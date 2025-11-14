@@ -1,5 +1,12 @@
 # DoPlan CLI
 
+[![Test](https://github.com/DoPlan-dev/CLI/actions/workflows/test.yml/badge.svg)](https://github.com/DoPlan-dev/CLI/actions/workflows/test.yml)
+[![Lint](https://github.com/DoPlan-dev/CLI/actions/workflows/lint.yml/badge.svg)](https://github.com/DoPlan-dev/CLI/actions/workflows/lint.yml)
+[![Build](https://github.com/DoPlan-dev/CLI/actions/workflows/build.yml/badge.svg)](https://github.com/DoPlan-dev/CLI/actions/workflows/build.yml)
+[![Release](https://github.com/DoPlan-dev/CLI/actions/workflows/release.yml/badge.svg)](https://github.com/DoPlan-dev/CLI/actions/workflows/release.yml)
+[![Go Version](https://img.shields.io/badge/go-1.21%2B-blue)](https://golang.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 **DoPlan** is a comprehensive project workflow automation tool that transforms your app ideas into well-structured, documented, and trackable development projects. Built with Go, DoPlan provides a complete command-line interface and integrates seamlessly with popular AI-powered IDEs to guide you through the entire development lifecycle—from initial concept to deployment.
 
 DoPlan automates the tedious aspects of project management by generating documentation, creating project structures, managing Git workflows, tracking progress, and providing visual dashboards. It enforces best practices through automated rules, templates, and checkpoints, ensuring your project stays organized and maintainable throughout its development.
@@ -50,6 +57,33 @@ Whether you're building a web application, API service, mobile app, or any softw
 - **Git** (for version control)
 - **GitHub CLI** (`gh`) - Optional, for GitHub automation features
 
+### Homebrew (Recommended)
+
+```bash
+# Install from Homebrew tap (coming soon)
+brew install DoPlan-dev/doplan/doplan
+
+# Or if tap is added
+brew tap DoPlan-dev/doplan
+brew install doplan
+```
+
+**Note:** Homebrew tap repository setup is in progress. Binary releases are available below.
+
+### Binary Release
+
+Download the latest release for your platform from [releases](https://github.com/DoPlan-dev/CLI/releases):
+
+```bash
+# Linux/macOS
+curl -L https://github.com/DoPlan-dev/CLI/releases/latest/download/doplan_<version>_<platform>.tar.gz | tar -xz
+sudo mv doplan /usr/local/bin/
+
+# Windows
+# Download doplan_<version>_windows_amd64.tar.gz
+# Extract and add to PATH
+```
+
 ### From Source
 
 ```bash
@@ -63,16 +97,6 @@ make install
 # Or build manually
 go build -o bin/doplan ./cmd/doplan
 sudo mv bin/doplan /usr/local/bin/
-```
-
-### Binary Release
-
-Download the latest release for your platform from [releases](https://github.com/DoPlan-dev/CLI/releases):
-
-```bash
-# Extract and move to PATH
-tar -xzf doplan-<version>-<platform>.tar.gz
-sudo mv doplan /usr/local/bin/
 ```
 
 ### Verify Installation
@@ -441,6 +465,23 @@ go run ./cmd/doplan
 Comprehensive documentation is available in a separate repository:
 - **Documentation Repository**: [github.com/DoPlan-dev/docs](https://github.com/DoPlan-dev/docs)
 - **Documentation Site**: [doplan.dev](https://doplan.dev) (if deployed)
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+- Development setup
+- Code standards
+- Testing guidelines
+- Pull request process
+- Release process
+
+## Release Process
+
+Releases are automated using GitHub Actions and GoReleaser. See [docs/development/RELEASE.md](docs/development/RELEASE.md) for details on:
+- Versioning strategy
+- Release process
+- Homebrew update process
+- Docker release process (if enabled)
 
 ## License
 

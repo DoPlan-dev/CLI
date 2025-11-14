@@ -35,9 +35,6 @@ archives:
 checksum:
   name_template: '{{ .ProjectName }}_{{ .Version }}_checksums.txt'
 
-snapshot:
-  name_template: "{{ .Tag }}-next"  # This will be ignored in v2, but kept for compatibility
-
 changelog:
   sort: asc
   filters:
@@ -45,15 +42,32 @@ changelog:
       - '^docs:'
       - '^test:'
       - '^chore:'
+  use: git
+  groups:
+    - title: 'Breaking Changes'
+      regexp: '^.*(breaking|BREAKING).*'
+      order: 0
+    - title: 'Features'
+      regexp: '^.*(feat|feature).*'
+      order: 1
+    - title: 'Bug Fixes'
+      regexp: '^.*(fix|bug).*'
+      order: 2
+    - title: 'Other Changes'
+      order: 999
 
-brews:
+homebrew:
   - name: doplan
     homepage: https://github.com/DoPlan-dev/CLI
     description: Project workflow automation tool
     license: MIT
-    repository:
+    tap:
       owner: DoPlan-dev
-      name: CLI
+      name: homebrew-doplan
+    commit_author:
+      name: goreleaserbot
+      email: noreply@doplan.dev
+    folder: Formula
     test: |
       system "#{bin}/doplan --version"
     install: |
@@ -79,8 +93,19 @@ nfpms:
 #       - "ghcr.io/doplan-dev/doplan:{{ .Tag }}"
 #       - "ghcr.io/doplan-dev/doplan:latest"
 #     dockerfile: Dockerfile
+#     build_flag_templates:
+#       - "--pull"
+#       - "--label=org.opencontainers.image.created={{.Date}}"
+#       - "--label=org.opencontainers.image.title={{.ProjectName}}"
+#       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+#       - "--label=org.opencontainers.image.version={{.Version}}"
 
 release:
   github:
     owner: DoPlan-dev
     name: CLI
+  mode: replace
+  header: |
+    ## What's Changed
+
+    Full Changelog: {{ .PreviousTag }}...{{ .Tag }}

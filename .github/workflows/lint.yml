@@ -1,0 +1,87 @@
+name: Lint
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  fmt:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Check formatting
+        run: |
+          if [ "$(gofmt -s -d .)" ]; then
+            echo "Code is not formatted. Run 'go fmt ./...' to fix."
+            gofmt -s -d .
+            exit 1
+          fi
+
+  vet:
+    name: Go Vet
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Run go vet
+        run: go vet ./...
+
+  mod:
+    name: Go Mod Verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Check for updates
+        run: go mod tidy && git diff --exit-code go.mod go.sum
+
+  lint:
+    name: Lint (Optional)
+    runs-on: ubuntu-latest
+    if: false  # Disabled by default, enable if golangci-lint config is added
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          args: --timeout=5m
+

@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   release:
@@ -30,11 +31,21 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 
-      - name: Create Homebrew PR
+      - name: Verify release
+        run: |
+          echo "Release created successfully!"
+          echo "Tag: ${{ github.ref_name }}"
+          echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}"
+
+      - name: Verify Homebrew formula
         if: success()
         run: |
-          echo "Homebrew PR creation would happen here"
-          echo "This typically requires a separate workflow or manual process"
-          echo "See: https://goreleaser.com/customization/homebrew/"
+          if [ -d "dist/homebrew" ]; then
+            echo "Homebrew formula generated successfully"
+            ls -la dist/homebrew/
+          else
+            echo "Note: Homebrew formula not generated (tap repository may not exist yet)"
+          fi
 
