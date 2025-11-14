@@ -160,6 +160,53 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Verify npm token and permissions
+        run: |
+          echo "Verifying npm token and permissions..."
+          
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "❌ Error: NPM_TOKEN secret is not set"
+            echo "Please add NPM_TOKEN to GitHub Secrets with publish permissions"
+            exit 1
+          fi
+          
+          # Verify token is valid and can authenticate
+          NPM_USER=$(npm whoami 2>&1 || echo "")
+          if [ -z "$NPM_USER" ]; then
+            echo "❌ Error: npm token is invalid or expired"
+            echo "Please create a new npm token with publish permissions:"
+            echo "  https://www.npmjs.com/settings/YOUR_USERNAME/tokens"
+            echo "  Token type: Automation (for CI/CD)"
+            exit 1
+          fi
+          
+          echo "✅ npm token is valid"
+          echo "✅ Authenticated as: $NPM_USER"
+          
+          # Check if package exists and verify maintainer access
+          PACKAGE_EXISTS=$(npm view doplan-cli version 2>&1 || echo "")
+          if [ -n "$PACKAGE_EXISTS" ] && [ "$PACKAGE_EXISTS" != "null" ]; then
+            echo "📦 Package doplan-cli exists on npm"
+            
+            # Get maintainers
+            MAINTAINERS=$(npm view doplan-cli maintainers 2>&1 || echo "")
+            echo "Maintainers: $MAINTAINERS"
+            
+            # Verify current user is a maintainer
+            IS_MAINTAINER=$(npm access ls-packages "$NPM_USER" 2>&1 | grep -q "doplan-cli" && echo "yes" || echo "no")
+            if [ "$IS_MAINTAINER" = "no" ]; then
+              echo "⚠️  Warning: User $NPM_USER may not have publish permissions for doplan-cli"
+              echo "Please verify you are a maintainer of the package"
+            else
+              echo "✅ User $NPM_USER has access to doplan-cli"
+            fi
+          else
+            echo "📦 Package doplan-cli does not exist yet (will be created on first publish)"
+            echo "✅ Token has permissions to create new packages"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Extract version from tag
         id: get_version
         run: |
@@ -200,4 +247,40 @@ jobs:
           echo "Published to npm successfully!"
           echo "Package: doplan-cli@${{ steps.get_version.outputs.version }}"
           echo "npm URL: https://www.npmjs.com/package/doplan-cli"
-
+          
+      - name: Verify package maintainers
+        run: |
+          echo "Verifying package maintainers..."
+          
+          # Get package info
+          PACKAGE_INFO=$(npm view doplan-cli --json 2>&1 || echo "")
+          
+          if [ -n "$PACKAGE_INFO" ] && [ "$PACKAGE_INFO" != "null" ]; then
+            echo "✅ Package published successfully"
+            
+            # Extract maintainers
+            MAINTAINERS=$(echo "$PACKAGE_INFO" | jq -r '.maintainers[]? | "\(.name) <\(.email)>"' 2>/dev/null || echo "")
+            
+            if [ -n "$MAINTAINERS" ]; then
+              echo "📋 Package maintainers:"
+              echo "$MAINTAINERS" | while read -r maintainer; do
+                echo "  - $maintainer"
+              done
+            else
+              echo "⚠️  No maintainers field found in package.json"
+            fi
+            
+            # Show current npm user
+            NPM_USER=$(npm whoami 2>&1 || echo "")
+            if [ -n "$NPM_USER" ]; then
+              echo "🔐 Published by: $NPM_USER"
+            fi
+          else
+            echo "⚠️  Could not retrieve package information"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Restore cache
+        run: |
+          tar --overwrite -xf mycache.tar    

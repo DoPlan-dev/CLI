@@ -28,6 +28,12 @@
     "productivity"
   ],
   "author": "DoPlan Team <support@doplan.dev>",
+  "maintainers": [
+    {
+      "name": "DoPlan Team",
+      "email": "support@doplan.dev"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
