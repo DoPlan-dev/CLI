@@ -86,21 +86,22 @@ brew install doplan
 
 ### Binary Release
 
-Download the latest release for your platform from [releases](https://github.com/DoPlan-dev/CLI/releases):
+Download the latest release for your platform from [releases](https://github.com/DoPlan-dev/CLI/releases/latest):
 
 ```bash
-# Linux/macOS
-curl -L https://github.com/DoPlan-dev/CLI/releases/latest/download/doplan_$(curl -s https://api.github.com/repos/DoPlan-dev/CLI/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/v//')_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m).tar.gz | tar -xz
+# Linux/macOS - Download and extract
+# Visit https://github.com/DoPlan-dev/CLI/releases/latest
+# Download the appropriate tar.gz file for your platform
+# Then extract and install:
+tar -xzf doplan_*_linux_amd64.tar.gz  # or darwin_arm64, etc.
 sudo mv doplan /usr/local/bin/
 
-# Or manually download from: https://github.com/DoPlan-dev/CLI/releases/latest
-
 # Windows
-# Download from: https://github.com/DoPlan-dev/CLI/releases/latest
+# Download doplan_*_windows_amd64.tar.gz from releases page
 # Extract and add to PATH
 ```
 
-**Latest Release:** [v0.0.17-beta](https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.17-beta)
+**Latest Release:** [v0.0.17-beta](https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.17-beta) | [View all releases](https://github.com/DoPlan-dev/CLI/releases)
 
 ### From Source
 
