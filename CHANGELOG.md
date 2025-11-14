@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1-beta] - 2025-11-14
 
-### Initial Release
+### Public Beta Release
 
-This is the first beta release of DoPlan CLI, a comprehensive project workflow automation tool that transforms app ideas into structured development projects.
+This is the first public beta release of DoPlan CLI, a comprehensive project workflow automation tool that transforms app ideas into structured development projects.
 
 ### Features
 - **Project Workflow Automation**: Transform app ideas into structured development projects
