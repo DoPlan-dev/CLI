@@ -49,6 +49,15 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
+      - name: Clean coverage files
+        shell: bash
+        run: |
+          # Remove any existing coverage files that might interfere with test discovery
+          # Go test can fail if coverage files are present and cause package discovery issues
+          rm -f coverage.out coverage.html coverage_*.out 2>/dev/null || true
+          # Remove any .out files in root directory
+          find . -maxdepth 1 -name "*.out" -type f ! -name "coverage.out" -delete 2>/dev/null || true
+          
       - name: Run tests
         run: go test -v -race -coverprofile=coverage.out ./...
 
@@ -92,6 +101,13 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
+
+      - name: Clean coverage files
+        run: |
+          # Remove any existing coverage files that might interfere
+          find . -name "*.out" -type f -delete 2>/dev/null || true
+          find . -name "coverage.out" -type f -delete 2>/dev/null || true
+          find . -name "coverage.html" -type f -delete 2>/dev/null || true
 
       - name: Run tests with coverage
         run: |

@@ -13,6 +13,8 @@ dist/
 # Output of the go coverage tool
 coverage.out
 coverage.html
+*.out
+coverage_*.out
 
 # Dependency directories
 vendor/
