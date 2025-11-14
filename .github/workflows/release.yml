@@ -171,39 +171,28 @@ jobs:
           fi
           
           # Verify token is valid and can authenticate
-          NPM_USER=$(npm whoami 2>&1 || echo "")
-          if [ -z "$NPM_USER" ]; then
+          if ! npm whoami >/dev/null 2>&1; then
             echo "❌ Error: npm token is invalid or expired"
             echo "Please create a new npm token with publish permissions:"
-            echo "  https://www.npmjs.com/settings/YOUR_USERNAME/tokens"
+            echo "  https://www.npmjs.com/settings/idorgham/tokens"
             echo "  Token type: Automation (for CI/CD)"
             exit 1
           fi
           
+          NPM_USER=$(npm whoami)
           echo "✅ npm token is valid"
           echo "✅ Authenticated as: $NPM_USER"
           
-          # Check if package exists and verify maintainer access
-          PACKAGE_EXISTS=$(npm view @doplan-dev/cli version 2>&1 || echo "")
-          if [ -n "$PACKAGE_EXISTS" ] && [ "$PACKAGE_EXISTS" != "null" ]; then
+          # Check package ownership/permissions
+          echo "Checking package permissions for @doplan-dev/cli..."
+          if npm view @doplan-dev/cli version >/dev/null 2>&1; then
             echo "📦 Package @doplan-dev/cli exists on npm"
-            
-            # Get maintainers
-            MAINTAINERS=$(npm view @doplan-dev/cli maintainers 2>&1 || echo "")
-            echo "Maintainers: $MAINTAINERS"
-            
-            # Verify current user is a maintainer
-            IS_MAINTAINER=$(npm access ls-packages "$NPM_USER" 2>&1 | grep -q "@doplan-dev/cli" && echo "yes" || echo "no")
-            if [ "$IS_MAINTAINER" = "no" ]; then
-              echo "⚠️  Warning: User $NPM_USER may not have publish permissions for @doplan-dev/cli"
-              echo "Please verify you are a maintainer of the package"
-            else
-              echo "✅ User $NPM_USER has access to @doplan-dev/cli"
-            fi
+            npm owner ls @doplan-dev/cli || echo "⚠️  Warning: Could not list owners (may not have access)"
           else
             echo "📦 Package @doplan-dev/cli does not exist yet (will be created on first publish)"
             echo "✅ Token has permissions to create new packages"
           fi
+          
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
