@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/DoPlan-dev/CLI/test/helpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/DoPlan-dev/CLI/test/helpers"
 )
 
 func TestNewTemplatesCommand(t *testing.T) {
@@ -40,4 +40,3 @@ func TestRunTemplatesList(t *testing.T) {
 	err = cmd.Execute()
 	assert.NoError(t, err)
 }
-

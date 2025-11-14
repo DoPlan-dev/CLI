@@ -21,7 +21,7 @@ func NewCommitManager(repoPath string) (*CommitManager, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open repository: %w", err)
 	}
-	
+
 	return &CommitManager{
 		repoPath: repoPath,
 		repo:     repo,
@@ -34,7 +34,7 @@ func (cm *CommitManager) CommitFiles(message string, paths []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get worktree: %w", err)
 	}
-	
+
 	// Add files
 	for _, path := range paths {
 		_, err := worktree.Add(path)
@@ -42,7 +42,7 @@ func (cm *CommitManager) CommitFiles(message string, paths []string) error {
 			return fmt.Errorf("failed to add file %s: %w", path, err)
 		}
 	}
-	
+
 	// Commit
 	_, err = worktree.Commit(message, &git.CommitOptions{
 		Author: &object.Signature{
@@ -53,7 +53,7 @@ func (cm *CommitManager) CommitFiles(message string, paths []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to commit: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -61,12 +61,12 @@ func (cm *CommitManager) CommitFiles(message string, paths []string) error {
 func (cm *CommitManager) PushBranch(branchName string) error {
 	cmd := exec.Command("git", "push", "origin", branchName)
 	cmd.Dir = cm.repoPath
-	
+
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("failed to push branch: %s, output: %s", err, string(output))
 	}
-	
+
 	return nil
 }
 
@@ -78,40 +78,39 @@ func (cm *CommitManager) AutoCommitAndPush(message string, paths []string) error
 		return fmt.Errorf("failed to get HEAD: %w", err)
 	}
 	branchName := headRef.Name().Short()
-	
+
 	// Commit
 	if err := cm.CommitFiles(message, paths); err != nil {
 		return err
 	}
-	
+
 	// Push
 	if err := cm.PushBranch(branchName); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
 // FormatCommitMessage formats a commit message according to conventional commits
 func FormatCommitMessage(commitType, scope, description string) string {
 	var parts []string
-	
+
 	if commitType != "" {
 		parts = append(parts, commitType)
 	}
-	
+
 	if scope != "" {
 		parts = append(parts, fmt.Sprintf("(%s)", scope))
 	}
-	
+
 	if len(parts) > 0 {
 		parts = append(parts, ":")
 	}
-	
+
 	if description != "" {
 		parts = append(parts, description)
 	}
-	
+
 	return strings.Join(parts, " ")
 }
-

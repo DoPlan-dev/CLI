@@ -8,11 +8,11 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/DoPlan-dev/CLI/internal/config"
+	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
+	"github.com/DoPlan-dev/CLI/internal/template"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
-	"github.com/DoPlan-dev/CLI/internal/config"
-	"github.com/DoPlan-dev/CLI/internal/template"
 )
 
 func NewTemplatesCommand() *cobra.Command {
@@ -373,4 +373,3 @@ func runTemplatesRemove(cmd *cobra.Command, args []string) error {
 	color.Green("✅ Template '%s' removed\n", args[0])
 	return nil
 }
-

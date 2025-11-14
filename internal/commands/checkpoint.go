@@ -7,11 +7,11 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/fatih/color"
-	"github.com/spf13/cobra"
-	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
 	"github.com/DoPlan-dev/CLI/internal/checkpoint"
 	"github.com/DoPlan-dev/CLI/internal/config"
+	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
+	"github.com/fatih/color"
+	"github.com/spf13/cobra"
 )
 
 func NewCheckpointCommand() *cobra.Command {
@@ -184,4 +184,3 @@ func runCheckpointRestore(cmd *cobra.Command, args []string) error {
 
 	return nil
 }
-

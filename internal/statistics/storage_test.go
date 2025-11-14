@@ -2,12 +2,14 @@ package statistics
 
 import (
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/DoPlan-dev/CLI/test/helpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/DoPlan-dev/CLI/test/helpers"
 )
 
 func TestNewStorage(t *testing.T) {
@@ -16,7 +18,18 @@ func TestNewStorage(t *testing.T) {
 
 	assert.NotNil(t, storage)
 	assert.Equal(t, projectRoot, storage.projectRoot)
-	assert.Contains(t, storage.storagePath, ".doplan/stats/statistics.json")
+
+	// Verify path components (handle Windows path separators)
+	// Normalize path separators for comparison
+	normalizedPath := strings.ReplaceAll(storage.storagePath, "\\", "/")
+	assert.Contains(t, normalizedPath, ".doplan")
+	assert.Contains(t, normalizedPath, "stats")
+	assert.Contains(t, normalizedPath, "statistics.json")
+
+	// Verify it ends with statistics.json (platform-agnostic)
+	expectedPath := filepath.Join(projectRoot, ".doplan", "stats", "statistics.json")
+	assert.Equal(t, expectedPath, storage.storagePath,
+		"storage path should match expected path (normalized for platform)")
 }
 
 func TestSaveAndLoad(t *testing.T) {
@@ -58,7 +71,7 @@ func TestLoadSince(t *testing.T) {
 	storage := NewStorage(projectRoot)
 
 	now := time.Now()
-	
+
 	// Save multiple entries
 	for i := 0; i < 5; i++ {
 		metrics := &StatisticsMetrics{
@@ -84,7 +97,7 @@ func TestLoadRange(t *testing.T) {
 	storage := NewStorage(projectRoot)
 
 	baseTime := time.Now().Add(-10 * time.Hour) // Start in the past
-	
+
 	// Save multiple entries - storage.Save uses time.Now() for Timestamp
 	// So we need to save them with small delays to ensure different timestamps
 	for i := 0; i < 5; i++ {
@@ -180,4 +193,3 @@ func TestSave_MaxEntries(t *testing.T) {
 	// Should only keep last 100
 	assert.LessOrEqual(t, len(historical), 100)
 }
-

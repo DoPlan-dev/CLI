@@ -1,11 +1,13 @@
 # Binaries
-bin/
-dist/
+
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
+
+/dist
+
 
 # Test binary
 *.test
@@ -13,6 +15,8 @@ dist/
 # Output of the go coverage tool
 coverage.out
 coverage.html
+*.out
+coverage_*.out
 
 # Dependency directories
 vendor/

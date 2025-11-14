@@ -1,0 +1,57 @@
+{
+  "name": "doplan-cli",
+  "version": "0.1.1-alpha",
+  "description": "Project workflow automation tool that transforms app ideas into well-structured, documented, and trackable development projects",
+  "main": "index.js",
+  "bin": {
+    "doplan": "./bin/doplan.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js",
+    "build": "node scripts/build.js",
+    "prepublishOnly": "npm run build && node scripts/prepublish.js"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "cli",
+    "project-management",
+    "workflow",
+    "automation",
+    "development",
+    "ide-integration",
+    "github",
+    "productivity"
+  ],
+  "author": "DoPlan Team <support@doplan.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DoPlan-dev/CLI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DoPlan-dev/CLI/issues"
+  },
+  "homepage": "https://github.com/DoPlan-dev/CLI#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
+

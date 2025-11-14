@@ -125,4 +125,3 @@ func aggregateHistoricalMetrics(history []*statistics.HistoricalData) *statistic
 	latest := history[len(history)-1]
 	return latest.Metrics
 }
-

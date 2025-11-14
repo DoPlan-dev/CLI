@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/DoPlan-dev/CLI/test/helpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/DoPlan-dev/CLI/test/helpers"
 )
 
 func TestNewManager(t *testing.T) {
@@ -169,4 +169,3 @@ func TestManager_GetDefaultTemplate_MissingConfig(t *testing.T) {
 		assert.NotEmpty(t, plan)
 	}
 }
-

@@ -5,11 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewProgressCommand(t *testing.T) {
@@ -107,4 +107,3 @@ func TestUpdateProgressFromTasks(t *testing.T) {
 	// Note: The actual calculation depends on the implementation
 	assert.NotNil(t, state)
 }
-

@@ -277,4 +277,3 @@ func TestCacheManager_InvalidateAll(t *testing.T) {
 	assert.Nil(t, cm.GetConfig())
 	assert.Nil(t, cm.GetState())
 }
-

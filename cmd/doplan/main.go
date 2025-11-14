@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/spf13/cobra"
 	"github.com/DoPlan-dev/CLI/internal/commands"
 	"github.com/DoPlan-dev/CLI/internal/ui"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -37,7 +37,7 @@ Combines Spec-Kit and BMAD-METHOD methodologies.`,
 
 	// TUI mode flag
 	tuiFlag := rootCmd.PersistentFlags().Bool("tui", false, "Run in TUI mode")
-	
+
 	// Check for TUI mode
 	if len(os.Args) > 1 && os.Args[1] == "--tui" {
 		if err := ui.Run(); err != nil {
@@ -46,7 +46,7 @@ Combines Spec-Kit and BMAD-METHOD methodologies.`,
 		}
 		return
 	}
-	
+
 	// Check flag value if parsed
 	if tuiFlag != nil && *tuiFlag {
 		if err := ui.Run(); err != nil {
@@ -61,4 +61,3 @@ Combines Spec-Kit and BMAD-METHOD methodologies.`,
 		os.Exit(1)
 	}
 }
-

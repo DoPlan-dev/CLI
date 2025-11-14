@@ -35,7 +35,7 @@ func ShowHeader() {
 // ShowInstallMenu displays the installation menu
 func ShowInstallMenu() (string, error) {
 	ShowHeader()
-	
+
 	prompt := promptui.Select{
 		Label: "What are you using to develop your application?",
 		Items: []string{
@@ -48,23 +48,23 @@ func ShowInstallMenu() (string, error) {
 			"Back",
 		},
 	}
-	
+
 	_, result, err := prompt.Run()
 	if err != nil {
 		return "", err
 	}
-	
+
 	// Convert to lowercase with dashes
 	ideMap := map[string]string{
-		"Cursor":    "cursor",
+		"Cursor":     "cursor",
 		"Gemini CLI": "gemini",
 		"Claude CLI": "claude",
-		"Codex":     "codex",
-		"OpenCode":  "opencode",
-		"Qwen Code": "qwen",
-		"Back":      "back",
+		"Codex":      "codex",
+		"OpenCode":   "opencode",
+		"Qwen Code":  "qwen",
+		"Back":       "back",
 	}
-	
+
 	return ideMap[result], nil
 }
 
@@ -74,12 +74,11 @@ func ConfirmReinstall() (bool, error) {
 		Label:     "DoPlan is already installed. Reinstall? This will overwrite existing configuration",
 		IsConfirm: true,
 	}
-	
+
 	result, err := prompt.Run()
 	if err != nil {
 		return false, err
 	}
-	
+
 	return result == "y" || result == "Y", nil
 }
-

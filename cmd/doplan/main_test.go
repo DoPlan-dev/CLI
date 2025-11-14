@@ -10,4 +10,3 @@ func TestMainPackage(t *testing.T) {
 	// This test ensures the package structure is valid
 	t.Log("Main package structure is valid")
 }
-

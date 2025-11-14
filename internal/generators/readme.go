@@ -16,7 +16,7 @@ func NewREADMEGenerator(projectRoot string) *READMEGenerator {
 func (g *READMEGenerator) Generate() string {
 	codeBlock := "```"
 	backtick := "`"
-	
+
 	return `# DoPlan - Project Workflow Manager
 
 DoPlan automates your project workflow from idea to deployment, combining **Spec-Kit** and **BMAD-METHOD** methodologies. It helps you create well-documented plans, manage features with Git branches, and track progress visually.

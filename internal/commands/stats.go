@@ -5,12 +5,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/fatih/color"
-	"github.com/spf13/cobra"
 	"github.com/DoPlan-dev/CLI/internal/config"
 	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
 	"github.com/DoPlan-dev/CLI/internal/github"
 	"github.com/DoPlan-dev/CLI/internal/statistics"
+	"github.com/fatih/color"
+	"github.com/spf13/cobra"
 )
 
 func NewStatsCommand() *cobra.Command {
@@ -179,4 +179,3 @@ func runStats(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 }
-

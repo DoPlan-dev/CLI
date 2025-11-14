@@ -5,21 +5,21 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/DoPlan-dev/CLI/test/helpers"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenerateBranchName(t *testing.T) {
 	tests := []struct {
-		name       string
-		phaseID    string
-		featureID  string
+		name        string
+		phaseID     string
+		featureID   string
 		featureName string
-		expected   string
+		expected    string
 	}{
 		{
 			name:        "simple name",

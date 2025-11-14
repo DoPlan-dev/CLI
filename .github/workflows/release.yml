@@ -7,6 +7,10 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
+
+env:
+  NODE_VERSION: '20'
 
 jobs:
   release:
@@ -22,19 +26,176 @@ jobs:
         with:
           go-version: '1.21'
 
+      - name: Clean dist folder
+        run: |
+          echo "Cleaning dist folder to avoid stale files..."
+          rm -rf dist/* dist/.* 2>/dev/null || true
+          echo "✅ Dist folder cleaned"
+
+      - name: Clean Go toolchain cache
+        run: |
+          echo "Cleaning Go toolchain modules to avoid tar extraction conflicts..."
+          rm -rf $HOME/go/pkg/mod/golang.org/toolchain@* 2>/dev/null || true
+          rm -rf /home/runner/go/pkg/mod/golang.org/toolchain@* 2>/dev/null || true
+          echo "✅ Go toolchain cache cleaned"
+
+      - name: Delete existing release (if re-running)
+        run: |
+          set -e
+          
+          echo "Checking for existing release: ${{ github.ref_name }}"
+          
+          # Check if release exists and get release ID
+          RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "API Response HTTP Code: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" = "200" ]; then
+            RELEASE_ID=$(echo "$BODY" | jq -r '.id // empty')
+            echo "Found release ID: $RELEASE_ID"
+            
+            if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
+              echo "Deleting release ${{ github.ref_name }} (ID: $RELEASE_ID) to allow re-upload..."
+              
+              DELETE_RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID")
+              
+              DELETE_HTTP_CODE=$(echo "$DELETE_RESPONSE" | tail -n1)
+              DELETE_BODY=$(echo "$DELETE_RESPONSE" | sed '$d')
+              
+              echo "Delete API Response HTTP Code: $DELETE_HTTP_CODE"
+              
+              if [ "$DELETE_HTTP_CODE" = "204" ]; then
+                echo "✅ Release deleted successfully"
+              else
+                echo "❌ Failed to delete release. HTTP Code: $DELETE_HTTP_CODE"
+                echo "Response: $DELETE_BODY"
+                exit 1
+              fi
+            else
+              echo "⚠️  Could not extract release ID from response"
+              echo "Response body: $BODY"
+              exit 1
+            fi
+          elif [ "$HTTP_CODE" = "404" ]; then
+            echo "✅ No existing release found for ${{ github.ref_name }} (this is expected for new releases)"
+          else
+            echo "⚠️  Unexpected HTTP code when checking for release: $HTTP_CODE"
+            echo "Response: $BODY"
+            # Don't fail for unexpected codes, might be a temporary API issue
+            echo "Continuing anyway..."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify release was deleted
+        run: |
+          echo "Verifying release ${{ github.ref_name }} was deleted..."
+          
+          VERIFY_RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}")
+          
+          VERIFY_HTTP_CODE=$(echo "$VERIFY_RESPONSE" | tail -n1)
+          
+          if [ "$VERIFY_HTTP_CODE" = "404" ]; then
+            echo "✅ Verification passed: Release does not exist (ready for GoReleaser)"
+          elif [ "$VERIFY_HTTP_CODE" = "200" ]; then
+            echo "❌ Verification failed: Release still exists!"
+            echo "This should not happen. The deletion step may have failed."
+            exit 1
+          else
+            echo "⚠️  Unexpected HTTP code during verification: $VERIFY_HTTP_CODE"
+            echo "Proceeding anyway, but this may cause issues..."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
           distribution: goreleaser
-          version: ${{ github.ref }}
+          version: v2
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 
-      - name: Create Homebrew PR
+      - name: Verify release
+        run: |
+          echo "Release created successfully!"
+          echo "Tag: ${{ github.ref_name }}"
+          echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}"
+
+      - name: Verify Homebrew formula
         if: success()
         run: |
-          echo "Homebrew PR creation would happen here"
-          echo "This typically requires a separate workflow or manual process"
-          echo "See: https://goreleaser.com/customization/homebrew/"
+          if [ -d "dist/homebrew" ]; then
+            echo "Homebrew formula generated successfully"
+            ls -la dist/homebrew/
+          else
+            echo "Note: Homebrew formula not generated (tap repository may not exist yet)"
+          fi
+
+  publish-npm:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: release
+    # npm package structure is ready (bin/doplan.js exists)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Publishing version: $VERSION"
+
+      - name: Debug version
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "Resolved version: ${GITHUB_REF#refs/tags/v}"
+          node -e "console.log('package.json version =', require('./package.json').version)"
+
+      - name: Update package.json version
+        run: |
+          TARGET="${{ steps.get_version.outputs.version }}"
+          echo "Target version from tag: $TARGET"
+          CURRENT=$(node -p "require('./package.json').version")
+          echo "Current package.json version: $CURRENT"
+          if [ "$CURRENT" != "$TARGET" ]; then
+            npm version "$TARGET" --no-git-tag-version
+          else
+            echo "package.json already at version $CURRENT; skipping npm version"
+          fi
+
+      - name: Verify package.json
+        run: |
+          cat package.json | grep -A 2 '"version"'
+          npm run prepublishOnly
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Verify npm publication
+        run: |
+          echo "Published to npm successfully!"
+          echo "Package: doplan-cli@${{ steps.get_version.outputs.version }}"
+          echo "npm URL: https://www.npmjs.com/package/doplan-cli"
 

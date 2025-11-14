@@ -13,13 +13,13 @@ func WriteJSON(path string, data interface{}) error {
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return err
 	}
-	
+
 	file, err := os.Create(path)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
-	
+
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", "  ")
 	return encoder.Encode(data)
@@ -82,4 +82,3 @@ func BatchWriteJSON(writes []struct {
 
 	return nil
 }
-

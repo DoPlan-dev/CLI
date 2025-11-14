@@ -122,4 +122,3 @@ func TestErrDirectoryNotFound(t *testing.T) {
 	assert.Equal(t, "IO004", err.Code)
 	assert.Contains(t, err.Suggestion, "doplan install")
 }
-

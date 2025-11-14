@@ -131,4 +131,3 @@ func (h *Handler) PrintError(err error) {
 		}
 	}
 }
-

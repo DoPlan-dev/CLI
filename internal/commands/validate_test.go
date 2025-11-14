@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewValidateCommand(t *testing.T) {
@@ -24,4 +24,3 @@ func TestRunValidate(t *testing.T) {
 	err := cmd.Execute()
 	assert.NoError(t, err)
 }
-

@@ -6,12 +6,12 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/fatih/color"
-	"github.com/spf13/cobra"
-	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
 	"github.com/DoPlan-dev/CLI/internal/config"
+	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
 	"github.com/DoPlan-dev/CLI/internal/generators"
 	"github.com/DoPlan-dev/CLI/internal/github"
+	"github.com/fatih/color"
+	"github.com/spf13/cobra"
 )
 
 func NewDashboardCommand() *cobra.Command {
@@ -74,7 +74,7 @@ func runDashboard(cmd *cobra.Command, args []string) error {
 
 	// Offer to open HTML dashboard
 	color.Cyan("\n💡 Tip: Open 'doplan/dashboard.html' in your browser for a visual dashboard!")
-	
+
 	// Try to open HTML dashboard if on macOS/Linux
 	htmlPath := fmt.Sprintf("%s/doplan/dashboard.html", projectRoot)
 	if _, err := os.Stat(htmlPath); err == nil {

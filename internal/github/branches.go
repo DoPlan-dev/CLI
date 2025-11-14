@@ -21,7 +21,7 @@ func NewBranchManager(repoPath string) (*BranchManager, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open repository: %w", err)
 	}
-	
+
 	return &BranchManager{
 		repoPath: repoPath,
 		repo:     repo,
@@ -34,7 +34,7 @@ func GenerateBranchName(phaseID, featureID, featureName string) string {
 	name := strings.ToLower(featureName)
 	name = strings.ReplaceAll(name, " ", "-")
 	name = strings.ReplaceAll(name, "_", "-")
-	
+
 	// Remove special characters
 	var result strings.Builder
 	for _, r := range name {
@@ -42,7 +42,7 @@ func GenerateBranchName(phaseID, featureID, featureName string) string {
 			result.WriteRune(r)
 		}
 	}
-	
+
 	cleanName := result.String()
 	return fmt.Sprintf("feature/%s-%s-%s", phaseID, featureID, cleanName)
 }
@@ -54,7 +54,7 @@ func (bm *BranchManager) CreateFeatureBranch(branchName string) error {
 	if err != nil {
 		return fmt.Errorf("failed to list branches: %w", err)
 	}
-	
+
 	err = branches.ForEach(func(ref *plumbing.Reference) error {
 		if ref.Name().Short() == branchName {
 			return fmt.Errorf("branch %s already exists", branchName)
@@ -64,28 +64,28 @@ func (bm *BranchManager) CreateFeatureBranch(branchName string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	// Get HEAD reference
 	headRef, err := bm.repo.Head()
 	if err != nil {
 		return fmt.Errorf("failed to get HEAD: %w", err)
 	}
-	
+
 	// Create new branch
 	branchRef := plumbing.NewBranchReferenceName(branchName)
 	ref := plumbing.NewHashReference(branchRef, headRef.Hash())
-	
+
 	if err := bm.repo.Storer.SetReference(ref); err != nil {
 		return fmt.Errorf("failed to create branch: %w", err)
 	}
-	
+
 	// Checkout the branch using git command
 	cmd := exec.Command("git", "checkout", branchName)
 	cmd.Dir = bm.repoPath
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to checkout branch: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -95,7 +95,7 @@ func (bm *BranchManager) BranchExists(branchName string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	
+
 	exists := false
 	err = branches.ForEach(func(ref *plumbing.Reference) error {
 		if ref.Name().Short() == branchName {
@@ -103,7 +103,7 @@ func (bm *BranchManager) BranchExists(branchName string) (bool, error) {
 		}
 		return nil
 	})
-	
+
 	return exists, err
 }
 
@@ -113,7 +113,6 @@ func (bm *BranchManager) GetCurrentBranch() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
+
 	return headRef.Name().Short(), nil
 }
-

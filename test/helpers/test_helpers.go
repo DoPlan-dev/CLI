@@ -63,4 +63,3 @@ func WriteTestFile(t *testing.T, projectRoot, path string, content []byte) {
 		t.Fatalf("Failed to write test file %s: %v", path, err)
 	}
 }
-

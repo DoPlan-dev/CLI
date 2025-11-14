@@ -162,4 +162,3 @@ func ErrDirectoryNotFound(path string) *DoPlanError {
 		WithSuggestion("Check that the directory exists or run 'doplan install' to create the required structure").
 		WithFix("doplan install")
 }
-

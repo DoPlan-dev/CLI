@@ -36,34 +36,34 @@ func (g *PlanGenerator) Generate() error {
 
 	for i, phase := range g.state.Phases {
 		phaseDir := filepath.Join(g.projectRoot, "doplan", fmt.Sprintf("%02d-phase", i+1))
-		
+
 		// Create phase directory
 		if err := os.MkdirAll(phaseDir, 0755); err != nil {
 			return err
 		}
-		
+
 		// Generate phase-plan.md
 		if err := g.generatePhasePlan(phaseDir, phase); err != nil {
 			return err
 		}
-		
+
 		// Generate phase-progress.json
 		if err := g.generatePhaseProgress(phaseDir, phase); err != nil {
 			return err
 		}
-		
+
 		// Generate features
 		for j, featureID := range phase.Features {
 			feature := g.findFeature(featureID)
 			if feature == nil {
 				continue
 			}
-			
+
 			featureDir := filepath.Join(phaseDir, fmt.Sprintf("%02d-Feature", j+1))
 			if err := os.MkdirAll(featureDir, 0755); err != nil {
 				return err
 			}
-			
+
 			// Generate feature documents
 			if err := g.generateFeaturePlan(featureDir, feature); err != nil {
 				return err
@@ -79,7 +79,7 @@ func (g *PlanGenerator) Generate() error {
 			}
 		}
 	}
-	
+
 	return nil
 }
 
@@ -131,7 +131,7 @@ func (g *PlanGenerator) generatePhasePlan(phaseDir string, phase models.Phase) e
 		phase.Status,
 		"",
 	)
-	
+
 	path := filepath.Join(phaseDir, "phase-plan.md")
 	return os.WriteFile(path, []byte(content), 0644)
 }
@@ -144,12 +144,12 @@ func (g *PlanGenerator) generatePhaseProgress(phaseDir string, phase models.Phas
 		"progress":  0,
 		"features":  len(phase.Features),
 	}
-	
+
 	data, err := json.MarshalIndent(progress, "", "  ")
 	if err != nil {
 		return err
 	}
-	
+
 	path := filepath.Join(phaseDir, "phase-progress.json")
 	return os.WriteFile(path, data, 0644)
 }
@@ -389,13 +389,13 @@ func (g *PlanGenerator) findPhaseForFeature(phaseID string) *models.Phase {
 
 func (g *PlanGenerator) generateFeatureProgress(featureDir string, feature *models.Feature) error {
 	progress := map[string]interface{}{
-		"featureID": feature.ID,
+		"featureID":   feature.ID,
 		"featureName": feature.Name,
-		"status":     feature.Status,
-		"progress":   feature.Progress,
-		"branch":     feature.Branch,
+		"status":      feature.Status,
+		"progress":    feature.Progress,
+		"branch":      feature.Branch,
 	}
-	
+
 	if feature.PR != nil {
 		progress["pr"] = map[string]interface{}{
 			"number": feature.PR.Number,
@@ -403,12 +403,12 @@ func (g *PlanGenerator) generateFeatureProgress(featureDir string, feature *mode
 			"status": feature.PR.Status,
 		}
 	}
-	
+
 	data, err := json.MarshalIndent(progress, "", "  ")
 	if err != nil {
 		return err
 	}
-	
+
 	path := filepath.Join(featureDir, "progress.json")
 	return os.WriteFile(path, data, 0644)
 }
@@ -444,4 +444,3 @@ func (g *PlanGenerator) getOrDefault(value, defaultValue string) string {
 	}
 	return value
 }
-

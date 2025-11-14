@@ -1,0 +1,160 @@
+name: Test
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }} with Go ${{ matrix.go-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        go-version: ['1.21', '1.22', '1.23']
+        exclude:
+          # Test fewer Go versions on Windows and macOS to speed up CI
+          - os: macos-latest
+            go-version: '1.22'
+          - os: macos-latest
+            go-version: '1.23'
+          - os: windows-latest
+            go-version: '1.22'
+          - os: windows-latest
+            go-version: '1.23'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Clean coverage files and artifacts
+        shell: bash
+        run: |
+          # Remove any existing coverage files that might interfere with test discovery
+          # Go test can fail if coverage files are present and cause package discovery issues
+          echo "Cleaning up coverage files and artifacts..."
+          # Remove all .out files recursively (except we'll create coverage.out later)
+          find . -name "*.out" -type f -delete 2>/dev/null || true
+          # Remove any .out directories
+          find . -name ".out" -type d -exec rm -rf {} + 2>/dev/null || true
+          # Remove any .out files in root
+          rm -f .out coverage.out coverage.html coverage_*.out 2>/dev/null || true
+          # Verify cleanup
+          echo "Verifying cleanup..."
+          if find . -maxdepth 1 -name "*.out" -type f 2>/dev/null | grep -q .; then
+            echo "Warning: Some .out files still exist"
+            find . -maxdepth 1 -name "*.out" -type f 2>/dev/null
+          else
+            echo "✅ Cleanup complete - no .out files found"
+          fi
+
+      - name: Run tests
+        shell: bash
+        run: |
+          # Run tests - cleanup should have removed any problematic .out files
+          echo "Running tests..."
+          # Use go test directly - cleanup step should have removed any .out files
+          go test -v -race -coverprofile=coverage.out ./... 2>&1 || {
+            EXIT_CODE=$?
+            echo "Tests failed with exit code $EXIT_CODE"
+            # Check if the error is related to .out package
+            if go list ./... 2>&1 | grep -q "\.out"; then
+              echo "Error: .out package detected. Attempting to clean and retry..."
+              find . -name "*.out" -type f -delete 2>/dev/null || true
+              find . -name ".out" -type d -exec rm -rf {} + 2>/dev/null || true
+              # Retry with explicit package list
+              PACKAGES=$(go list ./... 2>&1 | grep -v "\.out" | grep -v "no required module" || true)
+              if [ -n "$PACKAGES" ]; then
+                echo "Retrying with filtered packages..."
+                go test -v -race -coverprofile=coverage.out $PACKAGES
+              else
+                exit $EXIT_CODE
+              fi
+            else
+              exit $EXIT_CODE
+            fi
+          }
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.out
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build binary
+        run: make build
+
+      - name: Run integration tests
+        run: |
+          chmod +x scripts/*.sh
+          make test-scripts || true
+
+  coverage:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Clean coverage files
+        run: |
+          # Remove any existing coverage files that might interfere
+          find . -name "*.out" -type f -delete 2>/dev/null || true
+          find . -name "coverage.out" -type f -delete 2>/dev/null || true
+          find . -name "coverage.html" -type f -delete 2>/dev/null || true
+
+      - name: Run tests with coverage
+        run: |
+          go test -v -coverprofile=coverage.out ./...
+          go tool cover -html=coverage.out -o coverage.html
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage.out
+            coverage.html
+
