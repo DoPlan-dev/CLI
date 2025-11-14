@@ -27,9 +27,9 @@ func NewStorage(projectRoot string) *Storage {
 
 // HistoricalData represents a single statistics snapshot
 type HistoricalData struct {
-	Timestamp time.Time         `json:"timestamp"`
+	Timestamp time.Time          `json:"timestamp"`
 	Metrics   *StatisticsMetrics `json:"metrics"`
-	Data      *StatisticsData   `json:"data"`
+	Data      *StatisticsData    `json:"data"`
 }
 
 // Save stores statistics data
@@ -149,4 +149,3 @@ func (s *Storage) Clear() error {
 
 	return os.Remove(s.storagePath)
 }
-

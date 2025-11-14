@@ -920,4 +920,3 @@ When generating ` + backtick + `CONTEXT.md` + backtick + `, detect technologies 
    - Update via CLI commands
 `
 }
-

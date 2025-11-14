@@ -5,11 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewCheckpointManager(t *testing.T) {
@@ -357,4 +357,3 @@ func TestCheckpointManager_AutoCreatePhaseCheckpoint_Error(t *testing.T) {
 	// Should error when config is invalid
 	assert.Error(t, err)
 }
-

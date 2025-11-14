@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/DoPlan-dev/CLI/test/helpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/DoPlan-dev/CLI/test/helpers"
 )
 
 func TestNewRecoveryManager(t *testing.T) {
@@ -156,4 +156,3 @@ func TestFixStateNotFound(t *testing.T) {
 	assert.Contains(t, string(content), "phases")
 	assert.Contains(t, string(content), "features")
 }
-

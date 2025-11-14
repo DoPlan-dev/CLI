@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/DoPlan-dev/CLI/pkg/models"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewCalculator(t *testing.T) {
@@ -40,9 +40,9 @@ func TestCalculateVelocity(t *testing.T) {
 
 	assert.NotNil(t, velocity)
 	assert.InDelta(t, 0.5, velocity.FeaturesPerDay, 0.1) // 15/30
-	assert.InDelta(t, 3.0, velocity.CommitsPerDay, 0.1)   // 90/30
-	assert.InDelta(t, 2.0, velocity.TasksPerDay, 0.1)     // 60/30
-	assert.InDelta(t, 1.4, velocity.PRsPerWeek, 0.1)      // 6/4.3 weeks
+	assert.InDelta(t, 3.0, velocity.CommitsPerDay, 0.1)  // 90/30
+	assert.InDelta(t, 2.0, velocity.TasksPerDay, 0.1)    // 60/30
+	assert.InDelta(t, 1.4, velocity.PRsPerWeek, 0.1)     // 6/4.3 weeks
 }
 
 func TestCalculateCompletionRates(t *testing.T) {
@@ -51,7 +51,7 @@ func TestCalculateCompletionRates(t *testing.T) {
 
 	data := &StatisticsData{
 		State: &StateData{
-			TotalFeatures:    10,
+			TotalFeatures:     10,
 			CompletedFeatures: 6,
 		},
 		Tasks: &TaskStats{
@@ -92,7 +92,7 @@ func TestCalculateTimeMetrics(t *testing.T) {
 
 	data := &StatisticsData{
 		State: &StateData{
-			TotalFeatures:    10,
+			TotalFeatures:     10,
 			CompletedFeatures: 5,
 		},
 	}
@@ -100,15 +100,15 @@ func TestCalculateTimeMetrics(t *testing.T) {
 	state := &models.State{
 		Features: []models.Feature{
 			{
-				ID:        "f1",
-				Status:    "complete",
-				StartDate: time.Now().Add(-20 * 24 * time.Hour).Format("2006-01-02"),
+				ID:         "f1",
+				Status:     "complete",
+				StartDate:  time.Now().Add(-20 * 24 * time.Hour).Format("2006-01-02"),
 				TargetDate: time.Now().Add(-10 * 24 * time.Hour).Format("2006-01-02"),
 			},
 			{
-				ID:        "f2",
-				Status:    "complete",
-				StartDate: time.Now().Add(-15 * 24 * time.Hour).Format("2006-01-02"),
+				ID:         "f2",
+				Status:     "complete",
+				StartDate:  time.Now().Add(-15 * 24 * time.Hour).Format("2006-01-02"),
 				TargetDate: time.Now().Add(-5 * 24 * time.Hour).Format("2006-01-02"),
 			},
 		},
@@ -128,7 +128,7 @@ func TestCalculateQualityMetrics(t *testing.T) {
 
 	data := &StatisticsData{
 		GitHub: &GitHubStats{
-			TotalPRs: 10,
+			TotalPRs:  10,
 			MergedPRs: 8,
 		},
 		Checkpoints: &CheckpointStats{
@@ -141,7 +141,7 @@ func TestCalculateQualityMetrics(t *testing.T) {
 	metrics := calculator.CalculateQualityMetrics(data, githubData)
 
 	assert.NotNil(t, metrics)
-	assert.Equal(t, 80.0, metrics.PRMergeRate) // 8/10 * 100
+	assert.Equal(t, 80.0, metrics.PRMergeRate)               // 8/10 * 100
 	assert.InDelta(t, 2.8, metrics.CheckpointFrequency, 0.1) // 12/4.3 weeks
 }
 
@@ -158,4 +158,3 @@ func TestDaysSinceStart_Zero(t *testing.T) {
 	days := calculator.daysSinceStart()
 	assert.Equal(t, 0, days)
 }
-

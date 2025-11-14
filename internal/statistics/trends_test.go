@@ -19,7 +19,7 @@ func TestCalculateTrends_NoHistory(t *testing.T) {
 	}
 
 	trends := calc.CalculateTrends(current, []*HistoricalData{})
-	
+
 	assert.NotNil(t, trends)
 	assert.Equal(t, "stable", trends.VelocityTrend)
 	assert.Equal(t, "stable", trends.CompletionTrend)
@@ -28,11 +28,11 @@ func TestCalculateTrends_NoHistory(t *testing.T) {
 
 func TestCalculateVelocityTrend_Improving(t *testing.T) {
 	calc := NewTrendCalculator()
-	
+
 	current := &StatisticsMetrics{
 		Velocity: &VelocityMetrics{FeaturesPerDay: 1.0},
 	}
-	
+
 	// Need at least 2 entries for trend calculation
 	history := []*HistoricalData{
 		{
@@ -50,7 +50,7 @@ func TestCalculateVelocityTrend_Improving(t *testing.T) {
 	}
 
 	trend, change := calc.calculateVelocityTrend(current.Velocity, history)
-	
+
 	// Change from 0.5 to 1.0 is 100% increase, which is > 10%
 	if change > 10.0 {
 		assert.Equal(t, "improving", trend)
@@ -62,11 +62,11 @@ func TestCalculateVelocityTrend_Improving(t *testing.T) {
 
 func TestCalculateVelocityTrend_Declining(t *testing.T) {
 	calc := NewTrendCalculator()
-	
+
 	current := &StatisticsMetrics{
 		Velocity: &VelocityMetrics{FeaturesPerDay: 0.3},
 	}
-	
+
 	// Need at least 2 entries for trend calculation
 	history := []*HistoricalData{
 		{
@@ -84,7 +84,7 @@ func TestCalculateVelocityTrend_Declining(t *testing.T) {
 	}
 
 	trend, change := calc.calculateVelocityTrend(current.Velocity, history)
-	
+
 	// Change from 0.8 to 0.3 is -62.5% decrease, which is < -10%
 	if change < -10.0 {
 		assert.Equal(t, "declining", trend)
@@ -96,11 +96,11 @@ func TestCalculateVelocityTrend_Declining(t *testing.T) {
 
 func TestCalculateVelocityTrend_Stable(t *testing.T) {
 	calc := NewTrendCalculator()
-	
+
 	current := &StatisticsMetrics{
 		Velocity: &VelocityMetrics{FeaturesPerDay: 0.5},
 	}
-	
+
 	history := []*HistoricalData{
 		{
 			Timestamp: time.Now().Add(-10 * 24 * time.Hour),
@@ -111,18 +111,18 @@ func TestCalculateVelocityTrend_Stable(t *testing.T) {
 	}
 
 	trend, change := calc.calculateVelocityTrend(current.Velocity, history)
-	
+
 	assert.Equal(t, "stable", trend)
 	assert.InDelta(t, 0.0, change, 10.0)
 }
 
 func TestCalculateCompletionTrend_Improving(t *testing.T) {
 	calc := NewTrendCalculator()
-	
+
 	current := &StatisticsMetrics{
 		Completion: &CompletionRates{Overall: 80},
 	}
-	
+
 	// Need at least 2 entries for trend calculation
 	history := []*HistoricalData{
 		{
@@ -140,7 +140,7 @@ func TestCalculateCompletionTrend_Improving(t *testing.T) {
 	}
 
 	trend, change := calc.calculateCompletionTrend(current.Completion, history)
-	
+
 	// Change is 80 - 50 = 30, which is > 5.0, so should be improving
 	if change > 5.0 {
 		assert.Equal(t, "improving", trend)
@@ -153,11 +153,11 @@ func TestCalculateCompletionTrend_Improving(t *testing.T) {
 
 func TestCalculateQualityTrend_Improving(t *testing.T) {
 	calc := NewTrendCalculator()
-	
+
 	current := &StatisticsMetrics{
 		Quality: &QualityMetrics{PRMergeRate: 90.0},
 	}
-	
+
 	history := []*HistoricalData{
 		{
 			Timestamp: time.Now().Add(-10 * 24 * time.Hour),
@@ -168,7 +168,7 @@ func TestCalculateQualityTrend_Improving(t *testing.T) {
 	}
 
 	trend := calc.calculateQualityTrend(current.Quality, history)
-	
+
 	// Change is 90 - 70 = 20, which is > 5.0, so should be improving
 	// But if the entry isn't found (e.g., cutoff logic), it might be stable
 	assert.Contains(t, []string{"improving", "stable"}, trend)
@@ -176,7 +176,7 @@ func TestCalculateQualityTrend_Improving(t *testing.T) {
 
 func TestCalculateAverageVelocity(t *testing.T) {
 	calc := NewTrendCalculator()
-	
+
 	now := time.Now()
 	history := []*HistoricalData{
 		{
@@ -200,19 +200,19 @@ func TestCalculateAverageVelocity(t *testing.T) {
 	}
 
 	avg := calc.CalculateAverageVelocity(history, 7)
-	
+
 	assert.NotNil(t, avg)
 	assert.InDelta(t, 0.6, avg.FeaturesPerDay, 0.1) // Average of 0.5, 0.7, 0.6
 }
 
 func TestCalculateProjection(t *testing.T) {
 	calc := NewTrendCalculator()
-	
+
 	current := &StatisticsMetrics{
-		Velocity: &VelocityMetrics{FeaturesPerDay: 0.5},
+		Velocity:   &VelocityMetrics{FeaturesPerDay: 0.5},
 		Completion: &CompletionRates{Overall: 50},
 	}
-	
+
 	history := []*HistoricalData{
 		{
 			Timestamp: time.Now().Add(-1 * 24 * time.Hour),
@@ -223,9 +223,8 @@ func TestCalculateProjection(t *testing.T) {
 	}
 
 	projection := calc.CalculateProjection(current, history)
-	
+
 	// Should return a future date
 	assert.False(t, projection.IsZero())
 	assert.True(t, projection.After(time.Now()))
 }
-

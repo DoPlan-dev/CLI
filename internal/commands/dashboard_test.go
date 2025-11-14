@@ -5,11 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewDashboardCommand(t *testing.T) {
@@ -74,4 +74,3 @@ func TestRunDashboard_Installed(t *testing.T) {
 	dashboardPath := filepath.Join(projectRoot, "doplan", "dashboard.md")
 	assert.FileExists(t, dashboardPath)
 }
-

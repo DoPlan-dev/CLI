@@ -53,7 +53,7 @@ func RenderBestDoPlanHeader(width int, version string) string {
 		Foreground(lipgloss.AdaptiveColor{Dark: "#667eea", Light: "#764ba2"}).
 		Width(width).
 		Render("╔" + repeatString("═", width-2) + "╗")
-	
+
 	logo := `
   ██████╗░░█████╗░██████╗░██╗░░░░░░█████╗░███╗░░██╗
   ██╔══██╗██╔══██╗██╔══██╗██║░░░░░██╔══██╗████╗░██║
@@ -62,38 +62,38 @@ func RenderBestDoPlanHeader(width int, version string) string {
   ██████╔╝╚█████╔╝██║░░░░░███████╗██║░░██║██║░╚███║
   ╚═════╝░░╚════╝░╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝
 `
-	
+
 	styledLogo := lipgloss.NewStyle().
 		Foreground(lipgloss.AdaptiveColor{Dark: "#667eea", Light: "#764ba2"}).
 		Bold(true).
 		Width(width - 4).
 		Align(lipgloss.Center).
 		Render(logo)
-	
+
 	title := lipgloss.NewStyle().
 		Foreground(lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#000000"}).
 		Bold(true).
 		Width(width - 4).
 		Align(lipgloss.Center).
 		Render("DoPlan")
-	
+
 	subtitle := lipgloss.NewStyle().
 		Foreground(lipgloss.AdaptiveColor{Dark: "#999999", Light: "#666666"}).
 		Width(width - 4).
 		Align(lipgloss.Center).
 		Render("Project Workflow Manager")
-	
+
 	versionText := lipgloss.NewStyle().
 		Foreground(lipgloss.AdaptiveColor{Dark: "#666666", Light: "#999999"}).
 		Width(width - 4).
 		Align(lipgloss.Center).
 		Render(fmt.Sprintf("v%s", version))
-	
+
 	bottomBorder := lipgloss.NewStyle().
 		Foreground(lipgloss.AdaptiveColor{Dark: "#667eea", Light: "#764ba2"}).
 		Width(width).
 		Render("╚" + repeatString("═", width-2) + "╝")
-	
+
 	return lipgloss.JoinVertical(lipgloss.Center,
 		topBorder,
 		"",
@@ -114,4 +114,3 @@ func repeatString(s string, count int) string {
 	}
 	return result
 }
-

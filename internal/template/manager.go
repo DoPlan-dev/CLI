@@ -137,4 +137,3 @@ func (m *Manager) GetDefaultTemplate(templateType string) (string, error) {
 		return "", fmt.Errorf("unknown template type: %s", templateType)
 	}
 }
-

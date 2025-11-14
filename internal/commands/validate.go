@@ -5,11 +5,11 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/DoPlan-dev/CLI/internal/config"
+	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
+	"github.com/DoPlan-dev/CLI/internal/validator"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
-	"github.com/DoPlan-dev/CLI/internal/config"
-	"github.com/DoPlan-dev/CLI/internal/validator"
 )
 
 func NewValidateCommand() *cobra.Command {
@@ -135,4 +135,3 @@ func runValidate(cmd *cobra.Command, args []string) error {
 	color.Green("\n✅ Validation passed!\n")
 	return nil
 }
-

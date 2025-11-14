@@ -26,9 +26,9 @@ func (g *TemplatesGenerator) Generate() error {
 	}
 
 	templates := map[string]string{
-		"plan-template.md":    getPlanTemplate(),
-		"design-template.md":  getDesignTemplate(),
-		"tasks-template.md":   getTasksTemplate(),
+		"plan-template.md":   getPlanTemplate(),
+		"design-template.md": getDesignTemplate(),
+		"tasks-template.md":  getTasksTemplate(),
 	}
 
 	for filename, content := range templates {
@@ -247,4 +247,3 @@ func getTasksTemplate() string {
 Add task-specific notes here...
 `
 }
-

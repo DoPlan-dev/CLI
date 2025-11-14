@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DoPlan-dev/CLI/test/helpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/DoPlan-dev/CLI/test/helpers"
 )
 
 func TestNewLogger(t *testing.T) {
@@ -33,7 +33,7 @@ func TestLogger_Log(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		logger.Log(NewValidationError("VAL002", "Another error"), ErrorCategoryValidation)
 	}
-	
+
 	// Wait for flush to complete
 	time.Sleep(200 * time.Millisecond)
 
@@ -41,7 +41,7 @@ func TestLogger_Log(t *testing.T) {
 	// Check if file exists first
 	_, statErr := os.Stat(logger.logFile)
 	require.NoError(t, statErr, "Log file should exist")
-	
+
 	data, readErr := os.ReadFile(logger.logFile)
 	require.NoError(t, readErr)
 
@@ -70,7 +70,7 @@ func TestLogger_LogWithContext(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		logger.Log(NewIOError("IO002", "Another error"), ErrorCategoryIO)
 	}
-	
+
 	// Wait for flush to complete
 	time.Sleep(200 * time.Millisecond)
 
@@ -78,7 +78,7 @@ func TestLogger_LogWithContext(t *testing.T) {
 	// Check if file exists first
 	_, statErr := os.Stat(logger.logFile)
 	require.NoError(t, statErr, "Log file should exist")
-	
+
 	data, readErr := os.ReadFile(logger.logFile)
 	require.NoError(t, readErr)
 
@@ -86,7 +86,7 @@ func TestLogger_LogWithContext(t *testing.T) {
 	unmarshalErr := json.Unmarshal(data, &logs)
 	require.NoError(t, unmarshalErr)
 	require.GreaterOrEqual(t, len(logs), 1)
-	
+
 	// Find the log with context - it should be in the logs
 	var foundLog *ErrorLog
 	for _, log := range logs {
@@ -115,18 +115,18 @@ func TestLogger_GetLogs(t *testing.T) {
 		logger.Log(NewValidationError("VAL001", "Error 1"), ErrorCategoryValidation)
 	}
 	time.Sleep(200 * time.Millisecond) // Wait for flush interval
-	
+
 	// Get the last log's timestamp to set since after all Error 1 logs
 	allLogs, err := logger.GetLogs(time.Time{}) // Get all logs
 	require.NoError(t, err)
 	require.GreaterOrEqual(t, len(allLogs), 1, "First log should be persisted")
 	// Get the last Error 1 log's timestamp
 	lastError1Time := allLogs[len(allLogs)-1].Timestamp
-	
+
 	// Set since time after all Error 1 logs
 	since := lastError1Time.Add(10 * time.Millisecond)
 	time.Sleep(50 * time.Millisecond) // Ensure we're well past Error 1 logs
-	
+
 	// Log second error once
 	logger.Log(NewIOError("IO001", "Error 2"), ErrorCategoryIO)
 	// Fill buffer to trigger flush
@@ -275,4 +275,3 @@ func TestLogger_load_NoFile(t *testing.T) {
 	assert.Error(t, readErr)
 	assert.True(t, os.IsNotExist(readErr))
 }
-

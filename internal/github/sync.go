@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sync"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/DoPlan-dev/CLI/pkg/models"
@@ -106,64 +106,64 @@ func (gs *GitHubSync) Sync() (*models.GitHubData, error) {
 func (gs *GitHubSync) fetchBranches() ([]models.Branch, error) {
 	cmd := exec.Command("git", "branch", "-r")
 	cmd.Dir = gs.repoPath
-	
+
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var branches []models.Branch
 	lines := strings.Split(string(output), "\n")
-	
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if line == "" || strings.Contains(line, "HEAD") {
 			continue
 		}
-		
+
 		// Remove "origin/" prefix
 		branchName := strings.TrimPrefix(line, "origin/")
-		
+
 		branch := models.Branch{
 			Name:        branchName,
 			Status:      "active",
 			CommitCount: 0,
 		}
-		
+
 		branches = append(branches, branch)
 	}
-	
+
 	return branches, nil
 }
 
 func (gs *GitHubSync) fetchCommits() ([]models.Commit, error) {
 	cmd := exec.Command("git", "log", "--pretty=format:%H|%s|%an|%ad", "--date=iso", "-20")
 	cmd.Dir = gs.repoPath
-	
+
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var commits []models.Commit
 	lines := strings.Split(string(output), "\n")
-	
+
 	for _, line := range lines {
 		parts := strings.Split(line, "|")
 		if len(parts) < 4 {
 			continue
 		}
-		
+
 		commit := models.Commit{
 			Hash:    parts[0],
 			Message: parts[1],
 			Author:  parts[2],
 			Date:    parts[3],
 		}
-		
+
 		commits = append(commits, commit)
 	}
-	
+
 	return commits, nil
 }
 
@@ -171,15 +171,15 @@ func (gs *GitHubSync) fetchPRs() ([]models.PullRequest, error) {
 	// Try to use GitHub CLI
 	cmd := exec.Command("gh", "pr", "list", "--json", "number,title,url,state")
 	cmd.Dir = gs.repoPath
-	
+
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		// GitHub CLI not available or not authenticated
 		return []models.PullRequest{}, nil
 	}
-	
+
 	var prs []models.PullRequest
-	
+
 	// Parse JSON output
 	var ghPRs []struct {
 		Number int    `json:"number"`
@@ -187,11 +187,11 @@ func (gs *GitHubSync) fetchPRs() ([]models.PullRequest, error) {
 		URL    string `json:"url"`
 		State  string `json:"state"`
 	}
-	
+
 	if err := json.Unmarshal(output, &ghPRs); err != nil {
 		return []models.PullRequest{}, nil
 	}
-	
+
 	for _, ghPR := range ghPRs {
 		pr := models.PullRequest{
 			Number: ghPR.Number,
@@ -201,30 +201,30 @@ func (gs *GitHubSync) fetchPRs() ([]models.PullRequest, error) {
 		}
 		prs = append(prs, pr)
 	}
-	
+
 	return prs, nil
 }
 
 func (gs *GitHubSync) saveData(data *models.GitHubData) error {
 	dataPath := filepath.Join(gs.repoPath, "doplan", "github-data.json")
-	
+
 	// Ensure directory exists
 	if err := os.MkdirAll(filepath.Dir(dataPath), 0755); err != nil {
 		return err
 	}
-	
+
 	fileData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return err
 	}
-	
+
 	return os.WriteFile(dataPath, fileData, 0644)
 }
 
 // LoadData loads GitHub data from file
 func (gs *GitHubSync) LoadData() (*models.GitHubData, error) {
 	dataPath := filepath.Join(gs.repoPath, "doplan", "github-data.json")
-	
+
 	data, err := os.ReadFile(dataPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -237,12 +237,11 @@ func (gs *GitHubSync) LoadData() (*models.GitHubData, error) {
 		}
 		return nil, err
 	}
-	
+
 	var githubData models.GitHubData
 	if err := json.Unmarshal(data, &githubData); err != nil {
 		return nil, err
 	}
-	
+
 	return &githubData, nil
 }
-

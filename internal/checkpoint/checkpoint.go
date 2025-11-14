@@ -11,9 +11,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/fatih/color"
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/pkg/models"
+	"github.com/fatih/color"
 )
 
 // Checkpoint represents a project checkpoint
@@ -372,4 +372,3 @@ func IsCommandAvailable(cmd string) bool {
 	_, err := exec.LookPath(cmd)
 	return err == nil
 }
-

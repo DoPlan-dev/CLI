@@ -6,11 +6,11 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/DoPlan-dev/CLI/internal/config"
+	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
-	"github.com/DoPlan-dev/CLI/internal/config"
-	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func NewConfigCommand() *cobra.Command {
@@ -294,4 +294,3 @@ func validateConfig(cfg *models.Config) []string {
 
 	return issues
 }
-

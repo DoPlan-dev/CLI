@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/DoPlan-dev/CLI/internal/config"
+	"github.com/fatih/color"
 )
 
 // Issue represents a validation issue
@@ -211,11 +211,11 @@ func (v *Validator) AutoFix(issues []Issue) error {
 			}
 		}
 	}
-	
+
 	if fixed > 0 {
 		color.Green("\n✅ Auto-fixed %d issue(s)\n", fixed)
 	}
-	
+
 	return nil
 }
 
@@ -232,4 +232,3 @@ func (v *Validator) fixIssue(issue Issue) error {
 	}
 	return fmt.Errorf("cannot auto-fix issue type: %s", issue.Type)
 }
-

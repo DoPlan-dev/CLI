@@ -264,4 +264,3 @@ func (tc *TrendCalculator) CalculateProjection(current *StatisticsMetrics, histo
 
 	return time.Now().AddDate(0, 0, int(daysRemaining))
 }
-

@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/DoPlan-dev/CLI/internal/statistics"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseTimeInput_Duration(t *testing.T) {
@@ -38,8 +38,8 @@ func TestParseTimeInput_Duration(t *testing.T) {
 
 func TestParseTimeInput_Date(t *testing.T) {
 	tests := []struct {
-		input    string
-		wantErr  bool
+		input   string
+		wantErr bool
 	}{
 		{"2025-01-01", false},
 		{"2025-01-01 15:04:05", false},
@@ -91,8 +91,8 @@ func TestParseDuration(t *testing.T) {
 
 func TestParseRangeInput(t *testing.T) {
 	tests := []struct {
-		input    string
-		wantErr  bool
+		input   string
+		wantErr bool
 	}{
 		{"2025-01-01:2025-01-15", false},
 		{"7d:1d", false}, // 7 days ago to 1 day ago is valid (start before end)
@@ -134,11 +134,11 @@ func TestFilterMetrics(t *testing.T) {
 	}
 
 	tests := []struct {
-		filter   string
-		hasVel   bool
-		hasComp  bool
-		hasTime  bool
-		hasQual  bool
+		filter  string
+		hasVel  bool
+		hasComp bool
+		hasTime bool
+		hasQual bool
 	}{
 		{"all", true, true, true, true},
 		{"velocity", true, false, false, false},
@@ -187,4 +187,3 @@ func TestAggregateHistoricalMetrics_Empty(t *testing.T) {
 	result := aggregateHistoricalMetrics([]*statistics.HistoricalData{})
 	assert.Nil(t, result)
 }
-

@@ -6,14 +6,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fatih/color"
-	"github.com/spf13/cobra"
-	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
 	"github.com/DoPlan-dev/CLI/internal/checkpoint"
 	"github.com/DoPlan-dev/CLI/internal/config"
+	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
 	"github.com/DoPlan-dev/CLI/internal/generators"
 	"github.com/DoPlan-dev/CLI/internal/github"
 	"github.com/DoPlan-dev/CLI/pkg/models"
+	"github.com/fatih/color"
+	"github.com/spf13/cobra"
 )
 
 func NewProgressCommand() *cobra.Command {
@@ -142,7 +142,7 @@ func updateProgressFromTasks(doplanDir string, state *models.State) error {
 			// Find the feature and update its progress
 			featureDir := filepath.Dir(path)
 			featureName := filepath.Base(featureDir)
-			
+
 			// Try to match feature by directory name
 			for i := range state.Features {
 				if strings.Contains(strings.ToLower(state.Features[i].Name), strings.ToLower(featureName)) ||

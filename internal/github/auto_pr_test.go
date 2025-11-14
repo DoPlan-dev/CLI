@@ -5,11 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewAutoPRManager(t *testing.T) {
@@ -108,9 +108,9 @@ func TestAutoPRManager_isFeatureComplete(t *testing.T) {
 	require.NoError(t, os.WriteFile(tasksPath, []byte(tasksContent), 0644))
 
 	feature3 := &models.Feature{
-		ID:     "feat-3",
-		Phase:  "phase-1",
-		Status: "complete",
+		ID:       "feat-3",
+		Phase:    "phase-1",
+		Status:   "complete",
 		Progress: 100,
 	}
 	complete, err = mgr.isFeatureComplete(feature3)
@@ -350,4 +350,3 @@ func TestAutoPRManager_WatchFeatures_PartialFailures(t *testing.T) {
 	// Should not error - partial failures are handled gracefully
 	assert.NoError(t, err)
 }
-

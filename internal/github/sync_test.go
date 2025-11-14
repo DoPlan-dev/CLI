@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/DoPlan-dev/CLI/test/helpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/DoPlan-dev/CLI/test/helpers"
 )
 
 func TestGitHubSync_Sync(t *testing.T) {
@@ -123,4 +123,3 @@ func TestGitHubSync_LoadData(t *testing.T) {
 		assert.NotNil(t, data)
 	}
 }
-

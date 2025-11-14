@@ -3,8 +3,8 @@ package github
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewPRManager(t *testing.T) {
@@ -57,4 +57,3 @@ func TestPRManager_CreatePullRequest(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to create PR")
 }
-

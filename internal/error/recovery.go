@@ -11,10 +11,10 @@ import (
 type RecoveryStrategy string
 
 const (
-	RecoveryAutoFix   RecoveryStrategy = "autofix"
-	RecoveryPrompt    RecoveryStrategy = "prompt"
-	RecoveryRollback  RecoveryStrategy = "rollback"
-	RecoverySkip      RecoveryStrategy = "skip"
+	RecoveryAutoFix  RecoveryStrategy = "autofix"
+	RecoveryPrompt   RecoveryStrategy = "prompt"
+	RecoveryRollback RecoveryStrategy = "rollback"
+	RecoverySkip     RecoveryStrategy = "skip"
 )
 
 // RecoveryManager handles error recovery
@@ -82,11 +82,11 @@ func (rm *RecoveryManager) fixConfigNotFound(err *DoPlanError) error {
 	cmd := exec.Command("doplan", "install")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	
+
 	if runErr := cmd.Run(); runErr != nil {
 		return fmt.Errorf("auto-fix failed: %w (original error: %v)", runErr, err)
 	}
-	
+
 	return nil
 }
 
@@ -108,7 +108,7 @@ func (rm *RecoveryManager) fixStateNotFound(err *DoPlanError) error {
 		if mkErr := os.MkdirAll(dir, 0755); mkErr != nil {
 			return err
 		}
-		
+
 		// Create empty state file
 		emptyState := []byte(`{"phases":[],"features":[],"progress":{"overall":0}}`)
 		if writeErr := os.WriteFile(err.Path, emptyState, 0644); writeErr == nil {
@@ -132,15 +132,15 @@ func (rm *RecoveryManager) promptRecovery(err error) error {
 	if doplanErr.Fix != "" {
 		fmt.Fprintf(os.Stderr, "🔧 Fix command: %s\n", doplanErr.Fix)
 	}
-	
+
 	fmt.Fprint(os.Stderr, "\nAttempt auto-fix? (y/n): ")
 	var response string
 	fmt.Scanln(&response)
-	
+
 	if response == "y" || response == "Y" {
 		return rm.autoFix(err)
 	}
-	
+
 	return err
 }
 
@@ -150,4 +150,3 @@ func (rm *RecoveryManager) rollback(err error) error {
 	// For now, just return the error
 	return fmt.Errorf("rollback not yet implemented: %w", err)
 }
-

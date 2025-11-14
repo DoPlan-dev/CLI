@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DoPlan-dev/CLI/test/helpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/DoPlan-dev/CLI/test/helpers"
 )
 
 func TestNewStorage(t *testing.T) {
@@ -58,7 +58,7 @@ func TestLoadSince(t *testing.T) {
 	storage := NewStorage(projectRoot)
 
 	now := time.Now()
-	
+
 	// Save multiple entries
 	for i := 0; i < 5; i++ {
 		metrics := &StatisticsMetrics{
@@ -84,7 +84,7 @@ func TestLoadRange(t *testing.T) {
 	storage := NewStorage(projectRoot)
 
 	baseTime := time.Now().Add(-10 * time.Hour) // Start in the past
-	
+
 	// Save multiple entries - storage.Save uses time.Now() for Timestamp
 	// So we need to save them with small delays to ensure different timestamps
 	for i := 0; i < 5; i++ {
@@ -180,4 +180,3 @@ func TestSave_MaxEntries(t *testing.T) {
 	// Should only keep last 100
 	assert.LessOrEqual(t, len(historical), 100)
 }
-

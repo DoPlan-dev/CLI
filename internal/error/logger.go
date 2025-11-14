@@ -35,12 +35,12 @@ type Logger struct {
 type ErrorLog struct {
 	Timestamp time.Time              `json:"timestamp"`
 	Category  ErrorCategory          `json:"category"`
-	Code      string                `json:"code"`
-	Message   string                `json:"message"`
-	Details   string                `json:"details,omitempty"`
-	Path      string                `json:"path,omitempty"`
+	Code      string                 `json:"code"`
+	Message   string                 `json:"message"`
+	Details   string                 `json:"details,omitempty"`
+	Path      string                 `json:"path,omitempty"`
 	Context   map[string]interface{} `json:"context,omitempty"`
-	Stack     string                `json:"stack,omitempty"`
+	Stack     string                 `json:"stack,omitempty"`
 }
 
 // NewLogger creates a new error logger
@@ -176,10 +176,10 @@ func (l *Logger) persist() error {
 
 	// Load existing logs
 	existing, _ := l.load()
-	
+
 	// Merge with new logs
 	allLogs := append(existing, l.logs...)
-	
+
 	// Keep only last 1000 logs
 	if len(allLogs) > 1000 {
 		allLogs = allLogs[len(allLogs)-1000:]
@@ -216,4 +216,3 @@ func (l *Logger) load() ([]*ErrorLog, error) {
 
 	return logs, nil
 }
-

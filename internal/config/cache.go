@@ -106,4 +106,3 @@ func (cm *CacheManager) InvalidateAll() {
 	cm.InvalidateConfig()
 	cm.InvalidateState()
 }
-

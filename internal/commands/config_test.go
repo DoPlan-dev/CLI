@@ -4,11 +4,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewConfigCommand(t *testing.T) {
@@ -165,4 +165,3 @@ func TestRunConfigValidate(t *testing.T) {
 	err = cmd.Execute()
 	assert.NoError(t, err)
 }
-

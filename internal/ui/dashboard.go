@@ -6,15 +6,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DoPlan-dev/CLI/internal/config"
+	"github.com/DoPlan-dev/CLI/internal/github"
+	"github.com/DoPlan-dev/CLI/internal/statistics"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/DoPlan-dev/CLI/internal/config"
-	"github.com/DoPlan-dev/CLI/internal/github"
-	"github.com/DoPlan-dev/CLI/internal/statistics"
-	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 var (
@@ -226,8 +226,8 @@ func (m *DashboardModel) View() string {
 
 	body := lipgloss.JoinVertical(lipgloss.Left, menu, content)
 	body = lipgloss.NewStyle().
-		Width(m.width - 4).
-		Height(m.height - lipgloss.Height(header) - lipgloss.Height(footer) - 5).
+		Width(m.width-4).
+		Height(m.height-lipgloss.Height(header)-lipgloss.Height(footer)-5).
 		Padding(1, 2).
 		Render(body)
 
@@ -572,4 +572,3 @@ func (i featureItem) Title() string       { return i.feature.Name }
 func (i featureItem) Description() string {
 	return fmt.Sprintf("%s - %d%%", i.feature.Status, i.feature.Progress)
 }
-

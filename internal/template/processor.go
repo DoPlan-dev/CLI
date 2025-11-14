@@ -142,4 +142,3 @@ func repeatString(s string, count int) string {
 	}
 	return result
 }
-

@@ -5,10 +5,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewProcessor(t *testing.T) {
@@ -395,4 +395,3 @@ func TestRepeatString(t *testing.T) {
 	result5 := repeatString("", 5)
 	assert.Equal(t, "", result5)
 }
-

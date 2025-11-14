@@ -4,13 +4,13 @@ import "time"
 
 // Config represents the DoPlan configuration
 type Config struct {
-	IDE         string          `json:"ide"`
-	Installed   bool            `json:"installed"`
-	InstalledAt time.Time       `json:"installedAt"`
-	Version     string          `json:"version"`
-	GitHub      GitHubConfig    `json:"github"`
+	IDE         string           `json:"ide"`
+	Installed   bool             `json:"installed"`
+	InstalledAt time.Time        `json:"installedAt"`
+	Version     string           `json:"version"`
+	GitHub      GitHubConfig     `json:"github"`
 	Checkpoint  CheckpointConfig `json:"checkpoint"`
-	State       StateConfig     `json:"state"`
+	State       StateConfig      `json:"state"`
 }
 
 // GitHubConfig contains GitHub-related settings
@@ -22,8 +22,8 @@ type GitHubConfig struct {
 
 // CheckpointConfig contains checkpoint-related settings
 type CheckpointConfig struct {
-	AutoFeature bool `json:"autoFeature"` // Auto-create checkpoint when feature starts
-	AutoPhase   bool `json:"autoPhase"`   // Auto-create checkpoint when phase starts
+	AutoFeature  bool `json:"autoFeature"`  // Auto-create checkpoint when feature starts
+	AutoPhase    bool `json:"autoPhase"`    // Auto-create checkpoint when phase starts
 	AutoComplete bool `json:"autoComplete"` // Auto-create checkpoint when feature/phase completes
 }
 

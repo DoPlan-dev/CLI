@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/pkg/models"
+	"github.com/fatih/color"
 )
 
 // AutoPRManager handles automatic PR creation
@@ -169,4 +169,3 @@ func (aprm *AutoPRManager) WatchFeatures(state *models.State) error {
 
 	return nil
 }
-

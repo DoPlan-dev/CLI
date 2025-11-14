@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/DoPlan-dev/CLI/test/helpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/DoPlan-dev/CLI/test/helpers"
 )
 
 func TestWriteJSON(t *testing.T) {
@@ -219,4 +219,3 @@ func TestBatchWriteJSON_ComplexData(t *testing.T) {
 		assert.Equal(t, expectedJSON, actualJSON)
 	}
 }
-

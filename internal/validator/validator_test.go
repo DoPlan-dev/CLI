@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/DoPlan-dev/CLI/test/helpers"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewValidator(t *testing.T) {
@@ -28,7 +28,7 @@ func TestValidator_Validate(t *testing.T) {
 	// Validate may panic if config is nil, so we need to handle that
 	// or ensure config exists
 	issues, err := validator.Validate()
-	
+
 	// If error, that's acceptable (config not found)
 	// If no error, should return issues
 	if err == nil {
@@ -87,7 +87,7 @@ func TestValidator_validateInstallation(t *testing.T) {
 	// This is a private method, but we can test it indirectly through Validate
 	issues, err := validator.Validate()
 	require.NoError(t, err)
-	
+
 	// Should have issues about missing config
 	hasConfigIssue := false
 	for _, issue := range issues {
@@ -105,7 +105,7 @@ func TestValidator_validateStructure(t *testing.T) {
 
 	issues, err := validator.Validate()
 	require.NoError(t, err)
-	
+
 	// Should have issues about missing doplan directory
 	hasDoplanIssue := false
 	for _, issue := range issues {
@@ -130,7 +130,7 @@ func TestValidator_fixIssue_MissingFile(t *testing.T) {
 
 	err := validator.fixIssue(issue)
 	require.NoError(t, err)
-	
+
 	// Verify file was created
 	assert.FileExists(t, issue.Path)
 }
@@ -288,4 +288,3 @@ func TestIsCommandAvailable(t *testing.T) {
 	// Test with a command that likely doesn't exist
 	assert.False(t, isCommandAvailable("nonexistent-command-xyz-123"))
 }
-
