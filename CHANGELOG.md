@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.4-alpha] - 2025-11-14
+## [0.1.4-alpha] - 2025-11-14
 
 ### Fixed
 - **Homebrew v2 Syntax**: Updated Homebrew formula to use v2 syntax (removed deprecated `bottle :unneeded`)
@@ -118,7 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contribution guidelines
 - Release process documentation
 
-[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v1.0.4-alpha...HEAD
-[1.0.4-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v1.0.4-alpha
+[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.1.4-alpha...HEAD
+[0.1.4-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.1.4-alpha
 [1.0.0]: https://github.com/DoPlan-dev/CLI/releases/tag/v1.0.0
 

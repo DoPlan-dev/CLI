@@ -108,6 +108,6 @@ release:
     name: CLI
   mode: replace
   header: |
-    ## What's Changed
+    ## Release Notes
 
-    Full Changelog: {{ .PreviousTag }}...{{ .Tag }}
+    This release includes improvements to Homebrew formula syntax, npm publishing support, and workflow automation enhancements.
