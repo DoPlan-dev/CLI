@@ -28,18 +28,16 @@ jobs:
 
       - name: Delete existing release (if re-running)
         run: |
-          # Install GitHub CLI if not available
-          if ! command -v gh &> /dev/null; then
-            echo "Installing GitHub CLI..."
-            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-            sudo apt update && sudo apt install gh -y
-          fi
-          
           # Check if release exists and delete it to allow re-upload
-          if gh release view "${{ github.ref_name }}" &>/dev/null; then
-            echo "Release ${{ github.ref_name }} exists, deleting to allow re-upload..."
-            gh release delete "${{ github.ref_name }}" --yes || true
+          RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}" \
+            | jq -r '.id // empty')
+          
+          if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
+            echo "Release ${{ github.ref_name }} exists (ID: $RELEASE_ID), deleting to allow re-upload..."
+            curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID" || true
+            echo "Release deleted successfully"
           else
             echo "No existing release found for ${{ github.ref_name }}"
           fi
