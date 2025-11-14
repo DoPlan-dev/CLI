@@ -84,14 +84,14 @@ jobs:
 
       - name: Update package.json version
         run: |
-          TAG_VERSION="${{ steps.get_version.outputs.version }}"
-          echo "Tag version: $TAG_VERSION"
-          CURRENT=$(node -e "console.log(require('./package.json').version)")
+          TARGET="${{ steps.get_version.outputs.version }}"
+          echo "Target version from tag: $TARGET"
+          CURRENT=$(node -p "require('./package.json').version")
           echo "Current package.json version: $CURRENT"
-          if [ "$CURRENT" = "$TAG_VERSION" ]; then
-            echo "Version already matches tag — skipping npm version"
+          if [ "$CURRENT" != "$TARGET" ]; then
+            npm version "$TARGET" --no-git-tag-version
           else
-            npm version "$TAG_VERSION" --no-git-tag-version
+            echo "package.json already at version $CURRENT; skipping npm version"
           fi
 
       - name: Verify package.json
