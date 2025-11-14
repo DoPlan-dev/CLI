@@ -71,18 +71,22 @@ doplan --version
 
 **Note:** The npm package automatically downloads the correct binary for your platform during installation.
 
-### Homebrew (Recommended for macOS/Linux)
+### Homebrew (macOS/Linux)
+
+**Status:** Homebrew tap repository is not yet available. Please use npm or binary releases.
 
 ```bash
-# Install from Homebrew tap (coming soon)
-brew install DoPlan-dev/doplan/doplan
+# Homebrew installation will be available once the tap repository is set up
+# For now, please use:
+# - npm: npm install -g @doplan-dev/cli
+# - Binary releases: See below
+```
 
-# Or if tap is added
+**Note:** Homebrew tap repository setup is in progress. Once available, installation will be:
+```bash
 brew tap DoPlan-dev/doplan
 brew install doplan
 ```
-
-**Note:** Homebrew tap repository setup is in progress. Binary releases are available below.
 
 ### Binary Release
 
