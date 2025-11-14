@@ -1,6 +1,6 @@
 {
   "name": "doplan-cli",
-  "version": "0.1.4-alpha",
+  "version": "0.1.1-alpha",
   "description": "Project workflow automation tool that transforms app ideas into well-structured, documented, and trackable development projects",
   "main": "index.js",
   "bin": {
@@ -8,7 +8,8 @@
   },
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
-    "prepublishOnly": "node scripts/prepublish.js"
+    "build": "node scripts/build.js",
+    "prepublishOnly": "npm run build && node scripts/prepublish.js"
   },
   "files": [
     "bin/",

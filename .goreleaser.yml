@@ -110,4 +110,23 @@ release:
   header: |
     ## Release Notes
 
-    This release includes improvements to Homebrew formula syntax, npm publishing support, and workflow automation enhancements.
+    **DoPlan CLI v0.1.1-alpha - Initial Release**
+
+    This is the first alpha release of DoPlan CLI, a comprehensive project workflow automation tool that transforms app ideas into structured development projects.
+
+    ### Key Features
+    - Project workflow automation with IDE integration
+    - GitHub integration for automatic branching and PR management
+    - Real-time progress tracking with visual dashboards
+    - Document generation (PRD, project structure, API contracts)
+    - Interactive TUI dashboard
+    - Statistics and analytics with historical tracking
+    - Checkpoint system for project snapshots
+
+    ### Installation
+    - Download binaries for Linux, macOS, and Windows (amd64 and arm64)
+    - Install via npm: `npm install -g doplan-cli`
+    - Homebrew support coming soon
+
+    ### Documentation
+    See [README.md](https://github.com/DoPlan-dev/CLI/blob/master/README.md) for full documentation.
