@@ -28,22 +28,79 @@ jobs:
 
       - name: Delete existing release (if re-running)
         run: |
-          # Check if release exists and delete it to allow re-upload
-          RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}" \
-            | jq -r '.id // empty')
+          set -e
           
-          if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
-            echo "Release ${{ github.ref_name }} exists (ID: $RELEASE_ID), deleting to allow re-upload..."
-            curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID" || true
-            echo "Release deleted successfully"
+          echo "Checking for existing release: ${{ github.ref_name }}"
+          
+          # Check if release exists and get release ID
+          RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "API Response HTTP Code: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" = "200" ]; then
+            RELEASE_ID=$(echo "$BODY" | jq -r '.id // empty')
+            echo "Found release ID: $RELEASE_ID"
+            
+            if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
+              echo "Deleting release ${{ github.ref_name }} (ID: $RELEASE_ID) to allow re-upload..."
+              
+              DELETE_RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID")
+              
+              DELETE_HTTP_CODE=$(echo "$DELETE_RESPONSE" | tail -n1)
+              DELETE_BODY=$(echo "$DELETE_RESPONSE" | sed '$d')
+              
+              echo "Delete API Response HTTP Code: $DELETE_HTTP_CODE"
+              
+              if [ "$DELETE_HTTP_CODE" = "204" ]; then
+                echo "✅ Release deleted successfully"
+              else
+                echo "❌ Failed to delete release. HTTP Code: $DELETE_HTTP_CODE"
+                echo "Response: $DELETE_BODY"
+                exit 1
+              fi
+            else
+              echo "⚠️  Could not extract release ID from response"
+              echo "Response body: $BODY"
+              exit 1
+            fi
+          elif [ "$HTTP_CODE" = "404" ]; then
+            echo "✅ No existing release found for ${{ github.ref_name }} (this is expected for new releases)"
           else
-            echo "No existing release found for ${{ github.ref_name }}"
+            echo "⚠️  Unexpected HTTP code when checking for release: $HTTP_CODE"
+            echo "Response: $BODY"
+            # Don't fail for unexpected codes, might be a temporary API issue
+            echo "Continuing anyway..."
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
+
+      - name: Verify release was deleted
+        run: |
+          echo "Verifying release ${{ github.ref_name }} was deleted..."
+          
+          VERIFY_RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}")
+          
+          VERIFY_HTTP_CODE=$(echo "$VERIFY_RESPONSE" | tail -n1)
+          
+          if [ "$VERIFY_HTTP_CODE" = "404" ]; then
+            echo "✅ Verification passed: Release does not exist (ready for GoReleaser)"
+          elif [ "$VERIFY_HTTP_CODE" = "200" ]; then
+            echo "❌ Verification failed: Release still exists!"
+            echo "This should not happen. The deletion step may have failed."
+            exit 1
+          else
+            echo "⚠️  Unexpected HTTP code during verification: $VERIFY_HTTP_CODE"
+            echo "Proceeding anyway, but this may cause issues..."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
