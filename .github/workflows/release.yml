@@ -26,6 +26,19 @@ jobs:
         with:
           go-version: '1.21'
 
+      - name: Clean dist folder
+        run: |
+          echo "Cleaning dist folder to avoid stale files..."
+          rm -rf dist/* dist/.* 2>/dev/null || true
+          echo "✅ Dist folder cleaned"
+
+      - name: Clean Go toolchain cache
+        run: |
+          echo "Cleaning Go toolchain modules to avoid tar extraction conflicts..."
+          rm -rf $HOME/go/pkg/mod/golang.org/toolchain@* 2>/dev/null || true
+          rm -rf /home/runner/go/pkg/mod/golang.org/toolchain@* 2>/dev/null || true
+          echo "✅ Go toolchain cache cleaned"
+
       - name: Delete existing release (if re-running)
         run: |
           set -e
