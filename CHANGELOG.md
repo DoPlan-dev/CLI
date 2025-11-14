@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5-alpha] - 2025-11-14
+
+### Changed
+- Updated package name to scoped `@doplan-dev/cli`
+- Improved npm token verification in release workflow
+- Added maintainer checks and post-publish verification
+
 ## [0.0.1-beta] - 2025-11-14
 
 ### Initial Release
@@ -47,5 +54,6 @@ This is the first beta release of DoPlan CLI, a comprehensive project workflow a
 - Contribution guidelines
 - Release process documentation
 
-[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.0.1-beta...HEAD
+[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.0.5-alpha...HEAD
+[0.0.5-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.5-alpha
 [0.0.1-beta]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.1-beta
