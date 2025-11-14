@@ -57,7 +57,19 @@ Whether you're building a web application, API service, mobile app, or any softw
 - **Git** (for version control)
 - **GitHub CLI** (`gh`) - Optional, for GitHub automation features
 
-### Homebrew (Recommended)
+### npm (Recommended for Node.js users)
+
+```bash
+# Install globally
+npm install -g doplan-cli
+
+# Verify installation
+doplan --version
+```
+
+**Note:** The npm package automatically downloads the correct binary for your platform during installation.
+
+### Homebrew (Recommended for macOS/Linux)
 
 ```bash
 # Install from Homebrew tap (coming soon)
