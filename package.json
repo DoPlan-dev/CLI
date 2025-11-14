@@ -57,7 +57,7 @@
   ],
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "http://registry.npmjs.org/"
   }
 }
 

@@ -156,7 +156,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'http://registry.npmjs.org'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
