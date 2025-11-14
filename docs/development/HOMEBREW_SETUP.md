@@ -48,32 +48,43 @@ class Doplan < Formula
   homepage "https://github.com/DoPlan-dev/CLI"
   version "1.0.0"
   license "MIT"
-  bottle :unneeded
 
   on_macos do
     if Hardware::CPU.intel?
       url "https://github.com/DoPlan-dev/CLI/releases/download/v1.0.0/doplan_1.0.0_darwin_amd64.tar.gz"
       sha256 "REPLACE_WITH_ACTUAL_SHA256"
+
+      def install
+        bin.install "doplan"
+      end
     end
     if Hardware::CPU.arm?
       url "https://github.com/DoPlan-dev/CLI/releases/download/v1.0.0/doplan_1.0.0_darwin_arm64.tar.gz"
       sha256 "REPLACE_WITH_ACTUAL_SHA256"
+
+      def install
+        bin.install "doplan"
+      end
     end
   end
 
   on_linux do
-    if Hardware::CPU.intel?
+    if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
       url "https://github.com/DoPlan-dev/CLI/releases/download/v1.0.0/doplan_1.0.0_linux_amd64.tar.gz"
       sha256 "REPLACE_WITH_ACTUAL_SHA256"
+
+      def install
+        bin.install "doplan"
+      end
     end
-    if Hardware::CPU.arm?
+    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
       url "https://github.com/DoPlan-dev/CLI/releases/download/v1.0.0/doplan_1.0.0_linux_arm64.tar.gz"
       sha256 "REPLACE_WITH_ACTUAL_SHA256"
-    end
-  end
 
-  def install
-    bin.install "doplan"
+      def install
+        bin.install "doplan"
+      end
+    end
   end
 
   test do
@@ -104,7 +115,7 @@ See [DoPlan CLI](https://github.com/DoPlan-dev/CLI) for documentation.
 
 ## GoReleaser Configuration
 
-The GoReleaser configuration (`.goreleaser.yml`) is already set up to automatically create PRs to the Homebrew tap repository:
+The GoReleaser configuration (`.goreleaser.yml`) is already set up to automatically create PRs to the Homebrew tap repository. GoReleaser will automatically generate Homebrew v2 syntax (without deprecated `bottle :unneeded`) with platform-specific install methods:
 
 ```yaml
 homebrew:
@@ -125,6 +136,11 @@ homebrew:
     install: |
       bin.install "doplan"
 ```
+
+**Note:** GoReleaser automatically generates Homebrew v2 syntax with:
+- No deprecated `bottle :unneeded` directive
+- Platform-specific `install` methods inside each `on_macos` and `on_linux` block
+- Proper architecture checks (`Hardware::CPU.is_64_bit?` for Linux)
 
 ## GitHub Token Setup
 

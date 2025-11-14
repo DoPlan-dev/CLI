@@ -56,8 +56,7 @@ jobs:
     name: Publish to npm
     runs-on: ubuntu-latest
     needs: release
-    if: false  # Disabled until npm package structure is complete (bin/doplan.js needed)
-    # TODO: Enable once npm package structure is set up with bin/doplan.js
+    # npm package structure is ready (bin/doplan.js exists)
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

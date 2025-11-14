@@ -7,14 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- CI/CD workflows for testing, linting, and building
-- Multi-platform builds (Linux, macOS, Windows)
-- Automated release process with GoReleaser
-- Homebrew tap support (pending repository setup)
-- PR checks workflow for automated quality gates
-- Coverage reporting with Codecov integration
-- Enhanced release automation with changelog generation
+## [1.0.4-alpha] - 2025-11-14
+
+### Fixed
+- **Homebrew v2 Syntax**: Updated Homebrew formula to use v2 syntax (removed deprecated `bottle :unneeded`)
+  - Platform-specific `install` methods inside each `on_macos` and `on_linux` block
+  - Added `Hardware::CPU.is_64_bit?` checks for Linux (v2 requirement)
+  - Updated formula templates in `Formula/doplan.rb` and setup scripts
+  - GoReleaser automatically generates v2-compliant formulas
+
+### Changed
+- **npm Publishing**: Enabled npm publish job in release workflow
+  - `bin/doplan.js` wrapper script is ready and verified
+  - npm package structure complete and ready for publishing
+  - Automated npm publishing will trigger on tag pushes (requires `NPM_TOKEN` secret)
+
+### Documentation
+- Updated `docs/development/HOMEBREW_SETUP.md` with Homebrew v2 syntax examples and notes
+- Added notes about GoReleaser's automatic v2 syntax generation
 
 ## [1.0.0] - 2025-11-14
 
@@ -108,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contribution guidelines
 - Release process documentation
 
-[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v1.0.4-alpha...HEAD
+[1.0.4-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v1.0.4-alpha
 [1.0.0]: https://github.com/DoPlan-dev/CLI/releases/tag/v1.0.0
 
