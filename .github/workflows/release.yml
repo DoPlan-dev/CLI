@@ -26,6 +26,27 @@ jobs:
         with:
           go-version: '1.21'
 
+      - name: Delete existing release (if re-running)
+        run: |
+          # Install GitHub CLI if not available
+          if ! command -v gh &> /dev/null; then
+            echo "Installing GitHub CLI..."
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+            sudo apt update && sudo apt install gh -y
+          fi
+          
+          # Check if release exists and delete it to allow re-upload
+          if gh release view "${{ github.ref_name }}" &>/dev/null; then
+            echo "Release ${{ github.ref_name }} exists, deleting to allow re-upload..."
+            gh release delete "${{ github.ref_name }}" --yes || true
+          else
+            echo "No existing release found for ${{ github.ref_name }}"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
