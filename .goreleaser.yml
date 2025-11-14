@@ -110,9 +110,9 @@ release:
   header: |
     ## Release Notes
 
-    **DoPlan CLI v0.0.1-beta - Public Beta Release**
+    **DoPlan CLI v0.0.1-beta - First Release**
 
-    This is the first public beta release of DoPlan CLI, a comprehensive project workflow automation tool that transforms app ideas into structured development projects.
+    This is the first beta release of DoPlan CLI, a comprehensive project workflow automation tool that transforms app ideas into structured development projects.
 
     ### 🎉 What is DoPlan?
 
@@ -261,4 +261,4 @@ release:
 
     ### 🙏 Acknowledgments
 
-    Thank you for trying DoPlan CLI! This is a public beta release, and we'd love your feedback.
+    Thank you for trying DoPlan CLI! This is a beta release, and we'd love your feedback.
