@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.1-alpha] - 2025-11-14
+## [0.0.1-beta] - 2025-11-14
 
 ### Initial Release
 
-This is the first alpha release of DoPlan CLI, a comprehensive project workflow automation tool that transforms app ideas into structured development projects.
+This is the first beta release of DoPlan CLI, a comprehensive project workflow automation tool that transforms app ideas into structured development projects.
 
 ### Features
 - **Project Workflow Automation**: Transform app ideas into structured development projects
@@ -30,6 +30,7 @@ This is the first alpha release of DoPlan CLI, a comprehensive project workflow 
 - Homebrew v2 syntax support (ready for tap repository)
 - npm publishing support (ready for npm registry)
 - Comprehensive CI/CD workflows
+- npm token verification and maintainer checks
 
 ### Technical Details
 - Built with Go 1.21+
@@ -46,5 +47,5 @@ This is the first alpha release of DoPlan CLI, a comprehensive project workflow 
 - Contribution guidelines
 - Release process documentation
 
-[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.0.1-alpha...HEAD
-[0.0.1-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.1-alpha
+[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.0.1-beta...HEAD
+[0.0.1-beta]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.1-beta
