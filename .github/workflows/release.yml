@@ -184,24 +184,24 @@ jobs:
           echo "✅ Authenticated as: $NPM_USER"
           
           # Check if package exists and verify maintainer access
-          PACKAGE_EXISTS=$(npm view doplan-cli version 2>&1 || echo "")
+          PACKAGE_EXISTS=$(npm view @doplan-dev/doplan-cli version 2>&1 || echo "")
           if [ -n "$PACKAGE_EXISTS" ] && [ "$PACKAGE_EXISTS" != "null" ]; then
-            echo "📦 Package doplan-cli exists on npm"
+            echo "📦 Package @doplan-dev/doplan-cli exists on npm"
             
             # Get maintainers
-            MAINTAINERS=$(npm view doplan-cli maintainers 2>&1 || echo "")
+            MAINTAINERS=$(npm view @doplan-dev/doplan-cli maintainers 2>&1 || echo "")
             echo "Maintainers: $MAINTAINERS"
             
             # Verify current user is a maintainer
-            IS_MAINTAINER=$(npm access ls-packages "$NPM_USER" 2>&1 | grep -q "doplan-cli" && echo "yes" || echo "no")
+            IS_MAINTAINER=$(npm access ls-packages "$NPM_USER" 2>&1 | grep -q "@doplan-dev/doplan-cli" && echo "yes" || echo "no")
             if [ "$IS_MAINTAINER" = "no" ]; then
-              echo "⚠️  Warning: User $NPM_USER may not have publish permissions for doplan-cli"
+              echo "⚠️  Warning: User $NPM_USER may not have publish permissions for @doplan-dev/doplan-cli"
               echo "Please verify you are a maintainer of the package"
             else
-              echo "✅ User $NPM_USER has access to doplan-cli"
+              echo "✅ User $NPM_USER has access to @doplan-dev/doplan-cli"
             fi
           else
-            echo "📦 Package doplan-cli does not exist yet (will be created on first publish)"
+            echo "📦 Package @doplan-dev/doplan-cli does not exist yet (will be created on first publish)"
             echo "✅ Token has permissions to create new packages"
           fi
         env:
@@ -245,15 +245,15 @@ jobs:
       - name: Verify npm publication
         run: |
           echo "Published to npm successfully!"
-          echo "Package: doplan-cli@${{ steps.get_version.outputs.version }}"
-          echo "npm URL: https://www.npmjs.com/package/doplan-cli"
+          echo "Package: @doplan-dev/doplan-cli@${{ steps.get_version.outputs.version }}"
+          echo "npm URL: https://www.npmjs.com/package/@doplan-dev/doplan-cli"
           
       - name: Verify package maintainers
         run: |
           echo "Verifying package maintainers..."
           
           # Get package info
-          PACKAGE_INFO=$(npm view doplan-cli --json 2>&1 || echo "")
+          PACKAGE_INFO=$(npm view @doplan-dev/doplan-cli --json 2>&1 || echo "")
           
           if [ -n "$PACKAGE_INFO" ] && [ "$PACKAGE_INFO" != "null" ]; then
             echo "✅ Package published successfully"
