@@ -56,22 +56,24 @@ changelog:
     - title: 'Other Changes'
       order: 999
 
-homebrew:
-  - name: doplan
-    homepage: https://github.com/DoPlan-dev/CLI
-    description: Project workflow automation tool
-    license: MIT
-    tap:
-      owner: DoPlan-dev
-      name: homebrew-doplan
-    commit_author:
-      name: goreleaserbot
-      email: noreply@doplan.dev
-    folder: Formula
-    test: |
-      system "#{bin}/doplan --version"
-    install: |
-      bin.install "doplan"
+# Homebrew configuration - disabled until tap repository is set up
+# Will be enabled once homebrew-doplan repository exists
+# brews:
+#   - name: doplan
+#     homepage: https://github.com/DoPlan-dev/CLI
+#     description: Project workflow automation tool
+#     license: MIT
+#     tap:
+#       owner: DoPlan-dev
+#       name: homebrew-doplan
+#     commit_author:
+#       name: goreleaserbot
+#       email: noreply@doplan.dev
+#     folder: Formula
+#     test: |
+#       system "#{bin}/doplan --version"
+#     install: |
+#       bin.install "doplan"
 
 nfpms:
   - package_name: doplan
