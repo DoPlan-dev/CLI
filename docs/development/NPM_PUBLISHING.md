@@ -70,7 +70,7 @@ npm view @doplan-dev/doplan-cli
 - **Package Name:** `@doplan-dev/doplan-cli`
 - **Registry:** https://registry.npmjs.org/
 - **Access:** Public
-- **Scoped:** No (public package)
+- **Scoped:** Yes (scoped package under @doplan-dev organization)
 
 ## How It Works
 
