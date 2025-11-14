@@ -8,8 +8,7 @@
   },
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
-    "build": "node scripts/build.js",
-    "prepublishOnly": "npm run build && node scripts/prepublish.js"
+    "prepublishOnly": "node scripts/prepublish.js"
   },
   "files": [
     "bin/",
