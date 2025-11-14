@@ -7,23 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.3a-alpha] - 2025-11-14
-
-### Fixed
-- Ensured NODE_AUTH_TOKEN is properly configured in npm publish workflow
-- Added token to setup-node step for early authentication
-
-## [0.1.2-alpha] - 2025-11-14
-
-### Fixed
-- Fixed npm publish workflow build script issue
-- Simplified build.js script for npm package preparation
-
-## [0.1.1-alpha] - 2025-11-14
+## [0.0.1-alpha] - 2025-11-14
 
 ### Initial Release
 
-This is the first alpha release of DoPlan CLI.
+This is the first alpha release of DoPlan CLI, a comprehensive project workflow automation tool that transforms app ideas into structured development projects.
 
 ### Features
 - **Project Workflow Automation**: Transform app ideas into structured development projects
@@ -58,7 +46,5 @@ This is the first alpha release of DoPlan CLI.
 - Contribution guidelines
 - Release process documentation
 
-[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.1.3a-alpha...HEAD
-[0.1.3a-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.1.3a-alpha
-[0.1.2-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.1.2-alpha
-[0.1.1-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.1.1-alpha
+[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.0.1-alpha...HEAD
+[0.0.1-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.1-alpha

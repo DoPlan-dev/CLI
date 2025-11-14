@@ -1,6 +1,6 @@
 {
   "name": "doplan-cli",
-  "version": "0.1.3a-alpha",
+  "version": "0.0.1-alpha",
   "description": "Project workflow automation tool that transforms app ideas into well-structured, documented, and trackable development projects",
   "main": "index.js",
   "bin": {

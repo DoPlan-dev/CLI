@@ -110,23 +110,155 @@ release:
   header: |
     ## Release Notes
 
-    **DoPlan CLI v0.1.1-alpha - Initial Release**
+    **DoPlan CLI v0.0.1-alpha - First Release**
 
     This is the first alpha release of DoPlan CLI, a comprehensive project workflow automation tool that transforms app ideas into structured development projects.
 
-    ### Key Features
-    - Project workflow automation with IDE integration
-    - GitHub integration for automatic branching and PR management
-    - Real-time progress tracking with visual dashboards
-    - Document generation (PRD, project structure, API contracts)
-    - Interactive TUI dashboard
-    - Statistics and analytics with historical tracking
-    - Checkpoint system for project snapshots
+    ### 🎉 What is DoPlan?
 
-    ### Installation
-    - Download binaries for Linux, macOS, and Windows (amd64 and arm64)
-    - Install via npm: `npm install -g doplan-cli`
-    - Homebrew support coming soon
+    DoPlan automates the tedious aspects of project management by generating documentation, creating project structures, managing Git workflows, tracking progress, and providing visual dashboards. It enforces best practices through automated rules, templates, and checkpoints, ensuring your project stays organized and maintainable throughout its development.
 
-    ### Documentation
-    See [README.md](https://github.com/DoPlan-dev/CLI/blob/master/README.md) for full documentation.
+    ### ✨ Key Features
+
+    - **Project Workflow Automation**: Transform app ideas into structured development projects
+    - **IDE Integration**: Support for Cursor, Gemini CLI, Claude CLI, Codex CLI, OpenCode, and Qwen Code
+    - **GitHub Integration**: Automatic branch creation, commit tracking, and PR management
+    - **Progress Tracking**: Real-time progress monitoring with visual dashboards
+    - **Document Generation**: Auto-generate PRD, project structure, API contracts, and planning documents
+    - **Interactive TUI**: Fullscreen terminal user interface with interactive dashboard
+    - **Statistics & Analytics**: Comprehensive project insights with historical tracking
+    - **Checkpoint System**: Create, list, and restore project checkpoints (Time Machine)
+
+    ### 📦 Installation
+
+    **npm (Recommended for Node.js users):**
+    ```bash
+    npm install -g doplan-cli
+    ```
+
+    **Binary Release:**
+    Download the latest release for your platform from the [releases page](https://github.com/DoPlan-dev/CLI/releases):
+    - Linux (amd64, arm64)
+    - macOS (amd64, arm64)
+    - Windows (amd64, arm64)
+
+    **Package Managers:**
+    - Debian/Ubuntu: `.deb` packages available
+    - RHEL/CentOS: `.rpm` packages available
+    - Homebrew: Coming soon
+
+    ### 🚀 CLI Commands
+
+    #### Main Commands
+
+    | Command | Description |
+    |---------|-------------|
+    | `doplan install` | Install DoPlan in your project (interactive IDE selection) |
+    | `doplan dashboard` | View project dashboard with progress and GitHub activity |
+    | `doplan --tui` | Launch fullscreen interactive TUI dashboard |
+    | `doplan github` | Sync GitHub data (branches, commits, PRs) and update dashboard |
+    | `doplan progress` | Update all progress tracking files and regenerate dashboard |
+    | `doplan validate` | Validate project structure, configuration, and state consistency |
+
+    #### Configuration Commands
+
+    | Command | Description |
+    |---------|-------------|
+    | `doplan config show` | Show current configuration (table or JSON format) |
+    | `doplan config set <key> <value>` | Set a configuration value |
+    | `doplan config reset` | Reset configuration to defaults |
+    | `doplan config validate` | Validate configuration settings |
+
+    **Configuration Keys:**
+    - `github.enabled` - Enable/disable GitHub integration
+    - `github.autoBranch` - Auto-create branches for features
+    - `github.autoPR` - Auto-create PRs when features complete
+    - `checkpoint.autoFeature` - Auto-checkpoint when feature starts
+    - `checkpoint.autoPhase` - Auto-checkpoint when phase starts
+    - `checkpoint.autoComplete` - Auto-checkpoint when feature/phase completes
+
+    #### Checkpoint Commands
+
+    | Command | Description |
+    |---------|-------------|
+    | `doplan checkpoint create [name]` | Create a manual checkpoint |
+    | `doplan checkpoint list` | List all checkpoints |
+    | `doplan checkpoint restore <id>` | Restore a checkpoint |
+
+    **Checkpoint Options:**
+    - `--type <type>` - Checkpoint type: `manual`, `feature`, `phase`
+    - `--description <text>` - Add description to checkpoint
+
+    #### Template Commands
+
+    | Command | Description |
+    |---------|-------------|
+    | `doplan templates list` | List all available templates |
+    | `doplan templates show <name>` | Show template content |
+    | `doplan templates add <name> <file>` | Add a template from file |
+    | `doplan templates edit <name>` | Edit template (opens in default editor) |
+    | `doplan templates use <name> [--for type]` | Set default template (plan/design/tasks) |
+    | `doplan templates remove <name>` | Remove a template |
+
+    #### IDE Integration Commands
+
+    After installation, use these commands in your IDE:
+
+    **In Cursor/Gemini/Claude/Codex/OpenCode/Qwen:**
+    - `/Discuss` - Start idea discussion and refinement
+    - `/Plan` - Generate project plan and structure
+    - `/Design` - Create design documents
+    - `/Implement` - Begin feature implementation
+    - `/Progress` - Update progress tracking
+    - `/Next` - Get next action recommendation
+
+    ### 🗺️ Roadmap
+
+    #### v0.1.0 (Beta Release)
+    - [ ] Homebrew tap repository setup
+    - [ ] Enhanced TUI with keyboard navigation
+    - [ ] Web dashboard (optional web interface)
+    - [ ] Plugin system for custom integrations
+    - [ ] Export/import project configurations
+    - [ ] Multi-project workspace support
+
+    #### v0.2.0 (Stable Release)
+    - [ ] Cloud sync for project data
+    - [ ] Team collaboration features
+    - [ ] Advanced analytics and reporting
+    - [ ] Integration with more IDEs and tools
+    - [ ] Custom workflow templates marketplace
+    - [ ] API for programmatic access
+
+    #### v1.0.0 (Production Ready)
+    - [ ] Full documentation and tutorials
+    - [ ] Performance optimizations
+    - [ ] Enterprise features
+    - [ ] Security audit and hardening
+    - [ ] Official IDE extensions
+    - [ ] Community templates and plugins
+
+    ### 📚 Documentation
+
+    - **Full Documentation**: [README.md](https://github.com/DoPlan-dev/CLI/blob/master/README.md)
+    - **Installation Guide**: See README Installation section
+    - **Getting Started**: See README "How to Start" section
+    - **Contributing**: [CONTRIBUTING.md](https://github.com/DoPlan-dev/CLI/blob/master/CONTRIBUTING.md)
+
+    ### 🐛 Known Issues
+
+    - Homebrew tap repository is not yet set up (binaries available via direct download)
+    - Some IDE integrations may require manual configuration
+    - TUI dashboard is optimized for terminals with 80+ columns
+
+    ### 🤝 Contributing
+
+    We welcome contributions! Please see [CONTRIBUTING.md](https://github.com/DoPlan-dev/CLI/blob/master/CONTRIBUTING.md) for guidelines.
+
+    ### 📄 License
+
+    MIT License - see [LICENSE](https://github.com/DoPlan-dev/CLI/blob/master/LICENSE) file for details.
+
+    ### 🙏 Acknowledgments
+
+    Thank you for trying DoPlan CLI! This is an alpha release, and we'd love your feedback.
