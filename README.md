@@ -61,7 +61,7 @@ Whether you're building a web application, API service, mobile app, or any softw
 
 ```bash
 # Install globally
-npm install -g doplan-cli
+npm install -g @doplan-dev/cli
 
 # Verify installation
 doplan --version

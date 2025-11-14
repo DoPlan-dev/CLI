@@ -4,7 +4,7 @@ This document describes how to publish the DoPlan CLI to npm.
 
 ## Overview
 
-The DoPlan CLI is published to npm as `doplan-cli`. The npm package includes a wrapper script that automatically downloads the platform-specific binary from GitHub releases.
+The DoPlan CLI is published to npm as `@doplan-dev/cli`. The npm package includes a wrapper script that automatically downloads the platform-specific binary from GitHub releases.
 
 ## Package Structure
 
@@ -26,7 +26,7 @@ Publishing to npm is automated via GitHub Actions. When you push a tag matching 
 
 **Requirements:**
 - `NPM_TOKEN` secret must be configured in GitHub repository settings
-- Token must have publish permissions for the `doplan-cli` package
+- Token must have publish permissions for the `@doplan-dev/cli` package
 
 ### Manual Publishing
 
@@ -46,7 +46,7 @@ npm run prepublishOnly
 npm publish
 
 # 5. Verify publication
-npm view doplan-cli
+npm view @doplan-dev/cli
 ```
 
 ## Setting up NPM_TOKEN
@@ -67,14 +67,14 @@ npm view doplan-cli
 
 ## Package Details
 
-- **Package Name:** `doplan-cli`
+- **Package Name:** `@doplan-dev/cli`
 - **Registry:** https://registry.npmjs.org/
-- **Access:** Public (unscoped packages are public by default)
-- **Scoped:** No (unscoped package published by idorgham account)
+- **Access:** Public (requires "access": "public" in publishConfig for scoped packages)
+- **Scoped:** Yes (scoped package under @doplan-dev organization)
 
 ## How It Works
 
-1. **Installation:** When users run `npm install -g doplan-cli`:
+1. **Installation:** When users run `npm install -g @doplan-dev/cli`:
    - npm installs the package files
    - `postinstall.js` runs automatically
    - Downloads the platform-specific binary from GitHub releases
@@ -160,5 +160,5 @@ Excluded files:
 For issues with npm publishing:
 - Check GitHub Actions workflow logs
 - Verify npm token permissions
-- Review npm package page: https://www.npmjs.com/package/doplan-cli
+- Review npm package page: https://www.npmjs.com/package/@doplan-dev/cli
 

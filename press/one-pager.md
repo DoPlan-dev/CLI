@@ -37,7 +37,7 @@ DoPlan is a project workflow automation tool that transforms app ideas into stru
 brew install doplan
 
 # npm (Node.js)
-npm install -g doplan-cli
+npm install -g @doplan-dev/cli
 
 # Direct download
 # Visit https://github.com/DoPlan-dev/CLI/releases

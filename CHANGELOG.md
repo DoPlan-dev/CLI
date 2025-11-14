@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.16-beta] - 2025-11-14
+
+### Changed
+- Switched back to @doplan-dev organization scope
+- Changed package name from doplan-cli to @doplan-dev/cli
+- Published as public scoped package
+
 ## [0.0.15-beta] - 2025-11-14
 
 ### Changed
@@ -65,7 +72,8 @@ This is the first beta release of DoPlan CLI, a comprehensive project workflow a
 - Contribution guidelines
 - Release process documentation
 
-[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.0.15-beta...HEAD
+[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.0.16-beta...HEAD
+[0.0.16-beta]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.16-beta
 [0.0.15-beta]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.15-beta
 [0.0.14-beta]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.14-beta
 [0.0.13-beta]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.13-beta

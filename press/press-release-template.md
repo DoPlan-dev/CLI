@@ -21,7 +21,7 @@ DoPlan automates the tedious aspects of project management by generating documen
 
 DoPlan CLI is available now via:
 - **Homebrew**: `brew install doplan`
-- **npm**: `npm install -g doplan-cli`
+- **npm**: `npm install -g @doplan-dev/cli`
 - **Direct download**: https://github.com/DoPlan-dev/CLI/releases
 
 ### Use Cases
