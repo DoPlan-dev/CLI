@@ -1,0 +1,86 @@
+# .goreleaser.yml
+version: 2
+project_name: doplan
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    main: ./cmd/doplan
+    binary: doplan
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+
+archives:
+  - name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: '{{ .ProjectName }}_{{ .Version }}_checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"  # This will be ignored in v2, but kept for compatibility
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+
+brews:
+  - name: doplan
+    homepage: https://github.com/DoPlan-dev/CLI
+    description: Project workflow automation tool
+    license: MIT
+    repository:
+      owner: DoPlan-dev
+      name: CLI
+    test: |
+      system "#{bin}/doplan --version"
+    install: |
+      bin.install "doplan"
+
+nfpms:
+  - package_name: doplan
+    vendor: DoPlan
+    homepage: https://github.com/DoPlan-dev/CLI
+    maintainer: DoPlan Team <support@doplan.dev>
+    description: Project workflow automation tool
+    license: MIT
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/bin
+
+# Docker builds disabled for initial release - can be enabled later
+# dockers:
+#   - goos: linux
+#     goarch: amd64
+#     image_templates:
+#       - "ghcr.io/doplan-dev/doplan:{{ .Tag }}"
+#       - "ghcr.io/doplan-dev/doplan:latest"
+#     dockerfile: Dockerfile
+
+release:
+  github:
+    owner: DoPlan-dev
+    name: CLI
