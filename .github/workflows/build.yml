@@ -47,6 +47,7 @@ jobs:
           go-version: '1.21'
 
       - name: Build binary
+        shell: bash
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
@@ -62,6 +63,7 @@ jobs:
           go build -ldflags "-X main.version=$VERSION -X main.commit=$COMMIT -X main.date=$BUILD_TIME -s -w" -trimpath -o bin/$BINARY_NAME ./cmd/doplan
 
       - name: Verify binary exists
+        shell: bash
         run: |
           if [ "${{ matrix.goos }}" = "windows" ]; then
             if [ ! -f "bin/doplan.exe" ]; then
@@ -80,6 +82,7 @@ jobs:
           fi
 
       - name: Test binary (native architecture only)
+        shell: bash
         # Only test if building for native architecture (can execute on runner)
         # Cross-compiled binaries (arm64 on amd64 runners) cannot be executed
         # Strategy: Test amd64 builds which can run on all amd64 runners
@@ -94,7 +97,9 @@ jobs:
             ./bin/doplan --version
             echo "✅ Binary test passed for ${{ matrix.goos }}/${{ matrix.goarch }}"
           fi
+
       - name: Verify cross-compiled binary
+        shell: bash
         # For cross-compiled builds (arm64 on amd64 runners), verify binary exists but skip execution
         if: matrix.goarch == 'arm64'
         run: |

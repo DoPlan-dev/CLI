@@ -18,17 +18,17 @@ func TestNewStorage(t *testing.T) {
 
 	assert.NotNil(t, storage)
 	assert.Equal(t, projectRoot, storage.projectRoot)
-	
+
 	// Verify path components (handle Windows path separators)
 	// Normalize path separators for comparison
 	normalizedPath := strings.ReplaceAll(storage.storagePath, "\\", "/")
 	assert.Contains(t, normalizedPath, ".doplan")
 	assert.Contains(t, normalizedPath, "stats")
 	assert.Contains(t, normalizedPath, "statistics.json")
-	
+
 	// Verify it ends with statistics.json (platform-agnostic)
 	expectedPath := filepath.Join(projectRoot, ".doplan", "stats", "statistics.json")
-	assert.Equal(t, expectedPath, storage.storagePath, 
+	assert.Equal(t, expectedPath, storage.storagePath,
 		"storage path should match expected path (normalized for platform)")
 }
 

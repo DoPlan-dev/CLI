@@ -49,17 +49,53 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
-      - name: Clean coverage files
+      - name: Clean coverage files and artifacts
         shell: bash
         run: |
           # Remove any existing coverage files that might interfere with test discovery
           # Go test can fail if coverage files are present and cause package discovery issues
-          rm -f coverage.out coverage.html coverage_*.out 2>/dev/null || true
-          # Remove any .out files in root directory
-          find . -maxdepth 1 -name "*.out" -type f ! -name "coverage.out" -delete 2>/dev/null || true
-          
+          echo "Cleaning up coverage files and artifacts..."
+          # Remove all .out files recursively (except we'll create coverage.out later)
+          find . -name "*.out" -type f -delete 2>/dev/null || true
+          # Remove any .out directories
+          find . -name ".out" -type d -exec rm -rf {} + 2>/dev/null || true
+          # Remove any .out files in root
+          rm -f .out coverage.out coverage.html coverage_*.out 2>/dev/null || true
+          # Verify cleanup
+          echo "Verifying cleanup..."
+          if find . -maxdepth 1 -name "*.out" -type f 2>/dev/null | grep -q .; then
+            echo "Warning: Some .out files still exist"
+            find . -maxdepth 1 -name "*.out" -type f 2>/dev/null
+          else
+            echo "✅ Cleanup complete - no .out files found"
+          fi
+
       - name: Run tests
-        run: go test -v -race -coverprofile=coverage.out ./...
+        shell: bash
+        run: |
+          # Run tests - cleanup should have removed any problematic .out files
+          echo "Running tests..."
+          # Use go test directly - cleanup step should have removed any .out files
+          go test -v -race -coverprofile=coverage.out ./... 2>&1 || {
+            EXIT_CODE=$?
+            echo "Tests failed with exit code $EXIT_CODE"
+            # Check if the error is related to .out package
+            if go list ./... 2>&1 | grep -q "\.out"; then
+              echo "Error: .out package detected. Attempting to clean and retry..."
+              find . -name "*.out" -type f -delete 2>/dev/null || true
+              find . -name ".out" -type d -exec rm -rf {} + 2>/dev/null || true
+              # Retry with explicit package list
+              PACKAGES=$(go list ./... 2>&1 | grep -v "\.out" | grep -v "no required module" || true)
+              if [ -n "$PACKAGES" ]; then
+                echo "Retrying with filtered packages..."
+                go test -v -race -coverprofile=coverage.out $PACKAGES
+              else
+                exit $EXIT_CODE
+              fi
+            else
+              exit $EXIT_CODE
+            fi
+          }
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
