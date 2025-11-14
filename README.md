@@ -6,6 +6,8 @@
 [![Release](https://github.com/DoPlan-dev/CLI/actions/workflows/release.yml/badge.svg)](https://github.com/DoPlan-dev/CLI/actions/workflows/release.yml)
 [![Go Version](https://img.shields.io/badge/go-1.21%2B-blue)](https://golang.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/DoPlan-dev/CLI?label=latest%20release)](https://github.com/DoPlan-dev/CLI/releases/latest)
+[![npm version](https://img.shields.io/npm/v/@doplan-dev/cli)](https://www.npmjs.com/package/@doplan-dev/cli)
 
 **DoPlan** is a comprehensive project workflow automation tool that transforms your app ideas into well-structured, documented, and trackable development projects. Built with Go, DoPlan provides a complete command-line interface and integrates seamlessly with popular AI-powered IDEs to guide you through the entire development lifecycle—from initial concept to deployment.
 
@@ -88,13 +90,17 @@ Download the latest release for your platform from [releases](https://github.com
 
 ```bash
 # Linux/macOS
-curl -L https://github.com/DoPlan-dev/CLI/releases/latest/download/doplan_<version>_<platform>.tar.gz | tar -xz
+curl -L https://github.com/DoPlan-dev/CLI/releases/latest/download/doplan_$(curl -s https://api.github.com/repos/DoPlan-dev/CLI/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/v//')_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m).tar.gz | tar -xz
 sudo mv doplan /usr/local/bin/
 
+# Or manually download from: https://github.com/DoPlan-dev/CLI/releases/latest
+
 # Windows
-# Download doplan_<version>_windows_amd64.tar.gz
+# Download from: https://github.com/DoPlan-dev/CLI/releases/latest
 # Extract and add to PATH
 ```
+
+**Latest Release:** [v0.0.17-beta](https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.17-beta)
 
 ### From Source
 
