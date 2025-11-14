@@ -78,16 +78,7 @@ jobs:
 
       - name: Update package.json version
         run: |
-          TAG_VERSION="${{ steps.get_version.outputs.version }}"
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
-          echo "Current version: $CURRENT_VERSION"
-          echo "Tag version: $TAG_VERSION"
-          if [ "$CURRENT_VERSION" != "$TAG_VERSION" ]; then
-            echo "Updating version from $CURRENT_VERSION to $TAG_VERSION"
-            node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('package.json')); pkg.version = '$TAG_VERSION'; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');"
-          else
-            echo "Version already matches tag: $CURRENT_VERSION - skipping update"
-          fi
+          npm version "${{ steps.get_version.outputs.version }}" --no-git-tag-version --allow-same-version
 
       - name: Verify package.json
         run: |
