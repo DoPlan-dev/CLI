@@ -39,7 +39,7 @@ This is the first beta release of DoPlan CLI, a comprehensive project workflow a
 - Automated release process with GoReleaser
 - Debian (.deb) and RPM (.rpm) packages
 - Homebrew v2 syntax support (ready for tap repository)
-- npm publishing support with scoped package `@doplan-dev/cli`
+- npm publishing support with package `doplan-cli`
 - Comprehensive CI/CD workflows
 - npm token verification and maintainer checks
 

@@ -133,7 +133,7 @@ release:
 
     **npm (Recommended for Node.js users):**
     ```bash
-    npm install -g @doplan-dev/cli
+    npm install -g doplan-cli
     ```
 
     **Binary Release:**

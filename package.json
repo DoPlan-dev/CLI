@@ -1,5 +1,5 @@
 {
-  "name": "@doplan-dev/cli",
+  "name": "doplan-cli",
   "version": "0.0.14-beta",
   "description": "Project workflow automation tool that transforms app ideas into well-structured, documented, and trackable development projects",
   "main": "index.js",
@@ -30,7 +30,7 @@
   "author": "DoPlan Team <support@doplan.dev>",
   "maintainers": [
     {
-      "name": "DoPlan Team",
+      "name": "idorgham",
       "email": "support@doplan.dev"
     }
   ],
@@ -56,7 +56,6 @@
     "arm64"
   ],
   "publishConfig": {
-    "access": "public",
     "registry": "https://registry.npmjs.org/"
   }
 }
