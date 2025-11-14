@@ -270,6 +270,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           
-      - name: Restore cache
+      - name: Restore build cache
         run: |
-          tar --overwrite -xf mycache.tar    
+          if [ -f mycache.tar ]; then
+            echo "Restoring build cache from mycache.tar..."
+            tar --overwrite -xf mycache.tar
+            echo "✅ Cache restored successfully"
+          else
+            echo "⚠️  No cache file found (mycache.tar), proceeding without cache."
+            echo "This is normal for first runs or if cache creation was skipped."
+          fi    
