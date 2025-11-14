@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2-alpha] - 2025-11-14
+
+### Fixed
+- Fixed npm publish workflow build script issue
+- Simplified build.js script for npm package preparation
+
 ## [0.1.1-alpha] - 2025-11-14
 
 ### Initial Release
@@ -46,5 +52,6 @@ This is the first alpha release of DoPlan CLI.
 - Contribution guidelines
 - Release process documentation
 
-[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.1.1-alpha...HEAD
+[Unreleased]: https://github.com/DoPlan-dev/CLI/compare/v0.1.2-alpha...HEAD
+[0.1.2-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.1.2-alpha
 [0.1.1-alpha]: https://github.com/DoPlan-dev/CLI/releases/tag/v0.1.1-alpha
