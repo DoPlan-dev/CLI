@@ -98,7 +98,7 @@ Users can now install via npm:
 
 ```bash
 # Global installation
-npm install -g @doplan-dev/doplan-cli
+npm install -g @doplan-dev/cli
 
 # Verify
 doplan --version
