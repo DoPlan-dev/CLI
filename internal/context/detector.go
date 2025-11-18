@@ -1,9 +1,12 @@
 package context
 
 import (
+	"encoding/json"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 // ProjectState represents the detected state of a project
@@ -18,6 +21,20 @@ const (
 	StateInsideFeature        ProjectState = "InsideFeature"
 	StateInsidePhase          ProjectState = "InsidePhase"
 )
+
+// ContextDetails contains detailed context information
+type ContextDetails struct {
+	State         ProjectState `json:"state"`
+	ProjectRoot   string       `json:"projectRoot"`
+	CurrentPath   string       `json:"currentPath"`
+	PhaseID       string       `json:"phaseId,omitempty"`
+	PhaseName     string       `json:"phaseName,omitempty"`
+	FeatureID     string       `json:"featureId,omitempty"`
+	FeatureName   string       `json:"featureName,omitempty"`
+	IsGitRepo     bool         `json:"isGitRepo"`
+	GitBranch     string       `json:"gitBranch,omitempty"`
+	DashboardPath string       `json:"dashboardPath,omitempty"`
+}
 
 // Detector detects the current state of a project
 type Detector struct {
@@ -112,6 +129,37 @@ func (d *Detector) hasProjectFiles() bool {
 	return false
 }
 
+// DetectContextDetails detects the full context with details
+func (d *Detector) DetectContextDetails() (*ContextDetails, error) {
+	state, err := d.DetectProjectState()
+	if err != nil {
+		return nil, err
+	}
+
+	cwd, _ := os.Getwd()
+	details := &ContextDetails{
+		State:       state,
+		ProjectRoot: d.projectRoot,
+		CurrentPath: cwd,
+	}
+
+	// Check git repository
+	details.IsGitRepo = d.isGitRepository()
+	if details.IsGitRepo {
+		details.GitBranch = d.getGitBranch()
+	}
+
+	// If inside feature or phase, load details from dashboard
+	if state == StateInsideFeature || state == StateInsidePhase {
+		if err := d.loadContextFromDashboard(details); err != nil {
+			// Fallback to pattern matching if dashboard not available
+			d.loadContextFromPath(details)
+		}
+	}
+
+	return details, nil
+}
+
 // detectContext checks if we're inside a feature or phase directory
 func (d *Detector) detectContext() ProjectState {
 	cwd, err := os.Getwd()
@@ -120,26 +168,27 @@ func (d *Detector) detectContext() ProjectState {
 	}
 
 	// Check if we're inside doplan directory
-	if !filepath.HasPrefix(cwd, filepath.Join(d.projectRoot, "doplan")) {
+	doplanPath := filepath.Join(d.projectRoot, "doplan")
+	if !strings.HasPrefix(cwd, doplanPath) {
 		return ""
 	}
 
 	// Check for feature pattern (##-slug-name)
-	featurePattern := regexp.MustCompile(`\d+-\w+(-\w+)*$`)
-	phasePattern := regexp.MustCompile(`\d+-\w+(-\w+)*$`)
+	featurePattern := regexp.MustCompile(`^\d+-\w+(-\w+)*$`)
+	phasePattern := regexp.MustCompile(`^\d+-\w+(-\w+)*$`)
 
-	relPath, err := filepath.Rel(filepath.Join(d.projectRoot, "doplan"), cwd)
+	relPath, err := filepath.Rel(doplanPath, cwd)
 	if err != nil {
 		return ""
 	}
 
-	parts := filepath.SplitList(relPath)
+	parts := strings.Split(relPath, string(filepath.Separator))
 	if len(parts) >= 2 {
 		// Inside a feature (phase/feature)
 		if phasePattern.MatchString(parts[0]) && featurePattern.MatchString(parts[1]) {
 			return StateInsideFeature
 		}
-	} else if len(parts) == 1 {
+	} else if len(parts) == 1 && parts[0] != "." {
 		// Inside a phase
 		if phasePattern.MatchString(parts[0]) {
 			return StateInsidePhase
@@ -147,5 +196,125 @@ func (d *Detector) detectContext() ProjectState {
 	}
 
 	return ""
+}
+
+// isGitRepository checks if the project root is a git repository
+func (d *Detector) isGitRepository() bool {
+	gitDir := filepath.Join(d.projectRoot, ".git")
+	if _, err := os.Stat(gitDir); err == nil {
+		return true
+	}
+	return false
+}
+
+// getGitBranch gets the current git branch
+func (d *Detector) getGitBranch() string {
+	cmd := exec.Command("git", "branch", "--show-current")
+	cmd.Dir = d.projectRoot
+	output, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(output))
+}
+
+// loadContextFromDashboard loads context details from dashboard.json
+func (d *Detector) loadContextFromDashboard(details *ContextDetails) error {
+	dashboardPath := filepath.Join(d.projectRoot, ".doplan", "dashboard.json")
+	details.DashboardPath = dashboardPath
+
+	data, err := os.ReadFile(dashboardPath)
+	if err != nil {
+		return err
+	}
+
+	var dashboard struct {
+		Phases []struct {
+			ID   string `json:"id"`
+			Name string `json:"name"`
+			Features []struct {
+				ID   string `json:"id"`
+				Name string `json:"name"`
+			} `json:"features"`
+		} `json:"phases"`
+	}
+
+	if err := json.Unmarshal(data, &dashboard); err != nil {
+		return err
+	}
+
+	cwd, _ := os.Getwd()
+	relPath, err := filepath.Rel(filepath.Join(d.projectRoot, "doplan"), cwd)
+	if err != nil {
+		return err
+	}
+
+	parts := strings.Split(relPath, string(filepath.Separator))
+	if len(parts) >= 2 {
+		// Inside a feature
+		phaseSlug := parts[0]
+		featureSlug := parts[1]
+
+		// Find matching phase and feature
+		for _, phase := range dashboard.Phases {
+			// Extract slug from phase ID (format: "01-phase-slug")
+			if strings.HasSuffix(phase.ID, phaseSlug) || phase.ID == phaseSlug {
+				details.PhaseID = phase.ID
+				details.PhaseName = phase.Name
+
+				// Find feature
+				for _, feature := range phase.Features {
+					if strings.HasSuffix(feature.ID, featureSlug) || feature.ID == featureSlug {
+						details.FeatureID = feature.ID
+						details.FeatureName = feature.Name
+						return nil
+					}
+				}
+			}
+		}
+	} else if len(parts) == 1 && parts[0] != "." {
+		// Inside a phase
+		phaseSlug := parts[0]
+		for _, phase := range dashboard.Phases {
+			if strings.HasSuffix(phase.ID, phaseSlug) || phase.ID == phaseSlug {
+				details.PhaseID = phase.ID
+				details.PhaseName = phase.Name
+				return nil
+			}
+		}
+	}
+
+	return nil
+}
+
+// loadContextFromPath loads context from path pattern matching (fallback)
+func (d *Detector) loadContextFromPath(details *ContextDetails) {
+	cwd, _ := os.Getwd()
+	relPath, err := filepath.Rel(filepath.Join(d.projectRoot, "doplan"), cwd)
+	if err != nil {
+		return
+	}
+
+	parts := strings.Split(relPath, string(filepath.Separator))
+	phasePattern := regexp.MustCompile(`^(\d+)-(.+)$`)
+	featurePattern := regexp.MustCompile(`^(\d+)-(.+)$`)
+
+	if len(parts) >= 2 {
+		// Inside a feature
+		if matches := phasePattern.FindStringSubmatch(parts[0]); len(matches) > 2 {
+			details.PhaseID = matches[1]
+			details.PhaseName = matches[2]
+		}
+		if matches := featurePattern.FindStringSubmatch(parts[1]); len(matches) > 2 {
+			details.FeatureID = matches[1]
+			details.FeatureName = matches[2]
+		}
+	} else if len(parts) == 1 && parts[0] != "." {
+		// Inside a phase
+		if matches := phasePattern.FindStringSubmatch(parts[0]); len(matches) > 2 {
+			details.PhaseID = matches[1]
+			details.PhaseName = matches[2]
+		}
+	}
 }
 

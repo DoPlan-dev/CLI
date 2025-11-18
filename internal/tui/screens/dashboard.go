@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/DoPlan-dev/CLI/internal/config"
+	"github.com/DoPlan-dev/CLI/internal/dashboard"
+	"github.com/DoPlan-dev/CLI/internal/generators"
 	"github.com/DoPlan-dev/CLI/internal/github"
 	"github.com/DoPlan-dev/CLI/internal/statistics"
 	"github.com/DoPlan-dev/CLI/pkg/models"
@@ -41,6 +43,8 @@ type DashboardModel struct {
 	githubData *github.GitHubData
 	config     *models.Config
 	statistics *statistics.StatisticsMetrics
+	dashboardJSON *generators.DashboardJSON // Loaded from dashboard.json
+	lastUpdate    time.Time                // Last update time from dashboard.json
 
 	// Views
 	currentView string // "dashboard", "phases", "features", "github", "config", "stats"
@@ -57,6 +61,7 @@ type DashboardModel struct {
 	// Loading
 	spinner spinner.Model
 	loading bool
+	usingDashboardJSON bool // Whether we're using dashboard.json or fallback
 }
 
 func NewDashboardModel() *DashboardModel {
@@ -76,17 +81,69 @@ func NewDashboardModel() *DashboardModel {
 }
 
 type loadDataMsg struct {
-	state      *models.State
-	githubData *github.GitHubData
-	config     *models.Config
-	statistics *statistics.StatisticsMetrics
-	err        error
+	state             *models.State
+	githubData        *github.GitHubData
+	config            *models.Config
+	statistics        *statistics.StatisticsMetrics
+	dashboardJSON     *generators.DashboardJSON
+	lastUpdate        time.Time
+	usingDashboardJSON bool
+	err               error
 }
 
 func loadDataCmd() tea.Msg {
 	projectRoot, _ := os.Getwd()
-	cfgMgr := config.NewManager(projectRoot)
+	loader := dashboard.NewLoader(projectRoot)
 
+	// Try to load from dashboard.json first
+	if loader.DashboardExists() {
+		dashboardJSON, err := loader.LoadDashboard()
+		if err == nil {
+			lastUpdate, _ := loader.GetLastUpdateTime()
+			
+			// Load config for statistics
+			cfgMgr := config.NewManager(projectRoot)
+			cfg, _ := cfgMgr.LoadConfig()
+			
+			// Load statistics if config available
+			var stats *statistics.StatisticsMetrics
+			if cfg != nil {
+				githubSync := github.NewGitHubSync(projectRoot)
+				githubData, _ := githubSync.LoadData()
+				
+				collector := statistics.NewCollector(projectRoot)
+				data, err := collector.Collect()
+				if err == nil {
+					projectStartDate := cfg.InstalledAt
+					if projectStartDate.IsZero() {
+						projectStartDate = time.Now()
+					}
+					calculator := statistics.NewCalculator(projectStartDate)
+					// Convert dashboard JSON to state for statistics
+					state := convertDashboardToState(dashboardJSON)
+					stats = calculator.Calculate(data, state, githubData)
+				}
+				
+				return loadDataMsg{
+					dashboardJSON:     dashboardJSON,
+					lastUpdate:        lastUpdate,
+					usingDashboardJSON: true,
+					config:            cfg,
+					githubData:        githubData,
+					statistics:        stats,
+				}
+			}
+			
+			return loadDataMsg{
+				dashboardJSON:     dashboardJSON,
+				lastUpdate:        lastUpdate,
+				usingDashboardJSON: true,
+			}
+		}
+	}
+
+	// Fallback to state/config
+	cfgMgr := config.NewManager(projectRoot)
 	state, err := cfgMgr.LoadState()
 	if err != nil {
 		return loadDataMsg{err: err}
@@ -111,18 +168,76 @@ func loadDataCmd() tea.Msg {
 	}
 
 	return loadDataMsg{
-		state:      state,
-		githubData: githubData,
-		config:     cfg,
-		statistics: stats,
+		state:             state,
+		githubData:        githubData,
+		config:            cfg,
+		statistics:        stats,
+		usingDashboardJSON: false,
 	}
+}
+
+// convertDashboardToState converts dashboard.json to State for compatibility
+func convertDashboardToState(dashboardJSON *generators.DashboardJSON) *models.State {
+	state := &models.State{
+		Phases:   []models.Phase{},
+		Features: []models.Feature{},
+		Progress: models.Progress{
+			Overall: dashboardJSON.Project.Progress,
+			Phases:  make(map[string]int),
+		},
+	}
+
+	// Convert phases
+	for _, phaseJSON := range dashboardJSON.Phases {
+		phase := models.Phase{
+			ID:          phaseJSON.ID,
+			Name:        phaseJSON.Name,
+			Description: phaseJSON.Description,
+			Status:      phaseJSON.Status,
+			Features:    []string{},
+		}
+		state.Phases = append(state.Phases, phase)
+		state.Progress.Phases[phaseJSON.ID] = phaseJSON.Progress
+
+		// Convert features
+		for _, featureJSON := range phaseJSON.Features {
+			feature := models.Feature{
+				ID:       featureJSON.ID,
+				Phase:    phaseJSON.ID,
+				Name:     featureJSON.Name,
+				Status:   featureJSON.Status,
+				Progress: featureJSON.Progress,
+				Branch:   featureJSON.Branch,
+			}
+			if featureJSON.PR != nil {
+				feature.PR = &models.PullRequest{
+					Number: featureJSON.PR.Number,
+					Title:  featureJSON.PR.Title,
+					URL:    featureJSON.PR.URL,
+					Status: featureJSON.PR.Status,
+				}
+			}
+			state.Features = append(state.Features, feature)
+			phase.Features = append(phase.Features, featureJSON.ID)
+		}
+	}
+
+	return state
 }
 
 func (m *DashboardModel) Init() tea.Cmd {
 	return tea.Batch(
 		loadDataCmd,
 		m.spinner.Tick,
+		m.autoRefresh(), // Start auto-refresh
 	)
+}
+
+// autoRefresh refreshes dashboard every 30 seconds
+func (m *DashboardModel) autoRefresh() tea.Cmd {
+	return tea.Tick(30*time.Second, func(time.Time) tea.Msg {
+		return loadDataCmd()
+	})
 }
 
 func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -141,9 +256,19 @@ func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.githubData = msg.githubData
 		m.config = msg.config
 		m.statistics = msg.statistics
+		m.dashboardJSON = msg.dashboardJSON
+		m.lastUpdate = msg.lastUpdate
+		m.usingDashboardJSON = msg.usingDashboardJSON
+		
+		// If using dashboard.json, convert to state for compatibility
+		if m.usingDashboardJSON && m.dashboardJSON != nil && m.state == nil {
+			m.state = convertDashboardToState(m.dashboardJSON)
+		}
+		
 		m.loading = false
 		m.setupLists()
-		return m, nil
+		// Schedule next auto-refresh
+		return m, m.autoRefresh()
 
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -169,7 +294,7 @@ func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		case "r":
 			m.loading = true
-			return m, loadDataCmd
+			return m, tea.Batch(loadDataCmd, m.spinner.Tick)
 		}
 	}
 
@@ -333,7 +458,39 @@ func (m *DashboardModel) renderMenu() string {
 }
 
 func (m *DashboardModel) renderDashboard() string {
-	if m.state == nil {
+	// Use dashboard.json if available, otherwise fallback to state
+	var overallProgress int
+	var phases []models.Phase
+	var features []models.Feature
+	
+	if m.usingDashboardJSON && m.dashboardJSON != nil {
+		overallProgress = m.dashboardJSON.Project.Progress
+		// Convert dashboard JSON phases to models.Phase
+		for _, phaseJSON := range m.dashboardJSON.Phases {
+			phase := models.Phase{
+				ID:          phaseJSON.ID,
+				Name:        phaseJSON.Name,
+				Status:      phaseJSON.Status,
+				Description: phaseJSON.Description,
+			}
+			phases = append(phases, phase)
+			
+			// Add features
+			for _, featureJSON := range phaseJSON.Features {
+				feature := models.Feature{
+					ID:       featureJSON.ID,
+					Name:     featureJSON.Name,
+					Status:   featureJSON.Status,
+					Progress: featureJSON.Progress,
+				}
+				features = append(features, feature)
+			}
+		}
+	} else if m.state != nil {
+		overallProgress = m.state.Progress.Overall
+		phases = m.state.Phases
+		features = m.state.Features
+	} else {
 		return "No project data available"
 	}
 
@@ -341,17 +498,28 @@ func (m *DashboardModel) renderDashboard() string {
 
 	// Overall progress
 	sections = append(sections, titleStyle.Render("Overall Progress"))
-	progressBar := m.overallProgress.ViewAs(float64(m.state.Progress.Overall) / 100)
-	sections = append(sections, fmt.Sprintf("%d%% %s", m.state.Progress.Overall, progressBar))
+	progressBar := m.overallProgress.ViewAs(float64(overallProgress) / 100)
+	sections = append(sections, fmt.Sprintf("%d%% %s", overallProgress, progressBar))
 	sections = append(sections, "")
 
 	// Phase summary
 	sections = append(sections, titleStyle.Render("Phases"))
-	if len(m.state.Phases) == 0 {
+	if len(phases) == 0 {
 		sections = append(sections, "  No phases defined")
 	} else {
-		for _, phase := range m.state.Phases {
-			progress := m.state.Progress.Phases[phase.ID]
+		for _, phase := range phases {
+			var progress int
+			if m.usingDashboardJSON && m.dashboardJSON != nil {
+				// Find phase in dashboard JSON
+				for _, p := range m.dashboardJSON.Phases {
+					if p.ID == phase.ID {
+						progress = p.Progress
+						break
+					}
+				}
+			} else if m.state != nil {
+				progress = m.state.Progress.Phases[phase.ID]
+			}
 			status := "○"
 			if phase.Status == "complete" {
 				status = "✓"
@@ -365,11 +533,11 @@ func (m *DashboardModel) renderDashboard() string {
 
 	// Feature summary
 	sections = append(sections, titleStyle.Render("Recent Features"))
-	if len(m.state.Features) == 0 {
+	if len(features) == 0 {
 		sections = append(sections, "  No features defined")
 	} else {
 		count := 0
-		for _, feature := range m.state.Features {
+		for _, feature := range features {
 			if count >= 5 {
 				break
 			}
@@ -565,7 +733,14 @@ func (m *DashboardModel) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *DashboardModel) renderFooter() string {
 	help := helpStyle.Render("Press [1-6] to switch views | [r] to refresh | [q] to quit")
-	return strings.Repeat("─", m.width-4) + "\n" + help
+	
+	// Add last update time if using dashboard.json
+	updateInfo := ""
+	if m.usingDashboardJSON && !m.lastUpdate.IsZero() {
+		updateInfo = fmt.Sprintf(" | Last updated: %s", m.lastUpdate.Format("15:04:05"))
+	}
+	
+	return strings.Repeat("─", m.width-4) + "\n" + help + updateInfo
 }
 
 func (m *DashboardModel) setupLists() {

@@ -149,15 +149,15 @@ func createGenericGuide(projectRoot string) error {
 	content := `# Generic IDE Integration Guide
 
 ## Overview
-DoPlan stores all AI-related files in \`.doplan/ai/\` directory.
+DoPlan stores all AI-related files in .doplan/ai/ directory.
 
 ## Directory Structure
-\`\`\`
+` + "```" + `
 .doplan/ai/
 ├── agents/      # AI agent definitions
 ├── rules/       # Workflow and design rules
 └── commands/    # Command definitions
-\`\`\`
+` + "```" + `
 
 ## Integration Steps
 1. Locate IDE configuration directory
