@@ -58,27 +58,27 @@ type adoptProjectModel struct {
 	width  int
 	height int
 
-	projectRoot string
+	projectRoot   string
 	currentScreen adoptScreen
 
 	// Project data
-	analysis      *context.ProjectAnalysis
+	analysis       *context.ProjectAnalysis
 	adoptionOption string
-	githubRepo    string
-	ide           string
+	githubRepo     string
+	ide            string
 
 	// UI components
-	textInput    textinput.Model
-	optionsList  list.Model
-	ideList      list.Model
-	spinner      spinner.Model
-	loading      bool
-	loadingMsg   string
+	textInput   textinput.Model
+	optionsList list.Model
+	ideList     list.Model
+	spinner     spinner.Model
+	loading     bool
+	loadingMsg  string
 
 	// Analysis progress
-	analysisStep int
+	analysisStep  int
 	analysisSteps []string
-	err          error
+	err           error
 }
 
 func newAdoptProjectModel(projectRoot string) *adoptProjectModel {

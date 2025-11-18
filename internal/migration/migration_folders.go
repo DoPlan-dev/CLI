@@ -241,4 +241,3 @@ func (f *FolderMigrator) copyDir(src, dst string) error {
 
 	return nil
 }
-

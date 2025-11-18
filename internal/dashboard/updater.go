@@ -37,7 +37,7 @@ func (u *Updater) DashboardExists() bool {
 // ShouldUpdate checks if dashboard should be updated based on file timestamps
 func (u *Updater) ShouldUpdate() bool {
 	dashboardPath := filepath.Join(u.projectRoot, ".doplan", "dashboard.json")
-	
+
 	// If dashboard doesn't exist, should update
 	if _, err := os.Stat(dashboardPath); os.IsNotExist(err) {
 		return true
@@ -76,4 +76,3 @@ func (u *Updater) ShouldUpdate() bool {
 
 	return false
 }
-

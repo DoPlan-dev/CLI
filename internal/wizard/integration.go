@@ -24,13 +24,13 @@ var (
 )
 
 type integrationModel struct {
-	width     int
-	height    int
-	list      list.Model
+	width       int
+	height      int
+	list        list.Model
 	projectRoot string
 	selectedIDE string
-	status     string
-	err        error
+	status      string
+	err         error
 }
 
 type integrationItem struct {
@@ -245,7 +245,7 @@ func setupIDEIntegration(projectRoot, ide string) error {
 
 func showOtherIDEGuide(projectRoot string) {
 	guidePath := filepath.Join(projectRoot, ".doplan", "guides", "IDE_INTEGRATION.md")
-	
+
 	// Read guide if it exists
 	if content, err := os.ReadFile(guidePath); err == nil {
 		fmt.Println(string(content))
@@ -264,4 +264,3 @@ func showOtherIDEGuide(projectRoot string) {
 		fmt.Println()
 	}
 }
-

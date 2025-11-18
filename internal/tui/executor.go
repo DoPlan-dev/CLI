@@ -78,4 +78,3 @@ func (e *DefaultExecutor) ApplyDesign() error {
 func (e *DefaultExecutor) SetupIntegration() error {
 	return nil // Will be implemented
 }
-

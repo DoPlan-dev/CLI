@@ -230,8 +230,8 @@ func (d *Detector) loadContextFromDashboard(details *ContextDetails) error {
 
 	var dashboard struct {
 		Phases []struct {
-			ID   string `json:"id"`
-			Name string `json:"name"`
+			ID       string `json:"id"`
+			Name     string `json:"name"`
 			Features []struct {
 				ID   string `json:"id"`
 				Name string `json:"name"`
@@ -317,4 +317,3 @@ func (d *Detector) loadContextFromPath(details *ContextDetails) {
 		}
 	}
 }
-

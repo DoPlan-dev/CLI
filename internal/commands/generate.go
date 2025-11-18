@@ -52,4 +52,3 @@ func GenerateDocuments() error {
 
 	return nil
 }
-

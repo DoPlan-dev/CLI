@@ -69,7 +69,7 @@ var (
 func RenderProgressBar(percent int, width int) string {
 	filled := int(float64(width) * float64(percent) / 100.0)
 	empty := width - filled
-	
+
 	result := ""
 	for i := 0; i < filled; i++ {
 		result += ProgressFilled
@@ -77,9 +77,8 @@ func RenderProgressBar(percent int, width int) string {
 	for i := 0; i < empty; i++ {
 		result += ProgressEmpty
 	}
-	
+
 	return lipgloss.NewStyle().
 		Foreground(Primary()).
 		Render(result)
 }
-

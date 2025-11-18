@@ -107,8 +107,8 @@ func (m *deployModel) View() string {
 	}
 
 	body := lipgloss.NewStyle().
-		Width(m.width - 4).
-		Height(m.height - lipgloss.Height(header) - 5).
+		Width(m.width-4).
+		Height(m.height-lipgloss.Height(header)-5).
 		Padding(1, 2).
 		Render(content)
 
@@ -140,7 +140,7 @@ func (m *deployModel) renderWelcome() string {
 func (m *deployModel) renderPlatformSelection() string {
 	projectRoot, _ := os.Getwd()
 	detected, _ := deployment.DetectPlatform(projectRoot)
-	
+
 	text := "Select deployment platform:\n\n"
 	platforms := []struct {
 		id   string
@@ -200,7 +200,7 @@ func (m *deployModel) renderSuccess() string {
 func (m *deployModel) deploy() tea.Cmd {
 	return func() tea.Msg {
 		projectRoot, _ := os.Getwd()
-		
+
 		// Detect project type
 		projectType, err := detectProjectTypeForDeploy(projectRoot)
 		if err != nil {
@@ -270,4 +270,3 @@ type deployErrorMsg struct {
 }
 
 type deploySuccessMsg struct{}
-

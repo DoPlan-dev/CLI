@@ -256,13 +256,13 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case "dashboard":
 		if a.dashboard != nil {
-	var cmd tea.Cmd
-	var model tea.Model
-	model, cmd = a.dashboard.Update(msg)
-	if dm, ok := model.(*screens.DashboardModel); ok {
-		a.dashboard = dm
-	}
-	return a, cmd
+			var cmd tea.Cmd
+			var model tea.Model
+			model, cmd = a.dashboard.Update(msg)
+			if dm, ok := model.(*screens.DashboardModel); ok {
+				a.dashboard = dm
+			}
+			return a, cmd
 		}
 	}
 

@@ -1,38 +1,71 @@
-# DoPlan CLI Documentation
+# DoPlan Documentation
 
-This directory contains all documentation for the DoPlan CLI project.
+Welcome to the DoPlan CLI documentation. This directory contains comprehensive guides, references, and release notes for the project.
 
-## Directory Structure
+## 📚 Documentation Structure
 
-### 📁 `development/`
+### [Guides](./guides/)
+Practical guides and how-to documentation:
+- **Testing** - Testing strategies and test execution
+- **Troubleshooting** - Common issues and solutions
+- **IDE Commands Format** - IDE integration command formats
+- **Advanced Usage** - Advanced features and workflows
+- **IDE Integration** - IDE-specific integration details
+- **TUI Wizard Flow** - Terminal UI wizard documentation
+- **Manual Testing** - Manual testing procedures
+- **Testing Scenarios** - Test scenario documentation
+- **Workflow Examples** - Workflow usage examples
+- **Workflow Verification** - Workflow verification procedures
+- **Homebrew Setup** - Homebrew installation guide
+- **NPM Publishing** - NPM package publishing guide
+- **Manual Test Checklist** - Manual testing checklist
+- **NPM Setup** - NPM package setup guide
 
-Development and implementation documentation:
+### [Releases](./releases/)
+Release notes and version-specific documentation:
+- Release notes for all versions
+- Version-specific implementation guides
+- Beta release documentation
+- Performance reports
+- Testing checklists per release
 
-- **IMPLEMENTATION_COMPLETE.md** - Summary of completed implementation work
-- **IMPLEMENTATION_STATUS.md** - Current implementation status and progress tracking
-- **IMPLEMENTATION_SUMMARY.md** - High-level implementation summary
-- **FEATURES_COMPLETE.md** - Completed features documentation
-- **ENHANCEMENTS_COMPLETE.md** - Completed enhancements documentation
+### [Implementation](./implementation/)
+Implementation status and feature documentation:
+- Development status
+- Feature completion status
+- Implementation summaries
+- Enhancement documentation
 
-### 📁 `guides/`
+### [References](./references/)
+Reference documentation and technical details:
+- Error handling documentation
+- Migration strategies
+- Infrastructure documentation
+- Remaining work tracking
+- Preparation checklists
 
-User and developer guides:
+### [Development](./development/)
+Development-specific documentation:
+- Core development documentation
+- Implementation details
+- Development status tracking
 
-- **IDE_COMMANDS_FORMAT.md** - IDE command format reference
-- **TESTING.md** - Testing guide and test suite documentation
-- **TROUBLESHOOTING.md** - Troubleshooting common issues
+## 🚀 Quick Start
 
-## Quick Links
+1. **New to DoPlan?** Start with the [Main README](../README.md)
+2. **Want to contribute?** Read [CONTRIBUTING.md](../CONTRIBUTING.md)
+3. **Installing?** Check the guides for your platform:
+   - Homebrew: [Homebrew Setup](./guides/HOMEBREW_SETUP.md)
+   - NPM: [NPM Setup](./guides/NPM_SETUP.md)
+4. **Having issues?** See [Troubleshooting Guide](./guides/TROUBLESHOOTING_GUIDE.md)
 
-- [Main README](../README.md) - Project overview and getting started
-- [Testing Guide](guides/TESTING.md) - How to test the CLI
-- [IDE Commands](guides/IDE_COMMANDS_FORMAT.md) - IDE integration format
-- [Troubleshooting](guides/TROUBLESHOOTING.md) - Common issues and solutions
+## 📖 Additional Resources
 
-## Documentation Conventions
+- **Changelog**: See [CHANGELOG.md](../CHANGELOG.md) for version history
+- **Contributing**: See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines
 
-- All documentation is in Markdown format
-- Code examples should be tested and verified
-- Update documentation when features change
-- Keep implementation docs in sync with code
+## 🔗 External Documentation
 
+- Project README: [../README.md](../README.md)
+- Contributing Guide: [../CONTRIBUTING.md](../CONTRIBUTING.md)
+- Changelog: [../CHANGELOG.md](../CHANGELOG.md)

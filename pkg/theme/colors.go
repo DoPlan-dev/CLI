@@ -53,4 +53,3 @@ func TextDim() lipgloss.Color {
 func Border() lipgloss.Color {
 	return lipgloss.Color(ColorBorder)
 }
-

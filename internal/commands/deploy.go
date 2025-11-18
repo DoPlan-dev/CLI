@@ -8,4 +8,3 @@ import (
 func DeployProject() error {
 	return wizard.RunDeployWizard()
 }
-

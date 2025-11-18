@@ -81,10 +81,10 @@ func (d *Detector) detectFromPackageJSON() []Service {
 	servicePatterns := map[string]Service{
 		"@stripe/stripe-js": {
 			Name:        "Stripe",
-			Category:     "payment",
-			Description:  "Payment processing service",
-			Priority:     "required",
-			Detected:     true,
+			Category:    "payment",
+			Description: "Payment processing service",
+			Priority:    "required",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "Publishable Key", EnvVar: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", Required: true, Format: "pk_test_... or pk_live_..."},
 				{Name: "Secret Key", EnvVar: "STRIPE_SECRET_KEY", Required: true, Format: "sk_test_... or sk_live_..."},
@@ -92,10 +92,10 @@ func (d *Detector) detectFromPackageJSON() []Service {
 		},
 		"stripe": {
 			Name:        "Stripe",
-			Category:     "payment",
-			Description:  "Payment processing service",
-			Priority:     "required",
-			Detected:     true,
+			Category:    "payment",
+			Description: "Payment processing service",
+			Priority:    "required",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "Publishable Key", EnvVar: "STRIPE_PUBLISHABLE_KEY", Required: true, Format: "pk_test_... or pk_live_..."},
 				{Name: "Secret Key", EnvVar: "STRIPE_SECRET_KEY", Required: true, Format: "sk_test_... or sk_live_..."},
@@ -103,20 +103,20 @@ func (d *Detector) detectFromPackageJSON() []Service {
 		},
 		"@sendgrid/mail": {
 			Name:        "SendGrid",
-			Category:     "email",
-			Description:  "Email delivery service",
-			Priority:     "required",
-			Detected:     true,
+			Category:    "email",
+			Description: "Email delivery service",
+			Priority:    "required",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "API Key", EnvVar: "SENDGRID_API_KEY", Required: true, Format: "SG...."},
 			},
 		},
 		"nodemailer": {
 			Name:        "Email Service",
-			Category:     "email",
-			Description:  "Email sending service (SMTP)",
-			Priority:     "optional",
-			Detected:     true,
+			Category:    "email",
+			Description: "Email sending service (SMTP)",
+			Priority:    "optional",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "SMTP Host", EnvVar: "SMTP_HOST", Required: false},
 				{Name: "SMTP Port", EnvVar: "SMTP_PORT", Required: false},
@@ -126,10 +126,10 @@ func (d *Detector) detectFromPackageJSON() []Service {
 		},
 		"@aws-sdk/client-s3": {
 			Name:        "AWS S3",
-			Category:     "storage",
-			Description:  "Object storage service",
-			Priority:     "required",
-			Detected:     true,
+			Category:    "storage",
+			Description: "Object storage service",
+			Priority:    "required",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "Access Key ID", EnvVar: "AWS_ACCESS_KEY_ID", Required: true},
 				{Name: "Secret Access Key", EnvVar: "AWS_SECRET_ACCESS_KEY", Required: true},
@@ -138,10 +138,10 @@ func (d *Detector) detectFromPackageJSON() []Service {
 		},
 		"@supabase/supabase-js": {
 			Name:        "Supabase",
-			Category:     "database",
-			Description:  "Backend-as-a-Service platform",
-			Priority:     "required",
-			Detected:     true,
+			Category:    "database",
+			Description: "Backend-as-a-Service platform",
+			Priority:    "required",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "URL", EnvVar: "NEXT_PUBLIC_SUPABASE_URL", Required: true},
 				{Name: "Anon Key", EnvVar: "NEXT_PUBLIC_SUPABASE_ANON_KEY", Required: true},
@@ -150,10 +150,10 @@ func (d *Detector) detectFromPackageJSON() []Service {
 		},
 		"@auth0/nextjs-auth0": {
 			Name:        "Auth0",
-			Category:     "authentication",
-			Description:  "Authentication service",
-			Priority:     "required",
-			Detected:     true,
+			Category:    "authentication",
+			Description: "Authentication service",
+			Priority:    "required",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "Domain", EnvVar: "AUTH0_DOMAIN", Required: true},
 				{Name: "Client ID", EnvVar: "AUTH0_CLIENT_ID", Required: true},
@@ -163,10 +163,10 @@ func (d *Detector) detectFromPackageJSON() []Service {
 		},
 		"@clerk/nextjs": {
 			Name:        "Clerk",
-			Category:     "authentication",
-			Description:  "Authentication service",
-			Priority:     "required",
-			Detected:     true,
+			Category:    "authentication",
+			Description: "Authentication service",
+			Priority:    "required",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "Publishable Key", EnvVar: "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", Required: true},
 				{Name: "Secret Key", EnvVar: "CLERK_SECRET_KEY", Required: true},
@@ -174,20 +174,20 @@ func (d *Detector) detectFromPackageJSON() []Service {
 		},
 		"openai": {
 			Name:        "OpenAI",
-			Category:     "ai",
-			Description:  "AI/ML service",
-			Priority:     "optional",
-			Detected:     true,
+			Category:    "ai",
+			Description: "AI/ML service",
+			Priority:    "optional",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "API Key", EnvVar: "OPENAI_API_KEY", Required: false, Format: "sk-..."},
 			},
 		},
 		"@google-cloud/storage": {
 			Name:        "Google Cloud Storage",
-			Category:     "storage",
-			Description:  "Object storage service",
-			Priority:     "required",
-			Detected:     true,
+			Category:    "storage",
+			Description: "Object storage service",
+			Priority:    "required",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "Project ID", EnvVar: "GOOGLE_CLOUD_PROJECT_ID", Required: true},
 				{Name: "Credentials JSON", EnvVar: "GOOGLE_APPLICATION_CREDENTIALS", Required: true},
@@ -195,10 +195,10 @@ func (d *Detector) detectFromPackageJSON() []Service {
 		},
 		"@sentry/nextjs": {
 			Name:        "Sentry",
-			Category:     "analytics",
-			Description:  "Error tracking and monitoring",
-			Priority:     "optional",
-			Detected:     true,
+			Category:    "analytics",
+			Description: "Error tracking and monitoring",
+			Priority:    "optional",
+			Detected:    true,
 			Keys: []APIKey{
 				{Name: "DSN", EnvVar: "NEXT_PUBLIC_SENTRY_DSN", Required: false},
 			},
@@ -359,4 +359,3 @@ func (d *Detector) deduplicateServices(services []Service) []Service {
 
 	return unique
 }
-

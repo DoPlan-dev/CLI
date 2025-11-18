@@ -71,7 +71,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	color.Green("\n✅ DoPlan installed successfully for %s!", ide)
 	color.Yellow("\nYou can now use DoPlan commands in your IDE/CLI.")
 	color.Yellow("Run 'doplan dashboard' to view progress, or use slash commands in your IDE.\n")
-	
+
 	// Show IDE-specific instructions
 	switch ide {
 	case "vscode":
@@ -81,7 +81,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	case "cursor", "windsurf":
 		color.Cyan("📝 %s: Type '/' in chat to see available commands", ide)
 	}
-	
+
 	color.Cyan("📚 Integration guide: .doplan/guides/IDE_INTEGRATION.md\n")
 
 	return nil

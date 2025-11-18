@@ -136,7 +136,7 @@ func (a *ActivityGenerator) GenerateActivityFeed() ActivityData {
 				allActivities = append(allActivities, ActivityItemData{
 					Type:      "pr",
 					Message:   fmt.Sprintf("🔀 PR #%d: %s merged", pr.Number, pr.Title),
-					Timestamp: time.Now().Format(time.RFC3339), // TODO: Get actual merge time
+					Timestamp: time.Now().Format(time.RFC3339), // Use current time; actual merge time requires GitHub API enhancement
 				})
 			}
 		}
@@ -149,7 +149,7 @@ func (a *ActivityGenerator) GenerateActivityFeed() ActivityData {
 				allActivities = append(allActivities, ActivityItemData{
 					Type:      "phase",
 					Message:   fmt.Sprintf("🎯 phase: %s completed", phase.Name),
-					Timestamp: time.Now().Format(time.RFC3339), // TODO: Get actual completion time
+					Timestamp: time.Now().Format(time.RFC3339), // Use current time; actual completion time requires state enhancement
 				})
 			}
 		}

@@ -28,10 +28,10 @@ func NewMigrator(projectRoot string) *Migrator {
 
 // MigrationResult contains the result of a migration
 type MigrationResult struct {
-	Success      bool
-	BackupPath   string
+	Success         bool
+	BackupPath      string
 	FoldersMigrated int
-	Errors       []error
+	Errors          []error
 }
 
 // Migrate performs the complete migration
@@ -112,4 +112,3 @@ func (m *Migrator) Validate() error {
 func (m *Migrator) Rollback(backupPath string) error {
 	return m.backup.RestoreBackup(backupPath)
 }
-

@@ -7,8 +7,8 @@ const (
 	StatusConfigured APIKeyStatus = "configured" // Key exists and is valid
 	StatusPending    APIKeyStatus = "pending"    // Key is missing but not critical
 	StatusRequired   APIKeyStatus = "required"   // Key is missing and critical
-	StatusOptional   APIKeyStatus = "optional"  // Key is optional
-	StatusInvalid    APIKeyStatus = "invalid"   // Key exists but is invalid
+	StatusOptional   APIKeyStatus = "optional"   // Key is optional
+	StatusInvalid    APIKeyStatus = "invalid"    // Key exists but is invalid
 )
 
 // Service represents a service that requires API keys
@@ -25,13 +25,13 @@ type Service struct {
 // APIKey represents a single API key requirement
 type APIKey struct {
 	Name        string       `json:"name"`
-	EnvVar      string       `json:"envVar"`      // Environment variable name (e.g., STRIPE_API_KEY)
+	EnvVar      string       `json:"envVar"` // Environment variable name (e.g., STRIPE_API_KEY)
 	Description string       `json:"description"`
 	Required    bool         `json:"required"`
-	Format      string       `json:"format"`      // Format hint (e.g., "sk_live_...", "pk_test_...")
+	Format      string       `json:"format"` // Format hint (e.g., "sk_live_...", "pk_test_...")
 	Status      APIKeyStatus `json:"status"`
 	Value       string       `json:"value,omitempty"` // Only set when reading from .env
-	Validated   bool         `json:"validated"`      // Whether key was validated
+	Validated   bool         `json:"validated"`       // Whether key was validated
 	Error       string       `json:"error,omitempty"` // Validation error if any
 }
 
@@ -44,4 +44,3 @@ type RAKDData struct {
 	OptionalCount   int       `json:"optionalCount"`
 	LastUpdated     string    `json:"lastUpdated"`
 }
-

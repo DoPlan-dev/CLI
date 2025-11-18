@@ -84,31 +84,31 @@ func createVSCodeTasks(vscodeDir string) error {
 		"version": "2.0.0",
 		"tasks": []map[string]interface{}{
 			{
-				"label":    "DoPlan: Dashboard",
-				"type":     "shell",
-				"command":  "doplan",
-				"args":     []string{"dashboard"},
+				"label":          "DoPlan: Dashboard",
+				"type":           "shell",
+				"command":        "doplan",
+				"args":           []string{"dashboard"},
 				"problemMatcher": []string{},
 			},
 			{
-				"label":    "DoPlan: Discuss Idea",
-				"type":     "shell",
-				"command":  "doplan",
-				"args":     []string{"discuss"},
+				"label":          "DoPlan: Discuss Idea",
+				"type":           "shell",
+				"command":        "doplan",
+				"args":           []string{"discuss"},
 				"problemMatcher": []string{},
 			},
 			{
-				"label":    "DoPlan: Generate Docs",
-				"type":     "shell",
-				"command":  "doplan",
-				"args":     []string{"generate"},
+				"label":          "DoPlan: Generate Docs",
+				"type":           "shell",
+				"command":        "doplan",
+				"args":           []string{"generate"},
 				"problemMatcher": []string{},
 			},
 			{
-				"label":    "DoPlan: Update Progress",
-				"type":     "shell",
-				"command":  "doplan",
-				"args":     []string{"progress"},
+				"label":          "DoPlan: Update Progress",
+				"type":           "shell",
+				"command":        "doplan",
+				"args":           []string{"progress"},
 				"problemMatcher": []string{},
 			},
 		},
@@ -151,7 +151,7 @@ func createVSCodeSettings(vscodeDir string) error {
 
 func createVSCodePrompts(promptsDir, doplanAIDir string) error {
 	agentsDir := filepath.Join(doplanAIDir, "agents")
-	
+
 	// List of agent files to copy
 	agentFiles := []string{
 		"planner.agent.md",
@@ -232,4 +232,3 @@ All agents must follow:
 
 	return os.WriteFile(contextPath, []byte(contextContent), 0644)
 }
-

@@ -54,7 +54,7 @@ func NewLogger(projectRoot string, level LogLevel) (*Logger, error) {
 // rotateLogs rotates log files, keeping the last 10
 func rotateLogs(logDir string) error {
 	logPath := filepath.Join(logDir, "doplan.log")
-	
+
 	// Check if log file exists and is large enough to rotate
 	info, err := os.Stat(logPath)
 	if err != nil || info.Size() < 10*1024*1024 { // 10MB
@@ -65,7 +65,7 @@ func rotateLogs(logDir string) error {
 	for i := 9; i >= 1; i-- {
 		oldPath := filepath.Join(logDir, fmt.Sprintf("doplan.log.%d", i))
 		newPath := filepath.Join(logDir, fmt.Sprintf("doplan.log.%d", i+1))
-		
+
 		if _, err := os.Stat(oldPath); err == nil {
 			os.Rename(oldPath, newPath)
 		}
@@ -129,4 +129,3 @@ func (l *Logger) Close() error {
 	}
 	return nil
 }
-

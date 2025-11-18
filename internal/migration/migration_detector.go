@@ -97,10 +97,10 @@ func (d *Detector) detectPhaseFolders(phasePath, phaseNum string) ([]OldFolder, 
 		matches := featurePattern.FindStringSubmatch(entry.Name())
 		if len(matches) > 0 {
 			folders = append(folders, OldFolder{
-				Type:     "feature",
-				OldPath:  filepath.Join(phasePath, entry.Name()),
-				OldName:  entry.Name(),
-				PhaseNum: phaseNum,
+				Type:       "feature",
+				OldPath:    filepath.Join(phasePath, entry.Name()),
+				OldName:    entry.Name(),
+				PhaseNum:   phaseNum,
 				FeatureNum: matches[1],
 			})
 		}
@@ -108,9 +108,9 @@ func (d *Detector) detectPhaseFolders(phasePath, phaseNum string) ([]OldFolder, 
 
 	// Add phase folder
 	folders = append(folders, OldFolder{
-		Type:    "phase",
-		OldPath: phasePath,
-		OldName: filepath.Base(phasePath),
+		Type:     "phase",
+		OldPath:  phasePath,
+		OldName:  filepath.Base(phasePath),
 		PhaseNum: phaseNum,
 	})
 
@@ -125,4 +125,3 @@ type OldFolder struct {
 	PhaseNum   string
 	FeatureNum string
 }
-

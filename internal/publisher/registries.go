@@ -222,4 +222,3 @@ Installers:
 ManifestType: version
 ManifestVersion: 1.4.0`
 }
-

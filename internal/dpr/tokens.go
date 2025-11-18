@@ -9,20 +9,20 @@ import (
 
 // DesignTokens represents the design tokens structure
 type DesignTokens struct {
-	Colors      ColorTokens      `json:"colors"`
-	Typography  TypographyTokens  `json:"typography"`
-	Spacing     SpacingTokens     `json:"spacing"`
+	Colors       ColorTokens        `json:"colors"`
+	Typography   TypographyTokens   `json:"typography"`
+	Spacing      SpacingTokens      `json:"spacing"`
 	BorderRadius BorderRadiusTokens `json:"borderRadius"`
-	Shadows     ShadowTokens     `json:"shadows"`
-	Breakpoints BreakpointTokens  `json:"breakpoints"`
+	Shadows      ShadowTokens       `json:"shadows"`
+	Breakpoints  BreakpointTokens   `json:"breakpoints"`
 }
 
 type ColorTokens struct {
-	Primary    string            `json:"primary"`
-	Secondary  string            `json:"secondary"`
-	Accent     string            `json:"accent,omitempty"`
-	Neutral    map[string]string `json:"neutral"`
-	Semantic   SemanticColors    `json:"semantic"`
+	Primary   string            `json:"primary"`
+	Secondary string            `json:"secondary"`
+	Accent    string            `json:"accent,omitempty"`
+	Neutral   map[string]string `json:"neutral"`
+	Semantic  SemanticColors    `json:"semantic"`
 }
 
 type SemanticColors struct {
@@ -40,16 +40,16 @@ type TypographyTokens struct {
 }
 
 type SpacingTokens struct {
-	Scale   string            `json:"scale"`
-	Values  map[string]string `json:"values"`
+	Scale  string            `json:"scale"`
+	Values map[string]string `json:"values"`
 }
 
 type BorderRadiusTokens struct {
-	None    string `json:"none"`
-	Small   string `json:"small"`
-	Medium  string `json:"medium"`
-	Large   string `json:"large"`
-	Full    string `json:"full"`
+	None   string `json:"none"`
+	Small  string `json:"small"`
+	Medium string `json:"medium"`
+	Large  string `json:"large"`
+	Full   string `json:"full"`
 }
 
 type ShadowTokens struct {
@@ -182,7 +182,7 @@ func (tg *TokenGenerator) generateAccentColor(primary, secondary string) string 
 
 func (tg *TokenGenerator) generateTypographyTokens() TypographyTokens {
 	style := tg.getAnswerString("typography_style", "Sans-serif")
-	
+
 	fontFamily := make(map[string]string)
 	switch style {
 	case "Sans-serif (modern)":
@@ -213,29 +213,29 @@ func (tg *TokenGenerator) generateTypographyTokens() TypographyTokens {
 			"5xl":  "3rem",
 		},
 		FontWeight: map[string]string{
-			"thin":       "100",
-			"light":      "300",
-			"normal":     "400",
-			"medium":     "500",
-			"semibold":   "600",
-			"bold":       "700",
-			"extrabold":  "800",
-			"black":      "900",
+			"thin":      "100",
+			"light":     "300",
+			"normal":    "400",
+			"medium":    "500",
+			"semibold":  "600",
+			"bold":      "700",
+			"extrabold": "800",
+			"black":     "900",
 		},
 		LineHeight: map[string]string{
-			"none":   "1",
-			"tight":  "1.25",
-			"snug":   "1.375",
-			"normal": "1.5",
+			"none":    "1",
+			"tight":   "1.25",
+			"snug":    "1.375",
+			"normal":  "1.5",
 			"relaxed": "1.625",
-			"loose":  "2",
+			"loose":   "2",
 		},
 	}
 }
 
 func (tg *TokenGenerator) generateSpacingTokens() SpacingTokens {
 	spacing := tg.getAnswerString("layout_spacing", "Moderate")
-	
+
 	scale := "1rem" // Base unit
 	if spacing == "Tight" {
 		scale = "0.75rem"
@@ -248,24 +248,24 @@ func (tg *TokenGenerator) generateSpacingTokens() SpacingTokens {
 	return SpacingTokens{
 		Scale: scale,
 		Values: map[string]string{
-			"0":   "0",
-			"1":   fmt.Sprintf("calc(%s * 0.25)", scale),
-			"2":   fmt.Sprintf("calc(%s * 0.5)", scale),
-			"3":   fmt.Sprintf("calc(%s * 0.75)", scale),
-			"4":   scale,
-			"5":   fmt.Sprintf("calc(%s * 1.25)", scale),
-			"6":   fmt.Sprintf("calc(%s * 1.5)", scale),
-			"8":   fmt.Sprintf("calc(%s * 2)", scale),
-			"10":  fmt.Sprintf("calc(%s * 2.5)", scale),
-			"12":  fmt.Sprintf("calc(%s * 3)", scale),
-			"16":  fmt.Sprintf("calc(%s * 4)", scale),
-			"20":  fmt.Sprintf("calc(%s * 5)", scale),
-			"24":  fmt.Sprintf("calc(%s * 6)", scale),
-			"32":  fmt.Sprintf("calc(%s * 8)", scale),
-			"40":  fmt.Sprintf("calc(%s * 10)", scale),
-			"48":  fmt.Sprintf("calc(%s * 12)", scale),
-			"56":  fmt.Sprintf("calc(%s * 14)", scale),
-			"64":  fmt.Sprintf("calc(%s * 16)", scale),
+			"0":  "0",
+			"1":  fmt.Sprintf("calc(%s * 0.25)", scale),
+			"2":  fmt.Sprintf("calc(%s * 0.5)", scale),
+			"3":  fmt.Sprintf("calc(%s * 0.75)", scale),
+			"4":  scale,
+			"5":  fmt.Sprintf("calc(%s * 1.25)", scale),
+			"6":  fmt.Sprintf("calc(%s * 1.5)", scale),
+			"8":  fmt.Sprintf("calc(%s * 2)", scale),
+			"10": fmt.Sprintf("calc(%s * 2.5)", scale),
+			"12": fmt.Sprintf("calc(%s * 3)", scale),
+			"16": fmt.Sprintf("calc(%s * 4)", scale),
+			"20": fmt.Sprintf("calc(%s * 5)", scale),
+			"24": fmt.Sprintf("calc(%s * 6)", scale),
+			"32": fmt.Sprintf("calc(%s * 8)", scale),
+			"40": fmt.Sprintf("calc(%s * 10)", scale),
+			"48": fmt.Sprintf("calc(%s * 12)", scale),
+			"56": fmt.Sprintf("calc(%s * 14)", scale),
+			"64": fmt.Sprintf("calc(%s * 16)", scale),
 		},
 	}
 }
@@ -279,4 +279,3 @@ func (tg *TokenGenerator) getAnswerString(key string, defaultValue string) strin
 	}
 	return defaultValue
 }
-

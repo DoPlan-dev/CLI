@@ -215,4 +215,3 @@ func GetCurrentStep(hasPlan, hasDesign, hasImplementation, hasTests, hasReview, 
 	}
 	return "Complete"
 }
-

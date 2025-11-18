@@ -128,7 +128,7 @@ func (m *Manager) loadConfigYAML(path string) (*models.Config, error) {
 	cfg := &models.Config{
 		IDE:         viper.GetString("project.ide"),
 		Installed:   true,
-		InstalledAt: time.Now(), // TODO: Load from config if available
+		InstalledAt: time.Now(), // Use current time as default (config may not have this field yet)
 		Version:     viper.GetString("project.version"),
 		GitHub: models.GitHubConfig{
 			Enabled:    viper.GetBool("github.enabled"),
@@ -162,13 +162,13 @@ func (m *Manager) SaveConfigV2(cfg *models.Config) error {
 	// Convert to YAML structure
 	yamlConfig := map[string]interface{}{
 		"project": map[string]interface{}{
-			"name":    "", // TODO: Get from config
-			"type":    "", // TODO: Get from config
+			"name":    "", // Project name not stored in config yet
+			"type":    "", // Project type not stored in config yet
 			"version": cfg.Version,
 			"ide":     cfg.IDE,
 		},
 		"github": map[string]interface{}{
-			"repository": "", // TODO: Get from config
+			"repository": "", // GitHub repository URL not stored in config yet
 			"enabled":    cfg.GitHub.Enabled,
 			"autoBranch": cfg.GitHub.AutoBranch,
 			"autoPR":     cfg.GitHub.AutoPR,

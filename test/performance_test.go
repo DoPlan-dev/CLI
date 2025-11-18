@@ -187,15 +187,15 @@ func TestEdgeCaseVeryLargeDPRData(t *testing.T) {
 	largeString := strings.Repeat("test data ", 1000)
 	data := &dpr.DPRData{
 		Answers: map[string]interface{}{
-			"project_name":      largeString,
-			"audience_primary":  largeString,
-			"emotion_target":    largeString,
-			"style_overall":     largeString,
-			"color_primary":     largeString,
-			"typography_font":   largeString,
-			"layout_style":      largeString,
-			"components_style":  largeString,
-			"animation_level":   largeString,
+			"project_name":        largeString,
+			"audience_primary":    largeString,
+			"emotion_target":      largeString,
+			"style_overall":       largeString,
+			"color_primary":       largeString,
+			"typography_font":     largeString,
+			"layout_style":        largeString,
+			"components_style":    largeString,
+			"animation_level":     largeString,
 			"responsive_priority": largeString,
 		},
 	}
@@ -247,7 +247,7 @@ func TestMemoryUsage(t *testing.T) {
 		// If Alloc decreased, check TotalAlloc instead
 		memUsed = m2.TotalAlloc - m1.TotalAlloc
 	}
-	
+
 	t.Logf("Memory used: %d KB (%.2f MB)", memUsed/1024, float64(memUsed)/(1024*1024))
 	t.Logf("Heap allocated: m1=%d KB, m2=%d KB", m1.Alloc/1024, m2.Alloc/1024)
 
@@ -400,7 +400,7 @@ func createLargePackageJSON(t testing.TB, projectRoot string, numDeps int) {
 	packageJSON := fmt.Sprintf(`{
 		"name": "test-project",
 		"dependencies": {`)
-	
+
 	depsList := []string{}
 	for name, version := range deps {
 		depsList = append(depsList, fmt.Sprintf(`			"%s": "%s"`, name, version))
@@ -415,18 +415,17 @@ func createLargePackageJSON(t testing.TB, projectRoot string, numDeps int) {
 func createMockDPRData() *dpr.DPRData {
 	return &dpr.DPRData{
 		Answers: map[string]interface{}{
-			"project_name":           "Test Project",
-			"audience_primary":       "Developers",
-			"emotion_target":         "Professional",
-			"style_overall":          "Modern",
-			"color_primary":          "#667eea",
-			"typography_font":        "Inter",
-			"layout_style":           "Card-based",
-			"components_style":       "Elevated",
-			"animation_level":        "Subtle",
+			"project_name":             "Test Project",
+			"audience_primary":         "Developers",
+			"emotion_target":           "Professional",
+			"style_overall":            "Modern",
+			"color_primary":            "#667eea",
+			"typography_font":          "Inter",
+			"layout_style":             "Card-based",
+			"components_style":         "Elevated",
+			"animation_level":          "Subtle",
 			"accessibility_importance": 5,
-			"responsive_priority":    "Desktop First",
+			"responsive_priority":      "Desktop First",
 		},
 	}
 }
-

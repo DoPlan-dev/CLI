@@ -8,4 +8,3 @@ import (
 func ApplyDesign() error {
 	return wizard.RunDesignWizard()
 }
-

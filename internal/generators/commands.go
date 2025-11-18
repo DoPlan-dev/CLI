@@ -454,4 +454,3 @@ Update all progress tracking files. Recalculate progress bars for phases and fea
 
 	return nil
 }
-

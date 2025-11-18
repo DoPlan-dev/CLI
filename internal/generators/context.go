@@ -340,13 +340,13 @@ func (g *ContextGenerator) generateContextContent(stack *TechStack, projectName 
 			sb.WriteString(fmt.Sprintf("- **Core features:** %s\n", state.Idea.Solution))
 			hasContent = true
 		}
-			}
+	}
 	if !hasContent {
 		sb.WriteString("- Brief description: [To be filled]\n")
 		sb.WriteString("- Target audience: [To be filled]\n")
 		sb.WriteString("- Core features: [To be filled]\n")
-			}
-			sb.WriteString("\n")
+	}
+	sb.WriteString("\n")
 
 	// Technology Stack section
 	sb.WriteString("## Technology Stack\n\n")
@@ -415,8 +415,8 @@ func (g *ContextGenerator) generateContextContent(stack *TechStack, projectName 
 		sb.WriteString("- [API Specification](./doplan/contracts/api-spec.json) *(to be created)*\n")
 		sb.WriteString("- [Data Models](./doplan/contracts/data-model.md) *(to be created)*\n")
 		sb.WriteString("- [Design System](./doplan/design/DPR.md) *(to be created)*\n")
-			}
-			sb.WriteString("\n")
+	}
+	sb.WriteString("\n")
 
 	// Development Guidelines
 	sb.WriteString("## Development Guidelines\n\n")
@@ -456,13 +456,13 @@ func (g *ContextGenerator) generateContextContent(stack *TechStack, projectName 
 func (g *ContextGenerator) categorizeFrontend(stack *TechStack) []Technology {
 	var frontend []Technology
 	frontendKeywords := []string{"react", "vue", "angular", "next", "nuxt", "svelte", "tailwind", "css", "html", "typescript", "javascript"}
-	
+
 	for _, lang := range stack.Languages {
 		if strings.Contains(strings.ToLower(lang.Name), "javascript") || strings.Contains(strings.ToLower(lang.Name), "typescript") {
 			frontend = append(frontend, lang)
 		}
 	}
-	
+
 	for _, fw := range stack.Frameworks {
 		nameLower := strings.ToLower(fw.Name)
 		for _, keyword := range frontendKeywords {
@@ -472,7 +472,7 @@ func (g *ContextGenerator) categorizeFrontend(stack *TechStack) []Technology {
 			}
 		}
 	}
-	
+
 	return frontend
 }
 
@@ -480,13 +480,13 @@ func (g *ContextGenerator) categorizeFrontend(stack *TechStack) []Technology {
 func (g *ContextGenerator) categorizeBackend(stack *TechStack) []Technology {
 	var backend []Technology
 	backendKeywords := []string{"express", "fastify", "koa", "django", "flask", "rails", "gin", "echo", "fiber"}
-	
+
 	for _, lang := range stack.Languages {
 		if strings.Contains(strings.ToLower(lang.Name), "go") || strings.Contains(strings.ToLower(lang.Name), "python") || strings.Contains(strings.ToLower(lang.Name), "rust") {
 			backend = append(backend, lang)
 		}
 	}
-	
+
 	for _, fw := range stack.Frameworks {
 		nameLower := strings.ToLower(fw.Name)
 		for _, keyword := range backendKeywords {
@@ -496,11 +496,11 @@ func (g *ContextGenerator) categorizeBackend(stack *TechStack) []Technology {
 			}
 		}
 	}
-	
+
 	for _, db := range stack.Databases {
 		backend = append(backend, db)
 	}
-	
+
 	return backend
 }
 

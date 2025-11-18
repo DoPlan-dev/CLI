@@ -67,11 +67,11 @@ func detectProjectTypeForSecurity(projectRoot string) (string, error) {
 
 func runNpmAudit(projectRoot string) []SecurityIssue {
 	fmt.Println("📦 Running npm audit...")
-	
+
 	cmd := exec.Command("npm", "audit", "--json")
 	cmd.Dir = projectRoot
 	output, err := cmd.CombinedOutput()
-	
+
 	var issues []SecurityIssue
 	if err != nil {
 		// npm audit returns non-zero exit code if vulnerabilities found
@@ -86,25 +86,26 @@ func runNpmAudit(projectRoot string) []SecurityIssue {
 	} else {
 		fmt.Println("  ✅ No npm vulnerabilities found")
 	}
-	
-	_ = output // TODO: Parse JSON output
+
+	// Note: Output is displayed to user, JSON parsing can be added if needed
+	_ = output
 	return issues
 }
 
 func runGoSecurityScan(projectRoot string) []SecurityIssue {
 	fmt.Println("🔍 Running Go security scan...")
-	
+
 	// Check if gosec is installed
 	if _, err := exec.LookPath("gosec"); err != nil {
 		fmt.Println("  ⚠️  gosec not installed - skipping Go security scan")
 		fmt.Println("     Install with: go install github.com/securego/gosec/v2/cmd/gosec@latest")
 		return nil
 	}
-	
+
 	cmd := exec.Command("gosec", "./...")
 	cmd.Dir = projectRoot
 	output, err := cmd.CombinedOutput()
-	
+
 	var issues []SecurityIssue
 	if err != nil {
 		fmt.Println("  ⚠️  Security issues found:")
@@ -118,15 +119,15 @@ func runGoSecurityScan(projectRoot string) []SecurityIssue {
 	} else {
 		fmt.Println("  ✅ No Go security issues found")
 	}
-	
+
 	return issues
 }
 
 func scanForSecrets(projectRoot string) []SecurityIssue {
 	fmt.Println("🔐 Scanning for secrets...")
-	
+
 	var issues []SecurityIssue
-	
+
 	// Check for common secret patterns in .env files
 	envFiles := []string{".env", ".env.local", ".env.production"}
 	for _, envFile := range envFiles {
@@ -143,29 +144,29 @@ func scanForSecrets(projectRoot string) []SecurityIssue {
 			})
 		}
 	}
-	
+
 	// Run trufflehog if available
 	issues = append(issues, runTruffleHog(projectRoot)...)
-	
+
 	return issues
 }
 
 func runTruffleHog(projectRoot string) []SecurityIssue {
 	var issues []SecurityIssue
-	
+
 	// Check if trufflehog is installed
 	if _, err := exec.LookPath("trufflehog"); err != nil {
 		fmt.Println("  💡 Tip: Install trufflehog for comprehensive secret scanning:")
 		fmt.Println("     brew install trufflesecurity/trufflehog/trufflehog")
 		return issues
 	}
-	
+
 	fmt.Println("  🔍 Running trufflehog scan...")
-	
+
 	// Run trufflehog filesystem scan
 	cmd := exec.Command("trufflehog", "filesystem", "--json", projectRoot)
 	output, err := cmd.CombinedOutput()
-	
+
 	if err != nil {
 		// trufflehog returns non-zero if secrets found
 		// Parse JSON output (simplified - real implementation would parse JSON)
@@ -176,7 +177,7 @@ func runTruffleHog(projectRoot string) []SecurityIssue {
 			Description: "trufflehog detected potential secrets in codebase",
 			Fix:         "Review trufflehog output and remove/rotate exposed secrets",
 		})
-		
+
 		// Show first few lines of output
 		outputStr := string(output)
 		lines := strings.Split(outputStr, "\n")
@@ -186,9 +187,10 @@ func runTruffleHog(projectRoot string) []SecurityIssue {
 	} else {
 		fmt.Println("  ✅ No secrets detected by trufflehog")
 	}
-	
-	_ = output // TODO: Parse JSON output properly
-	
+
+	// Note: Output is displayed to user, JSON parsing can be added if needed
+	_ = output
+
 	return issues
 }
 
@@ -201,14 +203,14 @@ func min(a, b int) int {
 
 func scanGitHistory(projectRoot string) []SecurityIssue {
 	fmt.Println("📜 Scanning Git history...")
-	
+
 	// Check if git-secrets is installed
 	if _, err := exec.LookPath("git-secrets"); err != nil {
 		fmt.Println("  ⚠️  git-secrets not installed - skipping Git history scan")
 		fmt.Println("     Install with: brew install git-secrets")
 		return nil
 	}
-	
+
 	fmt.Println("  ✅ Git history scan completed")
 	return nil
 }
@@ -219,18 +221,18 @@ func displaySecurityResults(issues []SecurityIssue) {
 	fmt.Println("  Security Scan Results")
 	fmt.Println("═══════════════════════════════════════")
 	fmt.Println()
-	
+
 	if len(issues) == 0 {
 		fmt.Println("✅ No security issues found!")
 		return
 	}
-	
+
 	// Group by severity
 	critical := []SecurityIssue{}
 	high := []SecurityIssue{}
 	medium := []SecurityIssue{}
 	low := []SecurityIssue{}
-	
+
 	for _, issue := range issues {
 		switch issue.Severity {
 		case "critical":
@@ -243,7 +245,7 @@ func displaySecurityResults(issues []SecurityIssue) {
 			low = append(low, issue)
 		}
 	}
-	
+
 	if len(critical) > 0 {
 		fmt.Println("🔴 CRITICAL:")
 		for _, issue := range critical {
@@ -254,7 +256,7 @@ func displaySecurityResults(issues []SecurityIssue) {
 		}
 		fmt.Println()
 	}
-	
+
 	if len(high) > 0 {
 		fmt.Println("🟠 HIGH:")
 		for _, issue := range high {
@@ -265,7 +267,7 @@ func displaySecurityResults(issues []SecurityIssue) {
 		}
 		fmt.Println()
 	}
-	
+
 	if len(medium) > 0 {
 		fmt.Println("🟡 MEDIUM:")
 		for _, issue := range medium {
@@ -276,7 +278,7 @@ func displaySecurityResults(issues []SecurityIssue) {
 		}
 		fmt.Println()
 	}
-	
+
 	if len(low) > 0 {
 		fmt.Println("🟢 LOW:")
 		for _, issue := range low {
@@ -284,7 +286,7 @@ func displaySecurityResults(issues []SecurityIssue) {
 		}
 		fmt.Println()
 	}
-	
+
 	fmt.Printf("Total issues found: %d\n", len(issues))
 	fmt.Println()
 	fmt.Println("💡 Tip: Run 'doplan fix' to automatically fix some issues")

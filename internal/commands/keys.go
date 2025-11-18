@@ -90,4 +90,3 @@ func SyncEnvExample() error {
 	fmt.Printf("✅ Synced .env.example with %d services\n", len(services))
 	return nil
 }
-

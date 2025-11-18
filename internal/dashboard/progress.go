@@ -187,10 +187,10 @@ func (p *ProgressParser) parseTasksFile(path string) ([]TaskProgress, error) {
 	}
 
 	var tasks []TaskProgress
-	
+
 	// Simple parsing: look for - [x] or - [X] for completed tasks
 	// This is a simplified parser - can be enhanced later
 	// For now, we'll extract from the state model which has better task data
-	
+
 	return tasks, nil
 }

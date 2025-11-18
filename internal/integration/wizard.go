@@ -5,4 +5,3 @@ package integration
 type Wizard struct {
 	// Will be implemented in Phase 5
 }
-

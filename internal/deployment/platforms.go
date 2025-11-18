@@ -209,4 +209,3 @@ func DeployWithDocker(projectRoot string, envVars map[string]string) error {
 
 	return nil
 }
-

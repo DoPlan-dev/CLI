@@ -118,8 +118,8 @@ func (m *keysModel) View() string {
 	}
 
 	body := lipgloss.NewStyle().
-		Width(m.width - 4).
-		Height(m.height - lipgloss.Height(header) - 5).
+		Width(m.width-4).
+		Height(m.height-lipgloss.Height(header)-5).
 		Padding(1, 2).
 		Render(content)
 
@@ -272,4 +272,3 @@ func min(a, b int) int {
 	}
 	return b
 }
-

@@ -74,4 +74,3 @@ func (e *TUICommandExecutor) SetupIntegration() error {
 	}
 	return wizard.RunIntegrationWizard(projectRoot)
 }
-

@@ -149,4 +149,3 @@ func (v *Validator) ValidateAll(services []Service) error {
 
 	return nil
 }
-

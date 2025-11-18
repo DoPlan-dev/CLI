@@ -67,4 +67,3 @@ func (l *Loader) GetLastUpdateTime() (time.Time, error) {
 
 	return parsed, nil
 }
-

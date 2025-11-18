@@ -202,12 +202,12 @@ func TestDashboardAutoUpdate_RealData(t *testing.T) {
 	// Verify timestamp updated
 	updatedTime, err := loader.GetLastUpdateTime()
 	require.NoError(t, err)
-	
+
 	// Check that time is after or equal (allowing for file system timestamp precision)
 	if !updatedTime.After(initialTime) && !updatedTime.Equal(initialTime) {
 		t.Errorf("Updated time (%v) should be after or equal to initial time (%v)", updatedTime, initialTime)
 	}
-	
+
 	// At minimum, the generated timestamp in the JSON should be different
 	// Let's check the actual dashboard JSON
 	dashboard, err := loader.LoadDashboard()

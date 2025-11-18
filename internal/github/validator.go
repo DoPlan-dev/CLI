@@ -159,4 +159,3 @@ var ActionsRequiringGitHub = []string{
 	"progress",
 	"deploy",
 }
-

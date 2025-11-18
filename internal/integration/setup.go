@@ -62,7 +62,7 @@ func SetupCursor(projectRoot string) error {
 	// Create symlinks from .cursor/ to .doplan/ai/
 	symlinks := map[string]string{
 		filepath.Join(cursorDir, "agents"):   filepath.Join(doplanAIDir, "agents"),
-		filepath.Join(cursorDir, "rules"):     filepath.Join(doplanAIDir, "rules"),
+		filepath.Join(cursorDir, "rules"):    filepath.Join(doplanAIDir, "rules"),
 		filepath.Join(cursorDir, "commands"): filepath.Join(doplanAIDir, "commands"),
 	}
 
@@ -333,4 +333,3 @@ var supportedIDEs = map[string]*IDE{
 		VerifyFunc: VerifyQoder,
 	},
 }
-

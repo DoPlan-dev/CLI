@@ -116,8 +116,8 @@ func (m *designModel) View() string {
 	}
 
 	body := lipgloss.NewStyle().
-		Width(m.width - 4).
-		Height(m.height - lipgloss.Height(header) - 5).
+		Width(m.width-4).
+		Height(m.height-lipgloss.Height(header)-5).
 		Padding(1, 2).
 		Render(content)
 
@@ -229,4 +229,3 @@ type designErrorMsg struct {
 }
 
 type designSuccessMsg struct{}
-

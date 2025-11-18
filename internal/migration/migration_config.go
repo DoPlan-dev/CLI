@@ -137,9 +137,9 @@ type OldConfig struct {
 	IDE     string `json:"ide"`
 	Version string `json:"version"`
 	Github  struct {
-		Enabled   bool `json:"enabled"`
+		Enabled    bool `json:"enabled"`
 		AutoBranch bool `json:"autoBranch"`
-		AutoPR    bool `json:"autoPR"`
+		AutoPR     bool `json:"autoPR"`
 	} `json:"github"`
 }
 
@@ -163,7 +163,7 @@ type ProjectConfig struct {
 type GithubConfig struct {
 	Repository string `yaml:"repository"`
 	Enabled    bool   `yaml:"enabled"`
-	AutoBranch  bool   `yaml:"autoBranch"`
+	AutoBranch bool   `yaml:"autoBranch"`
 	AutoPR     bool   `yaml:"autoPR"`
 }
 
@@ -186,4 +186,3 @@ type TUIConfig struct {
 	Theme      string `yaml:"theme"`
 	Animations bool   `yaml:"animations"`
 }
-

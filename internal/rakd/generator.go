@@ -127,7 +127,7 @@ func (g *Generator) generateQuickStatus() string {
 
 **Overall Progress:** %.1f%% configured
 
-`, 
+`,
 		g.data.ConfiguredCount, float64(g.data.ConfiguredCount)/float64(total)*100,
 		g.data.RequiredCount, float64(g.data.RequiredCount)/float64(total)*100,
 		g.data.PendingCount, float64(g.data.PendingCount)/float64(total)*100,
@@ -328,8 +328,8 @@ func GenerateRAKD(projectRoot string) (*RAKDData, error) {
 
 	// Count by status
 	data := &RAKDData{
-		Services:        services,
-		LastUpdated:     time.Now().Format("January 2, 2006 at 3:04 PM"),
+		Services:    services,
+		LastUpdated: time.Now().Format("January 2, 2006 at 3:04 PM"),
 	}
 
 	for _, service := range services {
@@ -353,4 +353,3 @@ func GenerateRAKD(projectRoot string) (*RAKDData, error) {
 
 	return data, nil
 }
-

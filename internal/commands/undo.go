@@ -171,4 +171,3 @@ func undoConfigChange(projectRoot string, action ActionRecord) error {
 	fmt.Printf("✓ Restored configuration\n")
 	return nil
 }
-

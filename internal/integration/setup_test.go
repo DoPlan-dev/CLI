@@ -219,8 +219,8 @@ func TestSetupIDE(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	testCases := []struct {
-		name     string
-		ide      string
+		name      string
+		ide       string
 		shouldErr bool
 	}{
 		{"Cursor", "cursor", false},
@@ -335,4 +335,3 @@ func TestWindowsCompatibility(t *testing.T) {
 	}
 	_ = entries // Use entries to avoid unused variable
 }
-

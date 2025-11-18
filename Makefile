@@ -72,6 +72,11 @@ test-scripts: ## Run all test scripts
 release-prep: ## Prepare for release (tests, lint, build)
 	@./scripts/pre-release.sh
 
+check-production: ## Check if ready for production release
+	@./scripts/check-production-ready.sh
+
+check-ready: check-production ## Alias for check-production
+
 release-create: ## Create a new release (usage: make release-create VERSION=v1.0.0)
 	@if [ -z "$(VERSION)" ]; then \
 		echo "Usage: make release-create VERSION=v1.0.0"; \

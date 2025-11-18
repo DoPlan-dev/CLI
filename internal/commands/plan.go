@@ -44,4 +44,3 @@ func CreatePlan() error {
 
 	return nil
 }
-

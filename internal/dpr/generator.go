@@ -105,7 +105,7 @@ func (g *Generator) generateDPRContent() string {
 func (g *Generator) generateExecutiveSummary() string {
 	style := g.getAnswer("style_overall", "Modern")
 	emotion := g.getAnswer("emotion_primary", "Professional")
-	
+
 	return fmt.Sprintf(`This design system is built around a **%s** aesthetic with a focus on evoking **%s** emotions. The design prioritizes clarity, usability, and consistency across all interfaces.`, style, emotion)
 }
 
@@ -113,7 +113,7 @@ func (g *Generator) generateAudienceAnalysis() string {
 	primary := g.getAnswer("audience_primary", "Users")
 	age := g.getAnswer("audience_age", "26-35")
 	tech := g.getAnswer("audience_tech_level", "Intermediate")
-	
+
 	return fmt.Sprintf(`### Primary Audience
 - **Target Group:** %s
 - **Age Range:** %s
@@ -130,7 +130,7 @@ Based on the target audience, the design should prioritize:
 func (g *Generator) generateDesignPrinciples() string {
 	emotion := g.getAnswer("emotion_primary", "Professional")
 	style := g.getAnswer("style_overall", "Modern")
-	
+
 	return fmt.Sprintf(`1. **Emotional Resonance:** Design should evoke %s feelings
 2. **Visual Consistency:** Maintain %s aesthetic throughout
 3. **User-Centered:** Prioritize user needs and accessibility
@@ -142,7 +142,7 @@ func (g *Generator) generateVisualIdentity() string {
 	primary := g.getAnswer("color_primary", "#667eea")
 	secondary := g.getAnswer("color_secondary", "#764ba2")
 	scheme := g.getAnswer("color_scheme", "Both")
-	
+
 	return fmt.Sprintf(`### Color Palette
 - **Primary Color:** %s
 - **Secondary Color:** %s
@@ -154,7 +154,7 @@ func (g *Generator) generateVisualIdentity() string {
 
 ### Visual Style
 - **Overall Style:** %s
-- **Component Style:** %s`, 
+- **Component Style:** %s`,
 		primary, secondary, scheme,
 		g.getAnswer("typography_style", "Sans-serif"),
 		g.getAnswer("typography_importance", 3),
@@ -165,7 +165,7 @@ func (g *Generator) generateVisualIdentity() string {
 func (g *Generator) generateLayoutGuidelines() string {
 	layout := g.getAnswer("layout_style", "Centered")
 	spacing := g.getAnswer("layout_spacing", "Moderate")
-	
+
 	return fmt.Sprintf(`### Layout Structure
 - **Layout Style:** %s
 - **Spacing Preference:** %s
@@ -179,7 +179,7 @@ func (g *Generator) generateLayoutGuidelines() string {
 func (g *Generator) generateComponentLibrary() string {
 	style := g.getAnswer("components_style", "Elevated")
 	interactivity := g.getAnswer("components_interactivity", 3)
-	
+
 	return fmt.Sprintf(`### Component Style
 - **Style:** %s
 - **Interactivity Level:** %v/5
@@ -194,7 +194,7 @@ func (g *Generator) generateComponentLibrary() string {
 func (g *Generator) generateAnimationGuidelines() string {
 	level := g.getAnswer("animation_level", "Subtle")
 	style := g.getAnswer("animation_style", "Smooth")
-	
+
 	return fmt.Sprintf(`### Animation Principles
 - **Level:** %s
 - **Style:** %s
@@ -209,7 +209,7 @@ func (g *Generator) generateAnimationGuidelines() string {
 func (g *Generator) generateAccessibility() string {
 	importance := g.getAnswer("accessibility_importance", 4)
 	requirements := g.getAnswer("accessibility_requirements", "")
-	
+
 	content := fmt.Sprintf(`### Accessibility Priority
 - **Importance Level:** %v/5
 
@@ -219,18 +219,18 @@ func (g *Generator) generateAccessibility() string {
 - Screen reader compatibility
 - Color contrast ratios
 - Focus indicators`, importance)
-	
+
 	if requirements != "" && requirements != nil {
 		content += fmt.Sprintf("\n- **Specific Requirements:** %v", requirements)
 	}
-	
+
 	return content
 }
 
 func (g *Generator) generateResponsiveDesign() string {
 	priority := g.getAnswer("responsive_priority", "Mobile, Desktop")
 	approach := g.getAnswerString("responsive_approach", "Mobile-first")
-	
+
 	return fmt.Sprintf(`### Device Priority
 - **Priority Devices:** %v
 
@@ -304,4 +304,3 @@ func (g *Generator) getAnswerString(key string, defaultValue string) string {
 	}
 	return defaultValue
 }
-

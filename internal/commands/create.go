@@ -8,4 +8,3 @@ import (
 func CreateNewProject() error {
 	return wizard.RunNewProjectWizard()
 }
-

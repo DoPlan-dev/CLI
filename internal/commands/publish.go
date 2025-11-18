@@ -8,4 +8,3 @@ import (
 func PublishPackage() error {
 	return wizard.RunPublishWizard()
 }
-

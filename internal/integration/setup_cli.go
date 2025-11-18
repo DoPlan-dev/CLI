@@ -477,4 +477,3 @@ For more information, see Qwen Code documentation.
 
 	return os.WriteFile(guidePath, []byte(content), 0644)
 }
-

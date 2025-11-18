@@ -86,7 +86,7 @@ func (crg *CursorRulesGenerator) generateRulesContent() string {
 func (crg *CursorRulesGenerator) generateColorRules() string {
 	primary := crg.getAnswerString("color_primary", "#667eea")
 	secondary := crg.getAnswerString("color_secondary", "#764ba2")
-	
+
 	return fmt.Sprintf(`### Primary Colors
 - **Primary Color:** %s - Use for primary actions, links, and brand elements
 - **Secondary Color:** %s - Use for secondary actions and accents
@@ -103,7 +103,7 @@ func (crg *CursorRulesGenerator) generateColorRules() string {
 func (crg *CursorRulesGenerator) generateTypographyRules() string {
 	style := crg.getAnswerString("typography_style", "Sans-serif")
 	importance := crg.getAnswerInt("typography_importance", 3)
-	
+
 	rules := fmt.Sprintf(`### Typography System
 - **Font Style:** %s
 - **Importance Level:** %d/5
@@ -130,13 +130,13 @@ Use the following font sizes from design tokens:
 - Use font weights from design tokens
 - Headings: semibold (600) or bold (700)
 - Body text: normal (400) or medium (500)`, style, importance)
-	
+
 	return rules
 }
 
 func (crg *CursorRulesGenerator) generateSpacingRules() string {
 	spacing := crg.getAnswerString("layout_spacing", "Moderate")
-	
+
 	return fmt.Sprintf(`### Spacing System
 - **Spacing Preference:** %s
 - **Base Unit:** Use spacing values from design-tokens.json
@@ -158,7 +158,7 @@ When using Tailwind CSS, use spacing utilities:
 func (crg *CursorRulesGenerator) generateComponentGuidelines() string {
 	style := crg.getAnswerString("components_style", "Elevated")
 	interactivity := crg.getAnswerInt("components_interactivity", 3)
-	
+
 	return fmt.Sprintf(`### Component Style
 - **Style:** %s
 - **Interactivity Level:** %d/5
@@ -184,7 +184,7 @@ func (crg *CursorRulesGenerator) generateComponentGuidelines() string {
 func (crg *CursorRulesGenerator) generateResponsiveRules() string {
 	priority := crg.getAnswerString("responsive_priority", "Mobile, Desktop")
 	approach := crg.getAnswerString("responsive_approach", "Mobile-first")
-	
+
 	return fmt.Sprintf(`### Responsive Strategy
 - **Device Priority:** %s
 - **Approach:** %s
@@ -215,7 +215,7 @@ When using Tailwind CSS:
 func (crg *CursorRulesGenerator) generateAccessibilityRules() string {
 	importance := crg.getAnswerInt("accessibility_importance", 4)
 	requirements := crg.getAnswerString("accessibility_requirements", "")
-	
+
 	rules := fmt.Sprintf(`### Accessibility Priority
 - **Importance Level:** %d/5
 
@@ -248,11 +248,11 @@ func (crg *CursorRulesGenerator) generateAccessibilityRules() string {
 - Test focus indicators visibility
 - Test with zoom up to 200%%
 - Verify all content is accessible without mouse`, importance)
-	
+
 	if requirements != "" && requirements != "nil" {
 		rules += fmt.Sprintf("\n\n### Specific Requirements\n%s", requirements)
 	}
-	
+
 	return rules
 }
 
@@ -309,4 +309,3 @@ func (crg *CursorRulesGenerator) getAnswerInt(key string, defaultValue int) int 
 	}
 	return defaultValue
 }
-

@@ -76,7 +76,7 @@ func SetupWindsurf(projectRoot string) error {
 	// Create symlinks from .windsurf/ to .doplan/ai/
 	symlinks := map[string]string{
 		filepath.Join(windsurfDir, "agents"):   filepath.Join(doplanAIDir, "agents"),
-		filepath.Join(windsurfDir, "rules"):     filepath.Join(doplanAIDir, "rules"),
+		filepath.Join(windsurfDir, "rules"):    filepath.Join(doplanAIDir, "rules"),
 		filepath.Join(windsurfDir, "commands"): filepath.Join(doplanAIDir, "commands"),
 	}
 
@@ -149,8 +149,8 @@ func SetupQoder(projectRoot string) error {
 	// Create doplan.json config file
 	config := map[string]interface{}{
 		"doplan": map[string]interface{}{
-			"agents":  filepath.Join(doplanAIDir, "agents"),
-			"rules":   filepath.Join(doplanAIDir, "rules"),
+			"agents":   filepath.Join(doplanAIDir, "agents"),
+			"rules":    filepath.Join(doplanAIDir, "rules"),
 			"commands": filepath.Join(doplanAIDir, "commands"),
 		},
 	}
@@ -321,4 +321,3 @@ The ` + backtick + `.qoder/doplan.json` + backtick + ` file points to DoPlan dir
 
 	return os.WriteFile(guidePath, []byte(content), 0644)
 }
-

@@ -84,13 +84,13 @@ func launchMigrationWizard() error {
 // showFeatureView shows the feature-specific view
 func showFeatureView(detector *context.Detector) error {
 	// Feature view functionality - fallback to main dashboard for now
-	// TODO: Implement feature-specific view
+	// Future enhancement: Implement feature-specific view
 	return tui.RunWithExecutor(commands.NewTUICommandExecutor())
 }
 
 // showPhaseView shows the phase-specific view
 func showPhaseView(detector *context.Detector) error {
 	// Phase view functionality - fallback to main dashboard for now
-	// TODO: Implement phase-specific view
+	// Future enhancement: Implement phase-specific view
 	return tui.RunWithExecutor(commands.NewTUICommandExecutor())
 }

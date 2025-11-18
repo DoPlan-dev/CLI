@@ -47,4 +47,3 @@ func UpdateProgress() error {
 
 	return nil
 }
-

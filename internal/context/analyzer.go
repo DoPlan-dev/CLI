@@ -10,17 +10,17 @@ import (
 
 // ProjectAnalysis contains analysis results for an existing project
 type ProjectAnalysis struct {
-	TechStack      []string            `json:"techStack"`
-	ProjectFiles   []string            `json:"projectFiles"`
-	Documentation  []string            `json:"documentation"`
-	PotentialPhases []PotentialPhase   `json:"potentialPhases"`
-	TODOs          []string            `json:"todos"`
+	TechStack       []string         `json:"techStack"`
+	ProjectFiles    []string         `json:"projectFiles"`
+	Documentation   []string         `json:"documentation"`
+	PotentialPhases []PotentialPhase `json:"potentialPhases"`
+	TODOs           []string         `json:"todos"`
 }
 
 // PotentialPhase represents a potential phase detected from folder structure
 type PotentialPhase struct {
-	Name    string   `json:"name"`
-	Path    string   `json:"path"`
+	Name     string   `json:"name"`
+	Path     string   `json:"path"`
 	Features []string `json:"features"`
 }
 
@@ -39,11 +39,11 @@ func NewAnalyzer(projectRoot string) *Analyzer {
 // Analyze performs project analysis
 func (a *Analyzer) Analyze() (*ProjectAnalysis, error) {
 	analysis := &ProjectAnalysis{
-		TechStack:     []string{},
-		ProjectFiles:  []string{},
-		Documentation: []string{},
+		TechStack:       []string{},
+		ProjectFiles:    []string{},
+		Documentation:   []string{},
 		PotentialPhases: []PotentialPhase{},
-		TODOs:         []string{},
+		TODOs:           []string{},
 	}
 
 	// Detect tech stack
@@ -58,7 +58,7 @@ func (a *Analyzer) Analyze() (*ProjectAnalysis, error) {
 	// Identify potential phases/features
 	analysis.PotentialPhases = a.identifyPotentialPhases()
 
-	// Extract TODOs
+	// Extract TODO comments from code
 	analysis.TODOs = a.extractTODOs()
 
 	return analysis, nil
@@ -205,9 +205,9 @@ func (a *Analyzer) findFeaturesInPhase(phasePath string) []string {
 func (a *Analyzer) extractTODOs() []string {
 	var todos []string
 
-	// Simple TODO extraction - can be enhanced
+	// Basic TODO extraction; can be enhanced with more sophisticated parsing
 	codeExtensions := []string{"*.go", "*.js", "*.ts", "*.py", "*.rs", "*.java"}
-	
+
 	for _, ext := range codeExtensions {
 		matches, _ := filepath.Glob(filepath.Join(a.projectRoot, "**", ext))
 		for _, file := range matches {
@@ -225,4 +225,3 @@ func (a *Analyzer) extractTODOs() []string {
 
 	return todos
 }
-

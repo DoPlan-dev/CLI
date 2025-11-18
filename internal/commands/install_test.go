@@ -39,18 +39,18 @@ func TestInstaller_Install(t *testing.T) {
 	commandsPath := filepath.Join(projectRoot, ".cursor", "commands")
 	rulesPath := filepath.Join(projectRoot, ".cursor", "rules")
 	configPath := filepath.Join(projectRoot, ".cursor", "config")
-	
+
 	// Check that commands directory exists (as dir or symlink) and has files
 	commandsInfo, err := os.Stat(commandsPath)
 	require.NoError(t, err)
 	assert.True(t, commandsInfo.IsDir() || (commandsInfo.Mode()&os.ModeSymlink != 0), "commands should be directory or symlink")
 	assert.FileExists(t, filepath.Join(commandsPath, "discuss.md"))
-	
+
 	// Check that rules directory exists (as dir or symlink)
 	rulesInfo, err := os.Stat(rulesPath)
 	require.NoError(t, err)
 	assert.True(t, rulesInfo.IsDir() || (rulesInfo.Mode()&os.ModeSymlink != 0), "rules should be directory or symlink")
-	
+
 	// Check other directories
 	assert.DirExists(t, configPath)
 	assert.DirExists(t, filepath.Join(projectRoot, "doplan", "contracts"))

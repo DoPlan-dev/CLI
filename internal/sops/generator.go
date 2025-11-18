@@ -10,14 +10,14 @@ import (
 
 // ServiceTemplate represents a service setup template
 type ServiceTemplate struct {
-	Name        string
-	Category    string
-	Description string
-	Keys        []KeyTemplate
-	SetupSteps  []string
-	CodeExample string
+	Name         string
+	Category     string
+	Description  string
+	Keys         []KeyTemplate
+	SetupSteps   []string
+	CodeExample  string
 	CommonIssues []string
-	Resources   []string
+	Resources    []string
 }
 
 // KeyTemplate represents an API key template
@@ -57,7 +57,7 @@ func (g *Generator) GenerateAll() error {
 // GenerateForService generates SOPS for a specific service
 func (g *Generator) GenerateForService(serviceName string) error {
 	templates := g.getServiceTemplates()
-	
+
 	for _, template := range templates {
 		if strings.EqualFold(template.Name, serviceName) {
 			return g.generateServiceSOP(template)
@@ -391,4 +391,3 @@ func (g *Generator) getServiceTemplates() []ServiceTemplate {
 		},
 	}
 }
-

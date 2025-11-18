@@ -13,14 +13,14 @@ import (
 
 // QuestionnaireModel represents the DPR questionnaire TUI
 type QuestionnaireModel struct {
-	width         int
-	height        int
-	currentStep   int
-	totalSteps    int
-	answers       map[string]interface{}
-	projectRoot   string
-	err           error
-	
+	width       int
+	height      int
+	currentStep int
+	totalSteps  int
+	answers     map[string]interface{}
+	projectRoot string
+	err         error
+
 	// Input components
 	textInput    textinput.Model
 	selectList   list.Model
@@ -267,8 +267,8 @@ func (m *QuestionnaireModel) View() string {
 	content := m.renderQuestion(question)
 
 	body := lipgloss.NewStyle().
-		Width(m.width - 4).
-		Height(m.height - lipgloss.Height(header) - 5).
+		Width(m.width-4).
+		Height(m.height-lipgloss.Height(header)-5).
 		Padding(1, 2).
 		Render(content)
 
@@ -477,4 +477,3 @@ func getAllQuestions() []Question {
 		{ID: "responsive_approach", Category: "responsive", Text: "What responsive approach?", Type: "select", Options: []string{"Mobile-first", "Desktop-first", "Adaptive", "Fluid"}, Required: true},
 	}
 }
-

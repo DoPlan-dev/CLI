@@ -154,4 +154,3 @@ For IDE-specific setup instructions, see the individual guides in ` + backtick +
 
 	return os.WriteFile(masterGuidePath, []byte(content), 0644)
 }
-

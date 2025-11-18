@@ -103,4 +103,3 @@ func getDevCommand(projectType, packageManager string) []string {
 		return nil
 	}
 }
-

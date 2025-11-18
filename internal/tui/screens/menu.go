@@ -206,4 +206,3 @@ type RecommendationMsg struct {
 	Title       string
 	Description string
 }
-

@@ -11,12 +11,18 @@
 
 # Test binary
 *.test
+doplan-test
 
 # Output of the go coverage tool
 coverage.out
 coverage.html
-*.out
 coverage_*.out
+coverage_config.out
+coverage_github.out
+coverage_validator.out
+
+# Test results
+test-results.md
 
 # Dependency directories
 vendor/
@@ -38,6 +44,10 @@ Thumbs.db
 # Build artifacts
 *.tar.gz
 checksums.txt
+
+# Binaries in root
+doplan
+doplan-test
 
 # Local config
 .env

@@ -235,8 +235,8 @@ func displayFixResults(fixesApplied []string) {
 
 // generateAISuggestions generates AI-powered fix suggestions
 // This is a placeholder for future AI integration
+// Future enhancement: Integrate with AI API (OpenAI, Anthropic, etc.) for automated fix suggestions
 func generateAISuggestions(projectRoot string, issues []string) []string {
-	// TODO: Integrate with AI API (OpenAI, Anthropic, etc.)
 	// For now, return empty suggestions
 	fmt.Println("🤖 AI suggestions (coming soon)")
 	return []string{}
