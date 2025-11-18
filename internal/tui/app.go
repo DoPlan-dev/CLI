@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/DoPlan-dev/CLI/internal/tui/screens"
+	"github.com/DoPlan-dev/CLI/internal/workflow"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -65,7 +66,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.RunDevServer(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Dev server started"}
+					return screens.SuccessMsg{Message: "Dev server started", Action: "dev_server_started"}
 				},
 			)
 		case "undo":
@@ -74,7 +75,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.UndoLastAction(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Last action undone"}
+					return screens.SuccessMsg{Message: "Last action undone", Action: "action_undone"}
 				},
 			)
 		case "create":
@@ -83,7 +84,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.CreateNewProject(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "New project created"}
+					return screens.SuccessMsg{Message: "New project created", Action: "project_created"}
 				},
 			)
 		case "deploy":
@@ -92,7 +93,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.DeployProject(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Deployment started"}
+					return screens.SuccessMsg{Message: "Deployment started", Action: "deployment_started"}
 				},
 			)
 		case "publish":
@@ -101,7 +102,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.PublishPackage(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Package publishing started"}
+					return screens.SuccessMsg{Message: "Package publishing started", Action: "publish_started"}
 				},
 			)
 		case "security":
@@ -110,7 +111,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.RunSecurityScan(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Security scan completed"}
+					return screens.SuccessMsg{Message: "Security scan completed", Action: "security_scan_complete"}
 				},
 			)
 		case "fix":
@@ -119,7 +120,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.AutoFix(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Auto-fix completed"}
+					return screens.SuccessMsg{Message: "Auto-fix completed", Action: "fix_complete"}
 				},
 			)
 		case "discuss":
@@ -128,7 +129,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.DiscussIdea(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Idea discussion completed"}
+					return screens.SuccessMsg{Message: "Idea discussion completed", Action: "idea_discussed"}
 				},
 			)
 		case "generate":
@@ -137,7 +138,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.GenerateDocuments(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Documents generated"}
+					return screens.SuccessMsg{Message: "Documents generated", Action: "documents_generated"}
 				},
 			)
 		case "plan":
@@ -146,7 +147,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.CreatePlan(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Plan created"}
+					return screens.SuccessMsg{Message: "Plan created", Action: "plan_complete"}
 				},
 			)
 		case "progress":
@@ -155,7 +156,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.UpdateProgress(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Progress updated"}
+					return screens.SuccessMsg{Message: "Progress updated", Action: "progress_updated"}
 				},
 			)
 		case "design":
@@ -164,7 +165,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.ApplyDesign(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "Design system generated"}
+					return screens.SuccessMsg{Message: "Design system generated", Action: "design_system_applied"}
 				},
 			)
 		case "keys":
@@ -173,7 +174,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if err := a.executor.ManageAPIKeys(); err != nil {
 						return screens.ErrorMsg{Error: err}
 					}
-					return screens.SuccessMsg{Message: "API keys managed"}
+					return screens.SuccessMsg{Message: "API keys managed", Action: "api_keys_configured"}
 				},
 			)
 		case "integration":
@@ -198,24 +199,45 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return a, nil
 
 	case screens.SuccessMsg:
-		// Show success message and return to menu
+		// Show success message
 		fmt.Printf("✅ %s\n", msg.Message)
+
+		// Get recommended next step if action is provided
+		if msg.Action != "" {
+			title, description := workflow.GetNextStep(msg.Action)
+			if title != "" {
+				// Return recommendation message
+				return a, func() tea.Msg {
+					return screens.RecommendationMsg{
+						Title:       title,
+						Description: description,
+					}
+				}
+			}
+		}
+
 		a.current = "menu"
 		return a, nil
 
-		case screens.BackToMenuMsg:
-			a.current = "menu"
-			return a, nil
-		case screens.OpenKeysManagementMsg:
-			// Open keys management
-			return a, tea.Sequence(
-				func() tea.Msg {
-					if err := a.executor.ManageAPIKeys(); err != nil {
-						return screens.ErrorMsg{Error: err}
-					}
-					return screens.SuccessMsg{Message: "API keys managed"}
-				},
-			)
+	case screens.RecommendationMsg:
+		// Display recommendation and return to menu
+		renderRecommendation(msg.Title, msg.Description)
+		a.current = "menu"
+		return a, nil
+
+	case screens.BackToMenuMsg:
+		a.current = "menu"
+		return a, nil
+	case screens.OpenKeysManagementMsg:
+		// Open keys management
+		return a, tea.Sequence(
+			func() tea.Msg {
+				if err := a.executor.ManageAPIKeys(); err != nil {
+					return screens.ErrorMsg{Error: err}
+				}
+				return screens.SuccessMsg{Message: "API keys managed", Action: "api_keys_configured"}
+			},
+		)
 	}
 
 	// Delegate to current screen
@@ -279,6 +301,33 @@ func (a *App) View() string {
 		header,
 		body,
 	)
+}
+
+// renderRecommendation displays a recommended next step in a styled box
+func renderRecommendation(title, description string) {
+	// Define styles
+	borderStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#10b981")). // Green border (success color)
+		Padding(1, 2).
+		Width(60)
+
+	titleStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#10b981")).
+		Bold(true).
+		MarginBottom(1)
+
+	descriptionStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#ffffff")).
+		MarginTop(1)
+
+	// Build the recommendation box
+	content := titleStyle.Render("💡 Recommended Next Step: " + title)
+	content += "\n\n"
+	content += descriptionStyle.Render(description)
+
+	box := borderStyle.Render(content)
+	fmt.Println("\n" + box + "\n")
 }
 
 // Run starts the TUI with default executor

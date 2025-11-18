@@ -198,5 +198,12 @@ type ErrorMsg struct {
 // SuccessMsg is sent when an action succeeds
 type SuccessMsg struct {
 	Message string
+	Action  string // The action that was completed (e.g., "plan_complete", "feature_implemented")
+}
+
+// RecommendationMsg is sent to display a recommended next step
+type RecommendationMsg struct {
+	Title       string
+	Description string
 }
 
