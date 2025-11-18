@@ -268,9 +268,6 @@ func (g *Generator) generateWireframes() string {
 }
 
 func (g *Generator) generateImplementationGuidelines() string {
-	style := g.getAnswerString("style_overall", "Modern")
-	components := g.getAnswerString("components_style", "Elevated")
-	
 	return fmt.Sprintf(`### Development Workflow
 1. **Design Review:** Review DPR.md and design tokens before implementation
 2. **Component Development:** Build components following design system
@@ -288,7 +285,7 @@ func (g *Generator) generateImplementationGuidelines() string {
 - Update design tokens as design evolves
 - Keep DPR.md current with project changes
 - Review and update design rules regularly
-- Ensure all team members follow design system`, style, components)
+- Ensure all team members follow design system`)
 }
 
 func (g *Generator) getAnswer(key string, defaultValue interface{}) interface{} {
