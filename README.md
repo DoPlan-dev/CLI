@@ -24,8 +24,9 @@ Whether you're building a web application, API service, mobile app, or any softw
 - **Document Generation**: Auto-generate PRD, project structure, API contracts, and planning documents
 - **Workflow Guidance**: Intelligent recommendations for next steps based on your current progress
 
-### 🎨 **Interactive TUI Interface**
-- **Fullscreen TUI Menu**: Beautiful terminal user interface with 15 interactive actions
+### 🎨 **Interactive TUI Interface** *(Enhanced in v0.0.20-beta)*
+- **Context-Aware Menu**: Menu adapts to project state (installed vs new projects)
+- **Fixed-Width Header**: Clean, centered header design (70 chars)
 - **Visual Progress Bars**: See project, phase, and feature progress at a glance
 - **Multi-view Dashboard**: Switch between project overview, phases, features, GitHub activity, configuration, and statistics
 - **Real-time Updates**: Live refresh of progress, GitHub data, and recommendations
@@ -70,17 +71,21 @@ Whether you're building a web application, API service, mobile app, or any softw
 - **Commit Management**: Track commits, pushes, and branch status
 - **PR Tracking**: Monitor pull request status and URLs
 
-### 📝 **Documentation & Templates**
+### 📝 **Documentation & Templates** *(Enhanced in v0.0.20-beta)*
+- **Organized Documentation**: Restructured docs into guides, implementation, references, and releases
 - **Template System**: Customizable templates for plans, designs, and tasks
 - **Template Management**: Add, edit, remove, and set default templates
 - **Context Generation**: Auto-generate `CONTEXT.md` with tech stack and documentation links
 - **Documentation Rules**: Automated rules for documentation organization and naming
 
-### ⚙️ **Configuration & Validation**
+### ⚙️ **Configuration & Validation** *(Enhanced in v0.0.20-beta)*
+- **Production Readiness Check**: Comprehensive verification script (`make check-production`)
+  - 15 categories of checks: dependencies, formatting, static analysis, build, tests, coverage, TODO comments, debug code, git status, version info, documentation, license, build config, test infrastructure, and dependencies
+  - Automatic test coverage reporting with CLI-appropriate thresholds
+  - Smart code formatting detection
 - **Flexible Configuration**: Manage settings for GitHub, checkpoints, and workflow
 - **Project Validation**: Validate project structure and configuration with auto-fix
-- **Checkpoint System**: Create, list, and restore project checkpoints (Time Machine)
-- **Auto-Checkpointing**: Automatic checkpoints for features and phases
+- **Minimal CLI**: Streamlined command set (removed deprecated commands: checkpoint, completion, templates, progress, validate, stats)
 
 ### 🔌 **IDE Integration**
 - **Multi-IDE Support**: Works with Cursor, VS Code, Gemini CLI, Claude CLI, Codex CLI, OpenCode, Qwen Code, and more
@@ -142,7 +147,7 @@ sudo mv doplan /usr/local/bin/
 # Extract and add to PATH
 ```
 
-**Latest Release:** [v0.0.19-beta](https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.19-beta) | [View all releases](https://github.com/DoPlan-dev/CLI/releases)
+**Latest Release:** [v0.0.20-beta](https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.20-beta) | [View all releases](https://github.com/DoPlan-dev/CLI/releases)
 
 ### From Source
 
@@ -171,35 +176,32 @@ doplan --version
 
 | Command | Description |
 |---------|-------------|
-| `doplan` | Launch interactive TUI menu (15 actions) |
+| `doplan` | Launch interactive TUI menu (context-aware: shows Install/Exit for new projects, Development Server/Dashboard/Configuration for installed projects) |
 | `doplan install` | Install DoPlan in your project (interactive IDE selection) |
 | `doplan dashboard` | View project dashboard with progress and GitHub activity |
 | `doplan --tui` | Launch fullscreen interactive TUI dashboard |
 | `doplan github` | Sync GitHub data (branches, commits, PRs) and update dashboard |
-| `doplan progress` | Update all progress tracking files and regenerate dashboard |
-| `doplan validate` | Validate project structure, configuration, and state consistency |
 
-### TUI Menu Actions *(NEW in v0.0.19-beta)*
+**Note:** Commands like `progress`, `validate`, `checkpoint`, `completion`, `templates`, and `stats` have been removed in v0.0.20-beta for a more focused, minimal CLI.
 
-When you run `doplan`, you get an interactive TUI menu with 15 actions:
+### TUI Menu Actions *(Enhanced in v0.0.20-beta)*
 
+The TUI menu is now **context-aware** and adapts based on your project state:
+
+**For New Projects** (not yet installed):
 | Action | Description |
 |--------|-------------|
-| 📊 View Dashboard | View project progress and statistics |
-| ▶️ Run Dev Server | Auto-detect and run development server (Node/Go/Docker) |
-| ↩️ Undo Last Action | Revert the last DoPlan action |
-| 🚀 Deploy Project | Deploy to Vercel, Netlify, Railway, etc. |
-| 📦 Publish Package | Publish to npm, Homebrew, Scoop, Winget |
-| ✨ Create New Project | Start a new DoPlan project |
-| 🛡️ Run Security Scan | Scan for vulnerabilities and security issues |
-| 🩹 Auto-fix Issues | AI-powered auto-fix for common issues |
-| 💬 Discuss Idea | Refine your project idea |
-| 📝 Generate Documents | Generate PRD, contracts, and documentation |
-| 🗺️ Create Plan | Create phase and feature structure |
-| 📈 Update Progress | Update progress tracking files |
-| 🔑 Manage API Keys | Detect, validate, and manage API keys |
-| 🎨 Apply Design / DPR | Generate design system and tokens |
-| ⚙️ Setup AI/IDE Integration | Configure IDE integration (Cursor, VS Code, etc.) |
+| 📦 Install | Install DoPlan in this project |
+| ❌ Exit | Exit DoPlan |
+
+**For Installed Projects**:
+| Action | Description |
+|--------|-------------|
+| ▶️ Development Server | Run dev server for testing and developing |
+| 📊 Dashboard | Show development progress |
+| ⚙️ Configuration | Install files for other IDEs or CLIs |
+
+**Note:** Additional actions (Deploy, Publish, Security Scan, etc.) are available through IDE commands after installation.
 
 ### Configuration Commands
 
@@ -208,38 +210,40 @@ When you run `doplan`, you get an interactive TUI menu with 15 actions:
 | `doplan config show` | Show current configuration (table or JSON format) |
 | `doplan config set <key> <value>` | Set a configuration value |
 | `doplan config reset` | Reset configuration to defaults |
-| `doplan config validate` | Validate configuration settings |
 
 **Configuration Keys:**
 - `github.enabled` - Enable/disable GitHub integration
 - `github.autoBranch` - Auto-create branches for features
 - `github.autoPR` - Auto-create PRs when features complete
-- `checkpoint.autoFeature` - Auto-checkpoint when feature starts
-- `checkpoint.autoPhase` - Auto-checkpoint when phase starts
-- `checkpoint.autoComplete` - Auto-checkpoint when feature/phase completes
 
-### Checkpoint Commands
+### Production Readiness Check *(NEW in v0.0.20-beta)*
 
-| Command | Description |
-|---------|-------------|
-| `doplan checkpoint create [name]` | Create a manual checkpoint |
-| `doplan checkpoint list` | List all checkpoints |
-| `doplan checkpoint restore <id>` | Restore a checkpoint |
+Before releasing, verify your codebase is ready:
 
-**Checkpoint Options:**
-- `--type <type>` - Checkpoint type: `manual`, `feature`, `phase`
-- `--description <text>` - Add description to checkpoint
+```bash
+# Run comprehensive production readiness check
+make check-production
 
-### Template Commands
+# Or directly
+./scripts/check-production-ready.sh
+```
 
-| Command | Description |
-|---------|-------------|
-| `doplan templates list` | List all available templates |
-| `doplan templates show <name>` | Show template content |
-| `doplan templates add <name> <file>` | Add a template from file |
-| `doplan templates edit <name>` | Edit template (opens in default editor) |
-| `doplan templates use <name> [--for type]` | Set default template (plan/design/tasks) |
-| `doplan templates remove <name>` | Remove a template |
+The check verifies:
+- ✅ Dependencies (Go, Git)
+- ✅ Code formatting and static analysis
+- ✅ Build and test execution
+- ✅ Test coverage (with CLI-appropriate thresholds)
+- ✅ TODO/FIXME comments review
+- ✅ Debug code detection
+- ✅ Git status
+- ✅ Version information
+- ✅ Documentation completeness
+- ✅ License file
+- ✅ Build configuration
+- ✅ Test infrastructure
+- ✅ Dependency verification
+
+See [docs/guides/PRODUCTION_READINESS.md](docs/guides/PRODUCTION_READINESS.md) for details.
 
 ## How to Start: Using Commands in Your IDE to Develop Your App Idea
 
@@ -364,26 +368,15 @@ This command will:
 - Set up the development environment
 - Guide you through the implementation process
 
-### Step 7: Update Progress
+### Step 7: Workflow Automation
 
-As you complete tasks, update progress:
+DoPlan automatically tracks progress through:
+- Task completion in `tasks.md` files
+- Dashboard auto-updates
+- GitHub activity tracking
+- Phase and feature status monitoring
 
-**In your IDE:**
-```
-/Progress
-```
-
-**Or via CLI:**
-```bash
-doplan progress
-```
-
-This updates:
-- Feature progress percentages
-- Task completion status
-- Phase progress
-- Overall project progress
-- Regenerates the dashboard
+Progress is updated automatically when you mark tasks as complete in your feature `tasks.md` files.
 
 ### Step 8: Sync GitHub Data
 
@@ -402,58 +395,15 @@ This syncs:
 
 ### Step 9: Get Next Action Recommendation
 
-When you're ready for the next step:
-
-**In your IDE:**
-```
-/Next
-```
-
-This suggests:
+When you're ready for the next step, DoPlan automatically suggests:
 - Next feature to work on
 - Tasks to complete
 - Documentation to update
 - Pull requests to review
 
-### Step 10: Create Checkpoints (Optional)
+These recommendations appear after completing actions in the TUI.
 
-Save your project state at important milestones:
-
-**Via CLI:**
-```bash
-# Create manual checkpoint
-doplan checkpoint create "Before major refactor"
-
-# List checkpoints
-doplan checkpoint list
-
-# Restore a checkpoint
-doplan checkpoint restore <checkpoint-id>
-```
-
-### Step 11: Customize Templates
-
-Customize your document templates:
-
-**Via CLI:**
-```bash
-# List templates
-doplan templates list
-
-# Show a template
-doplan templates show plan-template.md
-
-# Add custom template
-doplan templates add my-plan.md /path/to/template.md
-
-# Set as default
-doplan templates use my-plan.md --for plan
-
-# Edit template
-doplan templates edit plan-template.md
-```
-
-### Step 12: Configure DoPlan
+### Step 10: Configure DoPlan
 
 Adjust settings to match your workflow:
 
@@ -472,7 +422,7 @@ doplan config set checkpoint.autoFeature true
 doplan config validate
 ```
 
-### Step 13: Generate Design System (DPR) *(NEW in v0.0.19-beta)*
+### Step 11: Generate Design System (DPR)
 
 Create a comprehensive design system for your project:
 
@@ -488,7 +438,7 @@ This will:
 - Generate `doplan/design/design-tokens.json` - Design tokens (colors, typography, spacing)
 - Generate `.doplan/ai/rules/design_rules.mdc` - Rules for AI agents to follow design system
 
-### Step 14: Manage API Keys *(NEW in v0.0.19-beta)*
+### Step 12: Manage API Keys
 
 Detect and manage API keys for your project services:
 
@@ -504,7 +454,7 @@ This will:
 - Generate `doplan/RAKD.md` - Required API Keys Document
 - Generate `.doplan/SOPS/` - Service Operating Procedures guides for each service
 
-### Step 15: Deploy Your Project *(NEW in v0.0.19-beta)*
+### Step 13: Deploy Your Project
 
 Deploy to your preferred platform:
 
@@ -522,7 +472,7 @@ Supported platforms:
 - Coolify
 - Docker
 
-### Step 16: Publish Your Package *(NEW in v0.0.19-beta)*
+### Step 14: Publish Your Package
 
 Publish to package registries:
 
@@ -538,7 +488,7 @@ Supported registries:
 - Scoop
 - Winget
 
-### Step 17: Use AI Agents *(NEW in v0.0.19-beta)*
+### Step 15: Use AI Agents
 
 Work with specialized AI agents in your IDE:
 
@@ -565,7 +515,7 @@ Plan → Design → Code → Test → Review → Deploy
 @devops /Deploy         # Deploy feature
 ```
 
-### Step 18: Get Workflow Guidance *(NEW in v0.0.19-beta)*
+### Step 16: Get Workflow Guidance
 
 Receive intelligent recommendations after each action:
 
@@ -672,6 +622,9 @@ make fmt
 
 # Clean build artifacts
 make clean
+
+# Production readiness check
+make check-production
 ```
 
 ### Running in Development
@@ -701,7 +654,23 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 ## Release Process
 
-Releases are automated using GitHub Actions and GoReleaser. See [docs/development/RELEASE.md](docs/development/RELEASE.md) for details on:
+Releases are automated using GitHub Actions and GoReleaser. Before releasing:
+
+```bash
+# Run production readiness check
+make check-production
+
+# This checks 15 categories including:
+# - Code formatting and static analysis
+# - Tests and coverage
+# - Documentation completeness
+# - Version information
+# - And more...
+```
+
+See [docs/guides/PRODUCTION_READINESS.md](docs/guides/PRODUCTION_READINESS.md) for the complete checklist.
+
+For release details, see [docs/releases/RELEASE.md](docs/releases/RELEASE.md):
 - Versioning strategy
 - Release process
 - Homebrew update process
