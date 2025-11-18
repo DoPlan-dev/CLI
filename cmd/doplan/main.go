@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/DoPlan-dev/CLI/internal/commands"
-	"github.com/DoPlan-dev/CLI/internal/ui"
+	"github.com/DoPlan-dev/CLI/internal/tui"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +40,7 @@ Combines Spec-Kit and BMAD-METHOD methodologies.`,
 
 	// Check for TUI mode
 	if len(os.Args) > 1 && os.Args[1] == "--tui" {
-		if err := ui.Run(); err != nil {
+		if err := tui.Run(); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}
@@ -49,7 +49,7 @@ Combines Spec-Kit and BMAD-METHOD methodologies.`,
 
 	// Check flag value if parsed
 	if tuiFlag != nil && *tuiFlag {
-		if err := ui.Run(); err != nil {
+		if err := tui.Run(); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}

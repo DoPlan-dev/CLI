@@ -9,7 +9,7 @@ import (
 	"github.com/DoPlan-dev/CLI/internal/config"
 	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
 	"github.com/DoPlan-dev/CLI/internal/generators"
-	"github.com/DoPlan-dev/CLI/internal/ui"
+	"github.com/DoPlan-dev/CLI/internal/tui"
 	"github.com/DoPlan-dev/CLI/internal/utils"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -38,7 +38,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 
 	// Check if already installed
 	if config.IsInstalled(projectRoot) {
-		confirmed, err := ui.ConfirmReinstall()
+		confirmed, err := tui.ConfirmReinstall()
 		if err != nil {
 			return err
 		}
@@ -49,7 +49,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	}
 
 	// Show installation menu
-	ide, err := ui.ShowInstallMenu()
+	ide, err := tui.ShowInstallMenu()
 	if err != nil {
 		return errHandler.Handle(doplanerror.NewIOError("IO001", "Failed to show installation menu").WithCause(err))
 	}

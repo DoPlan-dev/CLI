@@ -1,6 +1,7 @@
 package generators
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -26,8 +27,13 @@ func NewDashboardGenerator(projectRoot string, state *models.State, githubData *
 	}
 }
 
-// Generate creates both markdown and HTML dashboards
+// Generate creates JSON, markdown and HTML dashboards
 func (g *DashboardGenerator) Generate() error {
+	// Generate JSON dashboard first (machine-readable)
+	if err := g.GenerateJSON(); err != nil {
+		return fmt.Errorf("failed to generate JSON dashboard: %w", err)
+	}
+
 	doplanDir := filepath.Join(g.projectRoot, "doplan")
 
 	// Ensure directory exists
@@ -35,7 +41,7 @@ func (g *DashboardGenerator) Generate() error {
 		return fmt.Errorf("failed to create doplan directory: %w", err)
 	}
 
-	// Generate markdown dashboard
+	// Generate markdown dashboard (for backward compatibility)
 	mdContent := g.generateMarkdown()
 	mdPath := filepath.Join(doplanDir, "dashboard.md")
 	if err := os.WriteFile(mdPath, []byte(mdContent), 0644); err != nil {
@@ -50,6 +56,339 @@ func (g *DashboardGenerator) Generate() error {
 	}
 
 	return nil
+}
+
+// GenerateJSON generates the machine-readable dashboard.json
+func (g *DashboardGenerator) GenerateJSON() error {
+	doplanDir := filepath.Join(g.projectRoot, ".doplan")
+	if err := os.MkdirAll(doplanDir, 0755); err != nil {
+		return fmt.Errorf("failed to create .doplan directory: %w", err)
+	}
+
+	dashboard := g.buildDashboardJSON()
+	
+	data, err := json.MarshalIndent(dashboard, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal dashboard JSON: %w", err)
+	}
+
+	jsonPath := filepath.Join(doplanDir, "dashboard.json")
+	if err := os.WriteFile(jsonPath, data, 0644); err != nil {
+		return fmt.Errorf("failed to write dashboard JSON: %w", err)
+	}
+
+	return nil
+}
+
+// DashboardJSON represents the dashboard JSON structure
+type DashboardJSON struct {
+	Version   string                 `json:"version"`
+	Generated string                 `json:"generated"`
+	Project   ProjectJSON            `json:"project"`
+	GitHub    GitHubJSON             `json:"github"`
+	Phases    []PhaseJSON            `json:"phases"`
+	Summary   SummaryJSON            `json:"summary"`
+	Activity  ActivityJSON           `json:"activity"`
+	APIKeys   APIKeysJSON            `json:"apiKeys"`
+	Velocity  VelocityJSON           `json:"velocity"`
+}
+
+type ProjectJSON struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Version     string `json:"version"`
+	Progress    int    `json:"progress"`
+	Status      string `json:"status"`
+	StartDate   string `json:"startDate"`
+	TargetDate  string `json:"targetDate"`
+}
+
+type GitHubJSON struct {
+	Repository   string   `json:"repository"`
+	Branch       string   `json:"branch"`
+	Commits      int      `json:"commits"`
+	Contributors []string `json:"contributors"`
+	LastCommit   string   `json:"lastCommit"`
+}
+
+type PhaseJSON struct {
+	ID          string       `json:"id"`
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	Status      string       `json:"status"`
+	Progress    int          `json:"progress"`
+	StartDate   string       `json:"startDate"`
+	TargetDate  string       `json:"targetDate"`
+	Features    []FeatureJSON `json:"features"`
+	Stats       PhaseStatsJSON `json:"stats"`
+}
+
+type FeatureJSON struct {
+	ID           string `json:"id"`
+	Name         string `json:"name"`
+	Status       string `json:"status"`
+	Progress     int    `json:"progress"`
+	Branch       string `json:"branch"`
+	PR           *PRJSON `json:"pr"`
+	Commits      int    `json:"commits"`
+	LastActivity string `json:"lastActivity"`
+	Tasks        []TaskJSON `json:"tasks"`
+}
+
+type TaskJSON struct {
+	Name      string `json:"name"`
+	Completed bool   `json:"completed"`
+}
+
+type PRJSON struct {
+	Number int    `json:"number"`
+	Title  string `json:"title"`
+	URL    string `json:"url"`
+	Status string `json:"status"`
+}
+
+type PhaseStatsJSON struct {
+	TotalFeatures   int `json:"totalFeatures"`
+	Completed       int `json:"completed"`
+	InProgress      int `json:"inProgress"`
+	Todo            int `json:"todo"`
+	TotalTasks      int `json:"totalTasks"`
+	CompletedTasks  int `json:"completedTasks"`
+}
+
+type SummaryJSON struct {
+	TotalPhases      int `json:"totalPhases"`
+	Completed        int `json:"completed"`
+	InProgress       int `json:"inProgress"`
+	Todo             int `json:"todo"`
+	TotalFeatures    int `json:"totalFeatures"`
+	TotalTasks       int `json:"totalTasks"`
+	CompletedTasks   int `json:"completedTasks"`
+}
+
+type ActivityJSON struct {
+	Last24Hours ActivityPeriodJSON `json:"last24Hours"`
+	Last7Days   ActivityPeriodJSON `json:"last7Days"`
+	RecentActivity []ActivityItemJSON `json:"recentActivity"`
+}
+
+type ActivityPeriodJSON struct {
+	Commits       int `json:"commits"`
+	TasksCompleted int `json:"tasksCompleted"`
+	FilesChanged  int `json:"filesChanged"`
+}
+
+type ActivityItemJSON struct {
+	Type      string `json:"type"`
+	Message   string `json:"message"`
+	Timestamp string `json:"timestamp"`
+}
+
+type APIKeysJSON struct {
+	Total      int `json:"total"`
+	Configured int `json:"configured"`
+	Pending    int `json:"pending"`
+	Optional   int `json:"optional"`
+	Completion int `json:"completion"`
+}
+
+type VelocityJSON struct {
+	TasksPerDay        float64 `json:"tasksPerDay"`
+	CommitsPerDay      float64 `json:"commitsPerDay"`
+	EstimatedCompletion string `json:"estimatedCompletion"`
+	DaysToLaunch       int     `json:"daysToLaunch"`
+}
+
+// buildDashboardJSON builds the dashboard JSON structure
+func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
+	overallProgress := g.calculateOverallProgress()
+	
+	// Build phases
+	phases := []PhaseJSON{}
+	for _, phase := range g.state.Phases {
+		phaseProgress := g.calculatePhaseProgress(phase.ID)
+		features := []FeatureJSON{}
+		
+		for _, featureID := range phase.Features {
+			feature := g.findFeature(featureID)
+			if feature != nil {
+				tasks := []TaskJSON{}
+				for _, taskPhase := range feature.TaskPhases {
+					for _, task := range taskPhase.Tasks {
+						tasks = append(tasks, TaskJSON{
+							Name:      task.Name,
+							Completed: task.Completed,
+						})
+					}
+				}
+				
+				var pr *PRJSON
+				if feature.PR != nil {
+					pr = &PRJSON{
+						Number: feature.PR.Number,
+						Title:  feature.PR.Title,
+						URL:    feature.PR.URL,
+						Status: feature.PR.Status,
+					}
+				}
+				
+				features = append(features, FeatureJSON{
+					ID:           feature.ID,
+					Name:         feature.Name,
+					Status:       feature.Status,
+					Progress:     feature.Progress,
+					Branch:       feature.Branch,
+					PR:           pr,
+					Commits:      0, // TODO: Calculate from GitHub data
+					LastActivity: feature.StartDate,
+					Tasks:        tasks,
+				})
+			}
+		}
+		
+		// Calculate phase stats
+		completed := 0
+		inProgress := 0
+		todo := 0
+		totalTasks := 0
+		completedTasks := 0
+		
+		for _, feature := range features {
+			switch feature.Status {
+			case "complete":
+				completed++
+			case "in-progress":
+				inProgress++
+			default:
+				todo++
+			}
+			for _, task := range feature.Tasks {
+				totalTasks++
+				if task.Completed {
+					completedTasks++
+				}
+			}
+		}
+		
+		phases = append(phases, PhaseJSON{
+			ID:          phase.ID,
+			Name:        phase.Name,
+			Description: phase.Description,
+			Status:      phase.Status,
+			Progress:    phaseProgress,
+			StartDate:   phase.StartDate,
+			TargetDate:  phase.TargetDate,
+			Features:    features,
+			Stats: PhaseStatsJSON{
+				TotalFeatures:  len(features),
+				Completed:      completed,
+				InProgress:     inProgress,
+				Todo:           todo,
+				TotalTasks:     totalTasks,
+				CompletedTasks: completedTasks,
+			},
+		})
+	}
+	
+	// Calculate summary
+	completedPhases := 0
+	inProgressPhases := 0
+	todoPhases := 0
+	totalFeatures := 0
+	totalTasks := 0
+	completedTasks := 0
+	
+	for _, phase := range phases {
+		switch phase.Status {
+		case "complete":
+			completedPhases++
+		case "in-progress":
+			inProgressPhases++
+		default:
+			todoPhases++
+		}
+		totalFeatures += phase.Stats.TotalFeatures
+		totalTasks += phase.Stats.TotalTasks
+		completedTasks += phase.Stats.CompletedTasks
+	}
+	
+	// Build GitHub data
+	githubJSON := GitHubJSON{
+		Repository:   "", // Will be populated from config
+		Branch:       "main",
+		Commits:      len(g.githubData.Commits),
+		Contributors: []string{},
+		LastCommit:   "",
+	}
+	if len(g.githubData.Commits) > 0 {
+		githubJSON.LastCommit = g.githubData.Commits[0].Date
+	}
+	
+	// Build activity (simplified for now)
+	activity := ActivityJSON{
+		Last24Hours: ActivityPeriodJSON{
+			Commits:       0,
+			TasksCompleted: 0,
+			FilesChanged:  0,
+		},
+		Last7Days: ActivityPeriodJSON{
+			Commits:       len(g.githubData.Commits),
+			TasksCompleted: completedTasks,
+			FilesChanged:  0,
+		},
+		RecentActivity: []ActivityItemJSON{},
+	}
+	
+	// Add recent commits to activity
+	for i, commit := range g.githubData.Commits {
+		if i >= 10 {
+			break
+		}
+		activity.RecentActivity = append(activity.RecentActivity, ActivityItemJSON{
+			Type:      "commit",
+			Message:   commit.Message,
+			Timestamp: commit.Date,
+		})
+	}
+	
+	return &DashboardJSON{
+		Version:   "1.0",
+		Generated: time.Now().Format(time.RFC3339),
+		Project: ProjectJSON{
+			Name:        "", // Will be populated from config
+			Description: "",
+			Version:     "1.0.0",
+			Progress:    overallProgress,
+			Status:      "in-progress",
+			StartDate:   "",
+			TargetDate:  "",
+		},
+		GitHub:   githubJSON,
+		Phases:   phases,
+		Summary: SummaryJSON{
+			TotalPhases:    len(phases),
+			Completed:      completedPhases,
+			InProgress:     inProgressPhases,
+			Todo:           todoPhases,
+			TotalFeatures:  totalFeatures,
+			TotalTasks:     totalTasks,
+			CompletedTasks: completedTasks,
+		},
+		Activity: activity,
+		APIKeys: APIKeysJSON{
+			Total:      0,
+			Configured: 0,
+			Pending:    0,
+			Optional:   0,
+			Completion: 0,
+		},
+		Velocity: VelocityJSON{
+			TasksPerDay:        0.0,
+			CommitsPerDay:      0.0,
+			EstimatedCompletion: "",
+			DaysToLaunch:       0,
+		},
+	}
 }
 
 // GenerateInitialDashboard creates the initial dashboard content
