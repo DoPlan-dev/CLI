@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/DoPlan-dev/CLI/internal/commands"
 	"github.com/DoPlan-dev/CLI/internal/context"
 	"github.com/DoPlan-dev/CLI/internal/tui"
 	"github.com/DoPlan-dev/CLI/internal/wizard"
@@ -54,14 +55,14 @@ func executeRoot(cmd *cobra.Command, args []string) error {
 	case context.StateOldDoPlanStructure:
 		return launchMigrationWizard()
 	case context.StateNewDoPlanStructure:
-		return tui.Run() // Open dashboard
+		return tui.RunWithExecutor(commands.NewTUICommandExecutor()) // Open dashboard with command executor
 	case context.StateInsideFeature:
 		return showFeatureView(detector)
 	case context.StateInsidePhase:
 		return showPhaseView(detector)
 	default:
 		// Fallback to dashboard
-		return tui.Run()
+		return tui.RunWithExecutor(commands.NewTUICommandExecutor())
 	}
 }
 
@@ -84,12 +85,12 @@ func launchMigrationWizard() error {
 func showFeatureView(detector *context.Detector) error {
 	// Feature view functionality - fallback to main dashboard for now
 	// TODO: Implement feature-specific view
-	return tui.Run()
+	return tui.RunWithExecutor(commands.NewTUICommandExecutor())
 }
 
 // showPhaseView shows the phase-specific view
 func showPhaseView(detector *context.Detector) error {
 	// Phase view functionality - fallback to main dashboard for now
 	// TODO: Implement phase-specific view
-	return tui.Run()
+	return tui.RunWithExecutor(commands.NewTUICommandExecutor())
 }

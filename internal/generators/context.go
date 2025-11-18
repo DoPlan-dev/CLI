@@ -340,13 +340,13 @@ func (g *ContextGenerator) generateContextContent(stack *TechStack, projectName 
 			sb.WriteString(fmt.Sprintf("- **Core features:** %s\n", state.Idea.Solution))
 			hasContent = true
 		}
-	}
+			}
 	if !hasContent {
 		sb.WriteString("- Brief description: [To be filled]\n")
 		sb.WriteString("- Target audience: [To be filled]\n")
 		sb.WriteString("- Core features: [To be filled]\n")
-	}
-	sb.WriteString("\n")
+			}
+			sb.WriteString("\n")
 
 	// Technology Stack section
 	sb.WriteString("## Technology Stack\n\n")
@@ -415,8 +415,8 @@ func (g *ContextGenerator) generateContextContent(stack *TechStack, projectName 
 		sb.WriteString("- [API Specification](./doplan/contracts/api-spec.json) *(to be created)*\n")
 		sb.WriteString("- [Data Models](./doplan/contracts/data-model.md) *(to be created)*\n")
 		sb.WriteString("- [Design System](./doplan/design/DPR.md) *(to be created)*\n")
-	}
-	sb.WriteString("\n")
+			}
+			sb.WriteString("\n")
 
 	// Development Guidelines
 	sb.WriteString("## Development Guidelines\n\n")

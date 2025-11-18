@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -47,7 +45,7 @@ func Run() error {
 	return err
 }
 
-// RenderBestDoPlanHeader renders the DoPlan header with ASCII art
+// RenderBestDoPlanHeader renders the DoPlan header with ASCII art only
 func RenderBestDoPlanHeader(width int, version string) string {
 	topBorder := lipgloss.NewStyle().
 		Foreground(lipgloss.AdaptiveColor{Dark: "#667eea", Light: "#764ba2"}).
@@ -70,25 +68,6 @@ func RenderBestDoPlanHeader(width int, version string) string {
 		Align(lipgloss.Center).
 		Render(logo)
 
-	title := lipgloss.NewStyle().
-		Foreground(lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#000000"}).
-		Bold(true).
-		Width(width - 4).
-		Align(lipgloss.Center).
-		Render("DoPlan")
-
-	subtitle := lipgloss.NewStyle().
-		Foreground(lipgloss.AdaptiveColor{Dark: "#999999", Light: "#666666"}).
-		Width(width - 4).
-		Align(lipgloss.Center).
-		Render("Project Workflow Manager")
-
-	versionText := lipgloss.NewStyle().
-		Foreground(lipgloss.AdaptiveColor{Dark: "#666666", Light: "#999999"}).
-		Width(width - 4).
-		Align(lipgloss.Center).
-		Render(fmt.Sprintf("v%s", version))
-
 	bottomBorder := lipgloss.NewStyle().
 		Foreground(lipgloss.AdaptiveColor{Dark: "#667eea", Light: "#764ba2"}).
 		Width(width).
@@ -98,10 +77,6 @@ func RenderBestDoPlanHeader(width int, version string) string {
 		topBorder,
 		"",
 		styledLogo,
-		"",
-		title,
-		subtitle,
-		versionText,
 		"",
 		bottomBorder,
 	)

@@ -282,7 +282,7 @@ func TestCopyDir(t *testing.T) {
 	if err := os.MkdirAll(doplanAIDir, 0755); err != nil {
 		t.Fatalf("Failed to create doplan dir: %v", err)
 	}
-	
+
 	// Create test file in doplan/ai/commands
 	testFile := filepath.Join(doplanAIDir, "test.txt")
 	if err := os.WriteFile(testFile, []byte("test content"), 0644); err != nil {
@@ -301,7 +301,7 @@ func TestCopyDir(t *testing.T) {
 	if _, err := os.Stat(commandsDir); err != nil {
 		t.Errorf("Expected commands directory to exist, got error: %v", err)
 	}
-	
+
 	// Verify file is accessible through the symlink/copy
 	copiedFile := filepath.Join(commandsDir, "test.txt")
 	if _, err := os.Stat(copiedFile); err != nil {

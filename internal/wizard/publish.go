@@ -108,8 +108,8 @@ func (m *publishModel) View() string {
 	}
 
 	body := lipgloss.NewStyle().
-		Width(m.width - 4).
-		Height(m.height - lipgloss.Height(header) - 5).
+		Width(m.width-4).
+		Height(m.height-lipgloss.Height(header)-5).
 		Padding(1, 2).
 		Render(content)
 
@@ -175,7 +175,7 @@ func (m *publishModel) renderSuccess() string {
 func (m *publishModel) publish() tea.Cmd {
 	return func() tea.Msg {
 		projectRoot, _ := os.Getwd()
-		
+
 		// Detect package type
 		packageType, err := publisher.DetectPackageType(projectRoot)
 		if err != nil {
@@ -217,4 +217,3 @@ type publishErrorMsg struct {
 }
 
 type publishSuccessMsg struct{}
-

@@ -26,6 +26,7 @@ func (g *AgentsGenerator) Generate() error {
 	}
 
 	agents := map[string]string{
+		"README.md":        generateAgentsREADME(),
 		"planner.agent.md": generatePlannerAgent(),
 		"coder.agent.md":   generateCoderAgent(),
 		"designer.agent.md": generateDesignerAgent(),
@@ -42,6 +43,72 @@ func (g *AgentsGenerator) Generate() error {
 	}
 
 	return nil
+}
+
+func generateAgentsREADME() string {
+	backtick := "`"
+	return `# DoPlan AI Agents
+
+This directory contains AI agent definitions for use with your IDE's AI assistant (Cursor, VS Code Copilot, etc.).
+
+## Available Agents
+
+- **@planner** - Handles idea discussion, refinement, and project planning
+- **@coder** - Implements features based on plans and designs
+- **@designer** - Creates design specifications and UI/UX guidelines
+- **@reviewer** - Reviews code and provides feedback
+- **@tester** - Creates and runs tests
+- **@devops** - Handles deployment and infrastructure
+
+## How to Use
+
+### In Cursor
+1. Type @ in the chat to see available agents
+2. Select an agent (e.g., @planner)
+3. Ask your question or request
+
+### In VS Code with Copilot
+1. Reference agents in your prompts: "Use @planner to help plan this feature"
+2. Agents will follow their defined workflows
+
+### Workflow Rules
+All agents MUST follow the workflow rules defined in ` + backtick + `.doplan/ai/rules/workflow.mdc` + backtick + ` and ` + backtick + `.doplan/ai/rules/communication.mdc` + backtick + `.
+
+## Agent Workflow
+
+1. **@planner** - First step: Discuss idea, refine, generate PRD, create plan
+2. **@designer** - After planning: Create design specifications
+3. **@coder** - After design: Implement features
+4. **@tester** - After implementation: Create and run tests
+5. **@reviewer** - After testing: Review code quality
+6. **@devops** - After review: Handle deployment
+
+## Examples
+
+` + backtick + backtick + backtick + `
+@planner Help me plan a user authentication feature
+@designer Create a design for the login page
+@coder Implement the login functionality
+@tester Write tests for the login feature
+@reviewer Review the login implementation
+` + backtick + backtick + backtick + `
+
+## File Structure
+
+- ` + backtick + `planner.agent.md` + backtick + ` - Planner agent definition
+- ` + backtick + `coder.agent.md` + backtick + ` - Coder agent definition
+- ` + backtick + `designer.agent.md` + backtick + ` - Designer agent definition
+- ` + backtick + `reviewer.agent.md` + backtick + ` - Reviewer agent definition
+- ` + backtick + `tester.agent.md` + backtick + ` - Tester agent definition
+- ` + backtick + `devops.agent.md` + backtick + ` - DevOps agent definition
+
+## Integration
+
+These agents are automatically linked to your IDE:
+- Cursor: ` + backtick + `.cursor/agents/` + backtick + ` → ` + backtick + `.doplan/ai/agents/` + backtick + `
+- VS Code: Available via Copilot Chat
+- Other IDEs: See ` + backtick + `.doplan/guides/` + backtick + ` for setup instructions
+`
 }
 
 func generatePlannerAgent() string {

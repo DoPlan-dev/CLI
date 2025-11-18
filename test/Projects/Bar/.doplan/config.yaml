@@ -1,0 +1,22 @@
+apis:
+    configured: []
+    required: []
+design:
+    hasPreferences: false
+    tokensPath: doplan/design/design-tokens.json
+github:
+    autoBranch: true
+    autoPR: true
+    enabled: true
+    repository: https://github.com/idorgham/friends-bar
+project:
+    ide: cursor
+    name: friends-bar
+    type: landing
+    version: 1.0.0
+security:
+    autoFix: false
+    lastScan: null
+tui:
+    animations: true
+    theme: default

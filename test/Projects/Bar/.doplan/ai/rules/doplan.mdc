@@ -1,0 +1,40 @@
+# DoPlan Workflow Rules
+
+You are working on a project managed by DoPlan CLI.
+
+## Project Structure
+- All phases are in `doplan/##-phase-name/`
+- All features are in `doplan/##-phase-name/##-feature-name/`
+- Documentation is in `doplan/` root
+
+## Workflow
+1. Always read the phase plan before implementing features
+2. Follow the feature design specifications
+3. Update progress.json after completing tasks
+4. Use the DoPlan commands for project management
+
+## Rules Location
+All workflow rules are in `.doplan/ai/rules/`:
+- `workflow.mdc` - Main workflow rules
+- `communication.mdc` - Communication rules
+- Additional rule files for specific areas
+
+## Agents
+AI agents are defined in `.doplan/ai/agents/`:
+- `planner.agent.md` - Planning agent
+- `coder.agent.md` - Implementation agent
+- `designer.agent.md` - Design agent
+- `reviewer.agent.md` - Review agent
+- `tester.agent.md` - Testing agent
+- `devops.agent.md` - DevOps agent
+
+## Commands
+DoPlan commands are available in `.cursor/commands/`:
+- `/discuss` - Start idea discussion
+- `/refine` - Refine idea
+- `/generate` - Generate PRD and contracts
+- `/plan` - Create phase structure
+- `/dashboard` - Show dashboard
+- `/implement` - Start feature implementation
+- `/next` - Get next action recommendation
+- `/progress` - Update progress tracking

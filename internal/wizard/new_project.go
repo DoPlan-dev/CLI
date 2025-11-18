@@ -9,6 +9,7 @@ import (
 
 	"github.com/DoPlan-dev/CLI/internal/config"
 	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
+	"github.com/DoPlan-dev/CLI/internal/generators"
 	"github.com/DoPlan-dev/CLI/internal/integration"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/charmbracelet/bubbles/list"
@@ -45,7 +46,12 @@ type wizardScreen int
 const (
 	screenWelcome wizardScreen = iota
 	screenProjectName
+	screenTemplateChoice
 	screenTemplate
+	screenGitHubType
+	screenGitHubUsername
+	screenGitHubOrg
+	screenGitHubRepoName
 	screenGitHub
 	screenIDE
 	screenInstall
@@ -59,18 +65,25 @@ type newProjectModel struct {
 	currentScreen wizardScreen
 
 	// Project data
-	projectName string
-	template    string
-	githubRepo  string
-	ide         string
+	projectName    string
+	useTemplate    bool
+	template       string
+	githubRepo     string
+	githubRepoType string // "personal" or "organization"
+	githubUsername string
+	githubOrg      string
+	githubRepoName string
+	ide            string
 
 	// UI components
-	textInput    textinput.Model
-	templateList list.Model
-	ideList      list.Model
-	spinner      spinner.Model
-	loading      bool
-	loadingMsg   string
+	textInput          textinput.Model
+	templateChoiceList list.Model
+	templateList       list.Model
+	githubTypeList     list.Model
+	ideList            list.Model
+	spinner            spinner.Model
+	loading            bool
+	loadingMsg         string
 
 	// Installation progress
 	installStep  int
@@ -86,20 +99,50 @@ func newNewProjectModel() *newProjectModel {
 	ti.Width = 50
 
 	templates := []list.Item{
-		templateItem{name: "saas", desc: "SaaS Application (web app with backend)"},
-		templateItem{name: "mobile", desc: "Mobile App (React Native, Flutter, etc.)"},
-		templateItem{name: "ai-agent", desc: "AI Agent (LLM-powered application)"},
+		templateItem{name: "website-frontend", desc: "01- Website (Frontend)"},
+		templateItem{name: "website-admin", desc: "02- Website & Admin Dashboard (Frontend & Backend)"},
+		templateItem{name: "web-app", desc: "03- Web Application"},
+		templateItem{name: "mobile", desc: "04- Mobile Application"},
+		templateItem{name: "micro-saas", desc: "05- Micro SaaS"},
+		templateItem{name: "saas", desc: "06- SaaS"},
+		templateItem{name: "web-game", desc: "07- Web Game"},
+		templateItem{name: "cli", desc: "08- CLI"},
+		templateItem{name: "chrome-ext", desc: "09- Chrome Extension"},
+		templateItem{name: "ai-agent", desc: "10- AI Agent"},
 		templateItem{name: "landing", desc: "Landing Page (marketing website)"},
-		templateItem{name: "chrome-ext", desc: "Chrome Extension"},
 		templateItem{name: "electron", desc: "Electron Desktop App"},
 		templateItem{name: "api", desc: "API Service (REST/GraphQL backend)"},
-		templateItem{name: "cli", desc: "CLI Tool (command-line application)"},
+		templateItem{name: "desktop-app", desc: "Desktop Application"},
+		templateItem{name: "fullstack", desc: "Full Stack Application"},
+		templateItem{name: "backend-service", desc: "Backend Service"},
+		templateItem{name: "data-pipeline", desc: "Data Pipeline"},
+		templateItem{name: "ml-project", desc: "Machine Learning Project"},
 	}
+
+	templateChoiceOptions := []list.Item{
+		templateChoiceItem{name: "use-template", desc: "Use Template"},
+		templateChoiceItem{name: "start-without", desc: "Start without Template"},
+	}
+
+	templateChoiceList := list.New(templateChoiceOptions, list.NewDefaultDelegate(), 0, 0)
+	templateChoiceList.Title = "Choose Template Option"
+	templateChoiceList.SetShowStatusBar(false)
+	templateChoiceList.SetFilteringEnabled(false)
 
 	templateList := list.New(templates, list.NewDefaultDelegate(), 0, 0)
 	templateList.Title = "Select Project Template"
 	templateList.SetShowStatusBar(false)
 	templateList.SetFilteringEnabled(true)
+
+	githubTypes := []list.Item{
+		githubTypeItem{name: "personal", desc: "Personal"},
+		githubTypeItem{name: "organization", desc: "Organization"},
+	}
+
+	githubTypeList := list.New(githubTypes, list.NewDefaultDelegate(), 0, 0)
+	githubTypeList.Title = "Choose Repository Type"
+	githubTypeList.SetShowStatusBar(false)
+	githubTypeList.SetFilteringEnabled(false)
 
 	ides := []list.Item{
 		ideItem{name: "cursor", desc: "Cursor - AI-powered code editor"},
@@ -122,15 +165,18 @@ func newNewProjectModel() *newProjectModel {
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#667eea"))
 
 	return &newProjectModel{
-		currentScreen: screenWelcome,
-		textInput:     ti,
-		templateList:  templateList,
-		ideList:       ideList,
-		spinner:       s,
+		currentScreen:      screenWelcome,
+		textInput:          ti,
+		templateChoiceList: templateChoiceList,
+		templateList:       templateList,
+		githubTypeList:     githubTypeList,
+		ideList:            ideList,
+		spinner:            s,
 		installSteps: []string{
 			"Creating project structure",
 			"Setting up GitHub integration",
 			"Configuring IDE integration",
+			"Generating agents, rules, and commands",
 			"Generating initial files",
 		},
 	}
@@ -148,8 +194,12 @@ func (m *newProjectModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
+		m.templateChoiceList.SetWidth(msg.Width - 4)
+		m.templateChoiceList.SetHeight(msg.Height - 10)
 		m.templateList.SetWidth(msg.Width - 4)
 		m.templateList.SetHeight(msg.Height - 10)
+		m.githubTypeList.SetWidth(msg.Width - 4)
+		m.githubTypeList.SetHeight(msg.Height - 10)
 		m.ideList.SetWidth(msg.Width - 4)
 		m.ideList.SetHeight(msg.Height - 10)
 		return m, nil
@@ -195,8 +245,18 @@ func (m *newProjectModel) updateScreen(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.updateWelcome(msg)
 	case screenProjectName:
 		return m.updateProjectName(msg)
+	case screenTemplateChoice:
+		return m.updateTemplateChoice(msg)
 	case screenTemplate:
 		return m.updateTemplate(msg)
+	case screenGitHubType:
+		return m.updateGitHubType(msg)
+	case screenGitHubUsername:
+		return m.updateGitHubUsername(msg)
+	case screenGitHubOrg:
+		return m.updateGitHubOrg(msg)
+	case screenGitHubRepoName:
+		return m.updateGitHubRepoName(msg)
 	case screenGitHub:
 		return m.updateGitHub(msg)
 	case screenIDE:
@@ -216,6 +276,32 @@ func (m *newProjectModel) updateWelcome(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+func (m *newProjectModel) updateTemplateChoice(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "enter":
+		selected := m.templateChoiceList.SelectedItem()
+		if selected != nil {
+			choice := selected.(templateChoiceItem).name
+			if choice == "use-template" {
+				m.useTemplate = true
+				m.currentScreen = screenTemplate
+			} else {
+				m.useTemplate = false
+				m.template = ""
+				m.currentScreen = screenGitHub
+			}
+		}
+		return m, nil
+	case "esc":
+		m.currentScreen = screenProjectName
+		return m, nil
+	}
+
+	var cmd tea.Cmd
+	m.templateChoiceList, cmd = m.templateChoiceList.Update(msg)
+	return m, cmd
+}
+
 func (m *newProjectModel) updateProjectName(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "enter":
@@ -223,7 +309,7 @@ func (m *newProjectModel) updateProjectName(msg tea.KeyMsg) (tea.Model, tea.Cmd)
 			return m, nil
 		}
 		m.projectName = strings.TrimSpace(m.textInput.Value())
-		m.currentScreen = screenTemplate
+		m.currentScreen = screenTemplateChoice
 		return m, nil
 	case "esc":
 		m.currentScreen = screenWelcome
@@ -241,11 +327,11 @@ func (m *newProjectModel) updateTemplate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		selected := m.templateList.SelectedItem()
 		if selected != nil {
 			m.template = selected.(templateItem).name
-			m.currentScreen = screenGitHub
+			m.currentScreen = screenGitHubType
 		}
 		return m, nil
 	case "esc":
-		m.currentScreen = screenProjectName
+		m.currentScreen = screenTemplateChoice
 		return m, nil
 	}
 
@@ -254,27 +340,119 @@ func (m *newProjectModel) updateTemplate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m *newProjectModel) updateGitHub(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+func (m *newProjectModel) updateGitHubType(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "enter":
-		repo := strings.TrimSpace(m.textInput.Value())
-		if repo == "" {
-			// Show warning but allow proceeding (mandatory check can be added later)
-			m.githubRepo = ""
-		} else {
-			m.githubRepo = repo
+		selected := m.githubTypeList.SelectedItem()
+		if selected != nil {
+			m.githubRepoType = selected.(githubTypeItem).name
+			if m.githubRepoType == "personal" {
+				m.currentScreen = screenGitHubUsername
+			} else {
+				m.currentScreen = screenGitHubOrg
+			}
+			m.textInput.SetValue("")
+			m.textInput.Focus()
 		}
-		m.currentScreen = screenIDE
-		return m, nil
+		return m, textinput.Blink
 	case "esc":
-		m.currentScreen = screenTemplate
+		if m.useTemplate {
+			m.currentScreen = screenTemplate
+		} else {
+			m.currentScreen = screenTemplateChoice
+		}
+		return m, nil
+	}
+
+	var cmd tea.Cmd
+	m.githubTypeList, cmd = m.githubTypeList.Update(msg)
+	return m, cmd
+}
+
+func (m *newProjectModel) updateGitHubUsername(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "enter":
+		username := strings.TrimSpace(m.textInput.Value())
+		if username == "" {
+			return m, nil
+		}
+		m.githubUsername = username
+		m.currentScreen = screenGitHubRepoName
+		m.textInput.SetValue("")
+		m.textInput.Placeholder = "repository-name"
+		return m, textinput.Blink
+	case "esc":
+		m.currentScreen = screenGitHubType
 		return m, nil
 	}
 
 	var cmd tea.Cmd
 	m.textInput, cmd = m.textInput.Update(msg)
-	m.githubRepo = m.textInput.Value()
 	return m, cmd
+}
+
+func (m *newProjectModel) updateGitHubOrg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "enter":
+		org := strings.TrimSpace(m.textInput.Value())
+		if org == "" {
+			return m, nil
+		}
+		m.githubOrg = org
+		m.currentScreen = screenGitHubRepoName
+		m.textInput.SetValue("")
+		m.textInput.Placeholder = "repository-name"
+		return m, textinput.Blink
+	case "esc":
+		m.currentScreen = screenGitHubType
+		return m, nil
+	}
+
+	var cmd tea.Cmd
+	m.textInput, cmd = m.textInput.Update(msg)
+	return m, cmd
+}
+
+func (m *newProjectModel) updateGitHubRepoName(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "enter":
+		repoName := strings.TrimSpace(m.textInput.Value())
+		if repoName == "" {
+			return m, nil
+		}
+		m.githubRepoName = repoName
+		// Build full URL
+		if m.githubRepoType == "personal" {
+			m.githubRepo = fmt.Sprintf("https://github.com/%s/%s", m.githubUsername, m.githubRepoName)
+		} else {
+			m.githubRepo = fmt.Sprintf("https://github.com/%s/%s", m.githubOrg, m.githubRepoName)
+		}
+		m.currentScreen = screenGitHub
+		return m, nil
+	case "esc":
+		if m.githubRepoType == "personal" {
+			m.currentScreen = screenGitHubUsername
+		} else {
+			m.currentScreen = screenGitHubOrg
+		}
+		return m, nil
+	}
+
+	var cmd tea.Cmd
+	m.textInput, cmd = m.textInput.Update(msg)
+	return m, cmd
+}
+
+func (m *newProjectModel) updateGitHub(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "enter":
+		m.currentScreen = screenIDE
+		return m, nil
+	case "esc":
+		m.currentScreen = screenGitHubRepoName
+		return m, nil
+	}
+	return m, nil
 }
 
 func (m *newProjectModel) updateIDE(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
@@ -312,14 +490,27 @@ func (m *newProjectModel) View() string {
 		return "Loading..."
 	}
 
+	// Always render header
+	header := m.renderHeader()
+
 	var view string
 	switch m.currentScreen {
 	case screenWelcome:
 		view = m.renderWelcome()
 	case screenProjectName:
 		view = m.renderProjectName()
+	case screenTemplateChoice:
+		view = m.renderTemplateChoice()
 	case screenTemplate:
 		view = m.renderTemplate()
+	case screenGitHubType:
+		view = m.renderGitHubType()
+	case screenGitHubUsername:
+		view = m.renderGitHubUsername()
+	case screenGitHubOrg:
+		view = m.renderGitHubOrg()
+	case screenGitHubRepoName:
+		view = m.renderGitHubRepoName()
 	case screenGitHub:
 		view = m.renderGitHub()
 	case screenIDE:
@@ -330,10 +521,17 @@ func (m *newProjectModel) View() string {
 		view = m.renderSuccess()
 	}
 
-	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, view)
+	// Combine header and content
+	content := lipgloss.JoinVertical(lipgloss.Center, header, "", view)
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
 }
 
-func (m *newProjectModel) renderWelcome() string {
+func (m *newProjectModel) renderHeader() string {
+	topBorder := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#667eea")).
+		Width(m.width).
+		Render("╔" + strings.Repeat("═", m.width-2) + "╗")
+
 	logo := `
   ██████╗░░█████╗░██████╗░██╗░░░░░░█████╗░███╗░░██╗
   ██╔══██╗██╔══██╗██╔══██╗██║░░░░░██╔══██╗████╗░██║
@@ -343,6 +541,28 @@ func (m *newProjectModel) renderWelcome() string {
   ╚═════╝░░╚════╝░╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝
 `
 
+	styledLogo := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#667eea")).
+		Bold(true).
+		Width(m.width - 4).
+		Align(lipgloss.Center).
+		Render(logo)
+
+	bottomBorder := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#667eea")).
+		Width(m.width).
+		Render("╚" + strings.Repeat("═", m.width-2) + "╝")
+
+	return lipgloss.JoinVertical(lipgloss.Center,
+		topBorder,
+		"",
+		styledLogo,
+		"",
+		bottomBorder,
+	)
+}
+
+func (m *newProjectModel) renderWelcome() string {
 	title := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#667eea")).
 		Bold(true).
@@ -364,8 +584,6 @@ func (m *newProjectModel) renderWelcome() string {
 
 	return lipgloss.JoinVertical(
 		lipgloss.Center,
-		logo,
-		"",
 		title,
 		"",
 		subtitle,
@@ -402,6 +620,22 @@ func (m *newProjectModel) renderProjectName() string {
 	)
 }
 
+func (m *newProjectModel) renderTemplateChoice() string {
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#667eea")).
+			Bold(true).
+			Render("Choose Template Option"),
+		"",
+		m.templateChoiceList.View(),
+		"",
+		lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#666666")).
+			Render("Press Enter to select, Esc to go back"),
+	)
+}
+
 func (m *newProjectModel) renderTemplate() string {
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
@@ -418,24 +652,43 @@ func (m *newProjectModel) renderTemplate() string {
 	)
 }
 
-func (m *newProjectModel) renderGitHub() string {
+func (m *newProjectModel) renderGitHubType() string {
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#667eea")).
+			Bold(true).
+			Render("GitHub Repository Setup"),
+		"",
+		lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#f59e0b")).
+			Render("⚠️  GitHub repository is required for full functionality"),
+		"",
+		lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#ffffff")).
+			Render("Choose from: Personal / Organization"),
+		"",
+		m.githubTypeList.View(),
+		"",
+		lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#666666")).
+			Render("Press Enter to select, Esc to go back"),
+	)
+}
+
+func (m *newProjectModel) renderGitHubUsername() string {
 	title := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#667eea")).
 		Bold(true).
-		Render("GitHub Repository")
-
-	warning := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#f59e0b")).
-		Render("⚠️  GitHub repository is required for full functionality")
+		Render("GitHub Username")
 
 	prompt := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#ffffff")).
-		Render("Enter GitHub repository URL (or press Enter to skip):")
+		Render("GitHub Username:")
 
-	// Reset text input for GitHub screen
-	if m.textInput.Placeholder != "https://github.com/username/repo" {
-		m.textInput.Placeholder = "https://github.com/username/repo"
-		m.textInput.SetValue(m.githubRepo)
+	if m.textInput.Placeholder != "username" {
+		m.textInput.Placeholder = "username"
+		m.textInput.SetValue(m.githubUsername)
 		m.textInput.Focus()
 	}
 	input := m.textInput.View()
@@ -448,11 +701,100 @@ func (m *newProjectModel) renderGitHub() string {
 		lipgloss.Left,
 		title,
 		"",
-		warning,
+		prompt,
+		"",
+		input,
+		"",
+		help,
+	)
+}
+
+func (m *newProjectModel) renderGitHubOrg() string {
+	title := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#667eea")).
+		Bold(true).
+		Render("GitHub Organization")
+
+	prompt := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#ffffff")).
+		Render("GitHub Organization:")
+
+	if m.textInput.Placeholder != "organization" {
+		m.textInput.Placeholder = "organization"
+		m.textInput.SetValue(m.githubOrg)
+		m.textInput.Focus()
+	}
+	input := m.textInput.View()
+
+	help := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#666666")).
+		Render("Press Enter to continue, Esc to go back")
+
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		title,
 		"",
 		prompt,
 		"",
 		input,
+		"",
+		help,
+	)
+}
+
+func (m *newProjectModel) renderGitHubRepoName() string {
+	title := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#667eea")).
+		Bold(true).
+		Render("Repository Name")
+
+	prompt := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#ffffff")).
+		Render("Repository Name:")
+
+	if m.textInput.Placeholder != "repository-name" {
+		m.textInput.Placeholder = "repository-name"
+		m.textInput.SetValue(m.githubRepoName)
+		m.textInput.Focus()
+	}
+	input := m.textInput.View()
+
+	help := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#666666")).
+		Render("Press Enter to continue, Esc to go back")
+
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		title,
+		"",
+		prompt,
+		"",
+		input,
+		"",
+		help,
+	)
+}
+
+func (m *newProjectModel) renderGitHub() string {
+	title := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#667eea")).
+		Bold(true).
+		Render("GitHub Repository")
+
+	urlStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#10b981")).
+		Bold(true).
+		Render(fmt.Sprintf("Repository URL: %s", m.githubRepo))
+
+	help := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#666666")).
+		Render("Press Enter to continue, Esc to go back")
+
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		title,
+		"",
+		urlStyle,
 		"",
 		help,
 	)
@@ -571,11 +913,18 @@ func (m *newProjectModel) nextInstallStep() tea.Cmd {
 			return installStepMsg{step: 3, done: false}
 
 		case 3:
+			// Generate agents, rules, and commands
+			if err := m.generateAgentsAndRules(projectRoot); err != nil {
+				return installErrorMsg{err: err}
+			}
+			return installStepMsg{step: 4, done: false}
+
+		case 4:
 			// Generate initial files
 			if err := m.generateInitialFiles(projectRoot); err != nil {
 				return installErrorMsg{err: err}
 			}
-			return installStepMsg{step: 4, done: true}
+			return installStepMsg{step: 5, done: true}
 		}
 
 		return installStepMsg{step: m.installStep, done: true}
@@ -583,10 +932,11 @@ func (m *newProjectModel) nextInstallStep() tea.Cmd {
 }
 
 func (m *newProjectModel) createProjectStructure(projectRoot string) error {
+	// Only create .doplan structure - doplan/ folder will be created when phases are added
 	dirs := []string{
-		filepath.Join(projectRoot, ".doplan"),
-		filepath.Join(projectRoot, "doplan", "contracts"),
-		filepath.Join(projectRoot, "doplan", "templates"),
+		filepath.Join(projectRoot, ".doplan", "ai", "agents"),
+		filepath.Join(projectRoot, ".doplan", "ai", "rules"),
+		filepath.Join(projectRoot, ".doplan", "ai", "commands"),
 	}
 
 	for _, dir := range dirs {
@@ -614,6 +964,28 @@ func (m *newProjectModel) setupGitHub(projectRoot string) error {
 
 func (m *newProjectModel) setupIDE(projectRoot string) error {
 	return integration.SetupIDE(projectRoot, m.ide)
+}
+
+func (m *newProjectModel) generateAgentsAndRules(projectRoot string) error {
+	// Generate agents
+	agentsGen := generators.NewAgentsGenerator(projectRoot)
+	if err := agentsGen.Generate(); err != nil {
+		return fmt.Errorf("failed to generate agents: %w", err)
+	}
+
+	// Generate rules
+	rulesGen := generators.NewRulesGenerator(projectRoot)
+	if err := rulesGen.Generate(); err != nil {
+		return fmt.Errorf("failed to generate rules: %w", err)
+	}
+
+	// Generate commands
+	commandsGen := generators.NewCommandsGenerator(projectRoot)
+	if err := commandsGen.Generate(); err != nil {
+		return fmt.Errorf("failed to generate commands: %w", err)
+	}
+
+	return nil
 }
 
 func (m *newProjectModel) generateInitialFiles(projectRoot string) error {
@@ -706,6 +1078,24 @@ type templateItem struct {
 func (i templateItem) FilterValue() string { return i.name }
 func (i templateItem) Title() string       { return i.name }
 func (i templateItem) Description() string { return i.desc }
+
+type templateChoiceItem struct {
+	name string
+	desc string
+}
+
+func (i templateChoiceItem) FilterValue() string { return i.name }
+func (i templateChoiceItem) Title() string       { return i.name }
+func (i templateChoiceItem) Description() string { return i.desc }
+
+type githubTypeItem struct {
+	name string
+	desc string
+}
+
+func (i githubTypeItem) FilterValue() string { return i.name }
+func (i githubTypeItem) Title() string       { return i.name }
+func (i githubTypeItem) Description() string { return i.desc }
 
 type ideItem struct {
 	name string
