@@ -57,8 +57,7 @@ func (e *TUICommandExecutor) UpdateProgress() error {
 }
 
 func (e *TUICommandExecutor) ManageAPIKeys() error {
-	// TODO: Implement keys command
-	return nil
+	return ManageAPIKeys()
 }
 
 func (e *TUICommandExecutor) ApplyDesign() error {

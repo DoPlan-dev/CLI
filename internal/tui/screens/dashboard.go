@@ -9,6 +9,7 @@ import (
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/internal/dashboard"
 	"github.com/DoPlan-dev/CLI/internal/github"
+	"github.com/DoPlan-dev/CLI/internal/rakd"
 	"github.com/DoPlan-dev/CLI/internal/statistics"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/charmbracelet/bubbles/list"
@@ -51,6 +52,7 @@ type DashboardModel struct {
 	statistics    *statistics.StatisticsMetrics
 	dashboardJSON *models.DashboardJSON // Loaded from dashboard.json
 	lastUpdate    time.Time             // Last update time from dashboard.json
+	rakdData      *rakd.RAKDData        // API keys status data
 
 	// Views
 	currentView string // "dashboard", "phases", "features", "github", "config", "stats"
@@ -94,8 +96,15 @@ type loadDataMsg struct {
 	dashboardJSON      *models.DashboardJSON
 	lastUpdate         time.Time
 	usingDashboardJSON bool
+	rakdData           *rakd.RAKDData
 	err                error
 }
+
+// BackToMenuMsg is sent when user wants to go back to main menu
+type BackToMenuMsg struct{}
+
+// OpenKeysManagementMsg is sent when user wants to open keys management
+type OpenKeysManagementMsg struct{}
 
 func loadDataCmd() tea.Msg {
 	projectRoot, _ := os.Getwd()
@@ -106,18 +115,24 @@ func loadDataCmd() tea.Msg {
 		dashboardJSON, err := loader.LoadDashboard()
 		if err == nil {
 			lastUpdate, _ := loader.GetLastUpdateTime()
-
+			
 			// Load config (cached, fast)
 			cfgMgr := config.NewManager(projectRoot)
 			cfg, _ := cfgMgr.LoadConfig()
-
+			
 			// Load GitHub data (cached, relatively fast)
 			var githubData *github.GitHubData
-			githubSync := github.NewGitHubSync(projectRoot)
+				githubSync := github.NewGitHubSync(projectRoot)
 			githubData, _ = githubSync.LoadData()
-
+				
 			// Statistics loading is deferred - load on demand when stats view is accessed
 			// This keeps initial load fast (<100ms target)
+			// Load RAKD data (API keys status)
+			var rakdData *rakd.RAKDData
+			if rakData, err := rakd.GenerateRAKD(projectRoot); err == nil {
+				rakdData = rakData
+			}
+			
 			return loadDataMsg{
 				dashboardJSON:      dashboardJSON,
 				lastUpdate:         lastUpdate,
@@ -125,6 +140,7 @@ func loadDataCmd() tea.Msg {
 				config:             cfg,
 				githubData:         githubData,
 				statistics:         nil, // Load on demand
+				rakdData:           rakdData,
 			}
 		}
 	}
@@ -143,29 +159,36 @@ func loadDataCmd() tea.Msg {
 	cfg, _ := cfgMgr.LoadConfig()
 
 	// Statistics loading deferred - load on demand
+	// Load RAKD data (API keys status)
+	var rakdData *rakd.RAKDData
+	if rakData, err := rakd.GenerateRAKD(projectRoot); err == nil {
+		rakdData = rakData
+	}
+
 	return loadDataMsg{
 		state:              state,
 		githubData:         githubData,
 		config:             cfg,
 		statistics:         nil, // Load on demand when stats view accessed
 		usingDashboardJSON: false,
+		rakdData:           rakdData,
 	}
 }
 
 // loadStatisticsCmd loads statistics on demand (for stats view)
 func loadStatisticsCmd(projectRoot string, state *models.State, githubData *github.GitHubData, cfg *models.Config) tea.Cmd {
 	return func() tea.Msg {
-		var stats *statistics.StatisticsMetrics
-		collector := statistics.NewCollector(projectRoot)
-		data, err := collector.Collect()
-		if err == nil {
-			projectStartDate := cfg.InstalledAt
-			if projectStartDate.IsZero() {
-				projectStartDate = time.Now()
-			}
-			calculator := statistics.NewCalculator(projectStartDate)
-			stats = calculator.Calculate(data, state, githubData)
+	var stats *statistics.StatisticsMetrics
+	collector := statistics.NewCollector(projectRoot)
+	data, err := collector.Collect()
+	if err == nil {
+		projectStartDate := cfg.InstalledAt
+		if projectStartDate.IsZero() {
+			projectStartDate = time.Now()
 		}
+		calculator := statistics.NewCalculator(projectStartDate)
+		stats = calculator.Calculate(data, state, githubData)
+	}
 		return statisticsLoadedMsg{statistics: stats}
 	}
 }
@@ -257,12 +280,13 @@ func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.dashboardJSON = msg.dashboardJSON
 		m.lastUpdate = msg.lastUpdate
 		m.usingDashboardJSON = msg.usingDashboardJSON
-
+		m.rakdData = msg.rakdData
+		
 		// If using dashboard.json, convert to state for compatibility
 		if m.usingDashboardJSON && m.dashboardJSON != nil && m.state == nil {
 			m.state = convertDashboardToState(m.dashboardJSON)
 		}
-
+		
 		m.loading = false
 		m.setupLists()
 		// Schedule next auto-refresh
@@ -276,6 +300,11 @@ func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
+		case "m", "esc":
+			// Go back to main menu
+			return m, func() tea.Msg {
+				return BackToMenuMsg{}
+			}
 		case "1":
 			m.currentView = "dashboard"
 			return m, nil
@@ -305,6 +334,11 @@ func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 			return m, nil
+		case "k":
+			// Open keys management
+			return m, func() tea.Msg {
+				return OpenKeysManagementMsg{}
+			}
 		case "r":
 			m.loading = true
 			return m, tea.Batch(loadDataCmd, m.spinner.Tick)
@@ -409,25 +443,6 @@ func renderHeader(width int, version string) string {
 		Align(lipgloss.Center).
 		Render(logo)
 
-	title := lipgloss.NewStyle().
-		Foreground(lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#000000"}).
-		Bold(true).
-		Width(width - 4).
-		Align(lipgloss.Center).
-		Render("DoPlan")
-
-	subtitle := lipgloss.NewStyle().
-		Foreground(lipgloss.AdaptiveColor{Dark: "#999999", Light: "#666666"}).
-		Width(width - 4).
-		Align(lipgloss.Center).
-		Render("Project Workflow Manager")
-
-	versionText := lipgloss.NewStyle().
-		Foreground(lipgloss.AdaptiveColor{Dark: "#666666", Light: "#999999"}).
-		Width(width - 4).
-		Align(lipgloss.Center).
-		Render(fmt.Sprintf("v%s", version))
-
 	bottomBorder := lipgloss.NewStyle().
 		Foreground(lipgloss.AdaptiveColor{Dark: "#667eea", Light: "#764ba2"}).
 		Width(width).
@@ -437,10 +452,6 @@ func renderHeader(width int, version string) string {
 		topBorder,
 		"",
 		styledLogo,
-		"",
-		title,
-		subtitle,
-		versionText,
 		"",
 		bottomBorder,
 	)
@@ -475,7 +486,7 @@ func (m *DashboardModel) renderDashboard() string {
 	var overallProgress int
 	var phases []models.Phase
 	var features []models.Feature
-
+	
 	if m.usingDashboardJSON && m.dashboardJSON != nil {
 		overallProgress = m.dashboardJSON.Project.Progress
 		// Convert dashboard JSON phases to models.Phase
@@ -487,7 +498,7 @@ func (m *DashboardModel) renderDashboard() string {
 				Description: phaseJSON.Description,
 			}
 			phases = append(phases, phase)
-
+			
 			// Add features
 			for _, featureJSON := range phaseJSON.Features {
 				feature := models.Feature{
@@ -556,13 +567,19 @@ func (m *DashboardModel) renderDashboard() string {
 	sections = append(sections, fmt.Sprintf("%d%% %s", overallProgress, progressStyle.Render(progressBar)))
 	sections = append(sections, "")
 
+	// API Keys Status Widget
+	if m.rakdData != nil && len(m.rakdData.Services) > 0 {
+		sections = append(sections, m.renderAPIKeysWidget())
+		sections = append(sections, "")
+	}
+
 	// Stats grid
 	if m.usingDashboardJSON && m.dashboardJSON != nil {
 		summary := m.dashboardJSON.Summary
 		statsGrid := fmt.Sprintf(
 			"Phases: %d total | %d ✓ | %d → | %d ○\n"+
-				"Features: %d total | %d ✓ | %d →\n"+
-				"Tasks: %d total | %d ✓",
+			"Features: %d total | %d ✓ | %d →\n"+
+			"Tasks: %d total | %d ✓",
 			summary.TotalPhases, summary.Completed, summary.InProgress, summary.Todo,
 			summary.TotalFeatures, summary.Completed, summary.InProgress,
 			summary.TotalTasks, summary.CompletedTasks,
@@ -574,15 +591,15 @@ func (m *DashboardModel) renderDashboard() string {
 		// Velocity section with sparkline
 		if m.dashboardJSON.Velocity.CommitsPerDay > 0 || m.dashboardJSON.Velocity.TasksPerDay > 0 {
 			sections = append(sections, titleStyle.Render("Velocity"))
-			velocityText := fmt.Sprintf("Commits/day: %.1f | Tasks/day: %.1f",
+			velocityText := fmt.Sprintf("Commits/day: %.1f | Tasks/day: %.1f", 
 				m.dashboardJSON.Velocity.CommitsPerDay,
 				m.dashboardJSON.Velocity.TasksPerDay)
 			sections = append(sections, velocityText)
-
+			
 			// Generate simple sparkline (placeholder - would need velocity history)
 			// For now, show trend indicator
 			if m.dashboardJSON.Velocity.DaysToLaunch > 0 {
-				sections = append(sections, fmt.Sprintf("Est. completion: %s (%d days)",
+				sections = append(sections, fmt.Sprintf("Est. completion: %s (%d days)", 
 					m.dashboardJSON.Velocity.EstimatedCompletion,
 					m.dashboardJSON.Velocity.DaysToLaunch))
 			}
@@ -634,13 +651,13 @@ func (m *DashboardModel) renderDashboard() string {
 			} else {
 				statusStyle = progressTodoStyle
 			}
-
+			
 			// Mini progress bar
 			progressWidth := 20
 			filled := int(float64(progress) / 100.0 * float64(progressWidth))
 			bar := strings.Repeat("█", filled) + strings.Repeat("░", progressWidth-filled)
 			coloredBar := statusStyle.Render(bar)
-
+			
 			sections = append(sections, fmt.Sprintf("  %s %s %s (%d%%)", status, phase.Name, coloredBar, progress))
 		}
 	}
@@ -667,13 +684,13 @@ func (m *DashboardModel) renderDashboard() string {
 			} else {
 				statusStyle = progressTodoStyle
 			}
-
+			
 			// Mini progress bar for features
 			progressWidth := 15
 			filled := int(float64(feature.Progress) / 100.0 * float64(progressWidth))
 			bar := strings.Repeat("█", filled) + strings.Repeat("░", progressWidth-filled)
 			coloredBar := statusStyle.Render(bar)
-
+			
 			sections = append(sections, fmt.Sprintf("  %s %s %s (%d%%)", status, feature.Name, coloredBar, feature.Progress))
 			count++
 		}
@@ -858,15 +875,78 @@ func (m *DashboardModel) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m *DashboardModel) renderFooter() string {
-	help := helpStyle.Render("Press [1-6] to switch views | [r] to refresh | [q] to quit")
+func (m *DashboardModel) renderAPIKeysWidget() string {
+	data := m.rakdData
+	if data == nil {
+		return ""
+	}
 
+	total := len(data.Services)
+	if total == 0 {
+		return ""
+	}
+
+	// Calculate progress percentage
+	progress := 0.0
+	if total > 0 {
+		configured := data.ConfiguredCount
+		progress = float64(configured) / float64(total) * 100
+	}
+
+	// Progress bar
+	progressWidth := 30
+	filled := int(progress / 100.0 * float64(progressWidth))
+	bar := strings.Repeat("█", filled) + strings.Repeat("░", progressWidth-filled)
+	
+	var barStyle lipgloss.Style
+	if progress == 100 {
+		barStyle = progressCompleteStyle
+	} else if progress >= 50 {
+		barStyle = progressInProgressStyle
+	} else {
+		barStyle = progressTodoStyle
+	}
+	coloredBar := barStyle.Render(bar)
+
+	// Status summary
+	statusLine := fmt.Sprintf("✅ %d | 🔴 %d | 🟡 %d | 🔵 %d",
+		data.ConfiguredCount,
+		data.RequiredCount,
+		data.PendingCount,
+		data.OptionalCount)
+
+	// Highlight high-priority missing keys
+	warning := ""
+	if data.RequiredCount > 0 {
+		warning = fmt.Sprintf(" ⚠️  %d required keys missing!", data.RequiredCount)
+		warningStyle := lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#ef4444")).
+			Bold(true)
+		warning = warningStyle.Render(warning)
+	}
+
+	widget := titleStyle.Render("🔑 API Keys Status")
+	widget += "\n"
+	widget += fmt.Sprintf("%.0f%% %s\n", progress, coloredBar)
+	widget += statusLine
+	if warning != "" {
+		widget += "\n" + warning
+	}
+	widget += "\n"
+	widget += helpStyle.Render("Press [k] to manage keys")
+
+	return widget
+}
+
+func (m *DashboardModel) renderFooter() string {
+	help := helpStyle.Render("Press [1-6] to switch views | [k] for keys | [r] to refresh | [m] to menu | [q] to quit")
+	
 	// Add last update time if using dashboard.json
 	updateInfo := ""
 	if m.usingDashboardJSON && !m.lastUpdate.IsZero() {
 		updateInfo = fmt.Sprintf(" | Last updated: %s", m.lastUpdate.Format("15:04:05"))
 	}
-
+	
 	return strings.Repeat("─", m.width-4) + "\n" + help + updateInfo
 }
 

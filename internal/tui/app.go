@@ -167,8 +167,17 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return screens.SuccessMsg{Message: "Design system generated"}
 				},
 			)
-		case "keys", "integration":
-			// These will be implemented in later phases
+		case "keys":
+			return a, tea.Sequence(
+				func() tea.Msg {
+					if err := a.executor.ManageAPIKeys(); err != nil {
+						return screens.ErrorMsg{Error: err}
+					}
+					return screens.SuccessMsg{Message: "API keys managed"}
+				},
+			)
+		case "integration":
+			// This will be implemented in later phases
 			return a, tea.Sequence(
 				tea.Printf("Action '%s' - Coming soon in v0.0.19-beta!\n", msg.Action),
 				func() tea.Msg {
@@ -194,9 +203,19 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		a.current = "menu"
 		return a, nil
 
-	case screens.BackToMenuMsg:
-		a.current = "menu"
-		return a, nil
+		case screens.BackToMenuMsg:
+			a.current = "menu"
+			return a, nil
+		case screens.OpenKeysManagementMsg:
+			// Open keys management
+			return a, tea.Sequence(
+				func() tea.Msg {
+					if err := a.executor.ManageAPIKeys(); err != nil {
+						return screens.ErrorMsg{Error: err}
+					}
+					return screens.SuccessMsg{Message: "API keys managed"}
+				},
+			)
 	}
 
 	// Delegate to current screen
