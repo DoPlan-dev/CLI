@@ -25,13 +25,14 @@ func TestRulesGenerator_Generate(t *testing.T) {
 	err := gen.Generate()
 	require.NoError(t, err)
 
-	// Check rules directory
-	rulesDir := filepath.Join(projectRoot, ".cursor", "rules")
+	// Check rules directory (now in .doplan/ai/rules/)
+	rulesDir := filepath.Join(projectRoot, ".doplan", "ai", "rules")
 	assert.DirExists(t, rulesDir)
 
 	// Check all rule files
 	rules := []string{
-		"workflow-rules.md",
+		"workflow.mdc",
+		"communication.mdc",
 		"github-rules.md",
 		"command-rules.md",
 		"branch-rules.md",
@@ -51,7 +52,7 @@ func TestRulesGenerator_Generate(t *testing.T) {
 
 func TestRulesGenerator_Generate_ExistingDirectory(t *testing.T) {
 	projectRoot := helpers.CreateTempProject(t)
-	rulesDir := filepath.Join(projectRoot, ".cursor", "rules")
+	rulesDir := filepath.Join(projectRoot, ".doplan", "ai", "rules")
 	require.NoError(t, os.MkdirAll(rulesDir, 0755))
 
 	gen := NewRulesGenerator(projectRoot)
@@ -59,7 +60,7 @@ func TestRulesGenerator_Generate_ExistingDirectory(t *testing.T) {
 	require.NoError(t, err)
 
 	// Should still create files
-	assert.FileExists(t, filepath.Join(rulesDir, "workflow-rules.md"))
+	assert.FileExists(t, filepath.Join(rulesDir, "workflow.mdc"))
 }
 
 func TestGenerateWorkflowRules(t *testing.T) {

@@ -9,6 +9,7 @@ import (
 
 	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/internal/context"
+	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
 	"github.com/DoPlan-dev/CLI/internal/integration"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/charmbracelet/bubbles/list"
@@ -679,7 +680,10 @@ func (m *adoptProjectModel) createProjectStructure() error {
 
 	for _, dir := range dirs {
 		if err := os.MkdirAll(dir, 0755); err != nil {
-			return fmt.Errorf("failed to create directory %s: %w", dir, err)
+			return doplanerror.NewIOError("IO003", "Failed to create directory").
+				WithPath(dir).
+				WithCause(err).
+				WithSuggestion("Check file system permissions")
 		}
 	}
 
@@ -759,7 +763,10 @@ func (m *adoptProjectModel) saveConfigYAML(cfg *models.Config, githubRepo string
 
 	// Ensure directory exists
 	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
-		return fmt.Errorf("failed to create config directory: %w", err)
+		return doplanerror.NewIOError("IO003", "Failed to create config directory").
+			WithPath(filepath.Dir(configPath)).
+			WithCause(err).
+			WithSuggestion("Check file system permissions")
 	}
 
 	// Get project name from directory
@@ -799,7 +806,9 @@ func (m *adoptProjectModel) saveConfigYAML(cfg *models.Config, githubRepo string
 
 	data, err := yaml.Marshal(yamlConfig)
 	if err != nil {
-		return fmt.Errorf("failed to marshal YAML config: %w", err)
+		return doplanerror.NewConfigError("CFG002", "Failed to marshal YAML config").
+			WithCause(err).
+			WithSuggestion("Check YAML configuration structure")
 	}
 
 	if err := os.WriteFile(configPath, data, 0644); err != nil {

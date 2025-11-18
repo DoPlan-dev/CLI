@@ -64,7 +64,7 @@ func (a *ActivityGenerator) GenerateActivityFeed() ActivityData {
 		commits24h := 0
 		commits7d := 0
 		for _, commit := range a.githubData.Commits {
-			commitTime, err := parseTime(commit.Date)
+			commitTime, err := ParseTime(commit.Date)
 			if err != nil {
 				continue
 			}
@@ -168,7 +168,7 @@ func (a *ActivityGenerator) GenerateActivityFeed() ActivityData {
 
 // FormatTimeAgo formats a timestamp as relative time
 func FormatTimeAgo(timestamp string) string {
-	t, err := parseTime(timestamp)
+	t, err := ParseTime(timestamp)
 	if err != nil {
 		return timestamp
 	}
@@ -194,8 +194,8 @@ func FormatTimeAgo(timestamp string) string {
 	return fmt.Sprintf("%dd ago", days)
 }
 
-// parseTime parses various time formats
-func parseTime(timeStr string) (time.Time, error) {
+// ParseTime parses various time formats (public for testing)
+func ParseTime(timeStr string) (time.Time, error) {
 	// Try RFC3339 first
 	if t, err := time.Parse(time.RFC3339, timeStr); err == nil {
 		return t, nil
@@ -227,8 +227,8 @@ func sortActivitiesByTime(activities []ActivityItemData) []ActivityItemData {
 	// Simple bubble sort (can be optimized if needed)
 	for i := 0; i < len(activities); i++ {
 		for j := i + 1; j < len(activities); j++ {
-			timeI, errI := parseTime(activities[i].Timestamp)
-			timeJ, errJ := parseTime(activities[j].Timestamp)
+			timeI, errI := ParseTime(activities[i].Timestamp)
+			timeJ, errJ := ParseTime(activities[j].Timestamp)
 
 			if errI != nil || errJ != nil {
 				continue
@@ -248,7 +248,7 @@ func CalculateActivityPeriods(activities []ActivityItemData, since time.Time) Ac
 	period := ActivityPeriodData{}
 
 	for _, activity := range activities {
-		activityTime, err := parseTime(activity.Timestamp)
+		activityTime, err := ParseTime(activity.Timestamp)
 		if err != nil {
 			continue
 		}

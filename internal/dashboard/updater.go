@@ -4,14 +4,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-
-	"github.com/DoPlan-dev/CLI/internal/config"
-	"github.com/DoPlan-dev/CLI/internal/generators"
-	"github.com/DoPlan-dev/CLI/internal/github"
-	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // Updater handles dashboard.json updates
+// Note: UpdateDashboard is now in generators package to avoid import cycle
 type Updater struct {
 	projectRoot string
 }
@@ -23,60 +19,12 @@ func NewUpdater(projectRoot string) *Updater {
 	}
 }
 
-// UpdateDashboard regenerates dashboard.json
+// UpdateDashboard is deprecated - use generators.UpdateDashboard instead
+// This method is kept for backward compatibility but will be removed
 func (u *Updater) UpdateDashboard() error {
-	// Load state
-	configMgr := config.NewManager(u.projectRoot)
-	state, err := configMgr.LoadState()
-	if err != nil {
-		return fmt.Errorf("failed to load state: %w", err)
-	}
-
-	// Load config
-	cfg, err := configMgr.LoadConfig()
-	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
-	}
-
-	// Sync GitHub data if configured
-	var githubData *models.GitHubData
-	if cfg.GitHub.Enabled {
-		githubSync := github.NewGitHubSync(u.projectRoot)
-		githubData, err = githubSync.Sync()
-		if err != nil {
-			// Continue without GitHub data if sync fails
-			githubData = &models.GitHubData{}
-		}
-	} else {
-		githubData = &models.GitHubData{}
-	}
-
-	// Read progress files
-	progressParser := NewProgressParser(u.projectRoot)
-	progressData, err := progressParser.ReadProgressFiles()
-	if err != nil {
-		// Continue without progress data if parsing fails
-		progressData = make(map[string]*ProgressData)
-	}
-
-	// Generate activity feed
-	activityGen := NewActivityGenerator(state, githubData, progressData)
-	activity := activityGen.GenerateActivityFeed()
-
-	// Create dashboard generator
-	gen := generators.NewDashboardGenerator(u.projectRoot, state, githubData)
-	
-	// Generate dashboard JSON
-	if err := gen.GenerateJSON(); err != nil {
-		return fmt.Errorf("failed to generate dashboard JSON: %w", err)
-	}
-
-	// Also generate markdown and HTML for backward compatibility
-	if err := gen.Generate(); err != nil {
-		return fmt.Errorf("failed to generate dashboard: %w", err)
-	}
-
-	return nil
+	// This creates an import cycle, so we need to use generators.UpdateDashboard directly
+	// For now, return an error directing users to use generators.UpdateDashboard
+	return fmt.Errorf("UpdateDashboard has been moved to generators package. Use generators.UpdateDashboard instead")
 }
 
 // DashboardExists checks if dashboard.json exists

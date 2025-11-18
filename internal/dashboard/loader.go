@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/DoPlan-dev/CLI/internal/generators"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // Loader loads dashboard data from dashboard.json
@@ -23,7 +23,7 @@ func NewLoader(projectRoot string) *Loader {
 }
 
 // LoadDashboard loads dashboard.json and returns the dashboard data
-func (l *Loader) LoadDashboard() (*generators.DashboardJSON, error) {
+func (l *Loader) LoadDashboard() (*models.DashboardJSON, error) {
 	dashboardPath := filepath.Join(l.projectRoot, ".doplan", "dashboard.json")
 
 	// Check if dashboard.json exists
@@ -38,7 +38,7 @@ func (l *Loader) LoadDashboard() (*generators.DashboardJSON, error) {
 	}
 
 	// Parse JSON
-	var dashboard generators.DashboardJSON
+	var dashboard models.DashboardJSON
 	if err := json.Unmarshal(data, &dashboard); err != nil {
 		return nil, fmt.Errorf("failed to parse dashboard.json: %w", err)
 	}

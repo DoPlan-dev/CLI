@@ -67,6 +67,19 @@ func SetupCursor(projectRoot string) error {
 	}
 
 	for link, target := range symlinks {
+		// If link exists and has files, copy them to target first
+		if linkInfo, err := os.Stat(link); err == nil {
+			if linkInfo.IsDir() {
+				// Copy existing files from link to target before replacing
+				if err := os.MkdirAll(target, 0755); err != nil {
+					return fmt.Errorf("failed to create target %s: %w", target, err)
+				}
+				if err := copyDir(link, target); err != nil {
+					return fmt.Errorf("failed to copy existing files from %s to %s: %w", link, target, err)
+				}
+			}
+		}
+
 		// Remove existing link/directory if it exists
 		if err := os.RemoveAll(link); err != nil && !os.IsNotExist(err) {
 			return fmt.Errorf("failed to remove %s: %w", link, err)

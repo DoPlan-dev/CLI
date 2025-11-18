@@ -407,10 +407,15 @@ Update all progress tracking files. Recalculate progress bars for phases and fea
 
 	commandsDir := filepath.Join(i.projectRoot, ".cursor", "commands")
 
+	// Ensure directory exists (in case createDirectories didn't run or failed)
+	if err := os.MkdirAll(commandsDir, 0755); err != nil {
+		return fmt.Errorf("failed to create commands directory: %w", err)
+	}
+
 	for filename, content := range commands {
 		path := filepath.Join(commandsDir, filename)
 		if err := os.WriteFile(path, []byte(content), 0644); err != nil {
-			return err
+			return fmt.Errorf("failed to write command file %s: %w", filename, err)
 		}
 	}
 

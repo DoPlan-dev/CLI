@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/DoPlan-dev/CLI/internal/context"
 	"github.com/DoPlan-dev/CLI/internal/tui"
@@ -83,20 +82,14 @@ func launchMigrationWizard() error {
 
 // showFeatureView shows the feature-specific view
 func showFeatureView(detector *context.Detector) error {
-	details, err := detector.DetectContextDetails()
-	if err != nil {
-		// Fallback to dashboard if context detection fails
-		return tui.Run()
-	}
-	return tui.RunFeatureView(details)
+	// Feature view functionality - fallback to main dashboard for now
+	// TODO: Implement feature-specific view
+	return tui.Run()
 }
 
 // showPhaseView shows the phase-specific view
 func showPhaseView(detector *context.Detector) error {
-	details, err := detector.DetectContextDetails()
-	if err != nil {
-		// Fallback to dashboard if context detection fails
-		return tui.Run()
-	}
-	return tui.RunPhaseView(details)
+	// Phase view functionality - fallback to main dashboard for now
+	// TODO: Implement phase-specific view
+	return tui.Run()
 }

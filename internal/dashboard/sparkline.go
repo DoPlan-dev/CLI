@@ -10,13 +10,13 @@ import (
 
 // Sparkline characters for visualization
 const (
-	SparklineMin = "▂"
-	SparklineLow = "▃"
-	SparklineMid = "▄"
-	SparklineHigh = "▅"
+	SparklineMin    = "▂"
+	SparklineLow    = "▃"
+	SparklineMid    = "▄"
+	SparklineHigh   = "▅"
 	SparklineHigher = "▆"
-	SparklineMax = "▇"
-	SparklineFull = "█"
+	SparklineMax    = "▇"
+	SparklineFull   = "█"
 )
 
 // GenerateSparkline generates a sparkline visualization from data
@@ -40,7 +40,7 @@ func GenerateSparkline(data []float64, width int) string {
 	// Generate sparkline
 	var result string
 	step := float64(len(data)) / float64(width)
-	
+
 	for i := 0; i < width; i++ {
 		startIdx := int(float64(i) * step)
 		endIdx := int(float64(i+1) * step)
@@ -58,7 +58,7 @@ func GenerateSparkline(data []float64, width int) string {
 			sum += data[j]
 			count++
 		}
-		
+
 		var avg float64
 		if count > 0 {
 			avg = sum / float64(count)
@@ -78,7 +78,7 @@ func GenerateSparkline(data []float64, width int) string {
 // GenerateSparklineWithTrend generates a sparkline with trend indicator
 func GenerateSparklineWithTrend(data []float64, width int) (string, string, string) {
 	sparkline := GenerateSparkline(data, width)
-	
+
 	if len(data) < 2 {
 		return sparkline, "→", "stable"
 	}
@@ -86,12 +86,12 @@ func GenerateSparklineWithTrend(data []float64, width int) (string, string, stri
 	// Calculate trend
 	firstHalf := average(data[:len(data)/2])
 	secondHalf := average(data[len(data)/2:])
-	
+
 	change := ((secondHalf - firstHalf) / firstHalf) * 100
-	
+
 	var trendIcon string
 	var trendText string
-	
+
 	if change > 5 {
 		trendIcon = "↑"
 		trendText = "increasing"
@@ -109,7 +109,7 @@ func GenerateSparklineWithTrend(data []float64, width int) (string, string, stri
 // ColorCodeSparkline color codes a sparkline based on trend
 func ColorCodeSparkline(sparkline, trendText string) string {
 	style := lipgloss.NewStyle()
-	
+
 	switch trendText {
 	case "increasing":
 		style = style.Foreground(lipgloss.Color("#10b981")) // Green
@@ -134,7 +134,7 @@ func getSparklineChar(normalized float64) string {
 
 	// Map to 7 levels
 	level := int(normalized * 7)
-	
+
 	switch level {
 	case 0:
 		return SparklineMin
@@ -197,7 +197,7 @@ func GenerateVelocityHistory(dailyData []DailyVelocity, days int) []float64 {
 	}
 
 	result := make([]float64, days)
-	
+
 	// Fill with zeros initially
 	for i := range result {
 		result[i] = 0
@@ -239,7 +239,7 @@ func CalculateVelocityHistory(commits []models.Commit, tasks []TaskProgress, day
 	// Count commits per day
 	commitsPerDay := make(map[string]int)
 	for _, commit := range commits {
-		commitTime, err := parseTime(commit.Date)
+		commitTime, err := ParseTime(commit.Date)
 		if err != nil {
 			continue
 		}
@@ -260,10 +260,10 @@ func CalculateVelocityHistory(commits []models.Commit, tasks []TaskProgress, day
 	for i := 0; i < days; i++ {
 		date := now.AddDate(0, 0, -i)
 		dayKey := date.Format("2006-01-02")
-		
+
 		commits := float64(commitsPerDay[dayKey])
 		tasks := float64(tasksPerDay[dayKey])
-		
+
 		// Combine commits and tasks (weighted)
 		history[i].Value = commits + (tasks * 0.5)
 		history[i].Date = date
@@ -271,4 +271,3 @@ func CalculateVelocityHistory(commits []models.Commit, tasks []TaskProgress, day
 
 	return history
 }
-

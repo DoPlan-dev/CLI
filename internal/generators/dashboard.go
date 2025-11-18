@@ -8,7 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DoPlan-dev/CLI/internal/config"
 	"github.com/DoPlan-dev/CLI/internal/dashboard"
+	"github.com/DoPlan-dev/CLI/internal/github"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
@@ -67,7 +69,7 @@ func (g *DashboardGenerator) GenerateJSON() error {
 	}
 
 	dashboard := g.buildDashboardJSON()
-	
+
 	data, err := json.MarshalIndent(dashboard, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal dashboard JSON: %w", err)
@@ -81,165 +83,48 @@ func (g *DashboardGenerator) GenerateJSON() error {
 	return nil
 }
 
-// DashboardJSON represents the dashboard JSON structure
-type DashboardJSON struct {
-	Version   string                 `json:"version"`
-	Generated string                 `json:"generated"`
-	Project   ProjectJSON            `json:"project"`
-	GitHub    GitHubJSON             `json:"github"`
-	Phases    []PhaseJSON            `json:"phases"`
-	Summary   SummaryJSON            `json:"summary"`
-	Activity  ActivityJSON           `json:"activity"`
-	APIKeys   APIKeysJSON            `json:"apiKeys"`
-	Velocity  VelocityJSON           `json:"velocity"`
-}
-
-type ProjectJSON struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Version     string `json:"version"`
-	Progress    int    `json:"progress"`
-	Status      string `json:"status"`
-	StartDate   string `json:"startDate"`
-	TargetDate  string `json:"targetDate"`
-}
-
-type GitHubJSON struct {
-	Repository   string   `json:"repository"`
-	Branch       string   `json:"branch"`
-	Commits      int      `json:"commits"`
-	Contributors []string `json:"contributors"`
-	LastCommit   string   `json:"lastCommit"`
-}
-
-type PhaseJSON struct {
-	ID          string       `json:"id"`
-	Name        string       `json:"name"`
-	Description string       `json:"description"`
-	Status      string       `json:"status"`
-	Progress    int          `json:"progress"`
-	StartDate   string       `json:"startDate"`
-	TargetDate  string       `json:"targetDate"`
-	Features    []FeatureJSON `json:"features"`
-	Stats       PhaseStatsJSON `json:"stats"`
-}
-
-type FeatureJSON struct {
-	ID           string `json:"id"`
-	Name         string `json:"name"`
-	Status       string `json:"status"`
-	Progress     int    `json:"progress"`
-	Branch       string `json:"branch"`
-	PR           *PRJSON `json:"pr"`
-	Commits      int    `json:"commits"`
-	LastActivity string `json:"lastActivity"`
-	Tasks        []TaskJSON `json:"tasks"`
-}
-
-type TaskJSON struct {
-	Name      string `json:"name"`
-	Completed bool   `json:"completed"`
-}
-
-type PRJSON struct {
-	Number int    `json:"number"`
-	Title  string `json:"title"`
-	URL    string `json:"url"`
-	Status string `json:"status"`
-}
-
-type PhaseStatsJSON struct {
-	TotalFeatures   int `json:"totalFeatures"`
-	Completed       int `json:"completed"`
-	InProgress      int `json:"inProgress"`
-	Todo            int `json:"todo"`
-	TotalTasks      int `json:"totalTasks"`
-	CompletedTasks  int `json:"completedTasks"`
-}
-
-type SummaryJSON struct {
-	TotalPhases      int `json:"totalPhases"`
-	Completed        int `json:"completed"`
-	InProgress       int `json:"inProgress"`
-	Todo             int `json:"todo"`
-	TotalFeatures    int `json:"totalFeatures"`
-	TotalTasks       int `json:"totalTasks"`
-	CompletedTasks   int `json:"completedTasks"`
-}
-
-type ActivityJSON struct {
-	Last24Hours ActivityPeriodJSON `json:"last24Hours"`
-	Last7Days   ActivityPeriodJSON `json:"last7Days"`
-	RecentActivity []ActivityItemJSON `json:"recentActivity"`
-}
-
-type ActivityPeriodJSON struct {
-	Commits       int `json:"commits"`
-	TasksCompleted int `json:"tasksCompleted"`
-	FilesChanged  int `json:"filesChanged"`
-}
-
-type ActivityItemJSON struct {
-	Type      string `json:"type"`
-	Message   string `json:"message"`
-	Timestamp string `json:"timestamp"`
-}
-
-type APIKeysJSON struct {
-	Total      int `json:"total"`
-	Configured int `json:"configured"`
-	Pending    int `json:"pending"`
-	Optional   int `json:"optional"`
-	Completion int `json:"completion"`
-}
-
-type VelocityJSON struct {
-	TasksPerDay        float64 `json:"tasksPerDay"`
-	CommitsPerDay      float64 `json:"commitsPerDay"`
-	EstimatedCompletion string `json:"estimatedCompletion"`
-	DaysToLaunch       int     `json:"daysToLaunch"`
-}
+// DashboardJSON and related types are now in pkg/models
 
 // buildDashboardJSON builds the dashboard JSON structure
-func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
+func (g *DashboardGenerator) buildDashboardJSON() *models.DashboardJSON {
 	overallProgress := g.calculateOverallProgress()
-	
+
 	// Read progress data early for use in feature building
 	progressParser := dashboard.NewProgressParser(g.projectRoot)
 	progressData, err := progressParser.ReadProgressFiles()
 	if err != nil {
 		progressData = make(map[string]*dashboard.ProgressData)
 	}
-	
+
 	// Build phases
-	phases := []PhaseJSON{}
+	phases := []models.PhaseJSON{}
 	for _, phase := range g.state.Phases {
 		phaseProgress := g.calculatePhaseProgress(phase.ID)
-		features := []FeatureJSON{}
-		
+		features := []models.FeatureJSON{}
+
 		for _, featureID := range phase.Features {
 			feature := g.findFeature(featureID)
 			if feature != nil {
-				tasks := []TaskJSON{}
+				tasks := []models.TaskJSON{}
 				for _, taskPhase := range feature.TaskPhases {
 					for _, task := range taskPhase.Tasks {
-						tasks = append(tasks, TaskJSON{
+						tasks = append(tasks, models.TaskJSON{
 							Name:      task.Name,
 							Completed: task.Completed,
 						})
 					}
 				}
-				
-				var pr *PRJSON
+
+				var pr *models.PRJSON
 				if feature.PR != nil {
-					pr = &PRJSON{
+					pr = &models.PRJSON{
 						Number: feature.PR.Number,
 						Title:  feature.PR.Title,
 						URL:    feature.PR.URL,
 						Status: feature.PR.Status,
 					}
 				}
-				
+
 				// Calculate commits for this feature from branch name
 				commits := 0
 				if feature.Branch != "" && g.githubData != nil {
@@ -267,7 +152,7 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 					}
 				}
 
-				features = append(features, FeatureJSON{
+				features = append(features, models.FeatureJSON{
 					ID:           feature.ID,
 					Name:         feature.Name,
 					Status:       feature.Status,
@@ -280,14 +165,14 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 				})
 			}
 		}
-		
+
 		// Calculate phase stats
 		completed := 0
 		inProgress := 0
 		todo := 0
 		totalTasks := 0
 		completedTasks := 0
-		
+
 		for _, feature := range features {
 			switch feature.Status {
 			case "complete":
@@ -304,8 +189,8 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 				}
 			}
 		}
-		
-		phases = append(phases, PhaseJSON{
+
+		phases = append(phases, models.PhaseJSON{
 			ID:          phase.ID,
 			Name:        phase.Name,
 			Description: phase.Description,
@@ -314,7 +199,7 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 			StartDate:   phase.StartDate,
 			TargetDate:  phase.TargetDate,
 			Features:    features,
-			Stats: PhaseStatsJSON{
+			Stats: models.PhaseStatsJSON{
 				TotalFeatures:  len(features),
 				Completed:      completed,
 				InProgress:     inProgress,
@@ -324,7 +209,7 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 			},
 		})
 	}
-	
+
 	// Calculate summary
 	completedPhases := 0
 	inProgressPhases := 0
@@ -332,7 +217,7 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 	totalFeatures := 0
 	totalTasks := 0
 	completedTasks := 0
-	
+
 	for _, phase := range phases {
 		switch phase.Status {
 		case "complete":
@@ -346,9 +231,9 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 		totalTasks += phase.Stats.TotalTasks
 		completedTasks += phase.Stats.CompletedTasks
 	}
-	
+
 	// Build GitHub data
-	githubJSON := GitHubJSON{
+	githubJSON := models.GitHubJSON{
 		Repository:   "", // Will be populated from config
 		Branch:       "main",
 		Commits:      len(g.githubData.Commits),
@@ -368,38 +253,38 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 			githubJSON.Contributors = append(githubJSON.Contributors, contributor)
 		}
 	}
-	
+
 	// Generate comprehensive activity feed (progressData already loaded above)
 	activityGen := dashboard.NewActivityGenerator(g.state, g.githubData, progressData)
 	activityData := activityGen.GenerateActivityFeed()
-	
+
 	// Convert to ActivityJSON
-	activity := ActivityJSON{
-		Last24Hours: ActivityPeriodJSON{
-			Commits:       activityData.Last24Hours.Commits,
+	activity := models.ActivityJSON{
+		Last24Hours: models.ActivityPeriodJSON{
+			Commits:        activityData.Last24Hours.Commits,
 			TasksCompleted: activityData.Last24Hours.TasksCompleted,
-			FilesChanged:  activityData.Last24Hours.FilesChanged,
+			FilesChanged:   activityData.Last24Hours.FilesChanged,
 		},
-		Last7Days: ActivityPeriodJSON{
-			Commits:       activityData.Last7Days.Commits,
+		Last7Days: models.ActivityPeriodJSON{
+			Commits:        activityData.Last7Days.Commits,
 			TasksCompleted: activityData.Last7Days.TasksCompleted,
-			FilesChanged:  activityData.Last7Days.FilesChanged,
+			FilesChanged:   activityData.Last7Days.FilesChanged,
 		},
-		RecentActivity: []ActivityItemJSON{},
+		RecentActivity: []models.ActivityItemJSON{},
 	}
-	
+
 	for _, item := range activityData.RecentActivity {
-		activity.RecentActivity = append(activity.RecentActivity, ActivityItemJSON{
+		activity.RecentActivity = append(activity.RecentActivity, models.ActivityItemJSON{
 			Type:      item.Type,
 			Message:   item.Message,
 			Timestamp: item.Timestamp,
 		})
 	}
-	
-	return &DashboardJSON{
+
+	return &models.DashboardJSON{
 		Version:   "1.0",
 		Generated: time.Now().Format(time.RFC3339),
-		Project: ProjectJSON{
+		Project: models.ProjectJSON{
 			Name:        "", // Will be populated from config
 			Description: "",
 			Version:     "1.0.0",
@@ -408,9 +293,9 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 			StartDate:   "",
 			TargetDate:  "",
 		},
-		GitHub:   githubJSON,
-		Phases:   phases,
-		Summary: SummaryJSON{
+		GitHub: githubJSON,
+		Phases: phases,
+		Summary: models.SummaryJSON{
 			TotalPhases:    len(phases),
 			Completed:      completedPhases,
 			InProgress:     inProgressPhases,
@@ -420,7 +305,7 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 			CompletedTasks: completedTasks,
 		},
 		Activity: activity,
-		APIKeys: APIKeysJSON{
+		APIKeys: models.APIKeysJSON{
 			Total:      0,
 			Configured: 0,
 			Pending:    0,
@@ -765,12 +650,12 @@ func (g *DashboardGenerator) calculatePhaseProgress(phaseID string) int {
 }
 
 // calculateVelocity calculates velocity metrics
-func (g *DashboardGenerator) calculateVelocity() VelocityJSON {
-	velocity := VelocityJSON{
-		TasksPerDay:        0.0,
-		CommitsPerDay:      0.0,
+func (g *DashboardGenerator) calculateVelocity() models.VelocityJSON {
+	velocity := models.VelocityJSON{
+		TasksPerDay:         0.0,
+		CommitsPerDay:       0.0,
 		EstimatedCompletion: "",
-		DaysToLaunch:       0,
+		DaysToLaunch:        0,
 	}
 
 	// Calculate commits per day (last 7 days)
@@ -841,6 +726,43 @@ func (g *DashboardGenerator) calculateVelocity() VelocityJSON {
 	}
 
 	return velocity
+}
+
+// UpdateDashboard regenerates dashboard.json and related files
+// This is a convenience function that loads state and GitHub data, then generates the dashboard
+func UpdateDashboard(projectRoot string) error {
+	// Import here to avoid cycle - we'll use config and github packages directly
+	cfgMgr := config.NewManager(projectRoot)
+	state, err := cfgMgr.LoadState()
+	if err != nil {
+		return fmt.Errorf("failed to load state: %w", err)
+	}
+
+	cfg, err := cfgMgr.LoadConfig()
+	if err != nil {
+		// Continue with default config if loading fails
+		cfg = &models.Config{}
+	}
+
+	// Load GitHub data if configured
+	var githubData *models.GitHubData
+	if cfg != nil && cfg.GitHub.Enabled {
+		githubSync := github.NewGitHubSync(projectRoot)
+		githubData, err = githubSync.Sync()
+		if err != nil {
+			githubData = &models.GitHubData{}
+		}
+	} else {
+		githubData = &models.GitHubData{}
+	}
+
+	// Generate dashboard
+	gen := NewDashboardGenerator(projectRoot, state, githubData)
+	if err := gen.Generate(); err != nil {
+		return fmt.Errorf("failed to generate dashboard: %w", err)
+	}
+
+	return nil
 }
 
 func (g *DashboardGenerator) findPhase(phaseID string) *models.Phase {

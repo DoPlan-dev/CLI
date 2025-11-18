@@ -176,10 +176,11 @@ func TestContextGenerator_generateContextContent(t *testing.T) {
 	gen := NewContextGenerator(projectRoot)
 	stack := gen.detectTechStack()
 
-	content := gen.generateContextContent(stack)
+	content := gen.generateContextContent(stack, "TestProject")
 
+	assert.Contains(t, content, "Project Context: TestProject")
 	assert.Contains(t, content, "Technology Stack")
-	// Sections only appear if there are items, so check for CLIs which is always present
-	assert.Contains(t, content, "CLIs and Development Tools")
+	// Check for DoPlan Resources section (always present)
+	assert.Contains(t, content, "DoPlan Resources")
 	assert.Contains(t, content, "DoPlan CLI")
 }
