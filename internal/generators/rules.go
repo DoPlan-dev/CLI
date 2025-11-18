@@ -50,7 +50,11 @@ func generateCommunicationRules() string {
 	backtick := "`"
 	return `# DoPlan Communication Rules
 
-These rules govern how AI agents should communicate and collaborate within the DoPlan workflow.
+These rules govern how AI agents **MUST** communicate and collaborate within the DoPlan workflow.
+
+## ⚠️ CRITICAL: Agent Handoff Protocol
+
+**When your work is complete, you MUST tag the next agent.** This ensures the workflow continues smoothly.
 
 ## Communication Principles
 
@@ -59,30 +63,103 @@ These rules govern how AI agents should communicate and collaborate within the D
 - Use the DoPlan workflow stages appropriately
 - Always update state and progress files after actions
 - Follow the established naming conventions
+- **Tag the next agent when work is complete**
+- **Wait for previous agents to finish before starting**
 
-## Agent Collaboration
+## Agent Collaboration & Handoff
 
-### Agent Roles
-- **Planner**: Handles idea discussion, refinement, and planning
-- **Coder**: Implements features based on plans and designs
-- **Designer**: Creates design specifications and UI/UX guidelines
-- **Reviewer**: Reviews code and provides feedback
-- **Tester**: Creates and runs tests
-- **DevOps**: Handles deployment and infrastructure
+### Workflow Sequence & Handoffs
 
-### Communication Flow
-1. Planner creates plans and designs
-2. Coder implements based on plans
-3. Reviewer reviews implementation
-4. Tester validates functionality
-5. DevOps handles deployment
+1. **@planner** → **@designer**
+   - @planner completes planning
+   - Tags @designer: "Planning complete. @designer please create design specifications."
+   - @designer waits for @planner to finish
+
+2. **@designer** → **@coder**
+   - @designer completes design
+   - Tags @coder: "Design complete. @coder please begin implementation."
+   - @coder waits for @planner AND @designer to finish
+
+3. **@coder** → **@tester**
+   - @coder completes implementation
+   - Tags @tester: "Implementation complete. @tester please run tests."
+   - @tester ONLY begins when tagged by @coder
+
+4. **@tester** → **@reviewer**
+   - @tester completes testing
+   - Tags @reviewer: "All tests passed. Screenshot saved. @reviewer please review."
+   - @reviewer ONLY reviews AFTER @tester has successfully run all tests
+
+5. **@reviewer** → **@devops** OR **@coder**
+   - If approved: Tags @devops: "Code review passed. @devops please deploy."
+   - If changes needed: Tags @coder: "Changes needed. @coder please address."
+   - @devops ONLY begins AFTER @reviewer has approved
+
+6. **@devops** → **Team**
+   - @devops completes deployment
+   - Reports to team: "Deployment successful" or "Deployment failed"
+
+## Agent Roles & Responsibilities
+
+### @planner
+- **Role:** Senior project planner
+- **Starts:** First (project start)
+- **Hands off to:** @designer
+- **Must complete:** Planning, PRD, folder structure
+
+### @designer
+- **Role:** UI/UX specialist
+- **Starts:** After @planner completes
+- **Hands off to:** @coder
+- **Must complete:** Design specifications following design_rules.mdc
+
+### @coder
+- **Role:** Implementation specialist
+- **Starts:** After @planner AND @designer complete
+- **Hands off to:** @tester
+- **Must complete:** Feature implementation
+
+### @tester
+- **Role:** QA & Test Automation Specialist
+- **Starts:** When tagged by @coder
+- **Hands off to:** @reviewer
+- **Must complete:** Tests, screenshots, test report
+
+### @reviewer
+- **Role:** Quality assurance
+- **Starts:** AFTER @tester has successfully run all tests
+- **Hands off to:** @devops (if approved) OR @coder (if changes needed)
+- **Must complete:** Code review
+
+### @devops
+- **Role:** Deployment and infrastructure specialist
+- **Starts:** AFTER @reviewer has approved
+- **Hands off to:** Team (reports status)
+- **Must complete:** Deployment
+
+## Tagging Format
+
+**When tagging the next agent:**
+
+` + backtick + backtick + backtick + `
+✅ [Your work] complete for {feature-name}. [Brief summary]. @{next-agent} please [next action].
+` + backtick + backtick + backtick + `
+
+**Examples:**
+- "✅ Planning complete. Created 3 phases with 8 features. @designer please create design specifications."
+- "✅ Design complete. Design follows DPR and design_rules.mdc. @coder please begin implementation."
+- "✅ Implementation complete. All tasks done. @tester please run tests."
+- "✅ All tests passed. Screenshot saved to .doplan/artifacts/screenshots/01-auth/01-login.png. @reviewer please review."
+- "✅ Code review passed. All requirements met. @devops please deploy."
+- "❌ Code review: Changes needed. Issues: [list]. @coder please address."
 
 ## File References
 
 When discussing code or files:
-- Use absolute paths: ` + backtick + `doplan/01-phase/01-Feature/plan.md` + backtick + `
+- Use absolute paths: ` + backtick + `doplan/01-user-authentication/01-login-with-email/plan.md` + backtick + `
 - Reference line numbers when needed
 - Include file context in discussions
+- Use numbered folder structure
 
 ## State Updates
 
@@ -91,6 +168,39 @@ After any action:
 - Update state file if applicable
 - Regenerate dashboard if progress changed
 - Commit changes with clear messages
+- **Tag the next agent**
+
+## Error Handling
+
+**If you encounter issues:**
+- Tag the appropriate agent for clarification
+- Document the issue
+- Provide context and error details
+- Request specific help
+
+**Examples:**
+- "@planner: Need clarification on {feature}. Question: {question}."
+- "@designer: Design clarification needed. Issue: {issue}."
+- "@coder: Implementation issue. Error: {error}. @coder please help."
+
+## Multi-Agent Conversations
+
+Agents can work together in conversations. Always:
+1. Tag agents explicitly
+2. Provide context
+3. Reference relevant files
+4. Follow the workflow sequence
+5. Wait for responses before proceeding
+
+## Best Practices
+
+- Always tag the next agent when work is complete
+- Wait for previous agents to finish
+- Provide clear context when tagging
+- Reference specific files and line numbers
+- Update progress files after actions
+- Follow the workflow sequence strictly
+- Be respectful and constructive in feedback
 `
 }
 
@@ -98,7 +208,18 @@ func generateWorkflowRules() string {
 	backtick := "`"
 	return `# DoPlan Workflow Rules
 
-These rules govern how AI agents should operate within the DoPlan workflow.
+These rules define the **perfect workflow sequence** that all AI agents MUST follow.
+
+## ⚠️ CRITICAL: Perfect Workflow Sequence
+
+The DoPlan workflow follows this **exact sequence**. **DO NOT skip steps or work out of order:**
+
+1. **Plan** → @planner creates project structure
+2. **Design** → @designer creates design specifications
+3. **Code** → @coder implements features
+4. **Test** → @tester runs tests and captures screenshots
+5. **Review** → @reviewer reviews code quality
+6. **Deploy** → @devops handles deployment
 
 ## Core Principles
 
@@ -107,67 +228,154 @@ These rules govern how AI agents should operate within the DoPlan workflow.
 - Track progress in dashboard
 - Use feature branches for each feature
 - All commands are available as slash commands in your IDE/CLI
+- **Agents MUST wait for previous agents to complete**
+- **Agents MUST tag the next agent when work is complete**
 
 ## Workflow Stages
 
-### 1. Idea Discussion (/Discuss)
-- Ask comprehensive questions about the idea
-- Suggest improvements and enhancements
-- Help organize features into phases
-- Recommend tech stack based on requirements
-- Save results to state file and ` + backtick + `doplan/idea-notes.md` + backtick + `
+### 1. Plan → @planner (FIRST STEP)
 
-### 2. Idea Refinement (/Refine)
-- Review existing idea notes
-- Suggest additional features
-- Identify gaps in the plan
-- Enhance technical specifications
-- Update idea documentation
+**Agent:** @planner  
+**When:** Project start or new feature  
+**Commands:** /Discuss, /Refine, /Generate, /Plan
 
-### 3. Document Generation (/Generate)
-- Create ` + backtick + `doplan/PRD.md` + backtick + ` - Product Requirements Document
-- Create ` + backtick + `doplan/structure.md` + backtick + ` - Project structure
-- Create ` + backtick + `doplan/contracts/api-spec.json` + backtick + ` - API specification
-- Create ` + backtick + `doplan/contracts/data-model.md` + backtick + ` - Data models
-- Use templates from ` + backtick + `doplan/templates/` + backtick + `
+**Process:**
+1. **Idea Discussion (/Discuss)**
+   - Ask comprehensive questions about the idea
+   - Suggest improvements and enhancements
+   - Help organize features into phases
+   - Recommend tech stack based on requirements
+   - Save results to state file and ` + backtick + `doplan/idea-notes.md` + backtick + `
 
-### 4. Planning (/Plan)
-- Create phase directories: ` + backtick + `doplan/01-phase/` + backtick + `, ` + backtick + `doplan/02-phase/` + backtick + `, etc.
-- Create feature directories: ` + backtick + `doplan/01-phase/01-Feature/` + backtick + `, etc.
-- Generate ` + backtick + `plan.md` + backtick + `, ` + backtick + `design.md` + backtick + `, ` + backtick + `tasks.md` + backtick + ` for each feature
-- Create ` + backtick + `phase-plan.md` + backtick + ` and ` + backtick + `phase-progress.json` + backtick + ` for each phase
-- Update dashboard with new structure
+2. **Idea Refinement (/Refine)**
+   - Review existing idea notes
+   - Suggest additional features
+   - Identify gaps in the plan
+   - Enhance technical specifications
+   - Update idea documentation
 
-### 5. Implementation (/Implement)
-- Check current feature context from state
-- Automatically create GitHub branch: ` + backtick + `feature/XX-phase-XX-feature-name` + backtick + `
-- Initialize feature branch
-- Guide implementation based on plan.md, design.md, tasks.md
-- Update progress as tasks complete
+3. **Document Generation (/Generate)**
+   - Create ` + backtick + `doplan/PRD.md` + backtick + ` - Product Requirements Document
+   - Create ` + backtick + `doplan/structure.md` + backtick + ` - Project structure
+   - Create ` + backtick + `doplan/contracts/api-spec.json` + backtick + ` - API specification
+   - Create ` + backtick + `doplan/contracts/data-model.md` + backtick + ` - Data models
+   - Use templates from ` + backtick + `doplan/templates/` + backtick + `
 
-### 6. Progress Tracking (/Progress)
-- Scan all feature directories
-- Read tasks.md files
-- Calculate completion percentages
-- Update progress.json files
-- Regenerate dashboard
-- Sync GitHub data
+4. **Planning (/Plan)**
+   - **CRITICAL:** Create phase directories using numbered and slugified names: ` + backtick + `doplan/01-{phase-name}/` + backtick + `
+   - **CRITICAL:** Create feature directories: ` + backtick + `doplan/01-{phase-name}/01-{feature-name}/` + backtick + `
+   - Generate ` + backtick + `plan.md` + backtick + `, ` + backtick + `design.md` + backtick + ` (placeholder), ` + backtick + `tasks.md` + backtick + ` for each feature
+   - Create ` + backtick + `phase-plan.md` + backtick + ` and ` + backtick + `phase-progress.json` + backtick + ` for each phase
+   - Update dashboard with new structure
+   - **Tag @designer** to begin design work
+
+### 2. Design → @designer
+
+**Agent:** @designer  
+**When:** After @planner completes planning  
+**Commands:** /Design, /Design:Review
+
+**Process:**
+1. Read ` + backtick + `plan.md` + backtick + ` and PRD
+2. Read ` + backtick + `doplan/design/DPR.md` + backtick + ` - Design Preferences & Requirements
+3. Read ` + backtick + `.doplan/ai/rules/design_rules.mdc` + backtick + ` - Design rules
+4. Create comprehensive ` + backtick + `design.md` + backtick + ` following design system
+5. Use design tokens from ` + backtick + `doplan/design/design-tokens.json` + backtick + `
+6. **Tag @coder** to begin implementation
+
+### 3. Code → @coder
+
+**Agent:** @coder  
+**When:** After @planner AND @designer complete  
+**Commands:** /Implement
+
+**Process:**
+1. Verify @planner and @designer have completed
+2. Read ` + backtick + `plan.md` + backtick + `, ` + backtick + `design.md` + backtick + `, ` + backtick + `tasks.md` + backtick + `
+3. Automatically create GitHub branch: ` + backtick + `feature/{##}-{phase-name}-{##}-{feature-name}` + backtick + `
+4. Implement features following plan and design
+5. Follow ` + backtick + `.doplan/ai/rules/design_rules.mdc` + backtick + ` for UI work
+6. Update progress as tasks complete
+7. **Tag @tester** when work is ready for testing
+
+### 4. Test → @tester
+
+**Agent:** @tester  
+**When:** Tagged by @coder  
+**Commands:** /Test, /Test:Visual
+
+**Process:**
+1. Read ` + backtick + `plan.md` + backtick + ` and ` + backtick + `design.md` + backtick + `
+2. Generate test scenarios from acceptance criteria
+3. Write and execute automated tests using Playwright (MCP)
+4. **CRITICAL:** Capture screenshots to ` + backtick + `.doplan/artifacts/screenshots/{phase-name}/{feature-name}.png` + backtick + `
+5. Perform visual regression checks
+6. Report bugs with screenshots if found
+7. **Tag @reviewer** with test report (pass or fail)
+
+### 5. Review → @reviewer
+
+**Agent:** @reviewer  
+**When:** AFTER @tester has successfully run all tests  
+**Commands:** /Review
+
+**Process:**
+1. Verify @tester has run all tests and they pass
+2. Review implementation against ` + backtick + `plan.md` + backtick + ` and ` + backtick + `design.md` + backtick + `
+3. Check code quality and standards
+4. Verify design system compliance
+5. **If approved:** Tag @devops for deployment
+6. **If changes needed:** Tag @coder with feedback
+
+### 6. Deploy → @devops
+
+**Agent:** @devops  
+**When:** AFTER @reviewer has approved  
+**Commands:** /Deploy, /Deploy:Configure
+
+**Process:**
+1. Verify @reviewer has approved
+2. Check ` + backtick + `doplan/RAKD.md` + backtick + ` for required API keys
+3. Configure deployment pipelines
+4. Deploy to staging, then production
+5. Monitor deployment status
+6. Report deployment status to team
 
 ## State Management
 
 - State lives in IDE-specific config directory (e.g., ` + backtick + `.cursor/config/doplan-state.json` + backtick + `)
 - Progress tracked in ` + backtick + `doplan/**/progress.json` + backtick + ` files
-- Dashboard in ` + backtick + `doplan/dashboard.md` + backtick + `
+- Dashboard in ` + backtick + `doplan/dashboard.md` + backtick + ` and ` + backtick + `.doplan/dashboard.json` + backtick + `
 - Always update state after command execution
+
+## Agent Handoff Protocol
+
+**When your work is complete:**
+1. Update progress files
+2. Update state file
+3. **Tag the next agent** as defined in communication.mdc
+4. Provide context about what was completed
+
+**Example:**
+- @planner: "✅ Planning complete. Created 3 phases with 8 features. @designer please create design specifications."
+- @designer: "✅ Design complete. @coder please begin implementation."
+- @coder: "✅ Implementation complete. @tester please run tests."
+- @tester: "✅ All tests passed. Screenshot saved. @reviewer please review."
+- @reviewer: "✅ Code review passed. @devops please deploy."
+- @devops: "✅ Deployment successful."
 
 ## Best Practices
 
 - Always start with /Discuss before /Plan
 - Generate PRD before creating phases
 - Follow the phase → feature hierarchy
+- Use numbered and slugified folder names
 - Update tasks.md as you work
 - Run /Progress regularly
 - Use /Next to get recommendations
+- **Wait for previous agents to complete**
+- **Tag next agent when work is done**
+- **Follow the workflow sequence strictly**
 `
 }
 
