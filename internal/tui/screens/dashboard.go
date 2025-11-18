@@ -133,10 +133,10 @@ func loadDataCmd() tea.Msg {
 				rakdData = rakData
 			}
 			
-			return loadDataMsg{
+				return loadDataMsg{
 				dashboardJSON:      dashboardJSON,
 				lastUpdate:         lastUpdate,
-				usingDashboardJSON: true,
+					usingDashboardJSON: true,
 				config:             cfg,
 				githubData:         githubData,
 				statistics:         nil, // Load on demand

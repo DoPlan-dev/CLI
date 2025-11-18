@@ -241,32 +241,32 @@ The DoPlan workflow follows this **exact sequence**. **DO NOT skip steps or work
 
 **Process:**
 1. **Idea Discussion (/Discuss)**
-   - Ask comprehensive questions about the idea
-   - Suggest improvements and enhancements
-   - Help organize features into phases
-   - Recommend tech stack based on requirements
-   - Save results to state file and ` + backtick + `doplan/idea-notes.md` + backtick + `
+- Ask comprehensive questions about the idea
+- Suggest improvements and enhancements
+- Help organize features into phases
+- Recommend tech stack based on requirements
+- Save results to state file and ` + backtick + `doplan/idea-notes.md` + backtick + `
 
 2. **Idea Refinement (/Refine)**
-   - Review existing idea notes
-   - Suggest additional features
-   - Identify gaps in the plan
-   - Enhance technical specifications
-   - Update idea documentation
+- Review existing idea notes
+- Suggest additional features
+- Identify gaps in the plan
+- Enhance technical specifications
+- Update idea documentation
 
 3. **Document Generation (/Generate)**
-   - Create ` + backtick + `doplan/PRD.md` + backtick + ` - Product Requirements Document
-   - Create ` + backtick + `doplan/structure.md` + backtick + ` - Project structure
-   - Create ` + backtick + `doplan/contracts/api-spec.json` + backtick + ` - API specification
-   - Create ` + backtick + `doplan/contracts/data-model.md` + backtick + ` - Data models
-   - Use templates from ` + backtick + `doplan/templates/` + backtick + `
+- Create ` + backtick + `doplan/PRD.md` + backtick + ` - Product Requirements Document
+- Create ` + backtick + `doplan/structure.md` + backtick + ` - Project structure
+- Create ` + backtick + `doplan/contracts/api-spec.json` + backtick + ` - API specification
+- Create ` + backtick + `doplan/contracts/data-model.md` + backtick + ` - Data models
+- Use templates from ` + backtick + `doplan/templates/` + backtick + `
 
 4. **Planning (/Plan)**
    - **CRITICAL:** Create phase directories using numbered and slugified names: ` + backtick + `doplan/01-{phase-name}/` + backtick + `
    - **CRITICAL:** Create feature directories: ` + backtick + `doplan/01-{phase-name}/01-{feature-name}/` + backtick + `
    - Generate ` + backtick + `plan.md` + backtick + `, ` + backtick + `design.md` + backtick + ` (placeholder), ` + backtick + `tasks.md` + backtick + ` for each feature
-   - Create ` + backtick + `phase-plan.md` + backtick + ` and ` + backtick + `phase-progress.json` + backtick + ` for each phase
-   - Update dashboard with new structure
+- Create ` + backtick + `phase-plan.md` + backtick + ` and ` + backtick + `phase-progress.json` + backtick + ` for each phase
+- Update dashboard with new structure
    - **Tag @designer** to begin design work
 
 ### 2. Design → @designer
