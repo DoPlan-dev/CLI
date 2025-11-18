@@ -22,11 +22,47 @@ Whether you're building a web application, API service, mobile app, or any softw
 - **Phase & Feature Management**: Organize your project into phases and features with automatic directory structure
 - **Progress Tracking**: Real-time progress monitoring with visual dashboards (markdown and HTML)
 - **Document Generation**: Auto-generate PRD, project structure, API contracts, and planning documents
+- **Workflow Guidance**: Intelligent recommendations for next steps based on your current progress
 
-### 🎨 **Interactive Interface**
-- **Fullscreen TUI**: Beautiful terminal user interface with interactive dashboard
+### 🎨 **Interactive TUI Interface**
+- **Fullscreen TUI Menu**: Beautiful terminal user interface with 15 interactive actions
 - **Visual Progress Bars**: See project, phase, and feature progress at a glance
-- **Multi-view Dashboard**: Switch between project overview, phases, features, GitHub activity, and configuration
+- **Multi-view Dashboard**: Switch between project overview, phases, features, GitHub activity, configuration, and statistics
+- **Real-time Updates**: Live refresh of progress, GitHub data, and recommendations
+- **API Keys Widget**: Dashboard integration for API key status monitoring
+
+### 🤖 **AI Agents System** *(NEW in v0.0.19-beta)*
+- **6 Specialized Agents**: Planner, Designer, Coder, Reviewer, Tester, DevOps
+- **Workflow Enforcement**: Agents follow strict workflow sequence (Plan → Design → Code → Test → Review → Deploy)
+- **Agent Definitions**: Comprehensive agent files with roles, responsibilities, and communication protocols
+- **Workflow Rules**: Automated rules for agent handoffs and task sequencing
+- **Communication Protocols**: Tag-based communication system for agent collaboration
+
+### 🎨 **Design System (DPR)** *(NEW in v0.0.19-beta)*
+- **Interactive Questionnaire**: Guided questionnaire for design preferences and requirements
+- **DPR Document**: Complete Design Preferences & Requirements document generation
+- **Design Tokens**: Auto-generated `design-tokens.json` with colors, typography, spacing, and more
+- **AI Agent Rules**: `design_rules.mdc` for AI agents to follow design system guidelines
+- **Design System Maintenance**: Guidelines for keeping design system current
+
+### 🔐 **Secrets & API Keys Management** *(NEW in v0.0.19-beta)*
+- **Service Detection**: Automatically detects required services from project files (package.json, go.mod, etc.)
+- **API Key Validation**: Validates API keys in `.env` files with format checking
+- **RAKD Document**: Required API Keys Document (RAKD.md) with status and validation results
+- **SOPS Guides**: Service Operating Procedures guides for each detected service
+- **TUI Management**: Interactive TUI for managing API keys and viewing status
+
+### 🚀 **Deployment & Publishing** *(NEW in v0.0.19-beta)*
+- **Multi-Platform Deployment**: Deploy to Vercel, Netlify, Railway, Render, Coolify, Docker
+- **Package Publishing**: Publish to npm, Homebrew, Scoop, Winget
+- **Auto-Detection**: Automatically detects and recommends deployment platforms
+- **Interactive Wizards**: Beautiful TUI wizards for deployment and publishing configuration
+
+### 🛡️ **Security & Auto-Fix** *(NEW in v0.0.19-beta)*
+- **Security Scanning**: Comprehensive security scans (npm audit, gosec, git-secrets, trufflehog)
+- **Auto-Fix**: Automated fixes for common issues (npm audit fix, go mod tidy, go fmt, ESLint)
+- **AI Suggestions**: Placeholder for AI-powered fix suggestions
+- **Severity Reporting**: Reports issues by severity level with actionable recommendations
 
 ### 🔧 **GitHub Integration**
 - **Automatic Branching**: Create feature branches automatically
@@ -47,9 +83,10 @@ Whether you're building a web application, API service, mobile app, or any softw
 - **Auto-Checkpointing**: Automatic checkpoints for features and phases
 
 ### 🔌 **IDE Integration**
-- **Multi-IDE Support**: Works with Cursor, Gemini CLI, Claude CLI, Codex CLI, OpenCode, and Qwen Code
+- **Multi-IDE Support**: Works with Cursor, VS Code, Gemini CLI, Claude CLI, Codex CLI, OpenCode, Qwen Code, and more
 - **Custom Commands**: IDE-specific commands for seamless workflow integration
 - **Workflow Rules**: Automated rules and conventions for your development process
+- **Setup Wizard**: Interactive TUI wizard for IDE integration setup
 
 ## Installation
 
@@ -105,7 +142,7 @@ sudo mv doplan /usr/local/bin/
 # Extract and add to PATH
 ```
 
-**Latest Release:** [v0.0.17-beta](https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.17-beta) | [View all releases](https://github.com/DoPlan-dev/CLI/releases)
+**Latest Release:** [v0.0.19-beta](https://github.com/DoPlan-dev/CLI/releases/tag/v0.0.19-beta) | [View all releases](https://github.com/DoPlan-dev/CLI/releases)
 
 ### From Source
 
@@ -134,12 +171,35 @@ doplan --version
 
 | Command | Description |
 |---------|-------------|
+| `doplan` | Launch interactive TUI menu (15 actions) |
 | `doplan install` | Install DoPlan in your project (interactive IDE selection) |
 | `doplan dashboard` | View project dashboard with progress and GitHub activity |
 | `doplan --tui` | Launch fullscreen interactive TUI dashboard |
 | `doplan github` | Sync GitHub data (branches, commits, PRs) and update dashboard |
 | `doplan progress` | Update all progress tracking files and regenerate dashboard |
 | `doplan validate` | Validate project structure, configuration, and state consistency |
+
+### TUI Menu Actions *(NEW in v0.0.19-beta)*
+
+When you run `doplan`, you get an interactive TUI menu with 15 actions:
+
+| Action | Description |
+|--------|-------------|
+| 📊 View Dashboard | View project progress and statistics |
+| ▶️ Run Dev Server | Auto-detect and run development server (Node/Go/Docker) |
+| ↩️ Undo Last Action | Revert the last DoPlan action |
+| 🚀 Deploy Project | Deploy to Vercel, Netlify, Railway, etc. |
+| 📦 Publish Package | Publish to npm, Homebrew, Scoop, Winget |
+| ✨ Create New Project | Start a new DoPlan project |
+| 🛡️ Run Security Scan | Scan for vulnerabilities and security issues |
+| 🩹 Auto-fix Issues | AI-powered auto-fix for common issues |
+| 💬 Discuss Idea | Refine your project idea |
+| 📝 Generate Documents | Generate PRD, contracts, and documentation |
+| 🗺️ Create Plan | Create phase and feature structure |
+| 📈 Update Progress | Update progress tracking files |
+| 🔑 Manage API Keys | Detect, validate, and manage API keys |
+| 🎨 Apply Design / DPR | Generate design system and tokens |
+| ⚙️ Setup AI/IDE Integration | Configure IDE integration (Cursor, VS Code, etc.) |
 
 ### Configuration Commands
 
@@ -412,6 +472,117 @@ doplan config set checkpoint.autoFeature true
 doplan config validate
 ```
 
+### Step 13: Generate Design System (DPR) *(NEW in v0.0.19-beta)*
+
+Create a comprehensive design system for your project:
+
+**Via TUI:**
+```bash
+doplan
+# Select "🎨 Apply Design / DPR"
+```
+
+This will:
+- Guide you through an interactive questionnaire
+- Generate `doplan/design/DPR.md` - Complete design specifications
+- Generate `doplan/design/design-tokens.json` - Design tokens (colors, typography, spacing)
+- Generate `.doplan/ai/rules/design_rules.mdc` - Rules for AI agents to follow design system
+
+### Step 14: Manage API Keys *(NEW in v0.0.19-beta)*
+
+Detect and manage API keys for your project services:
+
+**Via TUI:**
+```bash
+doplan
+# Select "🔑 Manage API Keys"
+```
+
+This will:
+- Detect required services from your project files (package.json, go.mod, etc.)
+- Validate API keys in `.env` files
+- Generate `doplan/RAKD.md` - Required API Keys Document
+- Generate `.doplan/SOPS/` - Service Operating Procedures guides for each service
+
+### Step 15: Deploy Your Project *(NEW in v0.0.19-beta)*
+
+Deploy to your preferred platform:
+
+**Via TUI:**
+```bash
+doplan
+# Select "🚀 Deploy Project"
+```
+
+Supported platforms:
+- Vercel
+- Netlify
+- Railway
+- Render
+- Coolify
+- Docker
+
+### Step 16: Publish Your Package *(NEW in v0.0.19-beta)*
+
+Publish to package registries:
+
+**Via TUI:**
+```bash
+doplan
+# Select "📦 Publish Package"
+```
+
+Supported registries:
+- npm
+- Homebrew
+- Scoop
+- Winget
+
+### Step 17: Use AI Agents *(NEW in v0.0.19-beta)*
+
+Work with specialized AI agents in your IDE:
+
+**Available Agents:**
+- **@planner** - Project planning, PRD generation, idea refinement
+- **@designer** - Design specifications following DPR
+- **@coder** - Implementation based on plans and designs
+- **@tester** - Test creation and execution with screenshot capture
+- **@reviewer** - Code review and quality assurance
+- **@devops** - Deployment and infrastructure management
+
+**Workflow Sequence:**
+```
+Plan → Design → Code → Test → Review → Deploy
+```
+
+**In Cursor:**
+```
+@planner /Plan          # Start planning
+@designer /Design       # Create design specs
+@coder /Implement       # Implement feature
+@tester /Test           # Run tests
+@reviewer /Review       # Review code
+@devops /Deploy         # Deploy feature
+```
+
+### Step 18: Get Workflow Guidance *(NEW in v0.0.19-beta)*
+
+Receive intelligent recommendations after each action:
+
+After completing any action, DoPlan will:
+- Display a "Recommended Next Step" box
+- Suggest the next action based on your current progress
+- Guide you through the optimal workflow sequence
+
+**Example:**
+```
+✅ Plan created!
+
+💡 Recommended Next Step: Create Design Specifications
+Use @designer /Design to create design specifications for your first feature,
+or use the TUI menu: [d]esign
+```
+
 ## Project Structure
 
 After installation, your project will have this structure:
@@ -419,17 +590,47 @@ After installation, your project will have this structure:
 ```
 project-root/
 ├── .cursor/              # Cursor IDE integration (or .gemini/, .claude/, etc.)
-│   ├── commands/         # DoPlan command definitions
-│   ├── rules/            # Workflow rules and policies
+│   ├── agents/           # AI agent definitions (symlinked from .doplan/ai/agents/)
+│   ├── rules/            # Workflow rules (symlinked from .doplan/ai/rules/)
+│   ├── commands/         # DoPlan command definitions (symlinked from .doplan/ai/commands/)
 │   └── config/           # Configuration and state
 │       ├── doplan-config.json
 │       └── doplan-state.json
+├── .doplan/              # DoPlan configuration directory
+│   ├── ai/               # AI integration files
+│   │   ├── agents/       # AI agent definitions (6 agents)
+│   │   │   ├── README.md
+│   │   │   ├── planner.agent.md
+│   │   │   ├── designer.agent.md
+│   │   │   ├── coder.agent.md
+│   │   │   ├── reviewer.agent.md
+│   │   │   ├── tester.agent.md
+│   │   │   └── devops.agent.md
+│   │   ├── rules/        # Workflow and communication rules
+│   │   │   ├── workflow.mdc
+│   │   │   ├── communication.mdc
+│   │   │   └── design_rules.mdc (if DPR applied)
+│   │   └── commands/     # IDE command definitions
+│   │       ├── run.md
+│   │       ├── deploy.md
+│   │       ├── create.md
+│   │       └── ...
+│   ├── SOPS/             # Service Operating Procedures guides
+│   │   ├── stripe.md
+│   │   ├── sendgrid.md
+│   │   ├── aws-s3.md
+│   │   └── ...
+│   └── config.yaml       # DoPlan configuration
 ├── doplan/               # Planning directory
 │   ├── dashboard.md      # Visual progress dashboard
 │   ├── dashboard.html    # HTML version of dashboard
 │   ├── PRD.md            # Product Requirements Document
 │   ├── structure.md      # Project structure
 │   ├── CONTEXT.md        # Tech stack and documentation
+│   ├── RAKD.md           # Required API Keys Document (if services detected)
+│   ├── design/           # Design system files (if DPR applied)
+│   │   ├── DPR.md        # Design Preferences & Requirements
+│   │   └── design-tokens.json
 │   ├── contracts/        # API contracts
 │   │   ├── api-spec.json
 │   │   └── data-model.md
@@ -437,15 +638,15 @@ project-root/
 │   │   ├── plan-template.md
 │   │   ├── design-template.md
 │   │   └── tasks-template.md
-│   ├── 01-phase/         # Phase 1
+│   ├── 01-phase/         # Phase 1 (numbered format)
 │   │   ├── phase-plan.md
 │   │   ├── phase-progress.json
-│   │   ├── 01-Feature/
+│   │   ├── 01-feature/   # Feature 1 (numbered format)
 │   │   │   ├── plan.md
 │   │   │   ├── design.md
 │   │   │   ├── tasks.md
 │   │   │   └── progress.json
-│   │   └── 02-Feature/
+│   │   └── 02-feature/   # Feature 2
 │   │       └── ...
 │   └── 02-phase/         # Phase 2
 │       └── ...
