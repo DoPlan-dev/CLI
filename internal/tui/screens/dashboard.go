@@ -20,6 +20,13 @@ import (
 )
 
 var (
+	// Progress bar colors
+	progressCompleteStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#10b981")) // Green
+	progressInProgressStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#3b82f6")) // Blue
+	progressTodoStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#6b7280")) // Gray
+)
+
+var (
 	titleStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#667eea")).
 			Bold(true).
@@ -496,11 +503,79 @@ func (m *DashboardModel) renderDashboard() string {
 
 	var sections []string
 
-	// Overall progress
+	// Header with GitHub badge
+	if m.usingDashboardJSON && m.dashboardJSON != nil && m.dashboardJSON.GitHub.Repository != "" {
+		badge := lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#ffffff")).
+			Background(lipgloss.Color("#24292e")).
+			Padding(0, 1).
+			Render(fmt.Sprintf("🔗 %s", m.dashboardJSON.GitHub.Repository))
+		sections = append(sections, badge)
+		sections = append(sections, "")
+	}
+
+	// Overall progress with color-coded bar
 	sections = append(sections, titleStyle.Render("Overall Progress"))
 	progressBar := m.overallProgress.ViewAs(float64(overallProgress) / 100)
-	sections = append(sections, fmt.Sprintf("%d%% %s", overallProgress, progressBar))
+	var progressStyle lipgloss.Style
+	if overallProgress == 100 {
+		progressStyle = progressCompleteStyle
+	} else if overallProgress > 0 {
+		progressStyle = progressInProgressStyle
+	} else {
+		progressStyle = progressTodoStyle
+	}
+	sections = append(sections, fmt.Sprintf("%d%% %s", overallProgress, progressStyle.Render(progressBar)))
 	sections = append(sections, "")
+
+	// Stats grid
+	if m.usingDashboardJSON && m.dashboardJSON != nil {
+		summary := m.dashboardJSON.Summary
+		statsGrid := fmt.Sprintf(
+			"Phases: %d total | %d ✓ | %d → | %d ○\n"+
+			"Features: %d total | %d ✓ | %d →\n"+
+			"Tasks: %d total | %d ✓",
+			summary.TotalPhases, summary.Completed, summary.InProgress, summary.Todo,
+			summary.TotalFeatures, summary.Completed, summary.InProgress,
+			summary.TotalTasks, summary.CompletedTasks,
+		)
+		sections = append(sections, titleStyle.Render("Stats"))
+		sections = append(sections, statsGrid)
+		sections = append(sections, "")
+
+		// Velocity section with sparkline
+		if m.dashboardJSON.Velocity.CommitsPerDay > 0 || m.dashboardJSON.Velocity.TasksPerDay > 0 {
+			sections = append(sections, titleStyle.Render("Velocity"))
+			velocityText := fmt.Sprintf("Commits/day: %.1f | Tasks/day: %.1f", 
+				m.dashboardJSON.Velocity.CommitsPerDay,
+				m.dashboardJSON.Velocity.TasksPerDay)
+			sections = append(sections, velocityText)
+			
+			// Generate simple sparkline (placeholder - would need velocity history)
+			// For now, show trend indicator
+			if m.dashboardJSON.Velocity.DaysToLaunch > 0 {
+				sections = append(sections, fmt.Sprintf("Est. completion: %s (%d days)", 
+					m.dashboardJSON.Velocity.EstimatedCompletion,
+					m.dashboardJSON.Velocity.DaysToLaunch))
+			}
+			sections = append(sections, "")
+		}
+
+		// Recent activity feed
+		if len(m.dashboardJSON.Activity.RecentActivity) > 0 {
+			sections = append(sections, titleStyle.Render("Recent Activity"))
+			count := 0
+			for _, activity := range m.dashboardJSON.Activity.RecentActivity {
+				if count >= 5 {
+					break
+				}
+				timeAgo := dashboard.FormatTimeAgo(activity.Timestamp)
+				sections = append(sections, fmt.Sprintf("  %s %s", activity.Message, timeAgo))
+				count++
+			}
+			sections = append(sections, "")
+		}
+	}
 
 	// Phase summary
 	sections = append(sections, titleStyle.Render("Phases"))
@@ -521,12 +596,24 @@ func (m *DashboardModel) renderDashboard() string {
 				progress = m.state.Progress.Phases[phase.ID]
 			}
 			status := "○"
+			var statusStyle lipgloss.Style
 			if phase.Status == "complete" {
 				status = "✓"
+				statusStyle = progressCompleteStyle
 			} else if phase.Status == "in-progress" {
 				status = "→"
+				statusStyle = progressInProgressStyle
+			} else {
+				statusStyle = progressTodoStyle
 			}
-			sections = append(sections, fmt.Sprintf("  %s %s (%d%%)", status, phase.Name, progress))
+			
+			// Mini progress bar
+			progressWidth := 20
+			filled := int(float64(progress) / 100.0 * float64(progressWidth))
+			bar := strings.Repeat("█", filled) + strings.Repeat("░", progressWidth-filled)
+			coloredBar := statusStyle.Render(bar)
+			
+			sections = append(sections, fmt.Sprintf("  %s %s %s (%d%%)", status, phase.Name, coloredBar, progress))
 		}
 	}
 	sections = append(sections, "")
@@ -542,12 +629,24 @@ func (m *DashboardModel) renderDashboard() string {
 				break
 			}
 			status := "○"
+			var statusStyle lipgloss.Style
 			if feature.Status == "complete" {
 				status = "✓"
+				statusStyle = progressCompleteStyle
 			} else if feature.Status == "in-progress" {
 				status = "→"
+				statusStyle = progressInProgressStyle
+			} else {
+				statusStyle = progressTodoStyle
 			}
-			sections = append(sections, fmt.Sprintf("  %s %s (%d%%)", status, feature.Name, feature.Progress))
+			
+			// Mini progress bar for features
+			progressWidth := 15
+			filled := int(float64(feature.Progress) / 100.0 * float64(progressWidth))
+			bar := strings.Repeat("█", filled) + strings.Repeat("░", progressWidth-filled)
+			coloredBar := statusStyle.Render(bar)
+			
+			sections = append(sections, fmt.Sprintf("  %s %s %s (%d%%)", status, feature.Name, coloredBar, feature.Progress))
 			count++
 		}
 	}

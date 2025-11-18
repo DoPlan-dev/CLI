@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DoPlan-dev/CLI/internal/dashboard"
 	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
@@ -203,6 +204,13 @@ type VelocityJSON struct {
 func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 	overallProgress := g.calculateOverallProgress()
 	
+	// Read progress data early for use in feature building
+	progressParser := dashboard.NewProgressParser(g.projectRoot)
+	progressData, err := progressParser.ReadProgressFiles()
+	if err != nil {
+		progressData = make(map[string]*dashboard.ProgressData)
+	}
+	
 	// Build phases
 	phases := []PhaseJSON{}
 	for _, phase := range g.state.Phases {
@@ -232,6 +240,33 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 					}
 				}
 				
+				// Calculate commits for this feature from branch name
+				commits := 0
+				if feature.Branch != "" && g.githubData != nil {
+					for _, commit := range g.githubData.Commits {
+						if commit.Branch == feature.Branch {
+							commits++
+						}
+					}
+				}
+
+				// Get last activity from progress data or commits
+				lastActivity := feature.StartDate
+				if progressData != nil {
+					if pd, ok := progressData[feature.ID]; ok && !pd.LastUpdated.IsZero() {
+						lastActivity = pd.LastUpdated.Format(time.RFC3339)
+					}
+				}
+				// Also check commits for this feature
+				if commits > 0 && g.githubData != nil {
+					for _, commit := range g.githubData.Commits {
+						if commit.Branch == feature.Branch {
+							lastActivity = commit.Date
+							break
+						}
+					}
+				}
+
 				features = append(features, FeatureJSON{
 					ID:           feature.ID,
 					Name:         feature.Name,
@@ -239,8 +274,8 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 					Progress:     feature.Progress,
 					Branch:       feature.Branch,
 					PR:           pr,
-					Commits:      0, // TODO: Calculate from GitHub data
-					LastActivity: feature.StartDate,
+					Commits:      commits,
+					LastActivity: lastActivity,
 					Tasks:        tasks,
 				})
 			}
@@ -322,32 +357,42 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 	}
 	if len(g.githubData.Commits) > 0 {
 		githubJSON.LastCommit = g.githubData.Commits[0].Date
+		// Extract unique contributors
+		contributorMap := make(map[string]bool)
+		for _, commit := range g.githubData.Commits {
+			if commit.Author != "" {
+				contributorMap[commit.Author] = true
+			}
+		}
+		for contributor := range contributorMap {
+			githubJSON.Contributors = append(githubJSON.Contributors, contributor)
+		}
 	}
 	
-	// Build activity (simplified for now)
+	// Generate comprehensive activity feed (progressData already loaded above)
+	activityGen := dashboard.NewActivityGenerator(g.state, g.githubData, progressData)
+	activityData := activityGen.GenerateActivityFeed()
+	
+	// Convert to ActivityJSON
 	activity := ActivityJSON{
 		Last24Hours: ActivityPeriodJSON{
-			Commits:       0,
-			TasksCompleted: 0,
-			FilesChanged:  0,
+			Commits:       activityData.Last24Hours.Commits,
+			TasksCompleted: activityData.Last24Hours.TasksCompleted,
+			FilesChanged:  activityData.Last24Hours.FilesChanged,
 		},
 		Last7Days: ActivityPeriodJSON{
-			Commits:       len(g.githubData.Commits),
-			TasksCompleted: completedTasks,
-			FilesChanged:  0,
+			Commits:       activityData.Last7Days.Commits,
+			TasksCompleted: activityData.Last7Days.TasksCompleted,
+			FilesChanged:  activityData.Last7Days.FilesChanged,
 		},
 		RecentActivity: []ActivityItemJSON{},
 	}
 	
-	// Add recent commits to activity
-	for i, commit := range g.githubData.Commits {
-		if i >= 10 {
-			break
-		}
+	for _, item := range activityData.RecentActivity {
 		activity.RecentActivity = append(activity.RecentActivity, ActivityItemJSON{
-			Type:      "commit",
-			Message:   commit.Message,
-			Timestamp: commit.Date,
+			Type:      item.Type,
+			Message:   item.Message,
+			Timestamp: item.Timestamp,
 		})
 	}
 	
@@ -382,12 +427,7 @@ func (g *DashboardGenerator) buildDashboardJSON() *DashboardJSON {
 			Optional:   0,
 			Completion: 0,
 		},
-		Velocity: VelocityJSON{
-			TasksPerDay:        0.0,
-			CommitsPerDay:      0.0,
-			EstimatedCompletion: "",
-			DaysToLaunch:       0,
-		},
+		Velocity: g.calculateVelocity(),
 	}
 }
 
@@ -722,6 +762,85 @@ func (g *DashboardGenerator) calculatePhaseProgress(phaseID string) int {
 	}
 
 	return totalProgress / len(phase.Features)
+}
+
+// calculateVelocity calculates velocity metrics
+func (g *DashboardGenerator) calculateVelocity() VelocityJSON {
+	velocity := VelocityJSON{
+		TasksPerDay:        0.0,
+		CommitsPerDay:      0.0,
+		EstimatedCompletion: "",
+		DaysToLaunch:       0,
+	}
+
+	// Calculate commits per day (last 7 days)
+	if g.githubData != nil && len(g.githubData.Commits) > 0 {
+		now := time.Now()
+		sevenDaysAgo := now.AddDate(0, 0, -7)
+		commitsCount := 0
+
+		for _, commit := range g.githubData.Commits {
+			commitTime, err := time.Parse(time.RFC3339, commit.Date)
+			if err != nil {
+				// Try other formats
+				commitTime, err = time.Parse("2006-01-02 15:04:05", commit.Date)
+				if err != nil {
+					continue
+				}
+			}
+			if commitTime.After(sevenDaysAgo) {
+				commitsCount++
+			}
+		}
+
+		velocity.CommitsPerDay = float64(commitsCount) / 7.0
+	}
+
+	// Calculate tasks per day from state
+	if g.state != nil {
+		totalTasks := 0
+		completedTasks := 0
+		for _, feature := range g.state.Features {
+			for _, taskPhase := range feature.TaskPhases {
+				for _, task := range taskPhase.Tasks {
+					totalTasks++
+					if task.Completed {
+						completedTasks++
+					}
+				}
+			}
+		}
+
+		// Estimate based on project start (simplified)
+		if totalTasks > 0 {
+			// Assume project started when first feature was created
+			// For now, use a simple estimate
+			velocity.TasksPerDay = float64(completedTasks) / 30.0 // Rough estimate
+		}
+	}
+
+	// Calculate estimated completion (simplified)
+	if velocity.TasksPerDay > 0 && g.state != nil {
+		remainingTasks := 0
+		for _, feature := range g.state.Features {
+			for _, taskPhase := range feature.TaskPhases {
+				for _, task := range taskPhase.Tasks {
+					if !task.Completed {
+						remainingTasks++
+					}
+				}
+			}
+		}
+
+		if remainingTasks > 0 && velocity.TasksPerDay > 0 {
+			daysRemaining := float64(remainingTasks) / velocity.TasksPerDay
+			completionDate := time.Now().AddDate(0, 0, int(daysRemaining))
+			velocity.EstimatedCompletion = completionDate.Format(time.RFC3339)
+			velocity.DaysToLaunch = int(daysRemaining)
+		}
+	}
+
+	return velocity
 }
 
 func (g *DashboardGenerator) findPhase(phaseID string) *models.Phase {
