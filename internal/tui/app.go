@@ -178,11 +178,12 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				},
 			)
 		case "integration":
-			// This will be implemented in later phases
 			return a, tea.Sequence(
-				tea.Printf("Action '%s' - Coming soon in v0.0.19-beta!\n", msg.Action),
 				func() tea.Msg {
-					return screens.MenuActionMsg{Action: "menu"}
+					if err := a.executor.SetupIntegration(); err != nil {
+						return screens.ErrorMsg{Error: err}
+					}
+					return screens.SuccessMsg{Message: "IDE integration configured", Action: "integration_setup"}
 				},
 			)
 		case "menu":

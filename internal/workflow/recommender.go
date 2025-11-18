@@ -158,6 +158,12 @@ func GetNextStep(lastAction string) (title string, description string) {
 			description: "Action undone! Review what was changed and decide on next steps. Check dashboard: [d]ashboard",
 		},
 
+		// Integration setup
+		"integration_setup": {
+			title:       "Start Planning",
+			description: "IDE integration configured! Start planning your project with @planner /Plan, or use the TUI menu: [p]lan",
+		},
+
 		// Default fallback
 		"": {
 			title:       "Get Started",

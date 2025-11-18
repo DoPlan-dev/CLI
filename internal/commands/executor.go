@@ -1,7 +1,10 @@
 package commands
 
 import (
+	"os"
+
 	"github.com/DoPlan-dev/CLI/internal/tui"
+	"github.com/DoPlan-dev/CLI/internal/wizard"
 )
 
 // TUICommandExecutor implements the CommandExecutor interface for the TUI
@@ -65,7 +68,10 @@ func (e *TUICommandExecutor) ApplyDesign() error {
 }
 
 func (e *TUICommandExecutor) SetupIntegration() error {
-	// TODO: Implement integration command
-	return nil
+	projectRoot, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	return wizard.RunIntegrationWizard(projectRoot)
 }
 
