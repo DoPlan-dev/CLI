@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/DoPlan-dev/CLI/internal/config"
 )
 
 // ContextGenerator generates the tech stack context document
@@ -27,10 +29,56 @@ func (g *ContextGenerator) Generate() error {
 	// Detect technologies from project files
 	techStack := g.detectTechStack()
 
+	// Get project name from state or config
+	projectName := g.getProjectName()
+
 	// Generate context document
-	content := g.generateContextContent(techStack)
+	content := g.generateContextContent(techStack, projectName)
 
 	return os.WriteFile(contextPath, []byte(content), 0644)
+}
+
+// getProjectName retrieves project name from state or config
+func (g *ContextGenerator) getProjectName() string {
+	// Try to get from state first
+	cfgMgr := config.NewManager(g.projectRoot)
+	state, err := cfgMgr.LoadState()
+	if err == nil && state != nil && state.Idea != nil && state.Idea.Name != "" {
+		return state.Idea.Name
+	}
+
+	// Try to get from config YAML
+	cfg, err := cfgMgr.LoadConfig()
+	if err == nil && cfg != nil {
+		// Check YAML config for project name
+		configPath := filepath.Join(g.projectRoot, ".doplan", "config.yaml")
+		if data, err := os.ReadFile(configPath); err == nil {
+			// Simple YAML parsing for project.name
+			content := string(data)
+			if strings.Contains(content, "project:") {
+				lines := strings.Split(content, "\n")
+				for i, line := range lines {
+					if strings.Contains(line, "name:") && i > 0 && strings.Contains(lines[i-1], "project:") {
+						parts := strings.Split(line, "name:")
+						if len(parts) > 1 {
+							name := strings.TrimSpace(parts[1])
+							if name != "" && name != `""` {
+								return name
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Fallback to directory name
+	base := filepath.Base(g.projectRoot)
+	if base != "." && base != "/" {
+		return base
+	}
+
+	return "Project"
 }
 
 // TechStack represents the detected technology stack
@@ -267,160 +315,198 @@ func (g *ContextGenerator) extractNodeVersion() string {
 }
 
 // generateContextContent generates the CONTEXT.md content
-func (g *ContextGenerator) generateContextContent(stack *TechStack) string {
+func (g *ContextGenerator) generateContextContent(stack *TechStack, projectName string) string {
 	backtick := "`"
 	var sb strings.Builder
 
-	sb.WriteString("# Project Technology Stack\n\n")
-	sb.WriteString("This document provides a comprehensive overview of all technologies, frameworks, tools, and services used in this project.\n")
-	sb.WriteString("It serves as a context file for IDEs and CLIs to understand the project's technical stack.\n\n")
-	sb.WriteString("---\n\n")
+	// Header with project name
+	sb.WriteString(fmt.Sprintf("# Project Context: %s\n\n", projectName))
 
-	// Programming Languages
-	if len(stack.Languages) > 0 {
-		sb.WriteString("## Programming Languages\n\n")
-		for _, lang := range stack.Languages {
-			sb.WriteString(fmt.Sprintf("### %s\n\n", lang.Name))
-			if lang.Version != "" {
-				sb.WriteString(fmt.Sprintf("- **Version:** %s\n", lang.Version))
-			}
-			sb.WriteString(fmt.Sprintf("- **Documentation:** %s\n", lang.DocsURL))
-			if lang.Description != "" {
-				sb.WriteString(fmt.Sprintf("- **Description:** %s\n", lang.Description))
-			}
-			if lang.Usage != "" {
-				sb.WriteString(fmt.Sprintf("- **Usage:** %s\n", lang.Usage))
+	// Project Overview section
+	sb.WriteString("## Project Overview\n\n")
+	cfgMgr := config.NewManager(g.projectRoot)
+	state, _ := cfgMgr.LoadState()
+	hasContent := false
+	if state != nil && state.Idea != nil {
+		if state.Idea.Description != "" {
+			sb.WriteString(fmt.Sprintf("- **Brief description:** %s\n", state.Idea.Description))
+			hasContent = true
+		}
+		if len(state.Idea.TargetUsers) > 0 {
+			sb.WriteString(fmt.Sprintf("- **Target audience:** %s\n", strings.Join(state.Idea.TargetUsers, ", ")))
+			hasContent = true
+		}
+		if state.Idea.Solution != "" {
+			sb.WriteString(fmt.Sprintf("- **Core features:** %s\n", state.Idea.Solution))
+			hasContent = true
+		}
+	}
+	if !hasContent {
+		sb.WriteString("- Brief description: [To be filled]\n")
+		sb.WriteString("- Target audience: [To be filled]\n")
+		sb.WriteString("- Core features: [To be filled]\n")
+	}
+	sb.WriteString("\n")
+
+	// Technology Stack section
+	sb.WriteString("## Technology Stack\n\n")
+
+	// Frontend
+	frontendTechs := g.categorizeFrontend(stack)
+	if len(frontendTechs) > 0 {
+		sb.WriteString("### Frontend\n\n")
+		for _, tech := range frontendTechs {
+			sb.WriteString(fmt.Sprintf("- **%s:** %s", tech.Name, tech.DocsURL))
+			if tech.Version != "" && tech.Version != "latest" {
+				sb.WriteString(fmt.Sprintf(" (v%s)", tech.Version))
 			}
 			sb.WriteString("\n")
 		}
+		sb.WriteString("\n")
 	}
 
-	// Frameworks
-	if len(stack.Frameworks) > 0 {
-		sb.WriteString("## Frameworks\n\n")
-		for _, fw := range stack.Frameworks {
-			sb.WriteString(fmt.Sprintf("### %s\n\n", fw.Name))
-			if fw.Version != "" {
-				sb.WriteString(fmt.Sprintf("- **Version:** %s\n", fw.Version))
-			}
-			sb.WriteString(fmt.Sprintf("- **Documentation:** %s\n", fw.DocsURL))
-			if fw.Description != "" {
-				sb.WriteString(fmt.Sprintf("- **Description:** %s\n", fw.Description))
-			}
-			if fw.Usage != "" {
-				sb.WriteString(fmt.Sprintf("- **Purpose:** %s\n", fw.Usage))
+	// Backend
+	backendTechs := g.categorizeBackend(stack)
+	if len(backendTechs) > 0 {
+		sb.WriteString("### Backend\n\n")
+		for _, tech := range backendTechs {
+			sb.WriteString(fmt.Sprintf("- **%s:** %s", tech.Name, tech.DocsURL))
+			if tech.Version != "" && tech.Version != "latest" {
+				sb.WriteString(fmt.Sprintf(" (v%s)", tech.Version))
 			}
 			sb.WriteString("\n")
 		}
+		sb.WriteString("\n")
 	}
 
-	// CLIs and Tools
-	if len(stack.CLIs) > 0 {
-		sb.WriteString("## CLIs and Development Tools\n\n")
-		for _, cli := range stack.CLIs {
-			sb.WriteString(fmt.Sprintf("### %s\n\n", cli.Name))
-			if cli.Version != "" {
-				sb.WriteString(fmt.Sprintf("- **Version:** %s\n", cli.Version))
-			}
-			sb.WriteString(fmt.Sprintf("- **Documentation:** %s\n", cli.DocsURL))
-			if cli.Description != "" {
-				sb.WriteString(fmt.Sprintf("- **Description:** %s\n", cli.Description))
-			}
-			if cli.Usage != "" {
-				sb.WriteString(fmt.Sprintf("- **Usage:** %s\n", cli.Usage))
+	// Services & APIs
+	serviceTechs := g.categorizeServices(stack)
+	if len(serviceTechs) > 0 {
+		sb.WriteString("### Services & APIs\n\n")
+		for _, tech := range serviceTechs {
+			sb.WriteString(fmt.Sprintf("- **%s:** %s", tech.Name, tech.DocsURL))
+			// Check for SOPS directory
+			sopsPath := filepath.Join(g.projectRoot, ".doplan", "SOPS", strings.ToLower(tech.Name))
+			if g.fileExists(sopsPath) {
+				sb.WriteString(fmt.Sprintf(" - [Setup Guide](./.doplan/SOPS/%s/)", strings.ToLower(tech.Name)))
 			}
 			sb.WriteString("\n")
 		}
+		sb.WriteString("\n")
 	}
 
-	// Services
-	if len(stack.Services) > 0 {
-		sb.WriteString("## Services and Platforms\n\n")
-		for _, svc := range stack.Services {
-			sb.WriteString(fmt.Sprintf("### %s\n\n", svc.Name))
-			if svc.Version != "" {
-				sb.WriteString(fmt.Sprintf("- **Version:** %s\n", svc.Version))
-			}
-			sb.WriteString(fmt.Sprintf("- **Documentation:** %s\n", svc.DocsURL))
-			if svc.Description != "" {
-				sb.WriteString(fmt.Sprintf("- **Description:** %s\n", svc.Description))
-			}
-			if svc.Usage != "" {
-				sb.WriteString(fmt.Sprintf("- **Purpose:** %s\n", svc.Usage))
-			}
-			sb.WriteString("\n")
+	// Project-Specific Documentation
+	sb.WriteString("## Project-Specific Documentation\n\n")
+	docs := []struct {
+		name string
+		path string
+	}{
+		{"API Specification", "doplan/contracts/api-spec.json"},
+		{"Data Models", "doplan/contracts/data-model.md"},
+		{"Design System", "doplan/design/DPR.md"},
+		{"Product Requirements", "doplan/PRD.md"},
+	}
+	for _, doc := range docs {
+		if g.fileExists(doc.path) {
+			sb.WriteString(fmt.Sprintf("- [%s](./%s)\n", doc.name, doc.path))
 		}
 	}
-
-	// Databases
-	if len(stack.Databases) > 0 {
-		sb.WriteString("## Databases\n\n")
-		for _, db := range stack.Databases {
-			sb.WriteString(fmt.Sprintf("### %s\n\n", db.Name))
-			if db.Version != "" {
-				sb.WriteString(fmt.Sprintf("- **Version:** %s\n", db.Version))
-			}
-			sb.WriteString(fmt.Sprintf("- **Documentation:** %s\n", db.DocsURL))
-			if db.Description != "" {
-				sb.WriteString(fmt.Sprintf("- **Description:** %s\n", db.Description))
-			}
-			if db.Usage != "" {
-				sb.WriteString(fmt.Sprintf("- **Usage:** %s\n", db.Usage))
-			}
-			sb.WriteString("\n")
-		}
+	if len(docs) == 0 || !g.fileExists("doplan/contracts/api-spec.json") {
+		sb.WriteString("- [API Specification](./doplan/contracts/api-spec.json) *(to be created)*\n")
+		sb.WriteString("- [Data Models](./doplan/contracts/data-model.md) *(to be created)*\n")
+		sb.WriteString("- [Design System](./doplan/design/DPR.md) *(to be created)*\n")
 	}
+	sb.WriteString("\n")
 
-	// Development Tools
-	if len(stack.Tools) > 0 {
-		sb.WriteString("## Development Tools\n\n")
-		for _, tool := range stack.Tools {
-			sb.WriteString(fmt.Sprintf("### %s\n\n", tool.Name))
-			if tool.Version != "" {
-				sb.WriteString(fmt.Sprintf("- **Version:** %s\n", tool.Version))
-			}
-			sb.WriteString(fmt.Sprintf("- **Documentation:** %s\n", tool.DocsURL))
-			if tool.Description != "" {
-				sb.WriteString(fmt.Sprintf("- **Description:** %s\n", tool.Description))
-			}
-			if tool.Usage != "" {
-				sb.WriteString(fmt.Sprintf("- **Usage:** %s\n", tool.Usage))
-			}
-			sb.WriteString("\n")
-		}
-	}
+	// Development Guidelines
+	sb.WriteString("## Development Guidelines\n\n")
+	sb.WriteString("- **Coding standards:** Follow project conventions\n")
+	sb.WriteString("- **File naming conventions:** Use kebab-case for files, PascalCase for components\n")
+	sb.WriteString("- **Component patterns:** [To be defined]\n")
+	sb.WriteString("- **Testing approach:** [To be defined]\n")
+	sb.WriteString("\n")
 
-	// IDE Integration Section
-	sb.WriteString("## IDE/CLI Integration\n\n")
-	sb.WriteString("This project uses DoPlan for workflow automation. The following IDEs/CLIs are supported:\n\n")
+	// DoPlan Resources (collapsible)
+	sb.WriteString("## DoPlan Resources\n\n")
+	sb.WriteString("<details>\n")
+	sb.WriteString("<summary>DoPlan CLI Documentation</summary>\n\n")
+	sb.WriteString("This project uses DoPlan for workflow automation and project management.\n\n")
+	sb.WriteString("### IDE Integration\n\n")
+	sb.WriteString(fmt.Sprintf("- **Rules:** %s.doplan/ai/rules/%s\n", backtick, backtick))
+	sb.WriteString(fmt.Sprintf("- **Commands:** %s.doplan/ai/commands/%s\n", backtick, backtick))
+	sb.WriteString(fmt.Sprintf("- **Agents:** %s.doplan/ai/agents/%s\n", backtick, backtick))
+	sb.WriteString("\n")
 	sb.WriteString("### Cursor IDE\n")
-	sb.WriteString(fmt.Sprintf("- **Rules:** %s.cursor/rules/%s\n", backtick, backtick))
-	sb.WriteString(fmt.Sprintf("- **Commands:** %s.cursor/commands/%s\n", backtick, backtick))
+	sb.WriteString(fmt.Sprintf("- **Rules:** %s.cursor/rules/%s (symlinked from .doplan/ai/rules/)\n", backtick, backtick))
+	sb.WriteString(fmt.Sprintf("- **Commands:** %s.cursor/commands/%s (symlinked from .doplan/ai/commands/)\n", backtick, backtick))
 	sb.WriteString(fmt.Sprintf("- **Context:** This file (%sCONTEXT.md%s) is automatically loaded\n\n", backtick, backtick))
-
-	sb.WriteString("### Gemini CLI\n")
-	sb.WriteString(fmt.Sprintf("- **Commands:** %s.gemini/commands/%s\n", backtick, backtick))
-	sb.WriteString(fmt.Sprintf("- **Context:** Reference this file in command prompts\n\n"))
-
-	sb.WriteString("### Claude Code\n")
-	sb.WriteString(fmt.Sprintf("- **Commands:** %s.claude/commands/%s\n", backtick, backtick))
-	sb.WriteString(fmt.Sprintf("- **Context:** Use %s@CONTEXT.md%s to reference this file\n\n", backtick, backtick))
-
-	sb.WriteString("### Codex CLI\n")
-	sb.WriteString(fmt.Sprintf("- **Prompts:** %s.codex/prompts/%s\n", backtick, backtick))
-	sb.WriteString(fmt.Sprintf("- **Context:** Reference this file in prompt templates\n\n"))
-
-	sb.WriteString("### OpenCode\n")
-	sb.WriteString(fmt.Sprintf("- **Commands:** %s.opencode/command/%s\n", backtick, backtick))
-	sb.WriteString(fmt.Sprintf("- **Context:** Use %s@CONTEXT.md%s to reference this file\n\n", backtick, backtick))
-
-	sb.WriteString("### Qwen Code\n")
-	sb.WriteString(fmt.Sprintf("- **Commands:** %s.qwen/commands/%s\n", backtick, backtick))
-	sb.WriteString(fmt.Sprintf("- **Context:** Reference this file in command prompts\n\n"))
-
+	sb.WriteString("### Other IDEs\n")
+	sb.WriteString(fmt.Sprintf("- **VS Code:** See %s.doplan/guides/vscode_setup.md%s\n", backtick, backtick))
+	sb.WriteString(fmt.Sprintf("- **Generic:** See %s.doplan/guides/generic_ide_setup.md%s\n", backtick, backtick))
+	sb.WriteString("\n")
+	sb.WriteString("</details>\n\n")
 	sb.WriteString("---\n\n")
 	sb.WriteString("**Last Updated:** Auto-generated by DoPlan\n")
 	sb.WriteString("**Note:** This file is automatically updated during `doplan install` and can be manually edited to add additional technologies.\n")
 
 	return sb.String()
+}
+
+// categorizeFrontend identifies frontend technologies
+func (g *ContextGenerator) categorizeFrontend(stack *TechStack) []Technology {
+	var frontend []Technology
+	frontendKeywords := []string{"react", "vue", "angular", "next", "nuxt", "svelte", "tailwind", "css", "html", "typescript", "javascript"}
+	
+	for _, lang := range stack.Languages {
+		if strings.Contains(strings.ToLower(lang.Name), "javascript") || strings.Contains(strings.ToLower(lang.Name), "typescript") {
+			frontend = append(frontend, lang)
+		}
+	}
+	
+	for _, fw := range stack.Frameworks {
+		nameLower := strings.ToLower(fw.Name)
+		for _, keyword := range frontendKeywords {
+			if strings.Contains(nameLower, keyword) {
+				frontend = append(frontend, fw)
+				break
+			}
+		}
+	}
+	
+	return frontend
+}
+
+// categorizeBackend identifies backend technologies
+func (g *ContextGenerator) categorizeBackend(stack *TechStack) []Technology {
+	var backend []Technology
+	backendKeywords := []string{"express", "fastify", "koa", "django", "flask", "rails", "gin", "echo", "fiber"}
+	
+	for _, lang := range stack.Languages {
+		if strings.Contains(strings.ToLower(lang.Name), "go") || strings.Contains(strings.ToLower(lang.Name), "python") || strings.Contains(strings.ToLower(lang.Name), "rust") {
+			backend = append(backend, lang)
+		}
+	}
+	
+	for _, fw := range stack.Frameworks {
+		nameLower := strings.ToLower(fw.Name)
+		for _, keyword := range backendKeywords {
+			if strings.Contains(nameLower, keyword) {
+				backend = append(backend, fw)
+				break
+			}
+		}
+	}
+	
+	for _, db := range stack.Databases {
+		backend = append(backend, db)
+	}
+	
+	return backend
+}
+
+// categorizeServices identifies services and APIs
+func (g *ContextGenerator) categorizeServices(stack *TechStack) []Technology {
+	var services []Technology
+	services = append(services, stack.Services...)
+	return services
 }

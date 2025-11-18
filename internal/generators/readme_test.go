@@ -21,16 +21,18 @@ func TestREADMEGenerator_Generate(t *testing.T) {
 	gen := NewREADMEGenerator(projectRoot)
 	content := gen.Generate()
 
-	assert.Contains(t, content, "DoPlan - Project Workflow Manager")
-	assert.Contains(t, content, "Quick Start")
+	// Check project-first structure
+	assert.Contains(t, content, "🚀 Quick Start")
+	assert.Contains(t, content, "📋 Features")
+	assert.Contains(t, content, "🛠️ Tech Stack")
+	assert.Contains(t, content, "📁 Project Structure")
+	assert.Contains(t, content, "🔑 Environment Variables")
+	assert.Contains(t, content, "📚 Documentation")
+	// Check DoPlan section is in collapsible details
+	assert.Contains(t, content, "<details>")
+	assert.Contains(t, content, "Powered by DoPlan")
 	assert.Contains(t, content, "/Discuss")
-	assert.Contains(t, content, "/Refine")
-	assert.Contains(t, content, "/Generate")
-	assert.Contains(t, content, "/Plan")
-	assert.Contains(t, content, "/Implement")
 	assert.Contains(t, content, "doplan dashboard")
-	assert.Contains(t, content, ".cursor/commands/")
-	assert.Contains(t, content, "doplan/")
 }
 
 func TestREADMEGenerator_Generate_ContainsWorkflow(t *testing.T) {
@@ -39,11 +41,11 @@ func TestREADMEGenerator_Generate_ContainsWorkflow(t *testing.T) {
 	gen := NewREADMEGenerator(projectRoot)
 	content := gen.Generate()
 
-	// Check workflow steps are present
-	assert.Contains(t, content, "Step 1: Discuss Your Idea")
-	assert.Contains(t, content, "Step 2: Refine Your Idea")
-	assert.Contains(t, content, "Step 3: Generate Documentation")
-	assert.Contains(t, content, "Step 4: Create Your Plan")
+	// Check project-first sections are present (workflow steps removed in new structure)
+	assert.Contains(t, content, "Quick Start")
+	assert.Contains(t, content, "Features")
+	assert.Contains(t, content, "Tech Stack")
+	assert.Contains(t, content, "Project Structure")
 }
 
 func TestREADMEGenerator_Generate_ContainsCommands(t *testing.T) {
@@ -52,13 +54,11 @@ func TestREADMEGenerator_Generate_ContainsCommands(t *testing.T) {
 	gen := NewREADMEGenerator(projectRoot)
 	content := gen.Generate()
 
-	// Check all commands are mentioned
+	// Check DoPlan commands are in collapsible section
 	assert.Contains(t, content, "/Discuss")
-	assert.Contains(t, content, "/Refine")
 	assert.Contains(t, content, "/Generate")
 	assert.Contains(t, content, "/Plan")
-	assert.Contains(t, content, "/Implement")
-	assert.Contains(t, content, "/Next")
-	assert.Contains(t, content, "/Progress")
-	assert.Contains(t, content, "/Dashboard")
+	assert.Contains(t, content, "doplan dashboard")
+	assert.Contains(t, content, "doplan progress")
+	assert.Contains(t, content, "doplan github")
 }

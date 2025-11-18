@@ -1,107 +1,207 @@
-# DoPlan Test Scripts
+# DoPlan v0.0.18-beta Utility Scripts
 
-This directory contains test scripts to verify DoPlan CLI functionality.
+This directory contains utility scripts for development, testing, and maintenance of DoPlan v0.0.18-beta.
 
-## Available Scripts
+## 📋 Scripts Overview
 
-### `test-cli.sh`
-Comprehensive test suite for all CLI commands.
+### Test Environment Scripts
 
-**Usage:**
-```bash
-./scripts/test-cli.sh
-```
-
-**Tests:**
-- Build verification
-- Help and version commands
-- All subcommands (install, dashboard, github, progress)
-- Error handling (commands without installation)
-- TUI mode flag
-
-### `test-install.sh`
-Tests the installation flow in a real project environment.
+#### `setup-test-env.sh`
+Sets up a complete test environment with various project states.
 
 **Usage:**
 ```bash
-./scripts/test-install.sh
+./scripts/setup-test-env.sh
 ```
 
-**Tests:**
-- Installation command availability
-- Expected directory structure
-- Git repository setup
+**Creates:**
+- `/tmp/doplan-test/empty` - Empty folder
+- `/tmp/doplan-test/existing` - Existing code without DoPlan
+- `/tmp/doplan-test/old` - Old DoPlan structure (v0.0.17)
+- `/tmp/doplan-test/new` - New DoPlan structure (v0.0.18)
 
-### `test-integration.sh`
-Integration tests for the full workflow.
+#### `clean-test-env.sh`
+Cleans up the test environment.
 
 **Usage:**
 ```bash
-./scripts/test-integration.sh
+./scripts/clean-test-env.sh
 ```
 
-**Tests:**
-- Binary functionality
-- Command execution
-- File generation
+#### `backup-test-projects.sh`
+Creates backups of test projects.
+
+**Usage:**
+```bash
+./scripts/backup-test-projects.sh
+```
+
+**Backups stored in:** `/tmp/doplan-test-backups/TIMESTAMP/`
+
+#### `restore-test-projects.sh`
+Restores test projects from backup.
+
+**Usage:**
+```bash
+./scripts/restore-test-projects.sh <timestamp>
+```
+
+**Example:**
+```bash
+./scripts/restore-test-projects.sh 20240115-103000
+```
+
+### Testing Scripts
+
+#### `run-all-tests.sh`
+Runs all test suites (unit + integration).
+
+**Usage:**
+```bash
+./scripts/run-all-tests.sh
+```
+
+**Runs:**
+- Unit tests for all packages
+- Integration tests
+- Migration tests
+- IDE integration tests
+
+#### `test-migration.sh`
+Tests migration functionality.
+
+**Usage:**
+```bash
+./scripts/test-migration.sh
+```
+
+**Requires:** Old DoPlan structure (created by `setup-test-env.sh`)
+
+#### `test-ide-integration.sh`
+Tests IDE integration setup.
+
+**Usage:**
+```bash
+./scripts/test-ide-integration.sh
+```
+
+**Checks:**
+- Cursor integration
+- VS Code integration
 - Directory structure
+- Symlinks/files
 
-## Running All Tests
+### Validation Scripts
 
-Run all test scripts:
+#### `validate-migration.sh`
+Validates a completed migration.
 
+**Usage:**
 ```bash
-cd cli
-./scripts/test-cli.sh
-./scripts/test-install.sh
-./scripts/test-integration.sh
+./scripts/validate-migration.sh [project-root]
 ```
 
-Or use Make:
+**Checks:**
+- New config exists and is valid
+- Old config removed/backed up
+- Folder structure migrated
+- .doplan structure exists
 
+#### `check-dependencies.sh`
+Checks required dependencies.
+
+**Usage:**
 ```bash
-make test  # If you add this to Makefile
+./scripts/check-dependencies.sh
 ```
 
-## Manual Testing
+**Checks:**
+- Go (required, 1.24+)
+- Git (required)
+- GitHub CLI (optional)
+- jq (optional)
+- yq (optional)
 
-Some tests require manual interaction:
+## 🔧 Development Workflow
 
-1. **Installation Test:**
-   ```bash
-   mkdir test-project
-   cd test-project
-   git init
-   ../bin/doplan install
-   # Select an IDE option
-   # Verify directories are created
-   ```
+### Initial Setup
+```bash
+# 1. Check dependencies
+./scripts/check-dependencies.sh
 
-2. **Dashboard Test:**
-   ```bash
-   doplan dashboard
-   # Should show dashboard or "not installed" message
-   ```
+# 2. Set up test environment
+./scripts/setup-test-env.sh
 
-3. **TUI Test:**
-   ```bash
-   doplan --tui
-   # Should open fullscreen TUI
-   ```
+# 3. Create backup before making changes
+./scripts/backup-test-projects.sh
+```
 
-## Expected Results
+### During Development
+```bash
+# Run tests frequently
+./scripts/run-all-tests.sh
 
-All automated tests should pass. Manual tests require:
-- Git repository initialized
-- GitHub CLI installed (for PR tests)
-- Terminal with color support
+# Test specific features
+./scripts/test-migration.sh
+./scripts/test-ide-integration.sh
+```
 
-## Troubleshooting
+### Before Committing
+```bash
+# Run all tests
+./scripts/run-all-tests.sh
 
-If tests fail:
+# Validate any migrations
+./scripts/validate-migration.sh
+```
 
-1. **Build errors:** Run `make build` manually
-2. **Permission errors:** Ensure scripts are executable (`chmod +x scripts/*.sh`)
-3. **Binary not found:** Build the binary first (`make build`)
-4. **Git errors:** Ensure git is installed and configured
+## 📝 Script Details
 
+### Test Environment Structure
+
+After running `setup-test-env.sh`, you'll have:
+
+```
+/tmp/doplan-test/
+├── empty/          # Empty folder (for new project wizard)
+├── existing/       # Existing code (for adoption wizard)
+├── old/            # Old DoPlan structure (for migration)
+└── new/            # New DoPlan structure (for testing)
+```
+
+### Backup Structure
+
+Backups are stored with timestamps:
+
+```
+/tmp/doplan-test-backups/
+└── 20240115-103000/
+    ├── empty/
+    ├── existing/
+    ├── old/
+    └── new/
+```
+
+## 🐛 Troubleshooting
+
+### Script fails with "permission denied"
+```bash
+chmod +x scripts/*.sh
+```
+
+### Test environment not found
+```bash
+./scripts/setup-test-env.sh
+```
+
+### Backup not found
+```bash
+# List available backups
+ls -1 /tmp/doplan-test-backups/
+```
+
+## 📚 Related Documentation
+
+- [Testing Scenarios](../docs/development/TESTING_SCENARIOS.md)
+- [Troubleshooting Guide](../docs/development/TROUBLESHOOTING_GUIDE.md)
+- [Migration Strategy](../docs/development/MIGRATION_STRATEGY.md)

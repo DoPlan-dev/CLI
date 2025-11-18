@@ -35,16 +35,30 @@ func TestInstaller_Install(t *testing.T) {
 	err := installer.Install()
 	require.NoError(t, err)
 
-	// Check directories were created
-	assert.DirExists(t, filepath.Join(projectRoot, ".cursor", "commands"))
-	assert.DirExists(t, filepath.Join(projectRoot, ".cursor", "rules"))
-	assert.DirExists(t, filepath.Join(projectRoot, ".cursor", "config"))
+	// Check directories were created (may be symlinks after setupIDEIntegration)
+	commandsPath := filepath.Join(projectRoot, ".cursor", "commands")
+	rulesPath := filepath.Join(projectRoot, ".cursor", "rules")
+	configPath := filepath.Join(projectRoot, ".cursor", "config")
+	
+	// Check that commands directory exists (as dir or symlink) and has files
+	commandsInfo, err := os.Stat(commandsPath)
+	require.NoError(t, err)
+	assert.True(t, commandsInfo.IsDir() || (commandsInfo.Mode()&os.ModeSymlink != 0), "commands should be directory or symlink")
+	assert.FileExists(t, filepath.Join(commandsPath, "discuss.md"))
+	
+	// Check that rules directory exists (as dir or symlink)
+	rulesInfo, err := os.Stat(rulesPath)
+	require.NoError(t, err)
+	assert.True(t, rulesInfo.IsDir() || (rulesInfo.Mode()&os.ModeSymlink != 0), "rules should be directory or symlink")
+	
+	// Check other directories
+	assert.DirExists(t, configPath)
 	assert.DirExists(t, filepath.Join(projectRoot, "doplan", "contracts"))
 	assert.DirExists(t, filepath.Join(projectRoot, "doplan", "templates"))
 
 	// Check config was created
-	configPath := filepath.Join(projectRoot, ".cursor", "config", "doplan-config.json")
-	assert.FileExists(t, configPath)
+	configFilePath := filepath.Join(projectRoot, ".cursor", "config", "doplan-config.json")
+	assert.FileExists(t, configFilePath)
 
 	// Check README was created
 	readmePath := filepath.Join(projectRoot, "README.md")
@@ -170,8 +184,10 @@ func TestInstaller_generateRules(t *testing.T) {
 	err := installer.generateRules()
 	require.NoError(t, err)
 
-	rulesDir := filepath.Join(projectRoot, ".cursor", "rules")
-	assert.FileExists(t, filepath.Join(rulesDir, "workflow-rules.md"))
+	// Rules are now generated to .doplan/ai/rules/
+	rulesDir := filepath.Join(projectRoot, ".doplan", "ai", "rules")
+	assert.FileExists(t, filepath.Join(rulesDir, "workflow.mdc"))
+	assert.FileExists(t, filepath.Join(rulesDir, "communication.mdc"))
 	assert.FileExists(t, filepath.Join(rulesDir, "github-rules.md"))
 }
 
