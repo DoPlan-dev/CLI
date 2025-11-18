@@ -9,6 +9,7 @@ import (
 	"github.com/DoPlan-dev/CLI/internal/config"
 	doplanerror "github.com/DoPlan-dev/CLI/internal/error"
 	"github.com/DoPlan-dev/CLI/internal/generators"
+	"github.com/DoPlan-dev/CLI/internal/integration"
 	"github.com/DoPlan-dev/CLI/internal/tui"
 	"github.com/DoPlan-dev/CLI/internal/utils"
 	"github.com/fatih/color"
@@ -68,8 +69,20 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	}
 
 	color.Green("\n✅ DoPlan installed successfully for %s!", ide)
-	color.Yellow("\nYou can now use DoPlan commands in Cursor.")
-	color.Yellow("Run 'doplan dashboard' to view progress, or use slash commands in Cursor.\n")
+	color.Yellow("\nYou can now use DoPlan commands in your IDE/CLI.")
+	color.Yellow("Run 'doplan dashboard' to view progress, or use slash commands in your IDE.\n")
+	
+	// Show IDE-specific instructions
+	switch ide {
+	case "vscode":
+		color.Cyan("📝 VS Code: Use tasks from Command Palette (Ctrl+Shift+P) or Copilot Chat")
+	case "gemini", "claude", "codex", "opencode", "qwen":
+		color.Cyan("📝 %s: Type '/' to see available commands", ide)
+	case "cursor", "windsurf":
+		color.Cyan("📝 %s: Type '/' in chat to see available commands", ide)
+	}
+	
+	color.Cyan("📚 Integration guide: .doplan/guides/IDE_INTEGRATION.md\n")
 
 	return nil
 }
@@ -96,12 +109,15 @@ func (i *Installer) Install() error {
 	}{
 		{"Creating directory structure", i.createDirectories},
 		{"Installing IDE commands", i.installCommands},
-		{"Creating templates", i.createTemplates},
+		{"Generating AI agents", i.generateAgents},
 		{"Generating workflow rules", i.generateRules},
+		{"Setting up IDE integration", i.setupIDEIntegration},
+		{"Creating templates", i.createTemplates},
 		{"Generating tech stack context", i.generateContext},
 		{"Generating configuration", i.generateConfig},
 		{"Creating README", i.createREADME},
 		{"Creating initial dashboard", i.createDashboard},
+		{"Verifying installation", i.verifyInstallation},
 	}
 
 	useAnimations := utils.AnimationsEnabled()
@@ -1510,9 +1526,24 @@ func (i *Installer) createTemplates() error {
 	return templatesGen.Generate()
 }
 
+func (i *Installer) generateAgents() error {
+	agentsGen := generators.NewAgentsGenerator(i.projectRoot)
+	return agentsGen.Generate()
+}
+
 func (i *Installer) generateRules() error {
 	rulesGen := generators.NewRulesGenerator(i.projectRoot)
 	return rulesGen.Generate()
+}
+
+func (i *Installer) setupIDEIntegration() error {
+	// Setup IDE-specific integration (symlinks, config files, etc.)
+	return integration.SetupIDE(i.projectRoot, i.ide)
+}
+
+func (i *Installer) verifyInstallation() error {
+	// Verify the installation was successful
+	return integration.VerifyIDE(i.projectRoot, i.ide)
 }
 
 func (i *Installer) generateContext() error {

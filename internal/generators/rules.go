@@ -17,16 +17,18 @@ func NewRulesGenerator(projectRoot string) *RulesGenerator {
 	}
 }
 
-// Generate creates all rule files
+// Generate creates all rule files in .doplan/ai/rules/
 func (g *RulesGenerator) Generate() error {
-	rulesDir := filepath.Join(g.projectRoot, ".cursor", "rules")
+	// Generate to central location .doplan/ai/rules/
+	rulesDir := filepath.Join(g.projectRoot, ".doplan", "ai", "rules")
 
 	if err := os.MkdirAll(rulesDir, 0755); err != nil {
 		return err
 	}
 
 	rules := map[string]string{
-		"workflow-rules.md": generateWorkflowRules(),
+		"workflow.mdc":      generateWorkflowRules(),
+		"communication.mdc": generateCommunicationRules(),
 		"github-rules.md":   generateGitHubRules(),
 		"command-rules.md":  generateCommandRules(),
 		"branch-rules.md":   generateBranchRules(),
@@ -44,11 +46,59 @@ func (g *RulesGenerator) Generate() error {
 	return nil
 }
 
+func generateCommunicationRules() string {
+	backtick := "`"
+	return `# DoPlan Communication Rules
+
+These rules govern how AI agents should communicate and collaborate within the DoPlan workflow.
+
+## Communication Principles
+
+- Be clear and concise in all communications
+- Reference specific files and line numbers when discussing code
+- Use the DoPlan workflow stages appropriately
+- Always update state and progress files after actions
+- Follow the established naming conventions
+
+## Agent Collaboration
+
+### Agent Roles
+- **Planner**: Handles idea discussion, refinement, and planning
+- **Coder**: Implements features based on plans and designs
+- **Designer**: Creates design specifications and UI/UX guidelines
+- **Reviewer**: Reviews code and provides feedback
+- **Tester**: Creates and runs tests
+- **DevOps**: Handles deployment and infrastructure
+
+### Communication Flow
+1. Planner creates plans and designs
+2. Coder implements based on plans
+3. Reviewer reviews implementation
+4. Tester validates functionality
+5. DevOps handles deployment
+
+## File References
+
+When discussing code or files:
+- Use absolute paths: ` + backtick + `doplan/01-phase/01-Feature/plan.md` + backtick + `
+- Reference line numbers when needed
+- Include file context in discussions
+
+## State Updates
+
+After any action:
+- Update relevant progress.json files
+- Update state file if applicable
+- Regenerate dashboard if progress changed
+- Commit changes with clear messages
+`
+}
+
 func generateWorkflowRules() string {
 	backtick := "`"
 	return `# DoPlan Workflow Rules
 
-These rules govern how Cursor should operate within the DoPlan workflow.
+These rules govern how AI agents should operate within the DoPlan workflow.
 
 ## Core Principles
 
@@ -56,7 +106,7 @@ These rules govern how Cursor should operate within the DoPlan workflow.
 - Generate contracts before implementation
 - Track progress in dashboard
 - Use feature branches for each feature
-- All commands are available as slash commands in Cursor
+- All commands are available as slash commands in your IDE/CLI
 
 ## Workflow Stages
 
@@ -65,7 +115,7 @@ These rules govern how Cursor should operate within the DoPlan workflow.
 - Suggest improvements and enhancements
 - Help organize features into phases
 - Recommend tech stack based on requirements
-- Save results to ` + backtick + `.cursor/config/doplan-state.json` + backtick + ` and ` + backtick + `doplan/idea-notes.md` + backtick + `
+- Save results to state file and ` + backtick + `doplan/idea-notes.md` + backtick + `
 
 ### 2. Idea Refinement (/Refine)
 - Review existing idea notes
@@ -105,7 +155,7 @@ These rules govern how Cursor should operate within the DoPlan workflow.
 
 ## State Management
 
-- State lives in ` + backtick + `.cursor/config/doplan-state.json` + backtick + `
+- State lives in IDE-specific config directory (e.g., ` + backtick + `.cursor/config/doplan-state.json` + backtick + `)
 - Progress tracked in ` + backtick + `doplan/**/progress.json` + backtick + ` files
 - Dashboard in ` + backtick + `doplan/dashboard.md` + backtick + `
 - Always update state after command execution
