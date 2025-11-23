@@ -711,6 +711,76 @@ This section documents feedback, observations, and suggested improvements for th
   - 💡 Suggestion: Add `/branch` command to show current branch status
   - 💡 Suggestion: Add `/deps` command to check and install missing dependencies
   - 💡 Suggestion: Add `/validate` command to check project health
+  
+- [ ] **`/plan` Command - Granular Planning System** ⚠️ **MISSING CRITICAL FEATURE**:
+  - ❌ **Current**: No `/plan` command exists - planning structure is flat
+  - 💡 **Suggestion**: Add `/plan` command to create granular phase-based planning structure
+  - 💡 **Structure**: Create organized phase and feature folders with standardized templates
+  
+  **Proposed Structure:**
+  ```
+  .plan/
+  ├── docs/                          # 📚 Master Project Documents (Source of Truth)
+  │   ├── PRD.md                     # Global Product Requirements
+  │   ├── ARCHITECTURE.md            # Global System Architecture & Tree
+  │   ├── DESIGN_SYSTEM.md           # Global Design Rules (Colors/Typography)
+  │   └── ROADMAP.md                 # High-Level Strategy (Phases Overview)
+  │
+  ├── template/                      # 📄 Templates for new features
+  │   └── feature_scaffold/
+  │       ├── design.md
+  │       ├── plan.md
+  │       ├── tasks.md
+  │       ├── prompts.md
+  │       └── github.md              # Feature Git History
+  │
+  ├── contracts/                     # 🤝 Interfaces between Phases/Features
+  │   ├── api_schema.json            # Global API definitions
+  │   └── data_models.json           # Global DB schemas
+  │
+  ├── 01-Foundation/                 # 📅 PHASE 1: Setup
+  │   ├── 01-Project_Init/           # ✨ Feature 1: Initialization
+  │   │   ├── design.md              # Feature-specific Architecture
+  │   │   ├── plan.md                # Implementation Steps
+  │   │   ├── tasks.md               # Checklist
+  │   │   ├── prompts.md             # 🗣️ Log of prompts used here
+  │   │   └── github.md              # 🔗 Commit Log for this feature
+  │   │
+  │   └── 02-CI_Pipeline/             # ✨ Feature 2: DevOps Setup
+  │       ├── design.md
+  │       ├── plan.md
+  │       ├── tasks.md
+  │       ├── prompts.md
+  │       └── github.md
+  │
+  ├── 02-Core_Features/               # 📅 PHASE 2: MVP
+  │   ├── 01-User_Auth/               # ✨ Feature 1: Authentication
+  │   │   ├── design.md
+  │   │   ├── plan.md
+  │   │   ├── tasks.md
+  │   │   ├── prompts.md
+  │   │   └── github.md              # 🔗 Tracks "feat/auth" commits
+  │   │
+  │   └── ... (N Features)
+  │
+  └── ... (Future Phases)
+  ```
+  
+  **Command Functionality:**
+  - `/plan create-phase <phase-name>` - Create new phase folder (e.g., `01-Foundation`)
+  - `/plan create-feature <phase> <feature-name>` - Create feature folder within phase
+  - `/plan scaffold` - Initialize full planning structure from PRD/ARCHITECTURE
+  - Auto-generate feature folders from TASKS.md breakdown
+  - Link features to GitHub branches automatically
+  - Track prompts and commits per feature in `prompts.md` and `github.md`
+  
+  **Benefits:**
+  - ✅ Granular organization by phase and feature
+  - ✅ Clear separation of concerns
+  - ✅ Feature-level tracking (design, plan, tasks, prompts, git history)
+  - ✅ Contract definitions for inter-feature communication
+  - ✅ Template system for consistent feature planning
+  - ✅ Better project navigation and documentation
 
 - [ ] **State Management**:
   - ✅ Current: `active_state.json` tracks project state
@@ -723,9 +793,12 @@ This section documents feedback, observations, and suggested improvements for th
 
 - [ ] **File Organization**:
   - ✅ Current: `.plan/reports/` directory for scan reports
+  - ⚠️ **Current Limitation**: Flat planning structure (no phase/feature organization)
+  - 💡 Suggestion: Implement `/plan` command for granular phase/feature structure (see above)
   - 💡 Suggestion: Add `.plan/feedback/` directory for feedback files
   - 💡 Suggestion: Add `.plan/history/` directory for state snapshots
   - 💡 Suggestion: Auto-organize reports by date/phase
+  - 💡 Suggestion: Migrate existing `.plan/00_System/` to new structure
 
 - [ ] **Template Improvements**:
   - 💡 Suggestion: Make scan report template customizable
@@ -735,15 +808,23 @@ This section documents feedback, observations, and suggested improvements for th
 ### 19.3 Priority Improvements
 
 #### High Priority (Next Release)
-1. **Auto-branch creation in `/build` command**
+1. **`/plan` Command - Granular Planning System** 🚨 **CRITICAL MISSING FEATURE**
+   - Create phase-based folder structure (01-Foundation, 02-Core_Features, etc.)
+   - Create feature folders within phases (01-Project_Init, 02-CI_Pipeline, etc.)
+   - Generate standardized templates (design.md, plan.md, tasks.md, prompts.md, github.md)
+   - Initialize master docs folder (PRD.md, ARCHITECTURE.md, DESIGN_SYSTEM.md, ROADMAP.md)
+   - Create contracts folder for API schemas and data models
+   - Auto-scaffold from existing planning documents
+
+2. **Auto-branch creation in `/build` command**
    - Automatically create `task/TASK-XXX` branch when starting a task
    - Switch to branch before implementation
 
-2. **Task status auto-update**
+3. **Task status auto-update**
    - Mark tasks as complete in TASKS.md when `/finished` is used
    - Update progress tracking automatically
 
-3. **Scan report comparison**
+4. **Scan report comparison**
    - Show what changed between scans
    - Highlight new files, dependencies, tasks completed
 
