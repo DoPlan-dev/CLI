@@ -94,7 +94,7 @@ All documentation is in .plan/
 
 ## Support
 
-For issues or questions, visit: https://github.com/dorgham/doplan
+For issues or questions, visit: https://github.com/DoPlan-dev/CLI/
 
 ---
 
