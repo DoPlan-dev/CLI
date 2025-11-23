@@ -76,9 +76,9 @@ type Model struct {
 	errorSuggestion  string
 	previousState    wizardState   // Store previous state for recovery
 	stateHistory     []wizardState // History for back navigation
-	generationDone   bool           // Track if generation has completed
-	generationErr    error          // Store generation error if any
-	generationChan   chan tea.Msg   // Channel for generation results
+	generationDone   bool          // Track if generation has completed
+	generationErr    error         // Store generation error if any
+	generationChan   chan tea.Msg  // Channel for generation results
 }
 
 // generationCompleteMsg is sent when generation completes
@@ -341,8 +341,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						if len(m.steps) > 0 {
 							m.steps[0].Status = stepInProgress
 						}
-						// Start actual generation in background
-						return m, tea.Batch(tickSpinner, startGeneration(m))
+						// Start generation directly in goroutine (no command)
+						request := m.toProjectRequest()
+						resultChan := make(chan tea.Msg, 1)
+						m.generationChan = resultChan
+						
+						go func() {
+							if err := generator.Orchestrate(request); err != nil {
+								resultChan <- generationCompleteMsg{err: fmt.Errorf("generation failed: %w", err)}
+							} else {
+								resultChan <- generationCompleteMsg{err: nil}
+							}
+						}()
+						
+						// Start spinner
+						return m, tickSpinner
 					}
 				}
 				return m, nil
@@ -392,7 +405,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Handle spinner tick
 		if m.state == stateGenerating {
 			m.spinnerFrame++
-			
+
 			// Check for generation completion (non-blocking)
 			if m.generationChan != nil {
 				select {
@@ -402,7 +415,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.generationDone = true
 						m.generationErr = genMsg.err
 						m.generationChan = nil // Close channel
-						
+
 						if genMsg.err != nil {
 							// Transition to error state
 							m.state = stateError
@@ -422,7 +435,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					// No message yet, continue spinner
 				}
 			}
-			
+
 			// Continue spinner animation while generating
 			return m, tickSpinner
 		}
@@ -462,11 +475,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 
-	case setupGenerationChanMsg:
-		// Store the channel for checking results in tick handler
-		m.generationChan = msg.ch
-		// Return immediately with a tick to start checking
-		return m, tickSpinner
 
 	default:
 		// Handle text input messages
@@ -1251,34 +1259,3 @@ func Run() (*models.ProjectRequest, error) {
 	return nil, nil
 }
 
-// startGeneration starts the project generation in a goroutine
-func startGeneration(m Model) tea.Cmd {
-	return func() tea.Msg {
-		// Create project request
-		request := m.toProjectRequest()
-		if err := request.Validate(); err != nil {
-			return generationCompleteMsg{err: fmt.Errorf("invalid project request: %w", err)}
-		}
-
-		// Create channel for results (buffered so goroutine doesn't block)
-		resultChan := make(chan tea.Msg, 1)
-		
-		// Start generation in goroutine - this is truly async
-		go func() {
-			if err := generator.Orchestrate(request); err != nil {
-				resultChan <- generationCompleteMsg{err: fmt.Errorf("generation failed: %w", err)}
-			} else {
-				resultChan <- generationCompleteMsg{err: nil}
-			}
-		}()
-
-		// Return the channel setup message - we'll check it in Update
-		// This doesn't block, allowing UI to continue updating
-		return setupGenerationChanMsg{ch: resultChan}
-	}
-}
-
-// setupGenerationChanMsg sets up the channel for checking generation results
-type setupGenerationChanMsg struct {
-	ch chan tea.Msg
-}

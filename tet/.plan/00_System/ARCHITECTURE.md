@@ -1,7 +1,7 @@
 # Technical Architecture
 
 ## System Overview
-**Project**: test
+**Project**: tet
 **Version**: 1.0.0
 **Status**: Draft
 
