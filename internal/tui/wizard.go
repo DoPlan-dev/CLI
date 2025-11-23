@@ -76,9 +76,8 @@ type Model struct {
 	errorSuggestion  string
 	previousState    wizardState   // Store previous state for recovery
 	stateHistory     []wizardState // History for back navigation
-	generationDone   bool          // Track if generation has completed
-	generationErr    error         // Store generation error if any
-	generationChan   chan tea.Msg  // Channel for generation results
+	generationDone   bool  // Track if generation has completed
+	generationErr    error // Store generation error if any
 }
 
 // generationCompleteMsg is sent when generation completes
@@ -440,7 +439,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 		return m, nil
-
 
 	default:
 		// Handle text input messages
@@ -1203,7 +1201,7 @@ type programWithSend struct {
 func Run() (*models.ProjectRequest, error) {
 	initialModel := InitialModel()
 	p := tea.NewProgram(initialModel, tea.WithAltScreen())
-	
+
 	// Store program reference for sending messages from goroutines
 	programRef = p
 
@@ -1212,7 +1210,7 @@ func Run() (*models.ProjectRequest, error) {
 		fmt.Fprintf(os.Stderr, "Error running wizard: %v\n", err)
 		return nil, err
 	}
-	
+
 	// Clear program reference
 	programRef = nil
 
@@ -1255,7 +1253,7 @@ func startGenerationAsync(m Model) tea.Cmd {
 			} else {
 				result = generationCompleteMsg{err: nil}
 			}
-			
+
 			// Send result directly to program (non-blocking)
 			if programRef != nil {
 				programRef.Send(result)
@@ -1266,4 +1264,3 @@ func startGenerationAsync(m Model) tea.Cmd {
 		return nil
 	}
 }
-
