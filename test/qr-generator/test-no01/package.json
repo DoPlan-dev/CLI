@@ -2,6 +2,14 @@
   "name": "test-no01",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DoPlan-dev/test-no01.git"
+  },
+  "homepage": "https://github.com/DoPlan-dev/test-no01",
+  "bugs": {
+    "url": "https://github.com/DoPlan-dev/test-no01/issues"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

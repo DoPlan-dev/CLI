@@ -16,6 +16,8 @@ Thank you for your interest in contributing! This document provides guidelines a
    git clone https://github.com/DoPlan-dev/test-no01.git
    cd test-no01
    ```
+   
+   Or fork it first on GitHub: https://github.com/DoPlan-dev/test-no01
 
 2. **Install dependencies**
    ```bash
