@@ -1,7 +1,7 @@
 {
   "name": "@doplan-dev/cli",
   "version": "1.0.4",
-  "description": "DoPlan CLI - Zero-install AI Project Director",
+  "description": "🚀 Zero-install AI Project Director - Bootstrap production-ready projects with a complete hierarchical AI agency system in seconds. Includes 18 AI agents, 1000+ rules library, interactive TUI, and full automation for project structure, CI/CD, and boilerplate.",
   "bin": {
     "doplan": "bin/doplan.js"
   },
