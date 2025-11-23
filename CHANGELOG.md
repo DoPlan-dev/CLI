@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **GitHub Wiki Documentation**: Complete wiki with 20 comprehensive pages covering installation, usage, workflow, agents, rules, examples, and more
+- **Wiki Pages**: Home, Installation, Quick Start, Commands, FAQ, Troubleshooting, Workflow, Agents, Rules, First Project Tutorial, Contributing, Project Structure, Configuration, API Reference, Examples, Migration Guide, Development, Code of Conduct, Release Notes, and Wiki Maintenance Plan
+
 ### Planned
 - Additional project types (Tauri, Expo, etc.)
 - Extended rules library (1000+ files)
