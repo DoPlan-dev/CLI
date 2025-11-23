@@ -1,0 +1,31 @@
+{
+  "name": "@doplan/cli",
+  "version": "1.0.0",
+  "description": "DoPlan CLI - Zero-install AI Project Director",
+  "bin": {
+    "doplan": "./bin/doplan.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/download.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dorgham/doplan.git"
+  },
+  "keywords": [
+    "cli",
+    "ai",
+    "project-director",
+    "code-generation"
+  ],
+  "author": "DoPlan Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "bin",
+    "scripts"
+  ]
+}
+

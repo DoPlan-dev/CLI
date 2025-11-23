@@ -1,0 +1,41 @@
+# Source files
+*.go
+go.mod
+go.sum
+cmd/
+internal/
+pkg/
+scripts/compress-rules.go
+scripts/build.sh
+scripts/build.bat
+
+# Build artifacts
+dist/
+*.exe
+doplan
+coverage.out
+coverage.html
+
+# Documentation (keep only essential)
+*.md
+!README.md
+!CHANGELOG.md
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+*_test.go
+*_test.js
+
+# Git
+.git/
+.gitignore
+
+# Other
+.DS_Store
+*.log
+

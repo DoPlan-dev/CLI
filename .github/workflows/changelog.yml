@@ -1,0 +1,43 @@
+name: Update Changelog
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'CHANGELOG.md'
+  workflow_dispatch:
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Check for changelog updates
+        id: check_changelog
+        run: |
+          if git diff --name-only HEAD~1 HEAD | grep -q CHANGELOG.md; then
+            echo "updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "updated=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Auto-commit changelog
+        if: steps.check_changelog.outputs.updated == 'true'
+        run: |
+          git add CHANGELOG.md
+          git commit -m "docs: update changelog" || exit 0
+          git push || exit 0
