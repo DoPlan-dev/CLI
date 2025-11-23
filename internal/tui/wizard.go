@@ -1241,22 +1241,19 @@ func startGeneration(m Model) tea.Cmd {
 			return generationCompleteMsg{err: fmt.Errorf("invalid project request: %w", err)}
 		}
 
-		// Run generation in a goroutine to avoid blocking
+		// Run generation in a goroutine and send result via channel
 		// This allows the UI to continue updating while generation happens
-		errChan := make(chan error, 1)
+		resultChan := make(chan tea.Msg, 1)
 		go func() {
 			if err := generator.Orchestrate(request); err != nil {
-				errChan <- fmt.Errorf("generation failed: %w", err)
+				resultChan <- generationCompleteMsg{err: fmt.Errorf("generation failed: %w", err)}
 			} else {
-				errChan <- nil
+				resultChan <- generationCompleteMsg{err: nil}
 			}
 		}()
 
-		// Wait for generation to complete
-		if err := <-errChan; err != nil {
-			return generationCompleteMsg{err: err}
-		}
-
-		return generationCompleteMsg{err: nil}
+		// Return the result when ready (this will block until generation completes)
+		// In Bubble Tea, the command function can block - the framework handles it
+		return <-resultChan
 	}
 }
