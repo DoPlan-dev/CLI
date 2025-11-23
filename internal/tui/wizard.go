@@ -3,7 +3,6 @@ package tui
 import (
 	"fmt"
 	"os"
-	"runtime"
 	"strings"
 	"time"
 
@@ -343,29 +342,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						if len(m.steps) > 0 {
 							m.steps[0].Status = stepInProgress
 						}
-						// Start generation directly in goroutine (no command)
-						request := m.toProjectRequest()
-						resultChan := make(chan tea.Msg, 1)
-						m.generationChan = resultChan
-
-						// Start generation in goroutine - ensure it yields immediately
-						go func() {
-							// Yield to allow UI to update first
-							runtime.Gosched()
-							
-							// Now run generation
-							if err := generator.Orchestrate(request); err != nil {
-								resultChan <- generationCompleteMsg{err: fmt.Errorf("generation failed: %w", err)}
-							} else {
-								resultChan <- generationCompleteMsg{err: nil}
-							}
-						}()
-
-						// Force a yield to ensure goroutine starts
-						runtime.Gosched()
-						
-						// Start spinner
-						return m, tickSpinner
+						// Start generation using a command that returns immediately
+						// The command will start the goroutine and return right away
+						return m, tea.Batch(
+							tickSpinner,
+							startGenerationAsync(m),
+						)
 					}
 				}
 				return m, nil
@@ -483,6 +465,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.steps[msg.stepIndex].Status = stepInProgress
 			}
 		}
+		return m, nil
+
+	case setupGenerationChanMsg:
+		// Store the channel for checking results in tick handler
+		m.generationChan = msg.ch
+		// Return immediately - tick handler will check the channel
 		return m, nil
 
 	default:
@@ -1266,4 +1254,37 @@ func Run() (*models.ProjectRequest, error) {
 
 	// User quit or error occurred
 	return nil, nil
+}
+
+// startGenerationAsync starts generation in a goroutine and returns immediately
+// This is a proper Bubble Tea command that doesn't block
+func startGenerationAsync(m Model) tea.Cmd {
+	return func() tea.Msg {
+		// Create project request
+		request := m.toProjectRequest()
+		if err := request.Validate(); err != nil {
+			return generationCompleteMsg{err: fmt.Errorf("invalid project request: %w", err)}
+		}
+
+		// Start generation in goroutine - this MUST return immediately
+		// We'll use a channel to get the result, but we check it in tick handler
+		resultChan := make(chan tea.Msg, 1)
+		
+		go func() {
+			// Run generation in background
+			if err := generator.Orchestrate(request); err != nil {
+				resultChan <- generationCompleteMsg{err: fmt.Errorf("generation failed: %w", err)}
+			} else {
+				resultChan <- generationCompleteMsg{err: nil}
+			}
+		}()
+
+		// Return immediately with channel setup - this is non-blocking
+		return setupGenerationChanMsg{ch: resultChan}
+	}
+}
+
+// setupGenerationChanMsg sets up the channel for checking generation results
+type setupGenerationChanMsg struct {
+	ch chan tea.Msg
 }
