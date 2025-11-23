@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/doplan/cli/internal/generator"
 	"github.com/doplan/cli/pkg/models"
 )
 
@@ -75,6 +76,18 @@ type Model struct {
 	errorSuggestion  string
 	previousState    wizardState   // Store previous state for recovery
 	stateHistory     []wizardState // History for back navigation
+	generationDone   bool          // Track if generation has completed
+	generationErr    error         // Store generation error if any
+}
+
+// generationCompleteMsg is sent when generation completes
+type generationCompleteMsg struct {
+	err error
+}
+
+// stepProgressMsg is sent when a step completes
+type stepProgressMsg struct {
+	stepIndex int
 }
 
 // IDEInfo contains information about an IDE option
@@ -327,7 +340,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						if len(m.steps) > 0 {
 							m.steps[0].Status = stepInProgress
 						}
-						return m, tickSpinner
+						// Start actual generation in background
+						return m, tea.Batch(tickSpinner, startGeneration(m))
 					}
 				}
 				return m, nil
@@ -377,19 +391,61 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Handle spinner tick
 		if m.state == stateGenerating {
 			m.spinnerFrame++
-			// Simulate progress (for demo purposes)
-			// In real implementation, this would be driven by actual generation progress
-			// After a few ticks, transition to success (simulating completion)
-			if m.spinnerFrame > 30 {
-				// Mark all steps as completed
-				for i := range m.steps {
-					m.steps[i].Status = stepCompleted
+			// Continue spinner animation while generating
+			if m.generationDone {
+				// Generation completed, stop spinner
+				if m.generationErr != nil {
+					// Transition to error state
+					m.state = stateError
+					m.errorMessage = m.generationErr.Error()
+					m.errorSuggestion = "Please check the error message above and try again."
+					return m, nil
+				} else {
+					// Mark all steps as completed and transition to success
+					for i := range m.steps {
+						m.steps[i].Status = stepCompleted
+					}
+					m.state = stateSuccess
+					return m, nil
 				}
-				// Transition to success state
-				m.state = stateSuccess
-				return m, nil
 			}
+			// Update progress based on elapsed time (fallback if no step updates)
+			// This provides visual feedback while generation is running
 			return m, tickSpinner
+		}
+		return m, nil
+
+	case generationCompleteMsg:
+		// Generation completed
+		m.generationDone = true
+		m.generationErr = msg.err
+		if msg.err != nil {
+			// Transition to error state
+			m.state = stateError
+			m.errorMessage = msg.err.Error()
+			m.errorSuggestion = "Please check the error message above and try again."
+			return m, nil
+		} else {
+			// Mark all steps as completed
+			for i := range m.steps {
+				m.steps[i].Status = stepCompleted
+			}
+			// Transition to success state
+			m.state = stateSuccess
+			return m, nil
+		}
+
+	case stepProgressMsg:
+		// Update step progress
+		if msg.stepIndex < len(m.steps) {
+			// Mark current step as completed
+			if msg.stepIndex > 0 {
+				m.steps[msg.stepIndex-1].Status = stepCompleted
+			}
+			// Mark next step as in progress
+			if msg.stepIndex < len(m.steps) {
+				m.steps[msg.stepIndex].Status = stepInProgress
+			}
 		}
 		return m, nil
 
@@ -1174,4 +1230,33 @@ func Run() (*models.ProjectRequest, error) {
 
 	// User quit or error occurred
 	return nil, nil
+}
+
+// startGeneration starts the project generation in a goroutine
+func startGeneration(m Model) tea.Cmd {
+	return func() tea.Msg {
+		// Create project request
+		request := m.toProjectRequest()
+		if err := request.Validate(); err != nil {
+			return generationCompleteMsg{err: fmt.Errorf("invalid project request: %w", err)}
+		}
+
+		// Run generation in a goroutine to avoid blocking
+		// This allows the UI to continue updating while generation happens
+		errChan := make(chan error, 1)
+		go func() {
+			if err := generator.Orchestrate(request); err != nil {
+				errChan <- fmt.Errorf("generation failed: %w", err)
+			} else {
+				errChan <- nil
+			}
+		}()
+
+		// Wait for generation to complete
+		if err := <-errChan; err != nil {
+			return generationCompleteMsg{err: err}
+		}
+
+		return generationCompleteMsg{err: nil}
+	}
 }

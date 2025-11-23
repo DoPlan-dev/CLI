@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/doplan/cli/internal/generator"
 	"github.com/doplan/cli/internal/tui"
 	"github.com/doplan/cli/internal/version"
 	"github.com/spf13/cobra"
@@ -83,11 +82,8 @@ func runWizard() error {
 		return nil
 	}
 
-	// Generate the project
-	if err := generator.Orchestrate(request); err != nil {
-		return fmt.Errorf("failed to generate project: %w", err)
-	}
-
+	// Generation is now handled inside the wizard, so if we get here,
+	// the project was successfully created
 	fmt.Printf("\n✨ Project '%s' created successfully!\n", request.ProjectName)
 	fmt.Printf("Open with: %s ./%s\n", getIDECommand(request.IDE), request.ProjectName)
 	fmt.Printf("Then type /tell to begin\n")

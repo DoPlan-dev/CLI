@@ -41,10 +41,10 @@ if (!fs.existsSync(binaryPath)) {
       process.exit(1);
     }
   } else {
-    console.error('Error: DoPlan CLI binary not found.');
-    console.error(`Expected: ${binaryPath}`);
-    console.error('Please run: npm install');
-    process.exit(1);
+  console.error('Error: DoPlan CLI binary not found.');
+  console.error(`Expected: ${binaryPath}`);
+  console.error('Please run: npm install');
+  process.exit(1);
   }
 }
 
