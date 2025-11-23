@@ -37,7 +37,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.23'
       
       - name: Extract version
         id: version
@@ -51,15 +51,22 @@ jobs:
           echo "Version: $VERSION"
       
       - name: Download dependencies
-        run: go mod download
+        run: |
+          go mod download
+          go mod verify
       
       - name: Build
         run: |
+          set -e
           BINARY_NAME=doplan
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY_NAME=doplan.exe
           fi
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/doplan/cli/internal/version.Version=${{ steps.version.outputs.version }}" -o $BINARY_NAME ./cmd/doplan
+          echo "Building for ${{ matrix.goos }}/${{ matrix.goarch }}..."
+          echo "Go version: $(go version)"
+          echo "Module path: $(go list -m)"
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -v -ldflags "-X github.com/doplan/cli/internal/version.Version=${{ steps.version.outputs.version }}" -o $BINARY_NAME ./cmd/doplan
+          ls -lh $BINARY_NAME || echo "Binary not created!"
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
