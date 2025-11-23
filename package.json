@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "DoPlan CLI - Zero-install AI Project Director",
   "bin": {
-    "doplan": "./bin/doplan.js"
+    "doplan": "bin/doplan.js"
   },
   "scripts": {
     "postinstall": "node scripts/download.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/DoPlan-dev/CLI.git"
+    "url": "git+https://github.com/DoPlan-dev/CLI.git"
   },
   "keywords": [
     "cli",
