@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -135,6 +136,7 @@ func getGenerationSteps() []GenerationStep {
 }
 
 // tickSpinner is a command that sends a message to update the spinner animation
+// Returns a channel that Bubble Tea will receive from - this is non-blocking
 func tickSpinner() tea.Msg {
 	return time.After(time.Millisecond * 100)
 }
@@ -345,14 +347,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						request := m.toProjectRequest()
 						resultChan := make(chan tea.Msg, 1)
 						m.generationChan = resultChan
-						
+
+						// Start generation in goroutine - ensure it yields immediately
 						go func() {
+							// Yield to allow UI to update first
+							runtime.Gosched()
+							
+							// Now run generation
 							if err := generator.Orchestrate(request); err != nil {
 								resultChan <- generationCompleteMsg{err: fmt.Errorf("generation failed: %w", err)}
 							} else {
 								resultChan <- generationCompleteMsg{err: nil}
 							}
 						}()
+
+						// Force a yield to ensure goroutine starts
+						runtime.Gosched()
 						
 						// Start spinner
 						return m, tickSpinner
@@ -474,7 +484,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 		return m, nil
-
 
 	default:
 		// Handle text input messages
@@ -1258,4 +1267,3 @@ func Run() (*models.ProjectRequest, error) {
 	// User quit or error occurred
 	return nil, nil
 }
-
