@@ -29,8 +29,23 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Verify package-lock.json exists
+        run: |
+          if [ ! -f package-lock.json ]; then
+            echo "package-lock.json not found, creating minimal one..."
+            npm install --package-lock-only --ignore-scripts || true
+          else
+            echo "package-lock.json found ✓"
+            ls -la package-lock.json
+          fi
+
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --ignore-scripts
+          else
+            echo "No package-lock.json, skipping npm ci"
+          fi
         continue-on-error: true
 
       - name: Build
