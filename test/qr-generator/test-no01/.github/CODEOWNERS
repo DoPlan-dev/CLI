@@ -1,0 +1,24 @@
+# Default owners for everything in the repo
+* @DoPlan-dev
+
+# Documentation
+/docs/ @DoPlan-dev
+*.md @DoPlan-dev
+
+# GitHub workflows
+/.github/ @DoPlan-dev
+
+# Configuration files
+package.json @DoPlan-dev
+tsconfig.json @DoPlan-dev
+next.config.js @DoPlan-dev
+tailwind.config.ts @DoPlan-dev
+
+# Source code
+/app/ @DoPlan-dev
+/components/ @DoPlan-dev
+/lib/ @DoPlan-dev
+
+# Tests
+/tests/ @DoPlan-dev
+
