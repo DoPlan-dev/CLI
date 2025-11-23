@@ -1,5 +1,5 @@
 {
-  "name": "@doplan/cli",
+  "name": "@doplan-dev/cli",
   "version": "1.0.0",
   "description": "DoPlan CLI - Zero-install AI Project Director",
   "bin": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dorgham/doplan.git"
+    "url": "https://github.com/DoPlan-dev/CLI.git"
   },
   "keywords": [
     "cli",

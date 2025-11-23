@@ -48,7 +48,7 @@ Or create release manually:
 **Status**: ⏳ Manual (requires npm login)
 
 **Prerequisites:**
-- npm account with access to `@doplan/cli` package
+- npm account with access to `@doplan-dev/cli` package
 - npm CLI installed
 - Logged in to npm: `npm login`
 
@@ -74,16 +74,16 @@ Or create release manually:
    ```bash
    npm publish --access public
    ```
-   - This publishes `@doplan/cli@1.0.0` to npm registry
-   - Package will be available at: https://www.npmjs.com/package/@doplan/cli
+   - This publishes `@doplan-dev/cli@1.0.0` to npm registry
+   - Package will be available at: https://www.npmjs.com/package/@doplan-dev/cli
 
 4. **Verify installation:**
    ```bash
    # Test npx installation
-   npx @doplan/cli@latest --version
+   npx @doplan-dev/cli@latest --version
    
    # Test global installation
-   npm install -g @doplan/cli
+   npm install -g @doplan-dev/cli
    doplan --version
    ```
 
@@ -110,7 +110,7 @@ Zero-install AI Project Director that generates professional project structures 
 • Cross-platform support
 
 Get started:
-npx @doplan/cli
+npx @doplan-dev/cli
 
 #AI #CLI #DeveloperTools #Productivity
 
@@ -149,7 +149,7 @@ npx @doplan/cli
    - Add migration guide if upgrading from beta
 
 3. **Update README badges:**
-   - npm version badge: `![npm version](https://img.shields.io/npm/v/@doplan/cli)`
+   - npm version badge: `![npm version](https://img.shields.io/npm/v/@doplan-dev/cli)`
    - GitHub release badge: `![GitHub release](https://img.shields.io/github/v/release/DoPlan-dev/CLI)`
 
 **If no website exists:**
@@ -172,7 +172,7 @@ npx @doplan/cli
   - Set up issue templates if needed
 
 - [ ] **NPM Downloads:**
-  - Monitor download stats: https://www.npmjs.com/package/@doplan/cli
+  - Monitor download stats: https://www.npmjs.com/package/@doplan-dev/cli
   - Track daily/weekly trends
   - Identify popular platforms
 

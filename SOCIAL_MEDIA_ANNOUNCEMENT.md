@@ -17,7 +17,7 @@ Zero-install AI Project Director that generates professional project structures 
 • 500+ rules library
 • Complete automation
 
-Get started: npx @doplan/cli
+Get started: npx @doplan-dev/cli
 
 #AI #CLI #DeveloperTools #Productivity
 
@@ -33,7 +33,7 @@ Generate professional project structures with AI agents in seconds.
 
 ✨ Interactive TUI • 18 AI agents • 500+ rules
 
-npx @doplan/cli
+npx @doplan-dev/cli
 
 #AI #CLI #DevTools
 
@@ -67,10 +67,10 @@ Comprehensive rules for all major tech stacks - Go, Python, TypeScript, Next.js,
 Works seamlessly on macOS, Linux, and Windows.
 
 Getting started is simple:
-npx @doplan/cli
+npx @doplan-dev/cli
 
 Or install globally:
-npm install -g @doplan/cli
+npm install -g @doplan-dev/cli
 
 Built with Go, designed for developers who want to focus on building, not setup.
 
@@ -101,7 +101,7 @@ I'm excited to share DoPlan CLI v1.0.0 - a command-line tool that generates prof
 
 **Quick start:**
 ```bash
-npx @doplan/cli
+npx @doplan-dev/cli
 ```
 
 **Key features:**
@@ -118,7 +118,7 @@ npx @doplan/cli
 - Cobra (CLI framework)
 
 **GitHub:** https://github.com/DoPlan-dev/CLI
-**NPM:** https://www.npmjs.com/package/@doplan/cli
+**NPM:** https://www.npmjs.com/package/@doplan-dev/cli
 
 Would love to hear your feedback! What features would you like to see next?
 ```
@@ -170,7 +170,7 @@ DoPlan CLI is a command-line tool that generates professional project structures
 - Works offline after first run
 
 **Get started:**
-npx @doplan/cli
+npx @doplan-dev/cli
 
 **GitHub:** https://github.com/DoPlan-dev/CLI
 
@@ -208,7 +208,7 @@ DoPlan CLI is a powerful command-line tool that helps developers bootstrap produ
 - Open source projects
 
 **Getting Started:**
-npx @doplan/cli
+npx @doplan-dev/cli
 
 Built with Go, designed for developers who want to focus on building, not setup.
 ```
@@ -236,7 +236,7 @@ DoPlan CLI is a zero-install command-line tool that generates professional proje
 - Cross-platform support
 
 **Get Started:**
-npx @doplan/cli
+npx @doplan-dev/cli
 
 **Learn More:**
 - GitHub: https://github.com/DoPlan-dev/CLI

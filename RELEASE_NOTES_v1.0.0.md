@@ -12,7 +12,7 @@ DoPlan CLI is a zero-install, pure-Go command-line tool that instantly generates
 ## ✨ Key Features
 
 ### 🚀 Zero-Install Experience
-- **npx support**: `npx @doplan/cli` - no global installation needed
+- **npx support**: `npx @doplan-dev/cli` - no global installation needed
 - **Single binary**: < 15MB, works completely offline
 - **Cross-platform**: macOS (Intel + Apple Silicon), Linux (amd64 + arm64), Windows (amd64)
 
@@ -132,28 +132,28 @@ my-project/
 ### Quick Start
 ```bash
 # Using npx (recommended)
-npx @doplan/cli
+npx @doplan-dev/cli
 
 # Or install globally
-npm install -g @doplan/cli
+npm install -g @doplan-dev/cli
 doplan
 ```
 
 ### From Source
 ```bash
 # Clone and build
-git clone https://github.com/dorgham/doplan.git
+git clone https://github.com/DoPlan-dev/CLI.git
 cd doplan/GoPlan-CLI
 make build
 ./doplan
 ```
 
 ### Download Binaries
-Download pre-built binaries from [GitHub Releases](https://github.com/dorgham/doplan/releases).
+Download pre-built binaries from [GitHub Releases](https://github.com/DoPlan-dev/CLI/releases).
 
 ## 🎓 Getting Started
 
-1. **Run the wizard**: `doplan` or `npx @doplan/cli`
+1. **Run the wizard**: `doplan` or `npx @doplan-dev/cli`
 2. **Enter project name**: Choose a valid project name
 3. **Select IDE**: Choose from 6 supported IDEs
 4. **Project generated**: Complete structure created in seconds
@@ -191,5 +191,5 @@ See [CHANGELOG.md](./CHANGELOG.md) for detailed changes.
 
 **🎉 Thank you for using DoPlan CLI!**
 
-For issues, questions, or contributions, visit: https://github.com/dorgham/doplan
+For issues, questions, or contributions, visit: https://github.com/DoPlan-dev/CLI
 

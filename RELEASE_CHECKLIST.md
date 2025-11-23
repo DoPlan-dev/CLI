@@ -92,7 +92,7 @@ git push origin v1.0.0
 
 **Installation**:
 ```bash
-npx @doplan/cli
+npx @doplan-dev/cli
 ```
 
 **Documentation**: See RELEASE_NOTES_v1.0.0.md for full details.

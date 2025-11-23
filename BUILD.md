@@ -71,7 +71,7 @@ The GitHub Actions workflow will automatically:
 
 Binaries are available from GitHub Releases:
 ```
-https://github.com/dorgham/doplan/releases/download/v1.0.0/doplan-1.0.0-<platform>-<arch>.<ext>
+https://github.com/DoPlan-dev/CLI/releases/download/v1.0.0/doplan-1.0.0-<platform>-<arch>.<ext>
 ```
 
 ### NPX Installation
@@ -79,10 +79,10 @@ https://github.com/dorgham/doplan/releases/download/v1.0.0/doplan-1.0.0-<platfor
 Install via npm/npx:
 ```bash
 # Install globally
-npm install -g @doplan/cli
+npm install -g @doplan-dev/cli
 
 # Or use npx (no installation needed)
-npx @doplan/cli
+npx @doplan-dev/cli
 ```
 
 The npm package automatically downloads the correct binary for your platform.
