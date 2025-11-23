@@ -91,6 +91,10 @@ type stepProgressMsg struct {
 	stepIndex int
 }
 
+// programRef is a global reference to the program for sending messages from goroutines
+// This is safe because Run() is only called once and clears it after
+var programRef *tea.Program
+
 // IDEInfo contains information about an IDE option
 type IDEInfo struct {
 	Name        string
@@ -397,38 +401,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Handle spinner tick
 		if m.state == stateGenerating {
 			m.spinnerFrame++
-
-			// Check for generation completion (non-blocking)
-			if m.generationChan != nil {
-				select {
-				case msg := <-m.generationChan:
-					// Generation completed
-					if genMsg, ok := msg.(generationCompleteMsg); ok {
-						m.generationDone = true
-						m.generationErr = genMsg.err
-						m.generationChan = nil // Close channel
-
-						if genMsg.err != nil {
-							// Transition to error state
-							m.state = stateError
-							m.errorMessage = genMsg.err.Error()
-							m.errorSuggestion = "Please check the error message above and try again."
-							return m, nil
-						} else {
-							// Mark all steps as completed and transition to success
-							for i := range m.steps {
-								m.steps[i].Status = stepCompleted
-							}
-							m.state = stateSuccess
-							return m, nil
-						}
-					}
-				default:
-					// No message yet, continue spinner
-				}
-			}
-
 			// Continue spinner animation while generating
+			// The generation goroutine will send a message directly when done
 			return m, tickSpinner
 		}
 		return m, nil
@@ -467,11 +441,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 
-	case setupGenerationChanMsg:
-		// Store the channel for checking results in tick handler
-		m.generationChan = msg.ch
-		// Return immediately - tick handler will check the channel
-		return m, nil
 
 	default:
 		// Handle text input messages
@@ -1225,16 +1194,27 @@ func (m Model) toProjectRequest() *models.ProjectRequest {
 	}
 }
 
+// programWithSend wraps tea.Program to allow sending messages from goroutines
+type programWithSend struct {
+	*tea.Program
+}
+
 // Run starts the wizard TUI and returns the ProjectRequest if successful
 func Run() (*models.ProjectRequest, error) {
 	initialModel := InitialModel()
 	p := tea.NewProgram(initialModel, tea.WithAltScreen())
+	
+	// Store program reference for sending messages from goroutines
+	programRef = p
 
 	finalModel, err := p.Run()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error running wizard: %v\n", err)
 		return nil, err
 	}
+	
+	// Clear program reference
+	programRef = nil
 
 	// Cast to Model
 	model, ok := finalModel.(Model)
@@ -1266,25 +1246,24 @@ func startGenerationAsync(m Model) tea.Cmd {
 			return generationCompleteMsg{err: fmt.Errorf("invalid project request: %w", err)}
 		}
 
-		// Start generation in goroutine - this MUST return immediately
-		// We'll use a channel to get the result, but we check it in tick handler
-		resultChan := make(chan tea.Msg, 1)
-		
+		// Start generation in goroutine - send message directly to program when done
 		go func() {
 			// Run generation in background
+			var result tea.Msg
 			if err := generator.Orchestrate(request); err != nil {
-				resultChan <- generationCompleteMsg{err: fmt.Errorf("generation failed: %w", err)}
+				result = generationCompleteMsg{err: fmt.Errorf("generation failed: %w", err)}
 			} else {
-				resultChan <- generationCompleteMsg{err: nil}
+				result = generationCompleteMsg{err: nil}
+			}
+			
+			// Send result directly to program (non-blocking)
+			if programRef != nil {
+				programRef.Send(result)
 			}
 		}()
 
-		// Return immediately with channel setup - this is non-blocking
-		return setupGenerationChanMsg{ch: resultChan}
+		// Return nil - we don't need a setup message, the goroutine sends directly
+		return nil
 	}
 }
 
-// setupGenerationChanMsg sets up the channel for checking generation results
-type setupGenerationChanMsg struct {
-	ch chan tea.Msg
-}
