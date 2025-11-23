@@ -2,7 +2,11 @@
 
 This directory contains all project documentation organized by category.
 
-## Structure
+## 📋 Organization Rules
+
+**Important:** Keep the root directory clean! Only `README.md` and `CHANGELOG.md` should be in the root. All other documentation belongs here in `docs/`.
+
+## 📁 Structure
 
 - **`development/`** - Development guides and testing documentation
   - `BUILD.md` - Build and distribution guide
@@ -16,14 +20,16 @@ This directory contains all project documentation organized by category.
 - **`security/`** - Security documentation
   - `SECURITY_AUDIT.md` - Security audit report
 
-- **Root docs/** - General documentation
+- **Root `docs/`** - General documentation
   - `DOCUMENTATION_REVIEW.md` - Documentation review
   - `LAUNCH_CHECKLIST.md` - Launch checklist
   - `STANDUP.md` - Standup notes
   - `prompt.md` - Project prompt/description
+  - `CONTRIBUTING.md` - Contributing guidelines (including doc organization rules)
 
-## Quick Links
+## 🔗 Quick Links
 
 - [Main README](../README.md) - Project overview and getting started
 - [CHANGELOG](../CHANGELOG.md) - Version history and changes
+- [Contributing Guidelines](CONTRIBUTING.md) - How to contribute and organize docs
 

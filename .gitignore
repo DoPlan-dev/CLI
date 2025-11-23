@@ -49,6 +49,8 @@ doplan.test.exe
 
 # Output of the go coverage tool
 *.out
+coverage.out
+coverage.html
 
 # Dependency directories
 vendor/
@@ -56,3 +58,7 @@ vendor/
 # Go workspace file
 go.work
 go.work.sum
+
+# Documentation - keep organized in docs/
+# Only README.md and CHANGELOG.md should be in root
+# All other .md files should be in docs/ directory
