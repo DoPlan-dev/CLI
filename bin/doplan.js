@@ -21,10 +21,31 @@ if (platform === 'win32') {
 const binaryPath = path.join(binDir, binaryName);
 
 if (!fs.existsSync(binaryPath)) {
-  console.error('Error: DoPlan CLI binary not found.');
-  console.error(`Expected: ${binaryPath}`);
-  console.error('Please run: npm install');
-  process.exit(1);
+  console.log('Binary not found. Attempting to download...');
+  const downloadScript = path.join(__dirname, '..', 'scripts', 'download.js');
+  if (fs.existsSync(downloadScript)) {
+    try {
+      require(downloadScript).main();
+      // Check again after download attempt
+      if (!fs.existsSync(binaryPath)) {
+        console.error('Error: DoPlan CLI binary not found.');
+        console.error(`Expected: ${binaryPath}`);
+        console.error('Please ensure the GitHub release exists with binaries.');
+        console.error('Or build from source: https://github.com/DoPlan-dev/CLI');
+        process.exit(1);
+      }
+    } catch (error) {
+      console.error('Error downloading binary:', error.message);
+      console.error('Please ensure the GitHub release exists with binaries.');
+      console.error('Or build from source: https://github.com/DoPlan-dev/CLI');
+      process.exit(1);
+    }
+  } else {
+    console.error('Error: DoPlan CLI binary not found.');
+    console.error(`Expected: ${binaryPath}`);
+    console.error('Please run: npm install');
+    process.exit(1);
+  }
 }
 
 // Make executable on Unix systems

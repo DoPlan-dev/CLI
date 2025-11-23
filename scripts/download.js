@@ -121,15 +121,25 @@ async function main() {
     
     console.log('Installation complete!');
   } catch (error) {
-    // In CI environments or when release doesn't exist yet, don't fail
+    // In CI environments or development, don't fail
     const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true' || process.env.CI === '1';
-    if (isCI || error.message.includes('404')) {
-      console.warn('Warning: Could not download binary (this is normal in CI or before first release):', error.message);
-      console.warn('Binary will be downloaded on first use or when release is available.');
+    const isDev = process.env.NODE_ENV === 'development' || !process.env.npm_config_user_config;
+    
+    if (isCI || isDev || error.message.includes('404')) {
+      console.warn('Warning: Could not download binary:', error.message);
+      if (error.message.includes('404')) {
+        console.warn('The GitHub release may not exist yet or binaries are not available.');
+        console.warn('The binary will be downloaded automatically when you run the CLI.');
+        console.warn('Or check: https://github.com/DoPlan-dev/CLI/releases');
+      } else {
+        console.warn('Binary will be downloaded on first use or when release is available.');
+      }
       process.exit(0);
     }
+    // For production npm installs, fail so they know something is wrong
     console.error('Installation failed:', error.message);
-    console.error('This may be normal if the release is not yet available.');
+    console.error('Please check: https://github.com/DoPlan-dev/CLI/releases');
+    console.error('Or build from source: https://github.com/DoPlan-dev/CLI');
     process.exit(1);
   }
 }
