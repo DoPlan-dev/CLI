@@ -10,7 +10,37 @@ const path = require('path');
 const os = require('os');
 
 const VERSION = process.env.DOPLAN_VERSION || 'latest';
-const BASE_URL = `https://github.com/DoPlan-dev/CLI/releases/${VERSION === 'latest' ? 'latest/download' : `download/v${VERSION}`}`;
+
+async function getLatestVersion() {
+  return new Promise((resolve, reject) => {
+    https.get('https://api.github.com/repos/DoPlan-dev/CLI/releases/latest', {
+      headers: {
+        'User-Agent': 'DoPlan-CLI-Downloader'
+      }
+    }, (response) => {
+      let data = '';
+      
+      response.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      response.on('end', () => {
+        if (response.statusCode === 200) {
+          try {
+            const release = JSON.parse(data);
+            // Extract version from tag (e.g., "v1.0.0" -> "1.0.0")
+            const version = release.tag_name.replace(/^v/, '');
+            resolve(version);
+          } catch (e) {
+            reject(new Error('Failed to parse release data'));
+          }
+        } else {
+          reject(new Error(`Failed to fetch latest version: ${response.statusCode}`));
+        }
+      });
+    }).on('error', reject);
+  });
+}
 
 function getPlatformInfo() {
   const platform = os.platform();
@@ -101,9 +131,18 @@ function extractArchive(archivePath, ext) {
 
 async function main() {
   try {
+    // Get the actual version to use
+    let versionToUse = VERSION;
+    if (VERSION === 'latest') {
+      console.log('Fetching latest release version...');
+      versionToUse = await getLatestVersion();
+      console.log(`Latest version: ${versionToUse}`);
+    }
+    
     const { goos, goarch, ext } = getPlatformInfo();
-    const archiveName = `doplan-${VERSION === 'latest' ? 'latest' : VERSION}-${goos}-${goarch}.${ext}`;
-    const url = `${BASE_URL}/${archiveName}`;
+    const archiveName = `doplan-${versionToUse}-${goos}-${goarch}.${ext}`;
+    const baseUrl = `https://github.com/DoPlan-dev/CLI/releases/download/v${versionToUse}`;
+    const url = `${baseUrl}/${archiveName}`;
     
     console.log(`Downloading DoPlan CLI for ${goos}/${goarch}...`);
     console.log(`URL: ${url}`);
