@@ -76,8 +76,9 @@ type Model struct {
 	errorSuggestion  string
 	previousState    wizardState   // Store previous state for recovery
 	stateHistory     []wizardState // History for back navigation
-	generationDone   bool          // Track if generation has completed
-	generationErr    error         // Store generation error if any
+	generationDone   bool           // Track if generation has completed
+	generationErr    error          // Store generation error if any
+	generationChan   chan tea.Msg   // Channel for generation results
 }
 
 // generationCompleteMsg is sent when generation completes
@@ -391,26 +392,38 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Handle spinner tick
 		if m.state == stateGenerating {
 			m.spinnerFrame++
-			// Continue spinner animation while generating
-			if m.generationDone {
-				// Generation completed, stop spinner
-				if m.generationErr != nil {
-					// Transition to error state
-					m.state = stateError
-					m.errorMessage = m.generationErr.Error()
-					m.errorSuggestion = "Please check the error message above and try again."
-					return m, nil
-				} else {
-					// Mark all steps as completed and transition to success
-					for i := range m.steps {
-						m.steps[i].Status = stepCompleted
+			
+			// Check for generation completion (non-blocking)
+			if m.generationChan != nil {
+				select {
+				case msg := <-m.generationChan:
+					// Generation completed
+					if genMsg, ok := msg.(generationCompleteMsg); ok {
+						m.generationDone = true
+						m.generationErr = genMsg.err
+						m.generationChan = nil // Close channel
+						
+						if genMsg.err != nil {
+							// Transition to error state
+							m.state = stateError
+							m.errorMessage = genMsg.err.Error()
+							m.errorSuggestion = "Please check the error message above and try again."
+							return m, nil
+						} else {
+							// Mark all steps as completed and transition to success
+							for i := range m.steps {
+								m.steps[i].Status = stepCompleted
+							}
+							m.state = stateSuccess
+							return m, nil
+						}
 					}
-					m.state = stateSuccess
-					return m, nil
+				default:
+					// No message yet, continue spinner
 				}
 			}
-			// Update progress based on elapsed time (fallback if no step updates)
-			// This provides visual feedback while generation is running
+			
+			// Continue spinner animation while generating
 			return m, tickSpinner
 		}
 		return m, nil
@@ -448,6 +461,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 		return m, nil
+
+	case setupGenerationChanMsg:
+		// Store the channel for checking results in tick handler
+		m.generationChan = msg.ch
+		// Return immediately with a tick to start checking
+		return m, tickSpinner
 
 	default:
 		// Handle text input messages
@@ -1241,9 +1260,10 @@ func startGeneration(m Model) tea.Cmd {
 			return generationCompleteMsg{err: fmt.Errorf("invalid project request: %w", err)}
 		}
 
-		// Run generation in a goroutine and send result via channel
-		// This allows the UI to continue updating while generation happens
+		// Create channel for results (buffered so goroutine doesn't block)
 		resultChan := make(chan tea.Msg, 1)
+		
+		// Start generation in goroutine - this is truly async
 		go func() {
 			if err := generator.Orchestrate(request); err != nil {
 				resultChan <- generationCompleteMsg{err: fmt.Errorf("generation failed: %w", err)}
@@ -1252,8 +1272,13 @@ func startGeneration(m Model) tea.Cmd {
 			}
 		}()
 
-		// Return the result when ready (this will block until generation completes)
-		// In Bubble Tea, the command function can block - the framework handles it
-		return <-resultChan
+		// Return the channel setup message - we'll check it in Update
+		// This doesn't block, allowing UI to continue updating
+		return setupGenerationChanMsg{ch: resultChan}
 	}
+}
+
+// setupGenerationChanMsg sets up the channel for checking generation results
+type setupGenerationChanMsg struct {
+	ch chan tea.Msg
 }
