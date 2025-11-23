@@ -13,8 +13,13 @@ scripts/build.bat
 dist/
 *.exe
 doplan
+doplan.exe
 coverage.out
 coverage.html
+
+# Exclude binaries from bin directory (they should be downloaded)
+bin/doplan
+bin/doplan.exe
 
 # Documentation (keep only essential)
 *.md
