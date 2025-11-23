@@ -61,3 +61,6 @@ vet: ## Run go vet
 	@go vet ./...
 	@echo "✓ No issues found"
 
+check-docs: ## Check documentation organization
+	@./scripts/check-docs-organization.sh
+
