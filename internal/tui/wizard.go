@@ -76,8 +76,8 @@ type Model struct {
 	errorSuggestion  string
 	previousState    wizardState   // Store previous state for recovery
 	stateHistory     []wizardState // History for back navigation
-	generationDone   bool  // Track if generation has completed
-	generationErr    error // Store generation error if any
+	generationDone   bool          // Track if generation has completed
+	generationErr    error         // Store generation error if any
 }
 
 // generationCompleteMsg is sent when generation completes
