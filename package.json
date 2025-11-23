@@ -1,6 +1,6 @@
 {
   "name": "@doplan-dev/cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "DoPlan CLI - Zero-install AI Project Director",
   "bin": {
     "doplan": "bin/doplan.js"
