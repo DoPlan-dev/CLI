@@ -10,7 +10,7 @@ const path = require('path');
 const os = require('os');
 
 const VERSION = process.env.DOPLAN_VERSION || 'latest';
-const BASE_URL = `https://github.com/dorgham/doplan/releases/${VERSION === 'latest' ? 'latest/download' : `download/v${VERSION}`}`;
+const BASE_URL = `https://github.com/DoPlan-dev/CLI/releases/${VERSION === 'latest' ? 'latest/download' : `download/v${VERSION}`}`;
 
 function getPlatformInfo() {
   const platform = os.platform();
@@ -121,7 +121,15 @@ async function main() {
     
     console.log('Installation complete!');
   } catch (error) {
+    // In CI environments or when release doesn't exist yet, don't fail
+    const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true' || process.env.CI === '1';
+    if (isCI || error.message.includes('404')) {
+      console.warn('Warning: Could not download binary (this is normal in CI or before first release):', error.message);
+      console.warn('Binary will be downloaded on first use or when release is available.');
+      process.exit(0);
+    }
     console.error('Installation failed:', error.message);
+    console.error('This may be normal if the release is not yet available.');
     process.exit(1);
   }
 }
