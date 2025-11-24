@@ -1175,13 +1175,13 @@
 **Assigned**: Product Manager, Engineering Lead  
 **Dependencies**: 5.2 (branch metadata), existing `/finished` logic  
 **Effort**: 2 days  
-**Status**: ⏳ Pending  
+**Status**: ✅ Complete
 
 **Tasks**:
-- [ ] Parse TASKS.md to locate the active task entry
+- [x] Parse TASKS.md to locate the active task entry
 - [x] Mark tasks complete + recalc summary percentages
-- [ ] Prevent completion when dependencies remain unchecked
-- [ ] Display updated stats in `/progress`
+- [x] Prevent completion when dependencies remain unchecked
+- [x] Display updated stats in `/progress`
 
 ### 5.4 Scan Report Diffing
 **Description**: Compare each `/scan` output with the previous report and surface deltas automatically.  

@@ -9,8 +9,13 @@ When user types /finished:
 1. **Verify Active Branch**: 
    - Check that we're on a task branch (from `active_branch` in `.plan/active_state.json`)
    - If on main/master, warn and ask for confirmation
-2. **Mark Current Task Complete**: Mark the active task as completed in TASKS.md
-3. **Update State**: 
+2. **Check Dependencies**: 
+   - Run `go run scripts/taskcomplete/main.go --task [ID] --project . --check` to verify all dependencies are complete
+   - If dependencies are missing, **block completion** and list missing dependencies
+3. **Mark Current Task Complete**: 
+   - Run `go run scripts/taskcomplete/main.go --task [ID] --project .` to mark task complete in TASKS.md
+   - This updates the task status to "✅ Complete" and marks all checklist items as [x]
+4. **Update State**: 
    - Add task ID to completed array in `.plan/active_state.json`
    - Clear `active_task` and `active_branch` (set to null)
 4. **Snapshot State**: Run `go run scripts/statehistory/main.go snapshot --reason "finished [ID]" --label finished` so the new status is recorded in `.plan/history/`

@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Task Progress Automation**: Automatic task completion with dependency checking
+  - `/finished` command now automatically updates TASKS.md task status and checklist items
+  - Dependency validation blocks task completion if required dependencies are unfinished
+  - Integrated with progress reporting for automatic percentage recalculation
 - **`/plan` Command**: Scaffold structured planning hierarchy with phase folders, feature folders, and contract directories
   - Automatically parses TASKS.md to create phase folders (e.g., `01-foundation`, `02-core_features`)
   - Generates feature folders for each task with templates: `design.md`, `plan.md`, `tasks.md`, `prompts.md`, `github.md`
