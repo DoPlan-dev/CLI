@@ -38,7 +38,18 @@
 - The repo root should only contain source code, configuration, `README.md`, and `CHANGELOG.md`.
 - Any new supporting write-up must be placed under an appropriate `Docs/` subdirectory and referenced from `Docs/README.md`.
 
-## Enforcement tips
+## Enforcement
+
+### Automated Checks
+- **Lint Script**: `scripts/check-docs-organization.sh` validates documentation organization
+  - Run before committing: `./scripts/check-docs-organization.sh`
+  - Checks for root-level `.md` files (blocks if found)
+  - Validates `Docs/` structure exists with required subdirectories
+- **CI/CD Integration**: Automated checks run in GitHub Actions on every PR
+  - Job: `docs-check` in `.github/workflows/ci.yml`
+  - Blocks PRs that violate clean root policy
+
+### Manual Enforcement
 - Update `Docs/README.md` whenever you add a document so future contributors know where to find it.
 - Add `.gitkeep` files to empty directories to keep the category structure intact.
 - PR reviewers should block merges that introduce root-level `.md` files or documents outside `Docs/`.

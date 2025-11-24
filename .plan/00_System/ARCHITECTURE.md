@@ -565,9 +565,15 @@ npm package: doplan
 - Ensure new outputs stay embedded/offline by default, matching the existing architecture principles
 
 ### Documentation Layout Enforcement
-- Generator must create a top-level `Docs/` folder (capital “D”) with the canonical categories: `foundation/`, `features/`, `release/`, `history/`.
+- Generator must create a top-level `Docs/` folder (capital "D") with the canonical categories: `foundation/`, `features/`, `release/`, `history/`.
 - `/plan` and `/write` flows should deposit feature-specific specs into `Docs/features/<Feature_Name>/` and update `Docs/README.md`.
-- Add lint/validation so root-level `.md` files (beyond `README.md` & `CHANGELOG.md`) are rejected; new docs must live under `Docs/`.
+- **Lint/Validation**: `scripts/check-docs-organization.sh` enforces clean root policy:
+  - Rejects root-level `.md` files (beyond `README.md` & `CHANGELOG.md`)
+  - Validates `Docs/` structure exists with required subdirectories
+  - Checks for canonical categories (foundation, features, release, history)
+  - Integrated into CI/CD pipeline to block non-compliant PRs
+- **Rule File**: `.cursor/rules/library/11-documentation/docs-folder-structure.md` defines the policy
+- **Contributor Guidelines**: Policy documented in `Docs/README.md` and onboarding materials
 
 ### Design Decisions
 - Keep it simple (no over-engineering)

@@ -1279,13 +1279,14 @@
 **Assigned**: Documentation Lead, QA Engineer  
 **Dependencies**: 5.10  
 **Effort**: 1 day  
-**Status**: ⏳ Pending  
+**Status**: ✅ Complete
 
 **Tasks**:
-- [ ] Add documentation rule file (`.cursor/rules/.../docs-folder-structure.md`)
-- [ ] Update scripts/lints (e.g., `check-docs-organization.sh`) to watch for `Docs/`
-- [ ] Document requirements in PRD/ARCHITECTURE
-- [ ] Communicate policy in contributor docs / onboarding
+- [x] Add documentation rule file (`.cursor/rules/.../docs-folder-structure.md`)
+- [x] Update scripts/lints (e.g., `check-docs-organization.sh`) to watch for `Docs/`
+- [x] Document requirements in PRD/ARCHITECTURE
+- [x] Communicate policy in contributor docs / onboarding
+- [x] Integrate docs-check into CI/CD workflow
 
 ---
 

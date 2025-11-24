@@ -327,6 +327,13 @@
 #### 24. Rich Scan Report Customization
 - Offer report templates per project type/audience
 - Embed visuals, charts, and dependency vulnerability summaries
+
+#### 25. Clean Root Enforcement Rules
+- Enforce documentation organization via lint scripts
+- Block root-level `.md` files (except README.md and CHANGELOG.md)
+- Require all documentation to live under `Docs/` with canonical structure
+- Integrate checks into CI/CD pipeline
+- Document policy in contributor guidelines
 - Allow teams to extend report sections via configuration
 
 #### 25. `Docs/` Folder & Clean Root Policy
