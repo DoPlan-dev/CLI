@@ -1,0 +1,98 @@
+# Page snapshot
+
+```yaml
+- generic [active]:
+  - generic:
+    - generic [ref=e5] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e6]:
+        - img [ref=e7]
+      - generic [ref=e11]:
+        - button "Open issues overlay" [ref=e12]:
+          - generic [ref=e13]:
+            - generic [ref=e14]: "0"
+            - generic [ref=e15]: "1"
+          - generic [ref=e16]: Issue
+        - button "Collapse issues badge" [ref=e17]:
+          - img [ref=e18]
+    - generic [ref=e22]:
+      - dialog "Runtime Error" [ref=e23]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - generic [ref=e28]:
+                - generic [ref=e30]: Runtime Error
+                - generic [ref=e31]:
+                  - button "Copy Stack Trace" [ref=e32] [cursor=pointer]:
+                    - img [ref=e33]
+                  - button "No related documentation found" [disabled] [ref=e35]:
+                    - img [ref=e36]
+                  - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e38] [cursor=pointer]:
+                    - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                    - img [ref=e39]
+              - generic [ref=e47]:
+                - paragraph [ref=e48]: "Error: Cannot find module './548.js' Require stack: - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/.next/server/webpack-runtime.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/.next/server/pages/_document.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/server/require.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/server/load-components.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/build/utils.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/build/swc/options.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/build/swc/index.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/build/analysis/parse-module.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/build/analysis/get-page-static-info.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/server/lib/router-server.js - /Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/node_modules/next/dist/server/lib/start-server.js"
+                - button "Show More" [ref=e50] [cursor=pointer]
+            - generic [ref=e52]:
+              - generic [ref=e53]:
+                - paragraph [ref=e54]:
+                  - text: Call Stack
+                  - generic [ref=e55]: "50"
+                - button "Show 42 ignore-listed frames" [ref=e56] [cursor=pointer]:
+                  - text: Show 42 ignore-listed frames
+                  - img [ref=e57]
+              - generic [ref=e59]:
+                - generic [ref=e60]: __webpack_require__.f.require
+                - text: file:/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/.next/server/webpack-runtime.js (203:28)
+              - generic [ref=e61]:
+                - generic [ref=e62]: <unknown>
+                - text: file:/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/.next/server/webpack-runtime.js (116:40)
+              - generic [ref=e63]:
+                - generic [ref=e64]: Array.reduce
+                - text: <anonymous> (0:0)
+              - generic [ref=e65]:
+                - generic [ref=e66]: __webpack_require__.e
+                - text: file:/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/.next/server/webpack-runtime.js (115:67)
+              - generic [ref=e67]:
+                - generic [ref=e68]: Array.map
+                - text: <anonymous> (0:0)
+              - generic [ref=e69]:
+                - generic [ref=e70]: __webpack_require__.X
+                - text: file:/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/.next/server/webpack-runtime.js (167:22)
+              - generic [ref=e71]:
+                - generic [ref=e72]: <unknown>
+                - text: file:/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/.next/server/pages/_document.js (1:335)
+              - generic [ref=e73]:
+                - generic [ref=e74]: Object.<anonymous>
+                - text: file:/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/test/qr-generator/test-no01/.next/server/pages/_document.js (1:376)
+          - contentinfo [ref=e76]:
+            - paragraph [ref=e77]: This error happened while generating the page. Any console logs will be displayed in the terminal window.
+            - region "Error feedback" [ref=e78]:
+              - paragraph [ref=e79]:
+                - link "Was this helpful?" [ref=e80] [cursor=pointer]:
+                  - /url: https://nextjs.org/telemetry#error-feedback
+              - button "Mark as helpful" [ref=e81] [cursor=pointer]:
+                - img [ref=e82]
+              - button "Mark as not helpful" [ref=e85] [cursor=pointer]:
+                - img [ref=e86]
+          - generic [ref=e88]:
+            - generic [ref=e89]: "1"
+            - generic [ref=e90]: "2"
+      - generic [ref=e91]:
+        - generic [ref=e92]:
+          - navigation [ref=e93]:
+            - button "previous" [disabled] [ref=e94]:
+              - img "previous" [ref=e95]
+            - generic [ref=e97]:
+              - generic [ref=e98]: 1/
+              - text: "1"
+            - button "next" [disabled] [ref=e99]:
+              - img "next" [ref=e100]
+          - img
+        - generic [ref=e102]:
+          - link "Next.js 15.2.1 (outdated)" [ref=e103] [cursor=pointer]:
+            - /url: https://nextjs.org/docs/messages/version-staleness
+            - img [ref=e104]
+            - generic "An outdated version detected (latest is 16.0.3), upgrade is highly recommended!" [ref=e106]: Next.js 15.2.1 (outdated)
+          - img
+  - alert [ref=e107]
+```

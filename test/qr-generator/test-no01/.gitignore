@@ -40,6 +40,12 @@ next-env.d.ts
 *.db
 *.sqlite
 *.sqlite3
+data/
+tests/test.db
+
+# test coverage
+coverage/
+.nyc_output/
 
 # IDE
 .vscode/

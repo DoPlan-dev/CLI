@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+build
+dist
+coverage
+*.db
+*.sqlite
+*.sqlite3
+.env
+.env*.local
+
