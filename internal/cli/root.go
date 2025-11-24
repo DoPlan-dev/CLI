@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/doplan/cli/internal/tui"
-	"github.com/doplan/cli/internal/version"
+	"github.com/DoPlan-dev/CLI/internal/tui"
+	"github.com/DoPlan-dev/CLI/internal/version"
 	"github.com/spf13/cobra"
 )
 
@@ -110,4 +110,3 @@ func getIDECommand(ide string) string {
 		return "code"
 	}
 }
-

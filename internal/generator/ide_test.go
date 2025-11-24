@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func TestIDEGenerator_Name(t *testing.T) {
@@ -136,4 +136,3 @@ func TestGenerateIDEConfigs(t *testing.T) {
 		t.Error("GenerateIDEConfigs() should create .cursorrules")
 	}
 }
-

@@ -234,7 +234,13 @@ func TestCommandGitHubAutomation(t *testing.T) {
 	commandsWithGitHub := []string{"build", "finished"}
 
 	for _, cmdName := range commandsWithGitHub {
-		cmd := GetCommandByName(cmdName)
+		var cmd *Command
+		for _, c := range GetAllCommands() {
+			if c.Name == cmdName {
+				cmd = &c
+				break
+			}
+		}
 		if cmd == nil {
 			t.Fatalf("Command %s not found", cmdName)
 		}
@@ -244,4 +250,3 @@ func TestCommandGitHubAutomation(t *testing.T) {
 		}
 	}
 }
-

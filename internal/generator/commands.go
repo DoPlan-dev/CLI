@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/doplan/cli/internal/utils"
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/internal/utils"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // Command represents a slash command in the AI agency system
@@ -22,12 +22,12 @@ type Command struct {
 	AgentInvolvement []string // List of agents involved
 
 	// Files
-	FilesRead    []string // Files read by this command
+	FilesRead     []string // Files read by this command
 	FilesModified []string // Files modified by this command
 
 	// Additional Information
-	Examples      []string // Example usage
-	GitHubAutomation string // GitHub automation details (if applicable)
+	Examples         []string // Example usage
+	GitHubAutomation string   // GitHub automation details (if applicable)
 }
 
 // GetAllCommands returns all core and squad commands
@@ -48,7 +48,7 @@ func GetAllCommands() []Command {
 				"Project Orchestrator",
 				"Product Manager",
 			},
-			FilesRead:    []string{},
+			FilesRead: []string{},
 			FilesModified: []string{
 				".plan/00_System/IDEA.md",
 				".plan/active_state.json",
@@ -76,7 +76,7 @@ func GetAllCommands() []Command {
 				"Release & Growth Manager",
 				"Documentation Lead",
 			},
-			FilesRead:    []string{".plan/00_System/IDEA.md"},
+			FilesRead: []string{".plan/00_System/IDEA.md"},
 			FilesModified: []string{
 				".plan/00_System/BRAINSTORM.md",
 			},
@@ -182,6 +182,7 @@ func GetAllCommands() []Command {
 			},
 			FilesModified: []string{
 				".plan/active_state.json",
+				".plan/history/state-*.json",
 			},
 			Examples: []string{
 				"/good",
@@ -249,11 +250,19 @@ func GetAllCommands() []Command {
 1. **Determine Task**: 
    - If task_id provided, load that task
    - Otherwise, find next uncompleted task from TASKS.md
-2. **Load Task Context**: Read task details, dependencies, and related code
-3. **Activate Relevant Agents**: Activate agents needed for the task (Frontend Lead, Backend Lead, etc.)
-4. **Start Implementation**: Begin coding the task with full context
-5. **Update State**: Set active_task in .plan/active_state.json
-6. **Response**: "Building task [ID]: [Description]. Focus on this task only."`,
+2. **Check Git Status**: 
+   - Verify working tree is clean (no uncommitted changes)
+   - If dirty, warn user and block until clean
+3. **Create/Checkout Task Branch**: 
+   - Run go run scripts/branch/main.go --action create --task [ID] --project .
+   - This creates/checks out branch task/[ID] (e.g., task/5.2)
+   - Store branch name in active_branch field of .plan/active_state.json
+4. **Load Task Context**: Read task details, dependencies, and related code
+5. **Activate Relevant Agents**: Activate the necessary agents for the task (e.g., Frontend Lead, Backend Lead, etc.).
+6. **Start Implementation**: Begin implementing the task, making sure all necessary context has been loaded.
+7. **Update State**: Update active_task and active_branch in .plan/active_state.json.
+8. **Snapshot State**: Run go run scripts/statehistory/main.go snapshot --reason 'build [ID]' --label build to save the state in .plan/history/.
+9. **Response**: Respond with "Building task [ID]: [Description] on branch [branch_name]. Focus on this task only."`,
 			AgentInvolvement: []string{
 				"Engineering Lead",
 				"Project Orchestrator",
@@ -272,7 +281,7 @@ func GetAllCommands() []Command {
 			},
 			GitHubAutomation: `After task completion, the system will:
 - Auto-commit changes with conventional commit format
-- Auto-push to current branch (feature/bugfix/hotfix)
+- Auto-push to current branch (task/[ID])
 - Update CHANGELOG.md if significant changes
 - Follow branching strategy from @library/01-core-workflow/github-workflow-automation.md`,
 		},
@@ -284,23 +293,26 @@ func GetAllCommands() []Command {
 
 1. **Read TASKS.md**: Load all tasks
 2. **Read active_state.json**: Get completed tasks and current phase
-3. **Calculate Progress**: 
+3. **Inspect State History**: Look at the latest entries in .plan/history/ (or run go run scripts/statehistory/main.go diff --json) to understand the most recent change
+4. **Calculate Progress**: 
    - Total tasks
    - Completed tasks
    - In progress tasks
    - Percentage complete
-4. **Display Progress**: Show formatted progress report:
+5. **Display Progress**: Show formatted progress report:
    - Phase: [current phase]
    - Tasks: X/Y completed (Z%)
    - Current task: [active task]
    - Next up: [next task]
-5. **Response**: Display progress summary`,
+    - State Delta: summarize what changed between the last two snapshots (phase/task/branch/completed)
+6. **Response**: Display progress summary`,
 			AgentInvolvement: []string{
 				"Project Orchestrator",
 			},
 			FilesRead: []string{
 				".plan/TASKS.md",
 				".plan/active_state.json",
+				".plan/history/state-*.json",
 			},
 			FilesModified: []string{},
 			Examples: []string{
@@ -313,12 +325,23 @@ func GetAllCommands() []Command {
 			Description: "Mark current task done",
 			Action: `When user types /finished:
 
-1. **Mark Task Complete**: Update task status in TASKS.md
-2. **Update State**: Remove active_task and add to completed in active_state.json
-3. **Auto-commit**: Commit changes with conventional commit format
-4. **Auto-push**: Push to current branch
-5. **Update CHANGELOG**: Update CHANGELOG.md if significant changes
-6. **Response**: "Task completed! Changes committed and pushed. Type /build to start next task."`,
+1. **Verify Active Branch**: 
+   - Check that we're on a task branch (from active_branch in .plan/active_state.json)
+   - If on main/master, warn and ask for confirmation
+2. **Mark Task Complete**: Update task status in TASKS.md
+3. **Update State**: 
+   - Add task ID to completed array in .plan/active_state.json
+   - Clear active_task and active_branch (set to null)
+4. **Snapshot State**: Run go run scripts/statehistory/main.go snapshot --reason 'finished [ID]' --label finished so the completion is logged
+5. **Auto-commit**: Commit changes with conventional commit format (e.g., feat(task-5.2): complete branch automation)
+6. **Auto-push**: 
+   - Run go run scripts/branch/main.go --action push --project . to push the current branch
+   - This pushes the task branch to origin
+7. **Update CHANGELOG**: Update CHANGELOG.md if significant changes
+8. **Optional PR Creation**: 
+   - If gh CLI is available, suggest creating a PR with: gh pr create --title "feat: [task description]" --body "Completes task [ID]"
+   - This is optional and can be done manually
+9. **Response**: "Task marked complete! Changes committed and pushed to [branch_name]. Type /build to start the next task, or /progress to see overall progress."`,
 			AgentInvolvement: []string{
 				"Project Orchestrator",
 				"Release Captain",
@@ -330,6 +353,7 @@ func GetAllCommands() []Command {
 			FilesModified: []string{
 				".plan/TASKS.md",
 				".plan/active_state.json",
+				".plan/history/state-*.json",
 				"CHANGELOG.md",
 			},
 			Examples: []string{
@@ -657,4 +681,3 @@ func GenerateCommands(request *models.ProjectRequest, projectPath string) error 
 	generator := &CommandsGenerator{}
 	return generator.Generate(request, projectPath)
 }
-

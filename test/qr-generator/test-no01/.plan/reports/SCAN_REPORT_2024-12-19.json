@@ -1,0 +1,43 @@
+{
+  "file": "SCAN_REPORT_2024-12-19.md",
+  "scan_date": "2024-12-19",
+  "project": "test-no01",
+  "report_type": "Full Project Scan",
+  "summary_hash": "ecf3ca01f131023fc09b1907424bb42b85546629516e051762cd0046901ecd30",
+  "generated_at": "2025-11-24T15:30:27Z",
+  "executive_summary": [
+    "---"
+  ],
+  "findings": null,
+  "next_actions": null,
+  "recent_feedback": [
+    {
+      "timestamp": "2025-11-24T13:43:51Z",
+      "type": "bug",
+      "title": "Sample feedback",
+      "details": "Example entry",
+      "author": "QA"
+    },
+    {
+      "timestamp": "2025-11-24T13:51:28Z",
+      "type": "bug",
+      "title": "Sample feedback",
+      "details": "Example entry",
+      "author": "QA"
+    },
+    {
+      "timestamp": "2025-11-24T13:53:06Z",
+      "type": "bug",
+      "title": "Sample feedback",
+      "details": "Example entry",
+      "author": "QA"
+    },
+    {
+      "timestamp": "2025-11-24T13:54:21Z",
+      "type": "bug",
+      "title": "Sample feedback",
+      "details": "Example entry",
+      "author": "QA"
+    }
+  ]
+}

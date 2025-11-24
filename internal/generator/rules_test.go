@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func TestRulesGenerator_Name(t *testing.T) {
@@ -224,4 +224,3 @@ func TestGenerateRules(t *testing.T) {
 		t.Error("GenerateRules() should create .cursor/rules/library directory")
 	}
 }
-

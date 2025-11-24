@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func TestBoilerplateGenerator_Name(t *testing.T) {
@@ -154,4 +154,3 @@ func TestGenerateBoilerplate(t *testing.T) {
 		t.Error("GenerateBoilerplate() should create package.json")
 	}
 }
-

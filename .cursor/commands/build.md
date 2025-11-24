@@ -14,11 +14,19 @@ When user types /build or /build <task_id>:
 1. **Determine Task**: 
    - If task_id provided, load that task
    - Otherwise, find next uncompleted task from TASKS.md
-2. **Load Task Context**: Read task details, dependencies, and related code
-3. **Activate Relevant Agents**: Activate agents needed for the task (Frontend Lead, Backend Lead, etc.)
-4. **Start Implementation**: Begin coding the task with full context
-5. **Update State**: Set active_task in .plan/active_state.json
-6. **Response**: "Building task [ID]: [Description]. Focus on this task only."
+2. **Check Git Status**: 
+   - Verify working tree is clean (no uncommitted changes)
+   - If dirty, warn user and block until clean
+3. **Create/Checkout Task Branch**: 
+   - Run `go run scripts/branch/main.go --action create --task [ID] --project .`
+   - This creates/checks out branch `task/[ID]` (e.g., `task/5.2`)
+   - Store branch name in `active_branch` field of `.plan/active_state.json`
+4. **Load Task Context**: Read task details, dependencies, and related code
+5. **Activate Relevant Agents**: Activate agents needed for the task (Frontend Lead, Backend Lead, etc.)
+6. **Start Implementation**: Begin coding the task with full context
+7. **Update State**: Set `active_task` and `active_branch` in `.plan/active_state.json`
+8. **Snapshot State**: Immediately log the new state with `go run scripts/statehistory/main.go snapshot --reason "build [ID]" --label build`
+9. **Response**: "Building task [ID]: [Description] on branch [branch_name]. Focus on this task only."
 
 ## Agent Involvement
 - **Engineering Lead**: Coordinates task execution
@@ -30,7 +38,9 @@ When user types /build or /build <task_id>:
 - .plan/active_state.json
 
 ## Files Modified
-- .plan/active_state.json (active_task updated)
+- .plan/active_state.json (active_task and active_branch updated)
+- .plan/history/state-*.json (automatic snapshot for audit/rollback)
+- Git: New branch created/checked out (task/[ID])
 - src/** (code files created/modified)
 
 ## GitHub Automation

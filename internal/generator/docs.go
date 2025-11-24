@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/doplan/cli/internal/utils"
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/internal/utils"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // DocsGenerator generates documentation files
@@ -37,6 +37,11 @@ func (g *DocsGenerator) Generate(request *models.ProjectRequest, projectPath str
 	// Generate rules README
 	if err := generateRulesREADME(projectPath, request); err != nil {
 		return fmt.Errorf("failed to generate rules README: %w", err)
+	}
+
+	// Scaffold Docs/ hierarchy
+	if err := generateDocsHierarchy(projectPath); err != nil {
+		return fmt.Errorf("failed to scaffold Docs hierarchy: %w", err)
 	}
 
 	return nil
@@ -420,9 +425,54 @@ When adding new rules:
 	return utils.WriteFile(path, []byte(content))
 }
 
+func generateDocsHierarchy(projectPath string) error {
+	docsRoot := filepath.Join(projectPath, "Docs")
+	if err := utils.CreateDirectory(docsRoot); err != nil {
+		return err
+	}
+
+	categories := []struct {
+		name string
+		desc string
+	}{
+		{"foundation", "Global references shared across the product"},
+		{"features", "Feature-scoped specs, tasks, and histories"},
+		{"release", "Launch-readiness docs, retros, checklists"},
+		{"history", "Prompt transcripts, changelog excerpts, PR logs"},
+	}
+
+	for _, cat := range categories {
+		dir := filepath.Join(docsRoot, cat.name)
+		if err := utils.CreateDirectory(dir); err != nil {
+			return err
+		}
+		gitkeep := filepath.Join(dir, ".gitkeep")
+		if err := utils.WriteFile(gitkeep, []byte("")); err != nil {
+			return err
+		}
+	}
+
+	readmeContent := "# Docs Directory\n\n" +
+		"DoPlan keeps every long-form artifact inside `Docs/` so the repository root stays clean. Use these canonical subfolders:\n\n" +
+		"| Directory | Purpose |\n" +
+		"| --- | --- |\n" +
+		"| `Docs/foundation/` | Global system references, roadmaps, and guides |\n" +
+		"| `Docs/features/` | Feature-specific specs, plans, and task checklists |\n" +
+		"| `Docs/release/` | Launch readiness, release notes, retrospectives |\n" +
+		"| `Docs/history/` | Prompt logs, changelog excerpts, Git/PR summaries |\n\n" +
+		"## Rules\n\n" +
+		"1. **All docs live under `Docs/`.** Root-level additions are limited to `README.md` and `CHANGELOG.md`.\n" +
+		"2. **One document = one place.** Link references instead of duplicating content.\n" +
+		"3. **Feature folders mirror task IDs** (e.g., `Docs/features/01_Auth_Feature/`).\n" +
+		"4. **History stays in `Docs/history/`.** Capture prompts, retros, and audit trails there.\n\n" +
+		"Need another category? Create it under `Docs/` and update this README so future scans stay consistent.\n"
+
+	readmePath := filepath.Join(docsRoot, "README.md")
+	return utils.WriteFile(readmePath, []byte(readmeContent))
+}
+
 // GenerateDocumentation is a convenience function that creates a DocsGenerator and generates documentation
 func GenerateDocumentation(request *models.ProjectRequest, projectPath string) error {
 	generator := &DocsGenerator{}
 	return generator.Generate(request, projectPath)
 }
-

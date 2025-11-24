@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/doplan/cli/internal/utils"
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/internal/utils"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // Generator represents a component that generates part of the project
@@ -103,6 +103,7 @@ func Orchestrate(request *models.ProjectRequest) error {
 		{Generator: &BoilerplateGenerator{}, Name: "Boilerplate"},
 		{Generator: &DocsGenerator{}, Name: "Documentation"},
 		// {Generator: &DirectoryGenerator{}, Name: "Directory Structure"}, // Placeholder
+		// End of steps slice
 	}
 
 	// Track generation start time for performance monitoring

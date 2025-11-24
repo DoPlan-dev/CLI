@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/doplan/cli/internal/utils"
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/internal/utils"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // IDEGenerator generates IDE-specific configuration files
@@ -114,4 +114,3 @@ func GenerateIDEConfigs(request *models.ProjectRequest, projectPath string) erro
 	generator := &IDEGenerator{}
 	return generator.Generate(request, projectPath)
 }
-

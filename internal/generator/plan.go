@@ -3,10 +3,14 @@ package generator
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
+	"strings"
 
-	"github.com/doplan/cli/internal/utils"
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/internal/utils"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // PlanGenerator generates the .plan/ directory structure
@@ -60,6 +64,11 @@ func (g *PlanGenerator) Generate(request *models.ProjectRequest, projectPath str
 	// Generate active_state.json
 	if err := generateActiveState(planDir, request); err != nil {
 		return fmt.Errorf("failed to generate active_state.json: %w", err)
+	}
+
+	// Mirror key documents into Docs/ hierarchy
+	if err := mirrorPlanDocsToDocs(projectPath); err != nil {
+		return fmt.Errorf("failed to mirror docs into Docs/: %w", err)
 	}
 
 	return nil
@@ -331,9 +340,465 @@ func generateActiveState(planDir string, request *models.ProjectRequest) error {
 	return utils.WriteFile(path, jsonData)
 }
 
+func mirrorPlanDocsToDocs(projectPath string) error {
+	docsRoot := filepath.Join(projectPath, "Docs")
+	if _, err := os.Stat(docsRoot); err != nil {
+		// Docs directory might not exist yet; skip quietly
+		return nil
+	}
+
+	foundationDir := filepath.Join(docsRoot, "foundation")
+	if err := utils.CreateDirectory(foundationDir); err != nil {
+		return err
+	}
+
+	systemDir := filepath.Join(projectPath, ".plan", "00_System")
+	foundationDocs := []string{"IDEA.md", "BRAINSTORM.md", "PRD.md", "ARCHITECTURE.md", "DESIGN_SYSTEM.md"}
+	for _, name := range foundationDocs {
+		src := filepath.Join(systemDir, name)
+		data, err := os.ReadFile(src)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return err
+		}
+		dest := filepath.Join(foundationDir, name)
+		if err := utils.WriteFile(dest, data); err != nil {
+			return err
+		}
+	}
+
+	// Mirror TASKS.md into Docs/features/_plan/TASKS.md for quick access
+	tasksSrc := filepath.Join(projectPath, ".plan", "TASKS.md")
+	if data, err := os.ReadFile(tasksSrc); err == nil {
+		destDir := filepath.Join(docsRoot, "features", "_plan")
+		if err := utils.CreateDirectory(destDir); err != nil {
+			return err
+		}
+		if err := utils.WriteFile(filepath.Join(destDir, "TASKS.md"), data); err != nil {
+			return err
+		}
+	}
+
+	if err := scaffoldFeaturePhaseDocs(projectPath, docsRoot); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func scaffoldFeaturePhaseDocs(projectPath, docsRoot string) error {
+	tasksPath := filepath.Join(projectPath, ".plan", "TASKS.md")
+	data, err := os.ReadFile(tasksPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+
+	rePhase := regexp.MustCompile(`^##\s+Phase\s+(\d+):\s+(.*)$`)
+	lines := strings.Split(string(data), "\n")
+	seen := make(map[string]bool)
+
+	for _, raw := range lines {
+		line := strings.TrimSpace(raw)
+		if line == "" {
+			continue
+		}
+		matches := rePhase.FindStringSubmatch(line)
+		if len(matches) != 3 {
+			continue
+		}
+		numStr := matches[1]
+		title := strings.TrimSpace(matches[2])
+		slug := buildFeatureSlug(numStr, title)
+		if seen[slug] {
+			continue
+		}
+		seen[slug] = true
+
+		dir := filepath.Join(docsRoot, "features", slug)
+		if err := utils.CreateDirectory(dir); err != nil {
+			return err
+		}
+		readmePath := filepath.Join(dir, "README.md")
+		content := fmt.Sprintf(`# Phase %s · %s
+
+This folder holds specs, prompts, and history for **Phase %s – %s**.
+
+- Source checklist: `+"`Docs/features/_plan/TASKS.md`"+`
+- Original plan section: `+"`.plan/TASKS.md`"+` (Phase %s)
+
+Add discovery notes, prompt logs, and feature-specific contracts here so the Docs/features tree mirrors the task plan.
+`, padPhaseNumber(numStr), title, padPhaseNumber(numStr), title, padPhaseNumber(numStr))
+		if err := utils.WriteFile(readmePath, []byte(content)); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func buildFeatureSlug(numStr, title string) string {
+	num := padPhaseNumber(numStr)
+	name := strings.ToLower(title)
+	name = strings.ReplaceAll(name, " ", "_")
+	var b strings.Builder
+	for _, r := range name {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') || r == '_' || r == '-' {
+			b.WriteRune(r)
+		}
+	}
+	sanitized := b.String()
+	if sanitized == "" {
+		sanitized = "feature"
+	}
+	return fmt.Sprintf("%s_%s", num, sanitized)
+}
+
+func padPhaseNumber(numStr string) string {
+	if n, err := strconv.Atoi(numStr); err == nil {
+		return fmt.Sprintf("%02d", n)
+	}
+	return numStr
+}
+
+// ScaffoldPlanHierarchy scaffolds the phase/feature hierarchy from TASKS.md
+// This is called by the /plan command to create the structured planning folders
+func ScaffoldPlanHierarchy(projectPath string) error {
+	tasksPath := filepath.Join(projectPath, ".plan", "TASKS.md")
+	data, err := os.ReadFile(tasksPath)
+	if err != nil {
+		return fmt.Errorf("failed to read TASKS.md: %w", err)
+	}
+
+	planDir := filepath.Join(projectPath, ".plan")
+	phases, err := parsePhasesFromTasks(string(data))
+	if err != nil {
+		return fmt.Errorf("failed to parse phases: %w", err)
+	}
+
+	for _, phase := range phases {
+		phaseDir := filepath.Join(planDir, phase.FolderName)
+		if err := utils.CreateDirectory(phaseDir); err != nil {
+			return fmt.Errorf("failed to create phase directory %s: %w", phaseDir, err)
+		}
+
+		// Create contracts directory for shared schemas
+		contractsDir := filepath.Join(phaseDir, "_contracts")
+		if err := utils.CreateDirectory(contractsDir); err != nil {
+			return fmt.Errorf("failed to create contracts directory: %w", err)
+		}
+		// Add README to contracts
+		contractsReadme := `# Contracts
+
+This directory contains shared API/data schemas for **` + phase.Name + `**.
+
+## Usage
+- API schemas: Define request/response structures
+- Database schemas: Define data models and relationships
+- Type definitions: Shared TypeScript/Go types
+
+## Files
+Add your contract files here (e.g., ` + "`api.json`" + `, ` + "`schema.sql`" + `, ` + "`types.ts`" + `).
+
+---
+*Generated by DoPlan CLI*
+`
+		if err := utils.WriteFile(filepath.Join(contractsDir, "README.md"), []byte(contractsReadme)); err != nil {
+			return fmt.Errorf("failed to create contracts README: %w", err)
+		}
+
+		// Scaffold feature folders for each task in the phase
+		for _, feature := range phase.Features {
+			featureDir := filepath.Join(phaseDir, feature.FolderName)
+			if err := utils.CreateDirectory(featureDir); err != nil {
+				return fmt.Errorf("failed to create feature directory %s: %w", featureDir, err)
+			}
+
+			// Generate template files
+			if err := generateFeatureTemplates(featureDir, feature); err != nil {
+				return fmt.Errorf("failed to generate feature templates: %w", err)
+			}
+		}
+	}
+
+	return nil
+}
+
+type Phase struct {
+	Number     string
+	Name       string
+	FolderName string
+	Features   []Feature
+}
+
+type Feature struct {
+	ID          string
+	Title       string
+	FolderName  string
+	Description string
+}
+
+func parsePhasesFromTasks(content string) ([]Phase, error) {
+	var phases []Phase
+	lines := strings.Split(content, "\n")
+
+	rePhase := regexp.MustCompile(`^##\s+Phase\s+(\d+):\s+(.+?)(?:\s*\(|$)`)
+	reTask := regexp.MustCompile(`^###\s+(\d+\.\d+)\s+(.+)$`)
+
+	var currentPhase *Phase
+
+	for i, line := range lines {
+		trimmed := strings.TrimSpace(line)
+
+		// Check for phase header
+		if matches := rePhase.FindStringSubmatch(trimmed); len(matches) == 3 {
+			// Save previous phase if exists
+			if currentPhase != nil {
+				phases = append(phases, *currentPhase)
+			}
+
+			numStr := matches[1]
+			name := strings.TrimSpace(matches[2])
+			currentPhase = &Phase{
+				Number:     numStr,
+				Name:       name,
+				FolderName: buildPhaseFolderName(numStr, name),
+				Features:   []Feature{},
+			}
+			continue
+		}
+
+		// Check for task header (only if we're in a phase)
+		if currentPhase != nil {
+			if matches := reTask.FindStringSubmatch(trimmed); len(matches) == 3 {
+				taskID := matches[1]
+				taskTitle := strings.TrimSpace(matches[2])
+
+				// Try to find description in next few lines
+				description := ""
+				for j := i + 1; j < len(lines) && j < i+5; j++ {
+					nextLine := strings.TrimSpace(lines[j])
+					if strings.HasPrefix(nextLine, "**Description**") {
+						parts := strings.SplitN(nextLine, ":", 2)
+						if len(parts) == 2 {
+							description = strings.TrimSpace(parts[1])
+						}
+						break
+					}
+				}
+
+				feature := Feature{
+					ID:          taskID,
+					Title:       taskTitle,
+					FolderName:  buildFeatureFolderName(taskID, taskTitle),
+					Description: description,
+				}
+				currentPhase.Features = append(currentPhase.Features, feature)
+			}
+		}
+	}
+
+	// Don't forget the last phase
+	if currentPhase != nil {
+		phases = append(phases, *currentPhase)
+	}
+
+	return phases, nil
+}
+
+func buildPhaseFolderName(numStr, name string) string {
+	num := padPhaseNumber(numStr)
+	slug := sanitizeForFolder(name)
+	return fmt.Sprintf("%s-%s", num, slug)
+}
+
+func buildFeatureFolderName(taskID, title string) string {
+	// Extract the second number from task ID (e.g., "1.1" -> "01")
+	parts := strings.Split(taskID, ".")
+	if len(parts) >= 2 {
+		if n, err := strconv.Atoi(parts[1]); err == nil {
+			taskNum := fmt.Sprintf("%02d", n)
+			slug := sanitizeForFolder(title)
+			return fmt.Sprintf("%s-%s", taskNum, slug)
+		}
+	}
+	// Fallback
+	slug := sanitizeForFolder(title)
+	return fmt.Sprintf("%s-%s", taskID, slug)
+}
+
+func sanitizeForFolder(name string) string {
+	name = strings.ToLower(name)
+	name = strings.ReplaceAll(name, " ", "_")
+	name = strings.ReplaceAll(name, "&", "and")
+	var b strings.Builder
+	for _, r := range name {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') || r == '_' || r == '-' {
+			b.WriteRune(r)
+		}
+	}
+	result := b.String()
+	// Remove multiple underscores
+	result = regexp.MustCompile(`_+`).ReplaceAllString(result, "_")
+	result = strings.Trim(result, "_")
+	if result == "" {
+		result = "feature"
+	}
+	return result
+}
+
+func generateFeatureTemplates(featureDir string, feature Feature) error {
+	templates := map[string]string{
+		"design.md":  generateDesignTemplate(feature),
+		"plan.md":    generatePlanTemplate(feature),
+		"tasks.md":   generateTasksTemplate(feature),
+		"prompts.md": generatePromptsTemplate(feature),
+		"github.md":  generateGithubTemplate(feature),
+	}
+
+	for filename, content := range templates {
+		path := filepath.Join(featureDir, filename)
+		if err := utils.WriteFile(path, []byte(content)); err != nil {
+			return fmt.Errorf("failed to write %s: %w", filename, err)
+		}
+	}
+
+	return nil
+}
+
+func generateDesignTemplate(feature Feature) string {
+	return `# Design: ` + feature.Title + `
+
+**Task ID**: ` + feature.ID + `
+**Status**: Draft
+
+## Overview
+` + feature.Description + `
+
+## Design Decisions
+- [ ] Design decision 1
+- [ ] Design decision 2
+
+## UI/UX Considerations
+- [ ] User flow
+- [ ] Accessibility
+- [ ] Responsive design
+
+## Visual Mockups
+Add mockups or wireframes here.
+
+---
+*Generated by DoPlan CLI*
+`
+}
+
+func generatePlanTemplate(feature Feature) string {
+	return `# Plan: ` + feature.Title + `
+
+**Task ID**: ` + feature.ID + `
+**Status**: Draft
+
+## Objectives
+- [ ] Objective 1
+- [ ] Objective 2
+
+## Approach
+Describe the implementation approach here.
+
+## Dependencies
+- Dependency 1
+- Dependency 2
+
+## Timeline
+- Start: [Date]
+- Target completion: [Date]
+
+---
+*Generated by DoPlan CLI*
+`
+}
+
+func generateTasksTemplate(feature Feature) string {
+	return `# Tasks: ` + feature.Title + `
+
+**Task ID**: ` + feature.ID + `
+**Status**: Draft
+
+## Checklist
+- [ ] Subtask 1
+- [ ] Subtask 2
+- [ ] Subtask 3
+
+## Notes
+Add implementation notes here.
+
+---
+*Generated by DoPlan CLI*
+`
+}
+
+func generatePromptsTemplate(feature Feature) string {
+	return `# Prompts: ` + feature.Title + `
+
+**Task ID**: ` + feature.ID + `
+**Status**: Draft
+
+## AI Prompts Used
+This file tracks prompts and AI interactions for this feature.
+
+### Prompt 1
+` + "```" + `
+[Prompt text]
+` + "```" + `
+
+**Response**: [Summary]
+
+### Prompt 2
+` + "```" + `
+[Prompt text]
+` + "```" + `
+
+**Response**: [Summary]
+
+---
+*Generated by DoPlan CLI*
+`
+}
+
+func generateGithubTemplate(feature Feature) string {
+	branchName := "task/" + strings.ReplaceAll(feature.ID, ".", "-")
+	return `# GitHub: ` + feature.Title + `
+
+**Task ID**: ` + feature.ID + `
+**Status**: Draft
+
+## Issues
+- [ ] Create GitHub issue
+- [ ] Link to milestone
+
+## Pull Requests
+- [ ] Create PR template
+- [ ] Add reviewers
+
+## Branch Strategy
+- Branch name: ` + "`" + branchName + "`" + `
+- Base branch: ` + "`main`" + `
+
+## Commits
+Track commits related to this feature:
+- ` + "`feat(" + feature.ID + "): [description]`" + `
+
+---
+*Generated by DoPlan CLI*
+`
+}
+
 // GeneratePlan is a convenience function that creates a PlanGenerator and generates plan structure
 func GeneratePlan(request *models.ProjectRequest, projectPath string) error {
 	generator := &PlanGenerator{}
 	return generator.Generate(request, projectPath)
 }
-

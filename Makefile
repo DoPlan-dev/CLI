@@ -18,7 +18,7 @@ version: ## Show version information
 
 build: ## Build for current platform
 	@echo "Building DoPlan CLI v$(VERSION) for $(shell go env GOOS)/$(shell go env GOARCH)..."
-	@go build -ldflags "-X github.com/doplan/cli/internal/version.Version=$(VERSION)" -o $(BINARY_NAME) ./cmd/doplan
+	@go build -ldflags "-X github.com/DoPlan-dev/CLI/internal/version.Version=$(VERSION)" -o $(BINARY_NAME) ./cmd/doplan
 	@echo "✓ Built $(BINARY_NAME)"
 
 build-all: ## Build for all platforms
@@ -44,7 +44,7 @@ test-coverage: ## Run tests with coverage
 
 install: build ## Install to GOPATH/bin
 	@echo "Installing DoPlan CLI..."
-	@go install -ldflags "-X github.com/doplan/cli/internal/version.Version=$(VERSION)" ./cmd/doplan
+	@go install -ldflags "-X github.com/DoPlan-dev/CLI/internal/version.Version=$(VERSION)" ./cmd/doplan
 	@echo "✓ Installed to $(GOPATH)/bin/$(BINARY_NAME)"
 
 lint: ## Run linter

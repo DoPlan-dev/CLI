@@ -1,4 +1,4 @@
-module github.com/doplan/cli
+module github.com/DoPlan-dev/CLI
 
 go 1.23.0
 

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func TestPlanGenerator_Name(t *testing.T) {
@@ -158,4 +158,3 @@ func TestGeneratePlan(t *testing.T) {
 		t.Error("GeneratePlan() should create .plan/00_System directory")
 	}
 }
-

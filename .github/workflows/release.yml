@@ -65,7 +65,7 @@ jobs:
           echo "Building for ${{ matrix.goos }}/${{ matrix.goarch }}..."
           echo "Go version: $(go version)"
           echo "Module path: $(go list -m)"
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -v -ldflags "-X github.com/doplan/cli/internal/version.Version=${{ steps.version.outputs.version }}" -o $BINARY_NAME ./cmd/doplan
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -v -ldflags "-X github.com/DoPlan-dev/CLI/internal/version.Version=${{ steps.version.outputs.version }}" -o $BINARY_NAME ./cmd/doplan
           ls -lh $BINARY_NAME || echo "Binary not created!"
         env:
           GOOS: ${{ matrix.goos }}

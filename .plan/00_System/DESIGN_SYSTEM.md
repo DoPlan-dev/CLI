@@ -276,6 +276,38 @@ Press Enter to try again
 - **Progress bars**: Animate smoothly, not jumpy
 - **Fade effects**: 150ms fade in/out
 
+## 🧭 Workflow Command Extensions
+
+### `/plan` Command Flow
+- Display a tree preview of phases/features before scaffolding, using purple (phase) and pink (feature) badges
+- Provide inline copy explaining where `design.md`, `plan.md`, `tasks.md`, `prompts.md`, and `github.md` will live
+- Show a confirmation toast with keyboard shortcuts for jumping to the new folders
+
+### Branch & Task Automation Feedback
+- When `/build` creates/switches a branch, surface a `🔀 Branch Created` banner with branch name + copy-to-clipboard action
+- `/finished` responses should include progress chips (e.g., `📊 42 / 81 tasks • 52% complete`) and dependency warnings in red if blockers remain
+- Use subtle pulses to draw attention to updates without overwhelming the terminal
+
+### Scan Diff Presentation
+- Pair “Previous vs Current” columns with green/red deltas and percentage arrows
+- Provide quick-filter shortcuts (F for files, D for dependencies, C for coverage, T for tasks) so users can jump to sections
+- Allow toggling between compact summary and expanded diff directly in the TUI
+
+### `/feedback` Command UX
+- Offer prefilled templates for bug 🐞, feature 🚀, and question ❓ submissions
+- Show sync status chips (`LOCAL`, `SYNCED`) plus a link copy action when GitHub issues are created
+- Keep multiline inputs readable with bordered blocks and live character counts
+
+### State History & Rollback
+- Render recent snapshots as a vertical timeline with timestamps and key metadata (phase, task, branch)
+- Require explicit confirmation with a highlighted primary button before rollback, showing the fields that will change
+- Provide a diff preview (e.g., `active_task: TASK-052 → TASK-047`) to avoid surprises
+
+### Report Customization Controls
+- Offer selectable presets (Standard, Exec Summary, Detailed) using arrow keys and radio markers
+- Use icons to indicate optional sections (📈 charts, 🛡️ security, 🧪 testing, 🧩 dependencies)
+- Clearly label when custom templates are loaded from user config files to set expectations
+
 ---
 
 ## ♿ Accessibility

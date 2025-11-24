@@ -20,7 +20,7 @@ func TestRenderCommandMarkdown(t *testing.T) {
 			"Project Orchestrator",
 			"Product Manager",
 		},
-		FilesRead:    []string{},
+		FilesRead: []string{},
 		FilesModified: []string{
 			".plan/00_System/IDEA.md",
 			".plan/active_state.json",
@@ -69,7 +69,7 @@ func TestRenderCommandMarkdown(t *testing.T) {
 func TestRenderCommandMarkdown_NilCommand(t *testing.T) {
 	_, err := RenderCommandMarkdown(nil)
 	if err == nil {
-		t.Error("RenderCommandMarkdown(nil) should return an error")
+		t.Errorf("expected error when passing nil to RenderCommandMarkdown, got nil")
 	}
 }
 
@@ -135,59 +135,65 @@ func TestRenderCommandMarkdown_AllCommands(t *testing.T) {
 func TestRenderCommandMarkdown_OptionalSections(t *testing.T) {
 	// Test command without examples
 	cmdNoExamples := &Command{
-		Name:        "test",
-		Trigger:     "Exact match: /test",
-		Description: "Test command",
-		Action:      "Test action",
+		Name:             "test",
+		Trigger:          "Exact match: /test",
+		Description:      "Test command",
+		Action:           "Test action",
 		AgentInvolvement: []string{"Test Agent"},
-		Examples:    []string{},
+		Examples:         []string{},
 	}
 
-	markdown, err := RenderCommandMarkdown(cmdNoExamples)
-	if err != nil {
-		t.Fatalf("RenderCommandMarkdown() error = %v", err)
-	}
+	{
+		markdown, err := RenderCommandMarkdown(cmdNoExamples)
+		if err != nil {
+			t.Fatalf("RenderCommandMarkdown() error = %v", err)
+		}
 
-	if strings.Contains(markdown, "## Examples") {
-		t.Error("Markdown should not contain Examples section when no examples exist")
+		if strings.Contains(markdown, "## Examples") {
+			t.Error("Markdown should not contain Examples section when no examples exist")
+		}
 	}
 
 	// Test command without files read
 	cmdNoFilesRead := &Command{
-		Name:        "test2",
-		Trigger:     "Exact match: /test2",
-		Description: "Test command 2",
-		Action:      "Test action",
+		Name:             "test2",
+		Trigger:          "Exact match: /test2",
+		Description:      "Test command 2",
+		Action:           "Test action",
 		AgentInvolvement: []string{"Test Agent"},
-		FilesRead:    []string{},
+		FilesRead:        []string{},
 	}
 
-	markdown, err = RenderCommandMarkdown(cmdNoFilesRead)
-	if err != nil {
-		t.Fatalf("RenderCommandMarkdown() error = %v", err)
-	}
+	{
+		markdown, err := RenderCommandMarkdown(cmdNoFilesRead)
+		if err != nil {
+			t.Fatalf("RenderCommandMarkdown() error = %v", err)
+		}
 
-	if strings.Contains(markdown, "## Files Read") {
-		t.Error("Markdown should not contain Files Read section when no files are read")
+		if strings.Contains(markdown, "## Files Read") {
+			t.Error("Markdown should not contain Files Read section when no files are read")
+		}
 	}
 
 	// Test command without GitHub automation
 	cmdNoGitHub := &Command{
-		Name:        "test3",
-		Trigger:     "Exact match: /test3",
-		Description: "Test command 3",
-		Action:      "Test action",
+		Name:             "test3",
+		Trigger:          "Exact match: /test3",
+		Description:      "Test command 3",
+		Action:           "Test action",
 		AgentInvolvement: []string{"Test Agent"},
 		GitHubAutomation: "",
 	}
 
-	markdown, err = RenderCommandMarkdown(cmdNoGitHub)
-	if err != nil {
-		t.Fatalf("RenderCommandMarkdown() error = %v", err)
-	}
+	{
+		markdown, err := RenderCommandMarkdown(cmdNoGitHub)
+		if err != nil {
+			t.Fatalf("RenderCommandMarkdown() error = %v", err)
+		}
 
-	if strings.Contains(markdown, "## GitHub Automation") {
-		t.Error("Markdown should not contain GitHub Automation section when automation is empty")
+		if strings.Contains(markdown, "## GitHub Automation") {
+			t.Error("Markdown should not contain GitHub Automation section when automation is empty")
+		}
 	}
 }
 
@@ -221,7 +227,7 @@ func TestRenderCommandMarkdown_Formatting(t *testing.T) {
 
 	// Check formatting
 	lines := strings.Split(markdown, "\n")
-	
+
 	// Should start with title
 	if !strings.HasPrefix(lines[0], "# /") {
 		t.Error("Markdown should start with command title")
@@ -282,4 +288,3 @@ func TestRenderCommandMarkdown_Formatting(t *testing.T) {
 		t.Error("Markdown should contain GitHub Automation section")
 	}
 }
-

@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DoPlan-dev/CLI/internal/generator"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/doplan/cli/internal/generator"
-	"github.com/doplan/cli/pkg/models"
 )
 
 // Color definitions matching the design system

@@ -1,5 +1,16 @@
 <div align="center">
 
+# DoPlan CLI Banner
+
+```
+██████╗░░█████╗░██████╗░██╗░░░░░░█████╗░███╗░░██╗
+██╔══██╗██╔══██╗██╔══██╗██║░░░░░██╔══██╗████╗░██║
+██║░░██║██║░░██║██████╔╝██║░░░░░███████║██╔██╗██║
+██║░░██║██║░░██║██╔═══╝░██║░░░░░██╔══██║██║╚████║
+██████╔╝╚█████╔╝██║░░░░░███████╗██║░░██║██║░╚███║
+╚═════╝░░╚════╝░╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝
+```
+
 # 🚀 DoPlan CLI
 
 **Zero-install AI Project Director** - Bootstrap production-ready projects with a complete hierarchical AI agency system in seconds.
@@ -38,6 +49,19 @@
 - 🚀 **Complete Automation**: Project structure, agents, commands, rules, CI/CD, and boilerplate
 - 📦 **Offline-First**: Works completely offline after first run
 - 🔓 **Transparent**: All AI logic lives in markdown files - see and modify everything
+
+## 📈 KPIs & Targets
+<!-- KPIS:START -->
+- **Adoption**: 10,000+ projects created in first 6 months
+- **Engagement**: Average 5+ commands used per project
+- **Retention**: 30%+ users create second project
+- **Community**: 100+ GitHub stars, active discussions
+- **Quality**: < 1% bug reports, 4.5+ star rating
+- **Performance**: 95%+ of projects generated in < 5 seconds
+---
+<!-- KPIS:END -->
+> Generated via `/github info`. The helper caches metadata in `Docs/history/github-meta.json`, so KPI data stays available even when you're offline.
+
 
 ---
 
@@ -233,6 +257,9 @@ Once in your IDE, start using DoPlan commands:
 /good    → Approve & lock the plan
 /tasks   → Generate implementation tasks
 /build   → Start coding
+/report  → Generate scan metadata + diffs
+/feedback → Log structured feedback entries
+/state   → Snapshot or restore .plan/active_state
 ```
 
 ---
@@ -291,12 +318,46 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
 - **`/progress`** - Show current progress
   ```
   /progress
+  go run scripts/progress/main.go --root .
   ```
+  Runs the Go helper at `scripts/progress/` to display totals plus the most recent `.plan/history` delta (phase/task/branch/completed changes). Pass `--json` for machine-readable output.
+
+- **`/state`** - Manage state snapshots & rollbacks
+  ```
+  /state list
+  /state diff --json
+  /state restore --file state-20251124T120000Z.json --yes
+  ```
+  Wraps `go run scripts/statehistory/main.go` so you can inspect history, capture snapshots (before/after `/build` and `/finished`), and safely restore `.plan/active_state.json`.
 
 - **`/finished`** - Mark task complete
   ```
   /finished
   ```
+
+#### Feedback & Reporting Commands
+
+- **`/feedback`** - Log structured product/bug feedback
+  ```
+  /feedback bug "QR download fails" "API returns 500 when Accept header missing" --author QA
+  ```
+  Saves to `Docs/history/feedback.md` (human readable) and `Docs/history/feedback.json` (consumed by automation).
+
+- **`/report`** - Generate scan metadata + diffs
+  ```
+  /report                       # current project
+  /report ./test/qr-generator/test-no01
+  ```
+  Runs `go run scripts/scanreport/main.go` to update `SCAN_REPORT_*.json`, create `SCAN_DIFF_<date>.md`, and append both the latest state-history summary and an embedded `/progress` snapshot (phase, completion %, upcoming tasks). Use `--preset exec` or `--preset detailed` for alternate templates (exec view, detailed visuals + dependency audit).
+  Customization:
+  - Create `.plan/reports/config.json` to set defaults:
+    ```json
+    {
+      "preset": "exec",
+      "sections": ["executive", "progress", "visuals", "state", "feedback"]
+    }
+    ```
+  - CLI flags override config; custom `sections` let you reorder or omit report blocks.
 
 #### Team & Information Commands
 
@@ -362,7 +423,9 @@ my-project/
 ├── .plan/
 │   ├── 00_System/          # IDEA.md, PRD.md, ARCHITECTURE.md, DESIGN_SYSTEM.md
 │   ├── TASKS.md            # Implementation tasks
-│   └── active_state.json   # Project state
+│   ├── active_state.json   # Project state
+│   └── history/            # Time-stamped snapshots for rollback + reports
+├── Docs/                   # Optional capitalized docs (see test fixtures)
 ├── .github/
 │   └── workflows/          # CI/CD automation
 ├── src/                    # Your source code
@@ -410,6 +473,12 @@ Each agent has a specific role and expertise, working together to guide your pro
 - Documentation standards
 - Security practices
 - MCP tools integration
+
+### 🕒 State History & Rollback
+
+- `.plan/history/state-*.json` stores every update to `active_state.json`, captured automatically around `/build` and `/finished`
+- `/state` (backed by `go run scripts/statehistory/main.go`) lets you snapshot, list, diff, or restore with confirmation guardrails
+- `/progress` and `/report` surface the latest history diff so stakeholders always know *what* changed (phase, task, branch, completed tasks)
 
 ### 🎨 Beautiful Interactive TUI
 

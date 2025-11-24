@@ -42,7 +42,7 @@ scripts\build.bat
 VERSION=1.0.0 make build
 
 # Or with Go
-go build -ldflags "-X github.com/doplan/cli/internal/version.Version=1.0.0" -o doplan ./cmd/doplan
+go build -ldflags "-X github.com/DoPlan-dev/CLI/internal/version.Version=1.0.0" -o doplan ./cmd/doplan
 ```
 
 ---

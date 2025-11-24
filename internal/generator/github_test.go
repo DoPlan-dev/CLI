@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func TestGitHubGenerator_Name(t *testing.T) {
@@ -137,4 +137,3 @@ func TestGenerateGitHubWorkflows(t *testing.T) {
 		t.Error("GenerateGitHubWorkflows() should create .github/workflows directory")
 	}
 }
-

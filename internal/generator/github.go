@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/doplan/cli/internal/utils"
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/internal/utils"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // GitHubGenerator generates GitHub Actions workflows
@@ -181,7 +181,7 @@ jobs:
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY_NAME=doplan.exe
           fi
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/doplan/cli/internal/version.Version=${{ steps.version.outputs.version }}" -o $BINARY_NAME ./cmd/doplan
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/DoPlan-dev/CLI/internal/version.Version=${{ steps.version.outputs.version }}" -o $BINARY_NAME ./cmd/doplan
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}

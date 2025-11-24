@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // TestFullProjectGeneration tests the complete project generation flow
@@ -182,7 +182,7 @@ func TestGeneratorPipelineOrder(t *testing.T) {
 	// This test verifies that the pipeline order is correct
 	// Agents, Commands, Rules, Plan, GitHub should all run successfully
 	// We can't easily test order without mocking, but we can verify all run
-	
+
 	tmpDir, err := os.MkdirTemp("", "doplan-order-*")
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
@@ -212,7 +212,7 @@ func TestGeneratorPipelineOrder(t *testing.T) {
 
 	// Verify all generators produced output
 	projectPath := filepath.Join(tmpDir, "order-test")
-	
+
 	checks := []struct {
 		name string
 		path string
@@ -278,4 +278,3 @@ func verifyIDEConfigsGenerated(t *testing.T, projectPath string) {
 		t.Error("IDE generator should create .cursorrules")
 	}
 }
-

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func TestDocsGenerator_Name(t *testing.T) {
@@ -233,4 +233,3 @@ func TestGenerateRulesREADME(t *testing.T) {
 		t.Error("Rules README should contain 'Referencing Rules' section")
 	}
 }
-

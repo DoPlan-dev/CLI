@@ -25,6 +25,7 @@ bin/doplan.exe
 *.md
 !README.md
 !CHANGELOG.md
+!Docs/
 
 # IDE files
 .vscode/

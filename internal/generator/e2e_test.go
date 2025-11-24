@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // TestEndToEnd_CompleteWizardFlow tests the complete wizard flow

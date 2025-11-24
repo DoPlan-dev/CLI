@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **`/plan` Command**: Scaffold structured planning hierarchy with phase folders, feature folders, and contract directories
+  - Automatically parses TASKS.md to create phase folders (e.g., `01-foundation`, `02-core_features`)
+  - Generates feature folders for each task with templates: `design.md`, `plan.md`, `tasks.md`, `prompts.md`, `github.md`
+  - Creates `_contracts/` directory in each phase for shared API/data schemas
 - **GitHub Wiki Documentation**: Complete wiki with 20 comprehensive pages covering installation, usage, workflow, agents, rules, examples, and more
 - **Wiki Pages**: Home, Installation, Quick Start, Commands, FAQ, Troubleshooting, Workflow, Agents, Rules, First Project Tutorial, Contributing, Project Structure, Configuration, API Reference, Examples, Migration Guide, Development, Code of Conduct, Release Notes, and Wiki Maintenance Plan
 
