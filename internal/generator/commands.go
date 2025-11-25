@@ -28,6 +28,11 @@ type Command struct {
 	// Additional Information
 	Examples         []string // Example usage
 	GitHubAutomation string   // GitHub automation details (if applicable)
+	Requirements     string   // Requirements section (if applicable)
+	Notes            string   // Notes section (if applicable)
+	Customize        string   // Customize section (if applicable)
+	Options          string   // Options section (if applicable)
+	OfflineSafety    string   // Offline Safety section (if applicable)
 }
 
 // GetAllCommands returns all core and squad commands
@@ -61,25 +66,51 @@ func GetAllCommands() []Command {
 		{
 			Name:        "improve",
 			Trigger:     "/improve",
-			Description: "Team brainstorm session",
+			Description: "Phase-based discovery interview & brainstorming",
 			Action: `When user types /improve:
 
-1. **Activate All Level 1 Managers**: Product Manager, Engineering Lead, Design & UX Manager, QA & Reliability Manager, Release & Growth Manager, Documentation Lead
-2. **Brainstorm Session**: Each manager provides ideas and improvements
-3. **Update BRAINSTORM.md**: Write all brainstormed ideas to .plan/00_System/BRAINSTORM.md
-4. **Response**: "Brainstorm complete! Review BRAINSTORM.md. Type /write to generate planning documents."`,
+1. **Load Phase Templates**: Read interview phases from .plan/templates/brainstorm/phase-*.md (01-06) to enable customization without code changes
+2. **Conduct Phase-by-Phase Interview**:
+   - Phase 01: Vision & Outcomes (Product Manager leads)
+   - Phase 02: Audience & Differentiation (Product Manager + Design Manager)
+   - Phase 03: Experience, UI/UX & Tech (Design Manager + Engineering Lead)
+   - Phase 04: Content & SEO (Content Strategist + SEO Specialist join)
+   - Phase 05: Marketing & Growth (Marketing Manager joins)
+   - Phase 06: Delivery, Ops & Risks (Engineering Lead + Project Orchestrator)
+   - For each phase: Ask questions one at a time, probe deeper when answers are vague, wait for user confirmation before moving to next phase
+3. **Compile Summary**: Organize all answers by phase into a structured summary using format from .plan/templates/brainstorm/CONFIRMATION_TEMPLATE.md
+4. **Display Confirmation UI**: 
+   - Present the summary in a well-formatted markdown display with clear sections, checkmarks (✅), blockquotes for longer answers, and visual separators
+   - Include a "Review & Confirm" section with 4 clear options: (1) Save it, (2) Revise a phase, (3) Add information, (4) Start over
+   - Wait for explicit user confirmation - DO NOT save until user explicitly confirms
+5. **Handle User Response**:
+   - If confirmed: Proceed to save
+   - If revision requested: Re-ask questions for specified phase(s), update summary, show again
+   - If addition requested: Add information to appropriate phase, show updated summary
+   - If restart requested: Confirm intent, then restart from Phase 01 if confirmed
+6. **Save to BRAINSTORM.md**: Once explicitly confirmed, write the approved summary (organized by phase) to .plan/00_System/BRAINSTORM.md using structure from .plan/templates/brainstorm/TEMPLATE_BRAINSTORM.md
+7. **Update State**: Set .plan/active_state.json phase to "brainstorm"
+8. **Response**: "✅ Brainstorming session complete! Summary saved to BRAINSTORM.md. Type /write to generate PRD, Architecture, and Design System."`,
 			AgentInvolvement: []string{
 				"Product Manager",
 				"Engineering Lead",
-				"Design & UX Manager",
-				"QA & Reliability Manager",
-				"Release & Growth Manager",
-				"Documentation Lead",
+				"Design Manager",
+				"Content Strategist",
+				"SEO Specialist",
+				"Marketing Manager",
+				"Project Orchestrator",
 			},
-			FilesRead: []string{".plan/00_System/IDEA.md"},
+			FilesRead: []string{
+				".plan/00_System/IDEA.md",
+				".plan/templates/brainstorm/phase-*.md",
+				".plan/templates/brainstorm/CONFIRMATION_TEMPLATE.md",
+				".plan/templates/brainstorm/TEMPLATE_BRAINSTORM.md",
+			},
 			FilesModified: []string{
 				".plan/00_System/BRAINSTORM.md",
+				".plan/active_state.json",
 			},
+			Requirements: "- Phase templates should exist in .plan/templates/brainstorm/\n- Interview should be conversational, one question at a time\n- Summary must be displayed in formatted confirmation UI before saving\n- User must explicitly confirm before any files are written\n- Use CONFIRMATION_TEMPLATE.md format for displaying summary\n- Use TEMPLATE_BRAINSTORM.md format for final saved document",
 			Examples: []string{
 				"/improve",
 			},
@@ -170,7 +201,7 @@ func GetAllCommands() []Command {
 1. **Validate Documents**: Ensure PRD.md, ARCHITECTURE.md, and DESIGN_SYSTEM.md exist
 2. **Lock Plan**: Set locked: true in .plan/active_state.json
 3. **Update Phase**: Set phase to "approved" in active_state.json
-4. **Response**: "Plan approved and locked! Type /tasks to generate implementation tasks."`,
+4. **Response**: "Plan approved and locked! Type /plan to generate the execution plan and tasks."`,
 			AgentInvolvement: []string{
 				"Project Orchestrator",
 			},
@@ -189,33 +220,39 @@ func GetAllCommands() []Command {
 			},
 		},
 		{
-			Name:        "tasks",
-			Trigger:     "/tasks",
-			Description: "Generate TASKS.md",
-			Action: `When user types /tasks:
+			Name:        "plan",
+			Trigger:     "/plan",
+			Description: "Generate execution plan & scaffold phases",
+			Action: `When user types /plan:
 
-1. **Read Approved Plan**: Load PRD.md, ARCHITECTURE.md, and DESIGN_SYSTEM.md
-2. **Generate Tasks**: Create implementation tasks organized by phases
-3. **Create TASKS.md**: Write tasks to .plan/TASKS.md
-4. **Update State**: Set phase to "tasks" in active_state.json
-5. **Response**: "Tasks generated! Review .plan/TASKS.md. Type /build to start coding."`,
+1. **Synthesize Execution Tasks**: Read .plan/00_System/PRD.md, ARCHITECTURE.md, and DESIGN_SYSTEM.md to generate .plan/TASKS.md
+2. **Parse TASKS.md**: Use the generated tasks to determine phases and features
+3. **Scaffold Phase Folders**: Create phase directories (e.g., 01-Foundation) in .plan/
+4. **Generate Feature Folders**: For each task, create feature folders with templates (design.md, plan.md, tasks.md, prompts.md, github.md)
+5. **Create Contracts Directory**: Add _contracts/ folder in each phase for shared schemas
+6. **Update State**: Update .plan/active_state.json to reference the new hierarchy and set phase to "tasks"
+7. **Response**: "Execution plan generated! TASKS.md and phase folders created in .plan/. Type /build to start implementing."`,
 			AgentInvolvement: []string{
-				"Project Orchestrator",
-				"Engineering Lead",
 				"Product Manager",
+				"Engineering Lead",
+				"Project Orchestrator",
 			},
 			FilesRead: []string{
 				".plan/00_System/PRD.md",
 				".plan/00_System/ARCHITECTURE.md",
 				".plan/00_System/DESIGN_SYSTEM.md",
-				".plan/active_state.json",
+				".plan/TASKS.md",
 			},
 			FilesModified: []string{
 				".plan/TASKS.md",
+				".plan/[Phase-Folders]/",
+				".plan/[Phase-Folders]/[Feature-Folders]/",
+				".plan/[Phase-Folders]/_contracts/",
 				".plan/active_state.json",
 			},
+			Requirements: "- PRD, ARCHITECTURE, and DESIGN_SYSTEM must be approved via `/good`\n- Task generation templates live in `.plan/templates`",
 			Examples: []string{
-				"/tasks",
+				"/plan → Generate execution plan and tasks",
 			},
 		},
 		{
@@ -243,28 +280,12 @@ func GetAllCommands() []Command {
 		},
 		{
 			Name:        "build",
-			Trigger:     "/build or /build <task_id>",
+			Trigger:     "/build [<task_id>]",
 			Description: "Start coding next task",
-			Action: `When user types /build or /build <task_id>:
-
-1. **Determine Task**: 
-   - If task_id provided, load that task
-   - Otherwise, find next uncompleted task from TASKS.md
-2. **Check Git Status**: 
-   - Verify working tree is clean (no uncommitted changes)
-   - If dirty, warn user and block until clean
-3. **Create/Checkout Task Branch**: 
-   - Run go run scripts/branch/main.go --action create --task [ID] --project .
-   - This creates/checks out branch task/[ID] (e.g., task/5.2)
-   - Store branch name in active_branch field of .plan/active_state.json
-4. **Load Task Context**: Read task details, dependencies, and related code
-5. **Activate Relevant Agents**: Activate the necessary agents for the task (e.g., Frontend Lead, Backend Lead, etc.).
-6. **Start Implementation**: Begin implementing the task, making sure all necessary context has been loaded.
-7. **Update State**: Update active_task and active_branch in .plan/active_state.json.
-8. **Snapshot State**: Run go run scripts/statehistory/main.go snapshot --reason 'build [ID]' --label build to save the state in .plan/history/.
-9. **Response**: Respond with "Building task [ID]: [Description] on branch [branch_name]. Focus on this task only."`,
+			Action:      "When user types /build or /build <task_id>:\n\n1. **Determine Task**:\n   - If task_id provided, load that task\n   - Otherwise, find next uncompleted task from TASKS.md\n2. **Bootstrap Boilerplate (first run only)**:\n   - If the project is still plan-only (no package.json / src/), run `go run scripts/boilerplate/main.go --project .`\n   - This materializes the default stack (Next.js today) so the task has code to modify\n   - Skip if code already exists for this project/stack\n3. **Check Git Status**:\n   - Verify working tree is clean (no uncommitted changes)\n   - If dirty, warn user and block until clean\n4. **Create/Checkout Task Branch**:\n   - Run `go run scripts/branch/main.go --action create --task [ID] --project .`\n   - This creates/checks out branch `task/[ID]` (e.g., `task/5.2`)\n   - Store branch name in `active_branch` field of `.plan/active_state.json`\n5. **Load Task Context**: Read task details, dependencies, and related code\n6. **Activate Relevant Agents**: Activate agents needed for the task (Frontend Lead, Backend Lead, etc.)\n7. **Start Implementation**: Begin coding the task with full context\n8. **Update State**: Set `active_task` and `active_branch` in `.plan/active_state.json`\n9. **Snapshot State**: Immediately log the new state with `go run scripts/statehistory/main.go snapshot --reason \"build [ID]\" --label build`\n10. **Response**: \"Building task [ID]: [Description] on branch [branch_name]. Focus on this task only.\"",
 			AgentInvolvement: []string{
 				"Engineering Lead",
+				"Relevant Team Leads",
 				"Project Orchestrator",
 			},
 			FilesRead: []string{
@@ -272,40 +293,27 @@ func GetAllCommands() []Command {
 				".plan/active_state.json",
 			},
 			FilesModified: []string{
-				".plan/active_state.json",
+				".plan/active_state.json (active_task and active_branch updated)",
+				".plan/history/state-*.json (automatic snapshot for audit/rollback)",
+				"Git: New branch created/checked out (task/[ID])",
+				"src/** (code files created/modified)",
 			},
 			Examples: []string{
-				"/build",
-				"/build 1.2",
-				"/build 3",
+				"/build → Start next uncompleted task",
+				"/build 1.2 → Start specific task 1.2",
+				"/build 3 → Start task 3",
 			},
 			GitHubAutomation: `After task completion, the system will:
 - Auto-commit changes with conventional commit format
-- Auto-push to current branch (task/[ID])
-- Update CHANGELOG.md if significant changes
+- Auto-push to current branch (feature/bugfix/hotfix)
+- Update docs/CHANGELOG.md if significant changes
 - Follow branching strategy from @library/01-core-workflow/github-workflow-automation.md`,
 		},
 		{
 			Name:        "progress",
 			Trigger:     "/progress",
 			Description: "Show current progress",
-			Action: `When user types /progress:
-
-1. **Read TASKS.md**: Load all tasks
-2. **Read active_state.json**: Get completed tasks and current phase
-3. **Inspect State History**: Look at the latest entries in .plan/history/ (or run go run scripts/statehistory/main.go diff --json) to understand the most recent change
-4. **Calculate Progress**: 
-   - Total tasks
-   - Completed tasks
-   - In progress tasks
-   - Percentage complete
-5. **Display Progress**: Show formatted progress report:
-   - Phase: [current phase]
-   - Tasks: X/Y completed (Z%)
-   - Current task: [active task]
-   - Next up: [next task]
-    - State Delta: summarize what changed between the last two snapshots (phase/task/branch/completed)
-6. **Response**: Display progress summary`,
+			Action:      "When user types /progress:\n\n1. **Read TASKS.md**: Load all tasks\n2. **Read active_state.json**: Get completed tasks and current phase\n3. **Run Progress Tool**: Execute  \n   ```\n   go run scripts/progress/main.go --root <project>\n   ```  \n   This parses `.plan/TASKS.md`, `.plan/active_state.json`, and `.plan/history/` to compute stats and state deltas.\n4. **Calculate Progress**: \n   - Total tasks\n   - Completed tasks\n   - In progress tasks\n   - Percentage complete\n5. **Display Progress**: Show formatted progress report:\n   - Phase: [current phase]\n   - Tasks: X/Y completed (Z%)\n   - Current task: [active task]\n   - Next up: [next task]\n   - State Delta: summarize what changed between the last two snapshots (phase/task/branch/completed)\n6. **Response**: Display progress summary with the state delta footer",
 			AgentInvolvement: []string{
 				"Project Orchestrator",
 			},
@@ -321,34 +329,12 @@ func GetAllCommands() []Command {
 		},
 		{
 			Name:        "finished",
-			Trigger:     "/finished",
+			Trigger:     "/finished [<task_id>]",
 			Description: "Mark current task done",
-			Action: `When user types /finished:
-
-1. **Verify Active Branch**: 
-   - Check that we're on a task branch (from active_branch in .plan/active_state.json)
-   - If on main/master, warn and ask for confirmation
-2. **Check Dependencies**: 
-   - Run go run scripts/taskcomplete/main.go --task [ID] --project . --check to verify all dependencies are complete
-   - If dependencies are missing, block completion and list missing dependencies
-3. **Mark Task Complete**: 
-   - Run go run scripts/taskcomplete/main.go --task [ID] --project . to mark task complete in TASKS.md
-   - This updates the task status to "✅ Complete" and marks all checklist items as [x]
-4. **Update State**: 
-   - Add task ID to completed array in .plan/active_state.json
-   - Clear active_task and active_branch (set to null)
-5. **Snapshot State**: Run go run scripts/statehistory/main.go snapshot --reason 'finished [ID]' --label finished so the completion is logged
-6. **Auto-commit**: Commit changes with conventional commit format (e.g., feat(task-5.2): complete branch automation)
-7. **Auto-push**: 
-   - Run go run scripts/branch/main.go --action push --project . to push the current branch
-   - This pushes the task branch to origin
-8. **Update CHANGELOG**: Update CHANGELOG.md if significant changes
-9. **Optional PR Creation**: 
-   - If gh CLI is available, suggest creating a PR with: gh pr create --title "feat: [task description]" --body "Completes task [ID]"
-   - This is optional and can be done manually
-10. **Response**: "Task marked complete! Changes committed and pushed to [branch_name]. Type /build to start the next task, or /progress to see overall progress."`,
+			Action:      "When user types /finished:\n\n1. **Verify Active Branch**: \n   - Check that we're on a task branch (from `active_branch` in `.plan/active_state.json`)\n   - If on main/master, warn and ask for confirmation\n2. **Check Dependencies**: \n   - Run `go run scripts/taskcomplete/main.go --task [ID] --project . --check` to verify all dependencies are complete\n   - If dependencies are missing, **block completion** and list missing dependencies\n3. **Mark Current Task Complete**: \n   - Run `go run scripts/taskcomplete/main.go --task [ID] --project .` to mark task complete in TASKS.md\n   - This updates the task status to \"✅ Complete\" and marks all checklist items as [x]\n4. **Update State**: \n   - Add task ID to completed array in `.plan/active_state.json`\n   - Clear `active_task` and `active_branch` (set to null)\n4. **Snapshot State**: Run `go run scripts/statehistory/main.go snapshot --reason \"finished [ID]\" --label finished` so the new status is recorded in `.plan/history/`\n5. **Auto-Commit**: Automatically commit changes with conventional commit format (e.g., `feat(task-5.2): complete branch automation`)\n6. **Auto-Push**: \n   - Run `go run scripts/branch/main.go --action push --project .` to push the current branch\n   - This pushes the task branch to origin\n7. **Update Changelog**: If significant, add entry to CHANGELOG.md\n8. **Optional PR Creation**: \n   - If `gh` CLI is available, suggest creating a PR with: `gh pr create --title \"feat: [task description]\" --body \"Completes task [ID]\"`\n   - This is optional and can be done manually\n9. **Response**: \"Task marked complete! Changes committed and pushed to [branch_name]. Type /build to start the next task, or /progress to see overall progress.\"",
 			AgentInvolvement: []string{
-				"Project Orchestrator",
+				"Engineering Lead",
+				"QA Engineer",
 				"Release Captain",
 			},
 			FilesRead: []string{
@@ -356,19 +342,137 @@ func GetAllCommands() []Command {
 				".plan/active_state.json",
 			},
 			FilesModified: []string{
-				".plan/TASKS.md",
-				".plan/active_state.json",
-				".plan/history/state-*.json",
-				"CHANGELOG.md",
+				".plan/TASKS.md (task marked [x])",
+				".plan/active_state.json (completed array updated, active_task and active_branch cleared)",
+				".plan/history/state-*.json (new snapshot)",
+				"docs/CHANGELOG.md (if significant changes)",
+				"Git: Auto-commit and push to task branch",
 			},
 			Examples: []string{
 				"/finished",
 			},
-			GitHubAutomation: `After task completion, the system will:
-- Auto-commit changes with conventional commit format
-- Auto-push to current branch (feature/bugfix/hotfix)
-- Update CHANGELOG.md if significant changes
-- Follow branching strategy from @library/01-core-workflow/github-workflow-automation.md`,
+			GitHubAutomation: `- Creates conventional commit message based on changes
+- Pushes to current feature/bugfix/hotfix branch
+- Follows branching strategy from @library/01-core-workflow/github-workflow-automation.md
+- Triggers CI workflow on push`,
+		},
+		// Workflow Commands
+		{
+			Name:        "branchci",
+			Trigger:     "/branchci [regenerate]",
+			Description: "Generate CI workflow for branch prefixes",
+			Action:      "When you run `/branchci`:\n\n1. Reads `docs/history/branch-matrix.json` to understand what jobs/required checks each branch prefix needs (e.g., `task/`, `feature/`, `hotfix/`).\n2. Runs the generator:\n   ```bash\n   go run scripts/branchci/main.go --matrix docs/history/branch-matrix.json --out .github/workflows\n   ```\n3. Emits `.github/workflows/task-branches.yml`, a workflow that:\n   - Triggers on pushes to `task/*` (and can be expanded for other prefixes)\n   - Spins up jobs per branch prefix (lint/test/build/etc.)\n   - Adds a summary job so reviewers know which checks are required per branch\n4. Output: \"Workflow generated: .github/workflows/task-branches.yml\"",
+			AgentInvolvement: []string{
+				"DevOps Engineer",
+			},
+			FilesRead: []string{
+				"docs/history/branch-matrix.json",
+			},
+			FilesModified: []string{
+				".github/workflows/task-branches.yml",
+			},
+			Customize: "Edit `docs/history/branch-matrix.json` to add or tweak prefixes, jobs, and required checks. Re-run `/branchci` after editing to regenerate the workflow.",
+			Notes:     "- Generated workflow expects Go 1.21 and the standard lint/test/build jobs. Adapt `scripts/branchci/main.go` if your stack differs.\n- Use this command whenever you add a new branch naming convention or need different CI steps per branch type.",
+			Examples: []string{
+				"/branchci",
+				"/branchci regenerate",
+			},
+		},
+		{
+			Name:        "report",
+			Trigger:     "/report or /report <project_path>",
+			Description: "Generate scan report metadata and diffs",
+			Action:      "When you type /report:\n\n1. **Select Project**:\n   - Default: current workspace (.)\n   - Optional: `/report test/qr-generator/test-no01`\n2. **Generate Metadata**:\n   - Runs `go run scripts/scanreport/main.go --project <path>`\n   - Parses `.plan/reports/SCAN_REPORT_*.md`\n   - Creates/updates matching JSON files with structured metadata (scan date, project, executive summary, findings, next actions, summary hash)\n3. **Compute Diff**:\n   - When >=2 reports exist, compares the newest vs previous\n   - Builds `SCAN_DIFF_<date>.md` highlighting added/removed bullets in Executive Summary, Findings & Risks, Recommended Next Actions, **and** the latest `.plan/history` state changes (phase/task/branch/completed deltas)\n   - Appends preset-specific sections: progress snapshot (from `scripts/progress`), ASCII visuals, and a dependency audit when manifests are detected\n4. **Output**:\n   - Terminal summary showing metadata count + diff file path\n   - Diff markdown stored alongside the reports for sharing",
+			AgentInvolvement: []string{
+				"QA Engineer",
+				"Documentation Lead",
+			},
+			FilesRead: []string{
+				"<project>/.plan/reports/SCAN_REPORT_*.md",
+				"<project>/.plan/history/state-*.json (for the state delta section)",
+			},
+			FilesModified: []string{
+				"<project>/.plan/reports/SCAN_REPORT_*.json",
+				"<project>/.plan/reports/SCAN_DIFF_<date>.md",
+			},
+			Options:      "- `--preset standard` *(default)* – complete report\n- `--preset exec` – condensed executive view + visuals\n- `--preset detailed` – expanded sections with dependency audit\n- `.plan/reports/config.json` (optional) can set:\n  ```json\n  {\n    \"preset\": \"exec\",\n    \"sections\": [\"executive\", \"progress\", \"visuals\", \"state\", \"feedback\"]\n  }\n  ```\n  CLI flags override config; custom `sections` let teams reorder or omit report blocks.",
+			Requirements: "- Go 1.21+\n- Reports must follow `SCAN_REPORT_YYYY-MM-DD.md` naming",
+			Examples: []string{
+				"/report → run against current repo",
+				"/report test/qr-generator/test-no01 → run inside test fixture",
+			},
+		},
+		{
+			Name:        "feedback",
+			Trigger:     "/feedback <type> \"Title\" \"Details\" [--github <url>] [--author <name>]",
+			Description: "Log feedback (bug, feature, question, note)",
+			Action:      "When you run `/feedback ...`:\n\n1. **Parse arguments**\n   - `type`: bug | feature | question | note (defaults to `note`)\n   - `title`: short summary (required)\n   - `details`: multiline description (optional)\n   - `--author`: person filing feedback (defaults to `anonymous`)\n   - `--github`: optional issue URL if mirrored upstream\n2. **Log entry** via `go run scripts/feedback/main.go ...`\n   - Appends markdown to `docs/history/feedback.md`\n   - Updates JSON log `docs/history/feedback.json` for automation\n3. **Surface in workflow**\n   - `/report` command ingests latest feedback when generating scan metadata/diffs\n   - Future scans can summarize outstanding feedback items\n4. **Response**\n   - \"Feedback logged (type=bug) → docs/history/feedback.md\"",
+			AgentInvolvement: []string{
+				"Product Manager",
+				"QA Engineer",
+				"Documentation Lead",
+			},
+			FilesRead: []string{
+				"docs/history/feedback.md (created if missing)",
+				"docs/history/feedback.json",
+			},
+			FilesModified: []string{
+				"docs/history/feedback.md",
+				"docs/history/feedback.json",
+			},
+			Examples: []string{
+				"/feedback bug \"QR download fails\" \"API returns 500 when Accept header missing\"",
+				"/feedback feature \"Add dark mode\" \"Marketing wants dark hero section\" --author PM",
+				"/feedback question \"Rate limit\" \"What are the prod limits?\" --github https://github.com/org/repo/issues/123",
+			},
+			Notes: "- Requires Go 1.21+. Command shells run: `go run scripts/feedback/main.go --type <type> --title \"...\" --details \"...\" --author \"...\" --github <url>`\n- Works in any generated project (paths relative to project root).\n- Add new feedback types by passing a custom string (stored as lowercase).",
+		},
+		{
+			Name:        "state",
+			Trigger:     "/state <subcommand>",
+			Description: "Manage project state history",
+			Action:      "The `/state` helper wraps `go run scripts/statehistory/main.go` so you can manage `.plan/active_state.json` history safely.\n\n### snapshot\n1. Writes the current `.plan/active_state.json` into `.plan/history/state-<timestamp>.json`\n2. Accepts optional flags:\n   - `--reason` → stored in the snapshot metadata\n   - `--label` → appended to the file name (e.g., build, finished)\n3. Output: `Snapshot saved: .plan/history/state-20251124T120000Z-build.json`\n\n### list\n1. Lists recent entries (default: last 10)\n2. `--json` emits machine-readable summaries for scripts/CI\n\n### diff\n1. Compares two snapshots (default: latest vs previous)\n2. Shows Markdown summary (phase/task/branch/completed deltas) or JSON if `--json`\n3. Used by `/progress` and `/report` to surface state deltas\n\n### restore\n1. Requires `--file <id>` and `--yes` confirmation for guardrails\n2. Restores `.plan/active_state.json` from the selected snapshot\n3. Optionally captures a new snapshot (`--snapshot=false` to skip) so rollbacks themselves are logged\n4. Respond with confirmation + reminder to rerun `/progress`",
+			AgentInvolvement: []string{
+				"Project Orchestrator",
+				"QA Engineer",
+			},
+			FilesRead: []string{
+				"`.plan/active_state.json`",
+				"`.plan/history/state-*.json`",
+			},
+			FilesModified: []string{
+				"`.plan/history/state-*.json` (new entries)",
+				"`.plan/active_state.json` (when restoring)",
+			},
+			Examples: []string{
+				"/state snapshot --reason \"after /build 5.8\"",
+				"/state list --limit 5",
+				"/state diff --json",
+				"/state restore --file state-20251124T120000Z.json --yes",
+			},
+			Notes: "- State history is now required before/after `/build` and `/finished`\n- Restores should be rare; always snapshot first so you can undo mistakes",
+		},
+		{
+			Name:        "github",
+			Trigger:     "/github <subcommand>",
+			Description: "GitHub metadata and issue management",
+			Action:      "### `/github info`\nRuns:\n```\ngo run scripts/githubmeta/main.go --project . --sync-readme\n```\n- Detects primary remote + default branch\n- Extracts success metrics from `.plan/00_System/PRD.md`\n- Updates the README KPI block between `<!-- KPIS:START -->` / `<!-- KPIS:END -->`\n- Persists metadata to `docs/history/github-meta.json` for offline use\n\n### `/github issue \"Title\" \"Body\"`\nOutputs a ready-to-run `gh issue create` command with the detected repo slug, e.g.:\n```\ngo run scripts/githubmeta/main.go --project . --issue-title \"Fix cache\" --issue-body \"Details here\"\n```\nCopy/paste the printed `gh issue create` command (or pipe it) to open the issue.\n\n### `/github milestone \"Name\" [due-date]`\nPrints a `gh api` command to create a milestone:\n```\ngo run scripts/githubmeta/main.go --project . --milestone-title \"MVP\" --milestone-due 2025-01-15T00:00:00Z\n```",
+			AgentInvolvement: []string{
+				"Release & Growth Manager",
+			},
+			FilesRead: []string{
+				"`.git/` metadata",
+				"`.plan/00_System/PRD.md`",
+			},
+			FilesModified: []string{
+				"`docs/history/github-meta.json`",
+				"`README.md` KPI section when `--sync-readme` is used",
+			},
+			OfflineSafety: "- If git remote detection fails, the script logs a warning and keeps the last cached metadata (`docs/history/github-meta.json`). You can still update KPIs from PRD without network access.",
+			Examples: []string{
+				"/github info",
+				"/github issue \"Fix cache\" \"Cache misses spike\"",
+			},
 		},
 		// Squad Commands
 		{
@@ -512,10 +616,10 @@ func GetAllCommands() []Command {
 			},
 			FilesRead: []string{
 				".plan/TASKS.md",
-				"CHANGELOG.md",
+				"docs/CHANGELOG.md",
 			},
 			FilesModified: []string{
-				"CHANGELOG.md",
+				"docs/CHANGELOG.md",
 				".plan/00_System/RELEASE.md",
 			},
 			Examples: []string{
@@ -621,7 +725,17 @@ const commandTemplate = `# /{{.Name}}
 {{range .FilesModified}}- {{.}}
 {{end}}{{end}}{{if .GitHubAutomation}}
 ## GitHub Automation
-{{.GitHubAutomation}}{{end}}
+{{.GitHubAutomation}}{{end}}{{if .Requirements}}
+## Requirements
+{{.Requirements}}{{end}}{{if .Notes}}
+## Notes
+{{.Notes}}{{end}}{{if .Customize}}
+## Customize
+{{.Customize}}{{end}}{{if .Options}}
+## Options
+{{.Options}}{{end}}{{if .OfflineSafety}}
+## Offline Safety
+{{.OfflineSafety}}{{end}}
 `
 
 // RenderCommandMarkdown renders a command to markdown format

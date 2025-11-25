@@ -199,22 +199,22 @@ DoPlan CLI uses a slash-command system (`/command`) that activates specific AI a
 **Agents Involved**:
 - Project Orchestrator
 
-**Next Steps**: Use `/tasks` to generate implementation tasks.
+**Next Steps**: Use `/plan` to generate implementation tasks.
 
 ---
 
-### `/tasks` - Generate Implementation Tasks
+### `/plan` - Generate Implementation Tasks
 
 **Description**: Generate organized implementation tasks from the approved plan.
 
 **Usage**:
 ```bash
-/tasks
+/plan
 ```
 
 **Examples**:
 ```bash
-/tasks
+/plan
 ```
 
 **What it does**:
@@ -520,7 +520,7 @@ Follow this order for best results:
 2. `/improve` - Brainstorm
 3. `/write` - Generate plans
 4. `/good` - Approve
-5. `/tasks` - Generate tasks
+5. `/plan` - Generate tasks
 6. `/build` - Start coding
 7. `/finished` - Complete tasks
 
@@ -561,7 +561,7 @@ You can use multiple commands in sequence:
 /improve
 /write
 /good
-/tasks
+/plan
 /build
 ```
 
@@ -608,7 +608,7 @@ You can use multiple commands in sequence:
 | `/write` | Core | None | No |
 | `/change` | Core | Required: doc, change | No |
 | `/good` | Core | None | No |
-| `/tasks` | Core | None | No |
+| `/plan` | Core | None | No |
 | `/build` | Core | Optional: task_id | No |
 | `/progress` | Core | None | No |
 | `/finished` | Core | None | Yes |

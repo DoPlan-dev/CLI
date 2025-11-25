@@ -48,7 +48,6 @@ func TestFullProjectGeneration(t *testing.T) {
 	verifyPlanGenerated(t, projectPath)
 	verifyGitHubWorkflowsGenerated(t, projectPath)
 	verifyDocumentationGenerated(t, projectPath)
-	verifyBoilerplateGenerated(t, projectPath)
 	verifyIDEConfigsGenerated(t, projectPath)
 }
 
@@ -238,16 +237,16 @@ func verifyDocumentationGenerated(t *testing.T, projectPath string) {
 		t.Error("Documentation generator should create README.md")
 	}
 
-	// Check for STANDUP.md
-	standupPath := filepath.Join(projectPath, "STANDUP.md")
+	// Check for STANDUP.md in .plan/
+	standupPath := filepath.Join(projectPath, ".plan", "STANDUP.md")
 	if _, err := os.Stat(standupPath); os.IsNotExist(err) {
-		t.Error("Documentation generator should create STANDUP.md")
+		t.Error("Documentation generator should create .plan/STANDUP.md")
 	}
 
-	// Check for CHANGELOG.md
-	changelogPath := filepath.Join(projectPath, "CHANGELOG.md")
+	// Check for CHANGELOG.md in docs/
+	changelogPath := filepath.Join(projectPath, "docs", "CHANGELOG.md")
 	if _, err := os.Stat(changelogPath); os.IsNotExist(err) {
-		t.Error("Documentation generator should create CHANGELOG.md")
+		t.Error("Documentation generator should create docs/CHANGELOG.md")
 	}
 
 	// Check for rules README
@@ -257,24 +256,10 @@ func verifyDocumentationGenerated(t *testing.T, projectPath string) {
 	}
 }
 
-func verifyBoilerplateGenerated(t *testing.T, projectPath string) {
-	// Check for package.json (Next.js boilerplate)
-	packageJsonPath := filepath.Join(projectPath, "package.json")
-	if _, err := os.Stat(packageJsonPath); os.IsNotExist(err) {
-		t.Error("Boilerplate generator should create package.json")
-	}
-
-	// Check for tsconfig.json
-	tsconfigPath := filepath.Join(projectPath, "tsconfig.json")
-	if _, err := os.Stat(tsconfigPath); os.IsNotExist(err) {
-		t.Error("Boilerplate generator should create tsconfig.json")
-	}
-}
-
 func verifyIDEConfigsGenerated(t *testing.T, projectPath string) {
-	// Check for .cursorrules (Cursor IDE)
-	cursorrulesPath := filepath.Join(projectPath, ".cursorrules")
-	if _, err := os.Stat(cursorrulesPath); os.IsNotExist(err) {
-		t.Error("IDE generator should create .cursorrules")
+	// Check for CLAUDE.md under docs/
+	claudePath := filepath.Join(projectPath, "docs", "CLAUDE.md")
+	if _, err := os.Stat(claudePath); os.IsNotExist(err) {
+		t.Error("IDE generator should create docs/CLAUDE.md")
 	}
 }

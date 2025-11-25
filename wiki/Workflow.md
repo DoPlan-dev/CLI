@@ -48,7 +48,7 @@ DoPlan CLI uses a structured development workflow that guides you from initial i
           │
 3. TASKS PHASE
    ┌──────▼───────┐
-   │  /tasks      │ → Generate implementation tasks
+   │  /plan      │ → Generate implementation tasks
    └──────┬───────┘
           │
 4. DEVELOPMENT PHASE
@@ -189,7 +189,7 @@ The planning phase transforms your idea into a comprehensive plan.
 
 **Output**: Plan approved and locked
 
-**Next Step**: Use `/tasks` to generate implementation tasks
+**Next Step**: Use `/plan` to generate implementation tasks
 
 ---
 
@@ -197,9 +197,9 @@ The planning phase transforms your idea into a comprehensive plan.
 
 The development phase transforms your approved plan into working code.
 
-### Step 1: Generate Tasks (`/tasks`)
+### Step 1: Generate Tasks (`/plan`)
 
-**Command**: `/tasks`
+**Command**: `/plan`
 
 **What happens**:
 1. Reads approved plan (PRD, Architecture, Design System)
@@ -210,7 +210,7 @@ The development phase transforms your approved plan into working code.
 
 **Example**:
 ```bash
-/tasks
+/plan
 ```
 
 **Output**: Implementation tasks generated in `.plan/TASKS.md`
@@ -363,7 +363,7 @@ Always follow the workflow in order:
 2. `/improve` → Brainstorm
 3. `/write` → Generate plans
 4. `/good` → Approve
-5. `/tasks` → Generate tasks
+5. `/plan` → Generate tasks
 6. `/build` → Start coding
 7. `/finished` → Complete tasks
 
@@ -412,7 +412,7 @@ For quick prototypes:
 1. `/tell` - Capture idea
 2. `/write` - Generate plans
 3. `/good` - Approve quickly
-4. `/tasks` - Generate tasks
+4. `/plan` - Generate tasks
 5. `/build` - Start coding immediately
 
 ### Pattern 2: Thorough Planning
@@ -423,7 +423,7 @@ For complex projects:
 3. `/write` - Generate plans
 4. `/change` - Multiple iterations
 5. `/good` - Approve when perfect
-6. `/tasks` - Generate detailed tasks
+6. `/plan` - Generate detailed tasks
 7. `/build` - Implement carefully
 
 ### Pattern 3: Iterative Development
@@ -433,7 +433,7 @@ For iterative projects:
 2. Generate initial tasks
 3. Build and complete tasks
 4. Use `/change` to update plans
-5. Regenerate tasks with `/tasks`
+5. Regenerate tasks with `/plan`
 6. Continue building
 
 ### Pattern 4: Feature Development
@@ -442,7 +442,7 @@ For adding features:
 1. `/change prd Add new feature`
 2. `/change architecture Update architecture for feature`
 3. `/good` - Approve changes
-4. `/tasks` - Generate new tasks
+4. `/plan` - Generate new tasks
 5. `/build` - Implement feature
 
 ---
@@ -465,7 +465,7 @@ For adding features:
 /good
 
 # 5. Generate tasks
-/tasks
+/plan
 
 # 6. Build
 /build
@@ -499,7 +499,7 @@ For adding features:
 /good
 
 # 6. Generate tasks
-/tasks
+/plan
 
 # 7. Build incrementally
 /build

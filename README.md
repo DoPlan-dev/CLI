@@ -255,7 +255,7 @@ Once in your IDE, start using DoPlan commands:
 /improve → Team brainstorm session
 /write   → Generate PRD + Architecture + Design System
 /good    → Approve & lock the plan
-/tasks   → Generate implementation tasks
+/plan    → Generate execution plan + task hierarchy
 /build   → Start coding
 /report  → Generate scan metadata + diffs
 /feedback → Log structured feedback entries
@@ -303,11 +303,11 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
 
 #### Development Commands
 
-- **`/tasks`** - Generate implementation tasks
+- **`/plan`** - Generate execution plan + tasks
   ```
-  /tasks
+  /plan
   ```
-  Creates TASKS.md from the approved plan.
+  Synthesizes TASKS.md from the approved plan and scaffolds phase folders.
 
 - **`/build`** - Start coding
   ```
@@ -399,8 +399,8 @@ code .
 # 6. Review and approve
 /good
 
-# 7. Generate tasks
-/tasks
+# 7. Generate execution plan + tasks
+/plan
 
 # 8. Start building
 /build

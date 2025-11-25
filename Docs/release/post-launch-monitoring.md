@@ -45,7 +45,7 @@ Use this checklist immediately after a release to stay on top of support signals
 ## 5. Plan v1.1 Features
 - Gather inputs from the previous sections (issues, downloads, feedback, metrics).
 - Capture candidates in `Docs/features/05_v1_1_planning/README.md` (create if missing).
-- Once priorities are confirmed, use `/tell` + `/tasks` to regenerate the backlog for the next phase.
+- Once priorities are confirmed, use `/tell` + `/plan` to regenerate the backlog for the next phase.
 
 ---
 

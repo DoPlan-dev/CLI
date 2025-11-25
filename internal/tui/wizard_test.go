@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/charmbracelet/bubbletea"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func TestInitialModel(t *testing.T) {
@@ -132,8 +132,8 @@ func TestModel_View_Welcome(t *testing.T) {
 		t.Error("View() should contain 'DoPlan CLI'")
 	}
 
-	if !strings.Contains(view, "🚀") {
-		t.Error("View() should contain rocket emoji")
+	if !strings.Contains(view, "[>]") {
+		t.Error("View() should contain welcome indicator")
 	}
 
 	if !strings.Contains(view, "Enter") {
@@ -167,8 +167,8 @@ func TestRenderWelcome(t *testing.T) {
 		t.Error("renderWelcome() should contain 'DoPlan CLI'")
 	}
 
-	if !strings.Contains(welcome, "🚀") {
-		t.Error("renderWelcome() should contain rocket emoji")
+	if !strings.Contains(welcome, "[>]") {
+		t.Error("renderWelcome() should contain welcome indicator")
 	}
 }
 
@@ -188,8 +188,8 @@ func TestModel_View_ProjectName(t *testing.T) {
 		t.Error("View() should contain 'Project Name'")
 	}
 
-	if !strings.Contains(view, "📝") {
-		t.Error("View() should contain pencil emoji")
+	if !strings.Contains(view, "[*]") {
+		t.Error("View() should contain project name indicator")
 	}
 }
 
@@ -218,11 +218,11 @@ func TestValidateProjectName(t *testing.T) {
 
 	// Test invalid names
 	invalidNames := []string{
-		"my project",      // space
-		"my.project",     // dot
-		"my@project",     // @ symbol
-		"my#project",     // # symbol
-		"",               // empty
+		"my project", // space
+		"my.project", // dot
+		"my@project", // @ symbol
+		"my#project", // # symbol
+		"",           // empty
 	}
 
 	for _, name := range invalidNames {
@@ -269,8 +269,8 @@ func TestRenderProjectName_InvalidInput(t *testing.T) {
 	view := model.renderProjectName()
 
 	// Should show error message
-	if !strings.Contains(view, "❌") {
-		t.Error("renderProjectName() with invalid input should contain error icon")
+	if !strings.Contains(view, "[X]") {
+		t.Error("renderProjectName() with invalid input should contain error indicator")
 	}
 
 	if model.validationErr == "" {
@@ -380,8 +380,8 @@ func TestModel_View_IDESelection(t *testing.T) {
 		t.Error("View() should contain 'Select Your IDE'")
 	}
 
-	if !strings.Contains(view, "💻") {
-		t.Error("View() should contain computer emoji")
+	if !strings.Contains(view, "[*]") {
+		t.Error("View() should contain IDE selection indicator")
 	}
 
 	// Check for IDE names
@@ -410,18 +410,18 @@ func TestRenderIDESelection(t *testing.T) {
 		t.Error("renderIDESelection() should contain 'Select Your IDE'")
 	}
 
-	if !strings.Contains(view, "💻") {
-		t.Error("renderIDESelection() should contain computer emoji")
+	if !strings.Contains(view, "[*]") {
+		t.Error("renderIDESelection() should contain IDE selection indicator")
 	}
 
-	// Check for radio buttons
-	if !strings.Contains(view, "●") {
-		t.Error("renderIDESelection() should contain selected radio button (●)")
+	// Check for checkbox selections
+	if !strings.Contains(view, "☑") {
+		t.Error("renderIDESelection() should contain selected checkbox (☑)")
 	}
 
-	// Check for recommended star
-	if !strings.Contains(view, "⭐") {
-		t.Error("renderIDESelection() should contain recommended star (⭐)")
+	// Check for recommended indicator
+	if !strings.Contains(view, "[*]") {
+		t.Error("renderIDESelection() should contain recommended indicator")
 	}
 
 	// Check for navigation instructions
@@ -510,8 +510,8 @@ func TestModel_View_Generating(t *testing.T) {
 		t.Error("View() should contain 'Generating'")
 	}
 
-	if !strings.Contains(view, "⚙️") {
-		t.Error("View() should contain gear emoji")
+	if !strings.Contains(view, "[...]") {
+		t.Error("View() should contain generating indicator")
 	}
 }
 
@@ -532,8 +532,8 @@ func TestRenderGenerating(t *testing.T) {
 		t.Error("renderGenerating() should contain 'Generating'")
 	}
 
-	if !strings.Contains(view, "⚙️") {
-		t.Error("renderGenerating() should contain gear emoji")
+	if !strings.Contains(view, "[...]") {
+		t.Error("renderGenerating() should contain generating indicator")
 	}
 
 	// Check for step names
@@ -551,29 +551,29 @@ func TestGetStepIcon(t *testing.T) {
 	// Test completed
 	step := GenerationStep{Name: "Test", Status: stepCompleted}
 	icon := model.getStepIcon(step)
-	if icon != "✅" {
-		t.Errorf("getStepIcon(completed) = %q, want %q", icon, "✅")
+	if icon != "[+]" {
+		t.Errorf("getStepIcon(completed) = %q, want %q", icon, "[+]")
 	}
 
 	// Test in progress
 	step.Status = stepInProgress
 	icon = model.getStepIcon(step)
-	if !strings.Contains(icon, "⏳") {
-		t.Errorf("getStepIcon(inProgress) should contain ⏳, got %q", icon)
+	if !strings.Contains(icon, "[...]") {
+		t.Errorf("getStepIcon(inProgress) should contain [...], got %q", icon)
 	}
 
 	// Test failed
 	step.Status = stepFailed
 	icon = model.getStepIcon(step)
-	if icon != "❌" {
-		t.Errorf("getStepIcon(failed) = %q, want %q", icon, "❌")
+	if icon != "[X]" {
+		t.Errorf("getStepIcon(failed) = %q, want %q", icon, "[X]")
 	}
 
 	// Test pending
 	step.Status = stepPending
 	icon = model.getStepIcon(step)
-	if icon != "⏸" {
-		t.Errorf("getStepIcon(pending) = %q, want %q", icon, "⏸")
+	if icon != "[-]" {
+		t.Errorf("getStepIcon(pending) = %q, want %q", icon, "[-]")
 	}
 }
 
@@ -583,29 +583,29 @@ func TestGetStepColor(t *testing.T) {
 	// Test completed
 	step := GenerationStep{Name: "Test", Status: stepCompleted}
 	color := model.getStepColor(step)
-	if color != green {
-		t.Errorf("getStepColor(completed) = %v, want %v", color, green)
+	if color != primary {
+		t.Errorf("getStepColor(completed) = %v, want %v", color, primary)
 	}
 
 	// Test in progress
 	step.Status = stepInProgress
 	color = model.getStepColor(step)
-	if color != yellow {
-		t.Errorf("getStepColor(inProgress) = %v, want %v", color, yellow)
+	if color != secondary {
+		t.Errorf("getStepColor(inProgress) = %v, want %v", color, secondary)
 	}
 
 	// Test failed
 	step.Status = stepFailed
 	color = model.getStepColor(step)
-	if color != red {
-		t.Errorf("getStepColor(failed) = %v, want %v", color, red)
+	if color != primary {
+		t.Errorf("getStepColor(failed) = %v, want %v", color, primary)
 	}
 
 	// Test pending
 	step.Status = stepPending
 	color = model.getStepColor(step)
-	if color != gray600 {
-		t.Errorf("getStepColor(pending) = %v, want %v", color, gray600)
+	if color != tertiary {
+		t.Errorf("getStepColor(pending) = %v, want %v", color, tertiary)
 	}
 }
 
@@ -681,8 +681,8 @@ func TestGetSpinnerChar(t *testing.T) {
 		chars[char] = true
 	}
 
-	// Should have multiple different characters
-	if len(chars) < 5 {
+	// Should have multiple different characters (ASCII spinner has 4: |, /, -, \)
+	if len(chars) < 4 {
 		t.Errorf("getSpinnerChar() should cycle through multiple characters, got %d unique", len(chars))
 	}
 }
@@ -726,8 +726,8 @@ func TestModel_View_Success(t *testing.T) {
 		t.Error("View() should contain 'successfully'")
 	}
 
-	if !strings.Contains(view, "✨") {
-		t.Error("View() should contain celebration emoji")
+	if !strings.Contains(view, "[+]") {
+		t.Error("View() should contain success indicator")
 	}
 }
 
@@ -749,8 +749,8 @@ func TestRenderSuccess(t *testing.T) {
 		t.Error("renderSuccess() should contain 'Project created successfully'")
 	}
 
-	if !strings.Contains(view, "✨") {
-		t.Error("renderSuccess() should contain celebration emoji")
+	if !strings.Contains(view, "[+]") {
+		t.Error("renderSuccess() should contain success indicator")
 	}
 
 	if !strings.Contains(view, "test-project") {
@@ -789,8 +789,8 @@ func TestGetProjectStructureTree(t *testing.T) {
 		t.Error("getProjectStructureTree() should contain .github directory")
 	}
 
-	if !strings.Contains(tree, "✅") {
-		t.Error("getProjectStructureTree() should contain checkmark")
+	if !strings.Contains(tree, "[+]") {
+		t.Error("getProjectStructureTree() should contain success indicator")
 	}
 }
 
@@ -799,6 +799,7 @@ func TestRenderSuccess_NextSteps(t *testing.T) {
 	model.state = stateSuccess
 	model.width = 80
 	model.projectName = "my-project"
+	model.selectedIDEs = map[string]bool{"Cursor": true}
 	model.selectedIDE = "Cursor"
 
 	view := model.renderSuccess()
@@ -836,6 +837,10 @@ func TestRenderSuccess_DifferentIDEs(t *testing.T) {
 		model.state = stateSuccess
 		model.width = 80
 		model.projectName = "test-project"
+		model.selectedIDEs = map[string]bool{}
+		if tc.ide != "" {
+			model.selectedIDEs[tc.ide] = true
+		}
 		model.selectedIDE = tc.ide
 
 		view := model.renderSuccess()
@@ -869,10 +874,10 @@ func TestRenderSuccess_Checkmarks(t *testing.T) {
 
 	view := model.renderSuccess()
 
-	// Should contain multiple checkmarks
-	checkmarkCount := strings.Count(view, "✅")
-	if checkmarkCount < 1 {
-		t.Error("renderSuccess() should contain at least one checkmark")
+	// Should contain success indicators
+	successCount := strings.Count(view, "[+]")
+	if successCount < 1 {
+		t.Error("renderSuccess() should contain at least one success indicator")
 	}
 }
 
@@ -916,8 +921,8 @@ func TestModel_View_Error(t *testing.T) {
 		t.Error("View() should contain 'Error'")
 	}
 
-	if !strings.Contains(view, "❌") {
-		t.Error("View() should contain error icon")
+	if !strings.Contains(view, "[X]") {
+		t.Error("View() should contain error indicator")
 	}
 }
 
@@ -939,8 +944,8 @@ func TestRenderError(t *testing.T) {
 		t.Error("renderError() should contain 'Error'")
 	}
 
-	if !strings.Contains(view, "❌") {
-		t.Error("renderError() should contain error icon")
+	if !strings.Contains(view, "[X]") {
+		t.Error("renderError() should contain error indicator")
 	}
 
 	if !strings.Contains(view, "my-project") {
@@ -1113,7 +1118,7 @@ func TestCanTransitionTo(t *testing.T) {
 	}{
 		{stateWelcome, stateIDESelection, false}, // Can't skip steps
 		{stateProjectName, stateGenerating, false},
-		{stateSuccess, stateWelcome, false}, // Terminal state
+		{stateSuccess, stateWelcome, false},        // Terminal state
 		{stateGenerating, stateProjectName, false}, // Can't go backwards directly
 	}
 
@@ -1259,16 +1264,11 @@ func TestFullWizardFlow(t *testing.T) {
 		t.Errorf("Step 3: state = %v, want %v", model.state, stateGenerating)
 	}
 
-	// Step 4: Wait for generation to complete (simulate)
-	for i := 0; i < 35; i++ {
-		timeMsg := time.Now()
-		newModel, _ = model.Update(timeMsg)
-		model = newModel.(Model)
-		if model.state == stateSuccess {
-			break
-		}
-	}
-
+	// Step 4: Simulate generation completion by sending generationCompleteMsg
+	// In real usage, this would be sent by the async generation goroutine
+	genCompleteMsg := generationCompleteMsg{err: nil}
+	newModel, _ = model.Update(genCompleteMsg)
+	model = newModel.(Model)
 	if model.state != stateSuccess {
 		t.Errorf("Step 4: state = %v, want %v", model.state, stateSuccess)
 	}
@@ -1303,7 +1303,7 @@ func TestRenderProgressIndicator(t *testing.T) {
 func TestToProjectRequest(t *testing.T) {
 	model := InitialModel()
 	model.projectName = "test-project"
-	model.selectedIDE = "Cursor"
+	model.selectedIDEs = map[string]bool{"Cursor": true}
 
 	request := model.toProjectRequest()
 	if request == nil {
@@ -1317,6 +1317,9 @@ func TestToProjectRequest(t *testing.T) {
 	if request.IDE != "Cursor" {
 		t.Errorf("toProjectRequest() IDE = %q, want %q", request.IDE, "Cursor")
 	}
+	if len(request.IDEs) != 1 || request.IDEs[0] != "Cursor" {
+		t.Errorf("toProjectRequest() IDEs = %v, want [Cursor]", request.IDEs)
+	}
 
 	if request.ProjectType != "Fullstack" {
 		t.Errorf("toProjectRequest() ProjectType = %q, want %q", request.ProjectType, "Fullstack")
@@ -1326,7 +1329,7 @@ func TestToProjectRequest(t *testing.T) {
 func TestToProjectRequest_Validation(t *testing.T) {
 	model := InitialModel()
 	model.projectName = "test-project"
-	model.selectedIDE = "Cursor"
+	model.selectedIDEs = map[string]bool{"Cursor": true}
 
 	request := model.toProjectRequest()
 
@@ -1346,8 +1349,8 @@ func TestToProjectRequest_EmptyFields(t *testing.T) {
 		t.Errorf("toProjectRequest() ProjectName = %q, want empty", request.ProjectName)
 	}
 
-	if request.IDE != "" {
-		t.Errorf("toProjectRequest() IDE = %q, want empty", request.IDE)
+	if request.IDE != "Cursor" {
+		t.Errorf("toProjectRequest() IDE = %q, want %q", request.IDE, "Cursor")
 	}
 
 	// Should still have default project type
@@ -1362,12 +1365,15 @@ func TestToProjectRequest_AllIDEs(t *testing.T) {
 	for _, ide := range ideInfo {
 		model := InitialModel()
 		model.projectName = "test-project"
-		model.selectedIDE = ide.Name
+		model.selectedIDEs = map[string]bool{ide.Name: true}
 
 		request := model.toProjectRequest()
 
 		if request.IDE != ide.Name {
 			t.Errorf("toProjectRequest() with IDE %q = %q, want %q", ide.Name, request.IDE, ide.Name)
+		}
+		if len(request.IDEs) != 1 || request.IDEs[0] != ide.Name {
+			t.Errorf("toProjectRequest() with IDE %q returned IDEs %v", ide.Name, request.IDEs)
 		}
 
 		// Should validate successfully
@@ -1376,5 +1382,3 @@ func TestToProjectRequest_AllIDEs(t *testing.T) {
 		}
 	}
 }
-
-

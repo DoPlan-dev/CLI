@@ -17,7 +17,7 @@ Current project state is tracked in .plan/active_state.json
 2. Type /improve to brainstorm
 3. Type /write to generate documents
 4. Type /good to approve
-5. Type /tasks to generate tasks
+5. Type /plan to generate tasks
 6. Type /build to start coding
 
 For full command list, see README.md

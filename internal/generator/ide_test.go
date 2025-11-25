@@ -35,16 +35,10 @@ func TestIDEGenerator_Generate_Cursor(t *testing.T) {
 		t.Fatalf("IDEGenerator.Generate() error = %v", err)
 	}
 
-	// Verify .cursorrules was created
-	cursorRulesPath := filepath.Join(tmpDir, ".cursorrules")
-	if _, err := os.Stat(cursorRulesPath); os.IsNotExist(err) {
-		t.Error("IDEGenerator.Generate() should create .cursorrules for Cursor")
-	}
-
-	// Verify CLAUDE.md was also created
-	claudePath := filepath.Join(tmpDir, "CLAUDE.md")
+	// Verify CLAUDE.md was also created in docs/
+	claudePath := filepath.Join(tmpDir, "docs", "CLAUDE.md")
 	if _, err := os.Stat(claudePath); os.IsNotExist(err) {
-		t.Error("IDEGenerator.Generate() should create CLAUDE.md")
+		t.Error("IDEGenerator.Generate() should create docs/CLAUDE.md")
 	}
 }
 
@@ -67,10 +61,10 @@ func TestIDEGenerator_Generate_ClaudeCode(t *testing.T) {
 		t.Fatalf("IDEGenerator.Generate() error = %v", err)
 	}
 
-	// Verify CLAUDE.md was created
-	claudePath := filepath.Join(tmpDir, "CLAUDE.md")
+	// Verify CLAUDE.md was created in docs/
+	claudePath := filepath.Join(tmpDir, "docs", "CLAUDE.md")
 	if _, err := os.Stat(claudePath); os.IsNotExist(err) {
-		t.Error("IDEGenerator.Generate() should create CLAUDE.md for Claude Code")
+		t.Error("IDEGenerator.Generate() should create docs/CLAUDE.md for Claude Code")
 	}
 }
 
@@ -93,22 +87,22 @@ func TestIDEGenerator_Generate_FileContent(t *testing.T) {
 		t.Fatalf("IDEGenerator.Generate() error = %v", err)
 	}
 
-	// Verify .cursorrules content
-	cursorRulesPath := filepath.Join(tmpDir, ".cursorrules")
-	content, err := os.ReadFile(cursorRulesPath)
+	// Verify CLAUDE.md content
+	claudePath := filepath.Join(tmpDir, "docs", "CLAUDE.md")
+	content, err := os.ReadFile(claudePath)
 	if err != nil {
-		t.Fatalf("Failed to read .cursorrules: %v", err)
+		t.Fatalf("Failed to read docs/CLAUDE.md: %v", err)
 	}
 
 	contentStr := string(content)
 	if !strings.Contains(contentStr, "Agent Hierarchy") {
-		t.Error(".cursorrules should contain 'Agent Hierarchy'")
+		t.Error("CLAUDE.md should contain 'Agent Hierarchy'")
 	}
 	if !strings.Contains(contentStr, "Commands") {
-		t.Error(".cursorrules should contain 'Commands'")
+		t.Error("CLAUDE.md should contain 'Commands'")
 	}
 	if !strings.Contains(contentStr, "Rules") {
-		t.Error(".cursorrules should contain 'Rules'")
+		t.Error("CLAUDE.md should contain 'Rules'")
 	}
 }
 
@@ -130,9 +124,9 @@ func TestGenerateIDEConfigs(t *testing.T) {
 		t.Fatalf("GenerateIDEConfigs() error = %v", err)
 	}
 
-	// Verify files were created
-	cursorRulesPath := filepath.Join(tmpDir, ".cursorrules")
-	if _, err := os.Stat(cursorRulesPath); os.IsNotExist(err) {
-		t.Error("GenerateIDEConfigs() should create .cursorrules")
+	// Verify CLAUDE.md was created
+	claudePath := filepath.Join(tmpDir, "docs", "CLAUDE.md")
+	if _, err := os.Stat(claudePath); os.IsNotExist(err) {
+		t.Error("GenerateIDEConfigs() should create docs/CLAUDE.md")
 	}
 }

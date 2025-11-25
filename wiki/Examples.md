@@ -34,7 +34,7 @@ code .
 /good
 
 # 7. Generate tasks
-/tasks
+/plan
 
 # 8. Build
 /build
@@ -74,7 +74,7 @@ npx @doplan-dev/cli
 /improve
 /write
 /good
-/tasks
+/plan
 /build
 ```
 
@@ -112,7 +112,7 @@ npx @doplan-dev/cli
 /improve
 /write
 /good
-/tasks
+/plan
 /build
 ```
 
@@ -208,7 +208,7 @@ npx @doplan-dev/cli
 /change prd Add mobile app support
 /change architecture Use microservices
 /good
-/tasks
+/plan
 /build
 ```
 
@@ -234,7 +234,7 @@ npx @doplan-dev/cli
 /improve
 /write
 /good
-/tasks
+/plan
 /build
 ```
 
@@ -252,7 +252,7 @@ npx @doplan-dev/cli
 /tell [idea]
 /write
 /good
-/tasks
+/plan
 /build
 ```
 
@@ -270,7 +270,7 @@ npx @doplan-dev/cli
 /change architecture [updates]
 /change design [modifications]
 /good
-/tasks
+/plan
 /build
 /progress
 /finished
@@ -285,14 +285,14 @@ npx @doplan-dev/cli
 /tell [initial idea]
 /write
 /good
-/tasks
+/plan
 /build
 # ... develop ...
 /finished
 # ... iterate ...
 /change prd [new features]
 /good
-/tasks
+/plan
 /build
 ```
 

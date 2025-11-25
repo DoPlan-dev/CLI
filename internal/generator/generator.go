@@ -47,9 +47,14 @@ func Orchestrate(request *models.ProjectRequest) error {
 		return fmt.Errorf("invalid project request: %w", err)
 	}
 
-	// Additional validation: IDE must be supported
-	if !models.IsValidIDE(request.IDE) {
-		return fmt.Errorf("unsupported IDE: %s (supported: %v)", request.IDE, models.GetSupportedIDEs())
+	// Additional validation: IDE selections must be supported
+	if len(request.IDEs) == 0 {
+		return fmt.Errorf("at least one IDE must be selected (supported: %v)", models.GetSupportedIDEs())
+	}
+	for _, ide := range request.IDEs {
+		if !models.IsValidIDE(ide) {
+			return fmt.Errorf("unsupported IDE: %s (supported: %v)", ide, models.GetSupportedIDEs())
+		}
 	}
 
 	// Get current working directory
@@ -100,7 +105,6 @@ func Orchestrate(request *models.ProjectRequest) error {
 		{Generator: &PlanGenerator{}, Name: ".plan Structure"},
 		{Generator: &GitHubGenerator{}, Name: "GitHub Workflows"},
 		{Generator: &IDEGenerator{}, Name: "IDE Configs"},
-		{Generator: &BoilerplateGenerator{}, Name: "Boilerplate"},
 		{Generator: &DocsGenerator{}, Name: "Documentation"},
 		// {Generator: &DirectoryGenerator{}, Name: "Directory Structure"}, // Placeholder
 		// End of steps slice

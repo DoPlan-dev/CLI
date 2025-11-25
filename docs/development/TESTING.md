@@ -20,7 +20,8 @@ This document describes the comprehensive end-to-end testing strategy for DoPlan
 - **Purpose**: Ensures all expected files are created correctly
 - **Validates**:
   - Documentation files (README.md, STANDUP.md, CHANGELOG.md)
-  - IDE configs (.cursorrules, CLAUDE.md)
+  - IDE configs (docs/CLAUDE.md + `.cursor/rules` library)
+- Boilerplate generation script (`go run scripts/boilerplate/main.go --project .`)
   - Boilerplate files (package.json, tsconfig.json, etc.)
   - Agent files (18 agents)
   - Command files (19 commands)

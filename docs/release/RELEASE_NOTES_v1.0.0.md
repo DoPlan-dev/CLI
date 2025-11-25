@@ -90,7 +90,7 @@ my-project/
 - `/write` - Generate PRD + ARCHITECTURE + DESIGN_SYSTEM
 - `/change` - Edit any document
 - `/good` - Approve & lock the plan
-- `/tasks` - Generate implementation tasks
+- `/plan` - Generate implementation tasks
 - `/load` - Inject context into AI agents
 - `/build` - Start coding next task
 - `/progress` - Show current progress

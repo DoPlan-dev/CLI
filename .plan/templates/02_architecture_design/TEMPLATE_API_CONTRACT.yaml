@@ -1,0 +1,51 @@
+openapi: 3.0.3
+info:
+  title: TODO Service API
+  version: 0.1.0
+  description: >-
+    Replace with summary of the service. Document versioning and contact info.
+servers:
+  - url: https://api.example.com/v1
+    description: Production
+paths:
+  /example:
+    get:
+      summary: Describe endpoint purpose
+      operationId: getExample
+      tags:
+        - Examples
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+          required: false
+          description: Optional filter criteria
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Example'
+        '4XX':
+          description: Client error
+components:
+  schemas:
+    Example:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

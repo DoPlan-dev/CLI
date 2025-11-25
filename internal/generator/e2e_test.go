@@ -96,19 +96,10 @@ func TestEndToEnd_AllFilesGenerated(t *testing.T) {
 	expectedFiles := []string{
 		// Root documentation
 		"README.md",
-		"STANDUP.md",
-		"CHANGELOG.md",
+		".plan/STANDUP.md",
+		"docs/CHANGELOG.md",
 		// IDE configs
-		".cursorrules",
-		// Boilerplate
-		"package.json",
-		"tsconfig.json",
-		"tailwind.config.ts",
-		".eslintrc.json",
-		// App structure
-		"src/app/layout.tsx",
-		"src/app/page.tsx",
-		"src/app/globals.css",
+		"docs/CLAUDE.md",
 		// Agents
 		".cursor/agents/project_orchestrator.md",
 		".cursor/agents/product_manager.md",
@@ -270,15 +261,10 @@ func TestEndToEnd_AllIDEs(t *testing.T) {
 			projectPath := filepath.Join(tmpDir, projectName)
 
 			// Verify IDE-specific configs were generated
-			if ide == "Cursor" {
-				cursorrulesPath := filepath.Join(projectPath, ".cursorrules")
-				if _, err := os.Stat(cursorrulesPath); os.IsNotExist(err) {
-					t.Errorf("Expected .cursorrules for Cursor IDE")
-				}
-			} else if ide == "Claude Code" {
-				claudePath := filepath.Join(projectPath, "CLAUDE.md")
+			if ide == "Claude Code" || ide == "Cursor" {
+				claudePath := filepath.Join(projectPath, "docs", "CLAUDE.md")
 				if _, err := os.Stat(claudePath); os.IsNotExist(err) {
-					t.Errorf("Expected CLAUDE.md for Claude Code IDE")
+					t.Errorf("Expected docs/CLAUDE.md for IDE %s", ide)
 				}
 			}
 
@@ -311,7 +297,6 @@ func verifyCompleteProjectStructure(t *testing.T, projectPath string) {
 		".cursor/rules/library",
 		".plan/00_System",
 		".github/workflows",
-		"src/app",
 	}
 
 	for _, dir := range expectedDirs {
@@ -358,22 +343,18 @@ func verifyCompleteProjectStructure(t *testing.T, projectPath string) {
 	}
 
 	// Verify documentation files
-	docs := []string{"README.md", "STANDUP.md", "CHANGELOG.md"}
-	for _, doc := range docs {
-		docPath := filepath.Join(projectPath, doc)
+	docs := map[string]string{
+		"README.md":    "README.md",
+		"STANDUP.md":   ".plan/STANDUP.md",
+		"CHANGELOG.md": "docs/CHANGELOG.md",
+	}
+	for name, path := range docs {
+		docPath := filepath.Join(projectPath, path)
 		if _, err := os.Stat(docPath); os.IsNotExist(err) {
-			t.Errorf("Expected documentation file %s was not created", doc)
+			t.Errorf("Expected documentation file %s was not created at %s", name, path)
 		}
 	}
 
-	// Verify boilerplate files
-	boilerplate := []string{"package.json", "tsconfig.json", "tailwind.config.ts"}
-	for _, bp := range boilerplate {
-		bpPath := filepath.Join(projectPath, bp)
-		if _, err := os.Stat(bpPath); os.IsNotExist(err) {
-			t.Errorf("Expected boilerplate file %s was not created", bp)
-		}
-	}
 }
 
 // TestEndToEnd_PlatformInfo logs platform information for cross-platform testing

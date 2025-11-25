@@ -95,7 +95,7 @@ Captain   Coach
 - `/tell` - Analyzes product idea
 - `/improve` - Provides product insights
 - `/write` - Creates PRD.md
-- `/tasks` - Generates product-related tasks
+- `/plan` - Generates product-related tasks
 
 **File**: `.cursor/agents/product_manager.md`
 
@@ -115,7 +115,7 @@ Captain   Coach
 **When Activated**:
 - `/improve` - Provides technical insights
 - `/write` - Creates ARCHITECTURE.md
-- `/tasks` - Generates technical tasks
+- `/plan` - Generates technical tasks
 - `/build` - Coordinates implementation
 
 **File**: `.cursor/agents/engineering_lead.md`
@@ -409,6 +409,63 @@ Captain   Coach
 
 ---
 
+### Content Strategist
+
+**Role**: Brand Messaging & Content Systems
+
+**Responsibilities**:
+- Define tone of voice, messaging pillars, and slogans
+- Audit existing copy/assets and identify gaps
+- Provide structured briefs for feature/page copy
+- Coordinate content approvals with legal and stakeholders
+
+**When Activated**:
+- `/improve` content & storytelling phase
+- `/plan` when tasks require net-new copy
+- Landing pages, marketing sites, onboarding flows
+
+**File**: `.cursor/agents/content_strategist.md`
+
+---
+
+### SEO Specialist
+
+**Role**: Search Optimization & Content Performance
+
+**Responsibilities**:
+- Build keyword strategy and map intents to pages
+- Capture metadata/structured data requirements
+- Define measurement plan for organic KPIs
+- Review copy for SEO compliance and readability
+
+**When Activated**:
+- `/improve` SEO phase
+- `/plan` when execution tasks include SEO workstreams
+- Marketing/documentation updates that impact organic traffic
+
+**File**: `.cursor/agents/seo_specialist.md`
+
+---
+
+### Marketing Manager
+
+**Role**: Go-To-Market & Growth Strategy
+
+**Responsibilities**:
+- Map acquisition → activation → retention funnels
+- Define campaign timelines, channels, and budgets
+- Establish KPIs plus instrumentation plan
+- Coordinate collateral with Content & SEO
+
+**When Activated**:
+- `/improve` marketing & funnel phase
+- `/write` when GTM requirements influence PRD/ARCH
+- `/plan` to ensure tasks align with GTM goals
+
+**File**: `.cursor/agents/marketing_manager.md`
+
+---
+
 ## How Agents Work Together
 
 ### Command-Agent Mapping
@@ -416,11 +473,11 @@ Captain   Coach
 | Command | Primary Agents | Supporting Agents |
 |---------|---------------|-------------------|
 | `/tell` | Project Orchestrator, Product Manager | - |
-| `/improve` | Product Manager, Engineering Lead, Design Manager, QA Manager, Release Manager, Documentation Lead | - |
+| `/improve` | Product Manager, Engineering Lead, Design Manager, Marketing Manager | Content Strategist, SEO Specialist, QA Manager, Release Manager, Documentation Lead |
 | `/write` | Product Manager, Engineering Lead, System Architect, Design Manager, UI/UX Designer | Project Orchestrator |
 | `/change` | Project Orchestrator | Relevant agents based on document |
 | `/good` | Project Orchestrator | - |
-| `/tasks` | Project Orchestrator, Engineering Lead, Product Manager | - |
+| `/plan` | Project Orchestrator, Engineering Lead, Product Manager | - |
 | `/build` | Engineering Lead, Project Orchestrator | Frontend Lead, Backend Lead, etc. (based on task) |
 | `/finished` | Project Orchestrator, Release Captain | - |
 | `/ship` | Release Captain, Release Manager | - |
@@ -449,14 +506,18 @@ When using `/build`:
 #### Pattern 3: Brainstorming Collaboration
 
 When using `/improve`:
-1. All Level 1 managers contribute:
+1. Core panel:
    - Product Manager
    - Engineering Lead
    - Design Manager
+   - Marketing Manager
+2. Specialist breakouts:
+   - Content Strategist (tone, messaging, assets)
+   - SEO Specialist (keywords, metadata, performance)
    - QA Manager
    - Release Manager
    - Documentation Lead
-2. Each provides insights from their expertise
+3. Each provides insights from their expertise before the summary is confirmed
 
 ---
 

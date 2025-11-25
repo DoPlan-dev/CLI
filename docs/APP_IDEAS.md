@@ -117,7 +117,7 @@ Once in Cursor, execute these commands in order:
 
 **Step 5: Generate tasks**
 ```
-/tasks
+/plan
 ```
 
 **Step 6: Start building**
@@ -375,12 +375,12 @@ Once you've reviewed and are satisfied with the planning documents, type:
 
 **Note:** After `/good`, if you need to make changes, you can still use `/change` commands, but the plan is considered "approved" for task generation.
 
-##### **Step 7: Generate Implementation Tasks with `/tasks`**
+##### **Step 7: Generate Implementation Tasks with `/plan`**
 
 In Cursor, type this exact command:
 
 ```
-/tasks
+/plan
 ```
 
 **What happens:** This creates `.plan/TASKS.md` with detailed, actionable implementation tasks broken down by:
@@ -823,7 +823,7 @@ Cost optimization review:
 
 **Implementation Phase:**
 ```
-7. /tasks                       → Generate implementation tasks
+7. /plan                       → Generate implementation tasks
 8. /build                       → Start first task (or /build <task-number>)
 9. /progress                    → Check completion status
 10. /finished                   → Mark task complete

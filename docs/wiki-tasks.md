@@ -118,7 +118,7 @@
   - [ ] `/write` - Generate documents
   - [ ] `/change` - Edit documents
   - [ ] `/good` - Approve plan
-  - [ ] `/tasks` - Generate tasks
+  - [ ] `/plan` - Generate tasks
   - [ ] `/build` - Start coding
   - [ ] `/progress` - Track progress
   - [ ] `/finished` - Complete tasks
@@ -333,7 +333,7 @@
 - [ ] Tutorial for brainstorming with `/improve`
 - [ ] Tutorial for generating plans with `/write`
 - [ ] Tutorial for approving with `/good`
-- [ ] Tutorial for creating tasks with `/tasks`
+- [ ] Tutorial for creating tasks with `/plan`
 - [ ] Tutorial for building with `/build`
 - [ ] Tutorial for completing first feature
 - [ ] Add screenshots and examples
