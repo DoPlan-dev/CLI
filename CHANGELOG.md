@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2024-12-XX
+
+### Added
+- **Comprehensive Test Suite**: Major test coverage improvements across all packages
+  - Added tests for `internal/git` package (76.5% coverage): branch operations, repository detection, remote management
+  - Added tests for `internal/progress` package (91.9% coverage): task statistics, report formatting, progress computation
+  - Added tests for `internal/statehistory` package (73.8% coverage): snapshot management, state diffs, restoration
+  - Added tests for `internal/version` package (100% coverage): version retrieval and validation
+  - Added integration tests for `scripts/validate-brainstorm-templates`
+  - All tests run without cache (`-count=1`) to ensure fresh execution
+  - Improved error handling and edge case coverage
+
 ### Added
 - **Task Progress Automation**: Automatic task completion with dependency checking
   - `/finished` command now automatically updates TASKS.md task status and checklist items
