@@ -295,7 +295,8 @@ internal/
   "phase": "idea|brainstorm|writing|approved|tasks|building",
   "active_task": null | task_id,
   "completed": [task_ids],
-  "locked": false | true
+  "locked": false | true,
+  "active_branch": "" | "feature/my-work"
 }
 ```
 
@@ -308,6 +309,7 @@ idea → brainstorm → writing → approved → tasks → building
 - Atomic writes (temp file → rename)
 - Validate state before updates
 - Provide clear error messages on invalid transitions
+- Track the developer's checked-out branch whenever `/build` or `/finished` run so agents resume on the right branch
 
 ---
 
