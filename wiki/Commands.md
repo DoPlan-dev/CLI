@@ -325,6 +325,28 @@ Next up: 1.3 - Implement authentication
 
 ---
 
+### `/state` - Manage Project State History
+
+**Description**: Snapshot, diff, and restore `.plan/active_state.json` safely.
+
+**Usage**:
+```bash
+/state snapshot --reason "before build 2.1"
+/state list --limit 5
+/state diff --json
+/state restore --file state-20251124T120000Z.json --yes
+```
+
+**What it does**:
+1. Wraps `go run scripts/statehistory/main.go`.
+2. Creates timestamped entries in `.plan/history/state-*.json`.
+3. Produces human-readable or JSON diffs between snapshots.
+4. Restores state with guardrails (confirmation + optional auto-snapshot).
+
+**Best Practice**: Snapshot before `/build` and right after `/finished` so `/progress` and `/report` can highlight exact deltas.
+
+---
+
 ### `/finished` - Complete Task
 
 **Description**: Mark the current task as complete and auto-commit changes.
@@ -435,6 +457,81 @@ Next up: 1.3 - Implement authentication
 
 ---
 
+## Operations & Reporting Commands
+
+### `/feedback` - Log Product/Bug Feedback
+
+**Description**: Structured feedback logger that keeps `Docs/history` in sync.
+
+**Usage**:
+```bash
+/feedback bug "QR download fails" "API returns 500 when Accept header missing" --author QA
+/feedback feature "Add dark mode" "Marketing wants a themed hero" --github https://github.com/org/repo/issues/123
+```
+
+**What it does**:
+1. Parses `type`, `title`, `details`, `--author`, and `--github`.
+2. Runs `go run scripts/feedback/main.go`.
+3. Appends Markdown entries to `Docs/history/feedback.md`.
+4. Updates machine-readable `Docs/history/feedback.json`.
+5. Surfaces entries automatically inside `/report`.
+
+---
+
+### `/report` - Generate SCAN Reports & Diffs
+
+**Description**: Produce executive-ready progress reports and change diffs.
+
+**Usage**:
+```bash
+/report
+/report ./test/qr-generator/test-no01 --preset detailed
+```
+
+**What it does**:
+1. Runs `go run scripts/scanreport/main.go --project <path>`.
+2. Builds `.plan/reports/SCAN_REPORT_<date>.md` + JSON metadata.
+3. Creates `SCAN_DIFF_<date>.md` by diffing latest vs previous report.
+4. Embeds `/progress` snapshot, `.plan/history` deltas, and recent `/feedback`.
+5. Supports presets: `standard`, `exec`, `detailed`, or custom `.plan/reports/config.json`.
+
+---
+
+### `/branchci` - Regenerate Branch-Aware Workflows
+
+**Description**: Keeps `.github/workflows/task-branches.yml` aligned with branch policies.
+
+**Usage**:
+```bash
+/branchci
+/branchci regenerate
+```
+
+**What it does**:
+1. Reads `Docs/history/branch-matrix.json` for branch prefixes + required jobs.
+2. Runs `go run scripts/branchci/main.go --matrix Docs/history/branch-matrix.json --out .github/workflows`.
+3. Outputs workflows that enforce lint/test/build suites per prefix.
+
+---
+
+### `/github` - Sync KPIs, Issues, and Milestones
+
+**Description**: Bridges GitHub metadata with README + Docs/history cache.
+
+**Usage**:
+```bash
+/github info
+/github issue "Fix cache invalidation" "Details here"
+/github milestone "v1 GA" 2025-01-15
+```
+
+**What it does**:
+- `info`: Updates the README KPI block (between `<!-- KPIS:START -->` markers) and refreshes `Docs/history/github-meta.json`.
+- `issue`: Prints a ready-to-run `gh issue create` command with repo slug, title, and body.
+- `milestone`: Prints a `gh api` command with milestone name and due date.
+
+---
+
 ## Specialized Commands
 
 ### `/ship` - Release Management
@@ -518,11 +615,16 @@ Next up: 1.3 - Implement authentication
 Follow this order for best results:
 1. `/tell` - Capture idea
 2. `/improve` - Brainstorm
-3. `/write` - Generate plans
-4. `/good` - Approve
+3. `/write` - Generate plans (`/change` as needed)
+4. `/good` - Approve and lock
 5. `/plan` - Generate tasks
-6. `/build` - Start coding
-7. `/finished` - Complete tasks
+6. `/state snapshot --reason "pre-build"` - Record baseline
+7. `/build` - Start coding
+8. `/progress` - Check status
+9. `/finished` - Complete task (auto-commit + push)
+10. `/state snapshot --reason "post-finish"` - Capture delta
+11. `/report` - Share scan metadata/diffs
+12. `/safe` + `/cheap` + `/ship` - Prepare release
 
 ### 2. Using `/change` Effectively
 
@@ -611,12 +713,17 @@ You can use multiple commands in sequence:
 | `/plan` | Core | None | No |
 | `/build` | Core | Optional: task_id | No |
 | `/progress` | Core | None | No |
+| `/state` | Core | Subcommand: snapshot/list/diff/restore | No |
 | `/finished` | Core | None | Yes |
 | `/team` | Team | None | No |
-| `/load` | Team | Required: path | No |
+| `/load` | Team | Required: path/context | No |
+| `/feedback` | Operations | Required: type, title; optional flags | No |
+| `/report` | Operations | Optional: path, preset | No |
 | `/ship` | Specialized | None | No |
 | `/safe` | Specialized | None | No |
 | `/cheap` | Specialized | None | No |
+| `/branchci` | Integrations | Optional: regenerate flag | No |
+| `/github` | Integrations | Subcommand: info/issue/milestone | No |
 
 ---
 

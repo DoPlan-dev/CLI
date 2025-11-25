@@ -306,6 +306,100 @@ This workflow: finish → build next, keeps you moving forward efficiently.
 
 ---
 
+### Operations & Reporting Commands
+
+#### `/state` - Snapshot, Diff, and Restore Project State
+
+**Purpose:** Maintain `.plan/active_state.json` history so audits stay trustworthy.
+
+**Usage:**
+```
+/state snapshot --reason "before build 2.1"
+/state list --limit 5
+/state diff --json
+/state restore --file state-20251124T120000Z.json --yes
+```
+
+**What it does:**
+- Wraps `go run scripts/statehistory/main.go`
+- Writes timestamped snapshots into `.plan/history/`
+- Produces human-readable or JSON diffs between any two states
+- Restores state with guardrails (confirmation + optional auto-snapshot)
+
+> Snapshot before `/build` and after `/finished` so `/progress` and `/report` can highlight exact deltas.
+
+---
+
+#### `/report` - Generate Executive Scan Reports
+
+**Purpose:** Turn project state + feedback into SCAN reports and diffs.
+
+**Usage:**
+```
+/report
+/report ./test/qr-generator/test-no01 --preset detailed
+```
+
+**What it does:**
+1. Runs `go run scripts/scanreport/main.go` for the selected project.
+2. Updates `.plan/reports/SCAN_REPORT_<date>.md` plus matching JSON metadata.
+3. Builds `SCAN_DIFF_<date>.md` (latest vs previous) including `/progress` snapshot and `.plan/history` deltas.
+4. Supports presets: `standard` (default), `exec`, `detailed`, or a custom `.plan/reports/config.json`.
+
+---
+
+#### `/feedback` - Log Product, Bug, or UX Signals
+
+**Purpose:** Maintain a canonical feedback ledger that surfaces in reports.
+
+**Usage:**
+```
+/feedback bug "QR download fails" "API returns 500 when Accept header missing" --author QA
+/feedback feature "Add dark mode" "Marketing wants a themed hero" --github https://github.com/org/repo/issues/123
+```
+
+**What it does:**
+- Parses type/title/details/author/github flags.
+- Runs `go run scripts/feedback/main.go`.
+- Appends to `Docs/history/feedback.md` and updates `Docs/history/feedback.json`.
+- Feeds `/report` so stakeholders see the latest insights.
+
+---
+
+#### `/branchci` - Regenerate Branch-Aware Workflows
+
+**Purpose:** Keep `.github/workflows/task-branches.yml` aligned with your branch policy.
+
+**Usage:**
+```
+/branchci
+/branchci regenerate
+```
+
+**What it does:**
+1. Reads `Docs/history/branch-matrix.json` for branch prefixes + required jobs.
+2. Runs `go run scripts/branchci/main.go --matrix Docs/history/branch-matrix.json --out .github/workflows`.
+3. Emits verified workflows so every prefix (task/, feature/, hotfix/, etc.) gets the right CI gates.
+
+---
+
+#### `/github` - Sync KPIs, Issues, and Milestones
+
+**Purpose:** Keep GitHub metadata, README KPIs, and Docs/history caches consistent.
+
+**Usage:**
+```
+/github info
+/github issue "Fix cache invalidation" "Details here"
+/github milestone "v1 GA" 2025-01-15
+```
+
+**What it does:**
+- `info`: runs `go run scripts/githubmeta/main.go --project . --sync-readme` to refresh the KPI block between `<!-- KPIS:START -->`/`END` and caches results in `Docs/history/github-meta.json`.
+- `issue` / `milestone`: prints fully formed `gh` CLI commands with repo slug, title/body, and dates so you can paste + run.
+
+---
+
 ### Quality & Release Commands
 
 #### `/ship` - Prepare for Release
@@ -379,27 +473,32 @@ This workflow: finish → build next, keeps you moving forward efficiently.
 ### Phase 2: Implementation (2-6 hours)
 
 ```
-7. /plan                       → Generate implementation tasks
-8. /build                       → Start first task (or /build <task-number>)
-9. /progress                    → Check completion status
-10. /finished                   → Mark task complete
-11. /build                      → Continue to next task
-12. Repeat steps 9-11           → Complete all tasks
+7. /plan                         → Generate implementation tasks
+8. /state snapshot --reason "pre-build" → Capture baseline before coding
+9. /build                        → Start next task (or /build <task-number>)
+10. /progress                    → Check completion status (optional but recommended)
+11. /finished                    → Mark task complete (auto-commit + push)
+12. /state snapshot --reason "post-finish" → Record completion delta
+13. Repeat steps 9-12            → Continue through remaining tasks
 ```
 
 ### Phase 3: Quality & Release (1-2 hours)
 
 ```
-13. /safe                       → Security audit
-14. /cheap                      → Cost optimization review
-15. /ship                       → Prepare for release
+14. /report                      → Generate SCAN report + diff for stakeholders
+15. /feedback <type> ...         → Log stakeholder input captured during reviews
+16. /safe                        → Security audit
+17. /cheap                       → Cost optimization review
+18. /ship                        → Prepare for release
 ```
 
 ### Helper Commands (use anytime)
 
 ```
-/team                           → See active AI agents
-/load <context>                 → Inject context into agents
+/team                             → See active AI agents
+/load <context>                   → Inject context into agents
+/github info                      → Sync KPI block + metadata cache
+/branchci                         → Keep branch-aware CI in sync
 ```
 
 ---

@@ -19,6 +19,9 @@
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 [![Go](https://img.shields.io/badge/go-1.23+-00ADD8?style=for-the-badge&logo=go)](https://golang.org/)
+[![CI](https://img.shields.io/github/actions/workflow/status/DoPlan-dev/CLI/ci.yml?style=for-the-badge&label=CI)](https://github.com/DoPlan-dev/CLI/actions/workflows/ci.yml)
+[![Branch Policy](https://img.shields.io/github/actions/workflow/status/DoPlan-dev/CLI/branch-protection.yml?style=for-the-badge&label=Branch%20Policy)](https://github.com/DoPlan-dev/CLI/actions/workflows/branch-protection.yml)
+[![NPM Downloads](https://img.shields.io/npm/dm/@doplan-dev/cli?style=for-the-badge&color=orange)](https://www.npmjs.com/package/@doplan-dev/cli)
 [![GitHub Stars](https://img.shields.io/github/stars/DoPlan-dev/CLI?style=for-the-badge&logo=github)](https://github.com/DoPlan-dev/CLI)
 [![GitHub Issues](https://img.shields.io/github/issues/DoPlan-dev/CLI?style=for-the-badge&logo=github)](https://github.com/DoPlan-dev/CLI/issues)
 
@@ -409,6 +412,54 @@ code .
 /progress
 ```
 
+---
+
+## 🧠 Command Workflow
+
+```
+/tell → /improve → /write → /change → /good
+                    │
+                    ▼
+                 /plan → /build ⇆ /progress ⇆ /state
+                               │
+                               ▼
+                        /finished → /report → /ship
+                                      │
+                                      └── /feedback, /safe, /cheap, /branchci
+```
+
+- **Plan**: `/tell` through `/good` capture and approve strategy.
+- **Execute**: `/plan`, `/build`, `/progress`, `/state`, and `/finished` keep delivery disciplined and auditable.
+- **Operate**: `/report`, `/feedback`, `/ship`, `/safe`, `/cheap`, `/branchci`, `/github`, `/team`, and `/load` keep stakeholders aligned, secure, and informed.
+
+Every generated project ships with this workflow baked into `.plan`, `Docs/`, `.github/`, and the wiki so cursor-based IDEs can enforce it automatically.
+
+## 📟 Command Catalog
+
+| Command | Phase | What it unlocks |
+| --- | --- | --- |
+| `/tell` | Strategy | Capture project intent into `.plan/00_System/IDEA.md` |
+| `/improve` | Strategy | Brainstorm with all Level 1 managers |
+| `/write` | Strategy | Generate PRD, Architecture, Design System |
+| `/change` | Strategy | Patch any planning doc with natural language |
+| `/good` | Strategy | Lock planning set and advance to tasks |
+| `/plan` | Delivery | Expand planning docs into phased TASKS.md |
+| `/build [id]` | Delivery | Start next (or specific) implementation task |
+| `/progress` | Delivery | Summaries for total/completed tasks + upcoming work |
+| `/state <subcommand>` | Delivery | Snapshot, diff, and restore `.plan/active_state.json` |
+| `/finished` | Delivery | Mark tasks complete, auto-commit, and push |
+| `/feedback <type>` | Operations | Log bugs/features/questions into `Docs/history/feedback.*` |
+| `/report [path]` | Operations | Generate SCAN_REPORT metadata + diffs |
+| `/ship` | Operations | Release orchestration + versioning checklist |
+| `/safe` | Operations | Security review + dependency risk scan |
+| `/cheap` | Operations | Cost optimization playbook |
+| `/team` | Context | Display the 18-agent hierarchy |
+| `/load <context>` | Context | Inject extra domain knowledge for agents |
+| `/github <subcommand>` | Integrations | Sync KPIs, prep issues/milestones, update cache |
+| `/branchci` | Integrations | Regenerate per-branch workflow guardrails |
+
+👉 Looking for deeper explanations? See `Docs/foundation/the-guide.md` or the wiki pages for [Commands](https://github.com/DoPlan-dev/CLI/wiki/Commands) and [Workflow](https://github.com/DoPlan-dev/CLI/wiki/Workflow).
+
 ### Project Structure
 
 When you create a project, DoPlan generates:
@@ -432,6 +483,15 @@ my-project/
 ├── STANDUP.md             # Daily standup notes
 └── README.md              # Project documentation
 ```
+
+---
+
+## 📑 Docs, Changelog & Wiki
+
+- `CHANGELOG.md` follows Keep a Changelog + SemVer. Check the **[latest entry](CHANGELOG.md)** before cutting a release or running `/ship`.
+- The `Docs/` tree mirrors what every generated project should publish (foundation, features, release, history). Use it as the canonical structure reference.
+- The **[GitHub wiki](https://github.com/DoPlan-dev/CLI/wiki)** stays in sync with this README—Commands, Workflow, Quick Start, and Troubleshooting are updated whenever the CLI changes.
+- Automation helpers such as `/report`, `/feedback`, `/state`, and `/github info` keep each of those artifacts aligned (KPI block, scan diffs, feedback logs, and state history).
 
 ---
 

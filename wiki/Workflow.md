@@ -21,7 +21,7 @@ DoPlan CLI uses a structured development workflow that guides you from initial i
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    DoPlan CLI Workflow                       │
+│                    DoPlan CLI Workflow                      │
 └─────────────────────────────────────────────────────────────┘
 
 1. IDEA PHASE
@@ -48,10 +48,14 @@ DoPlan CLI uses a structured development workflow that guides you from initial i
           │
 3. TASKS PHASE
    ┌──────▼───────┐
-   │  /plan      │ → Generate implementation tasks
+   │  /plan       │ → Generate implementation tasks
    └──────┬───────┘
           │
 4. DEVELOPMENT PHASE
+   ┌──────▼───────┐
+   │  /state      │ → Snapshot before coding
+   └──────┬───────┘
+          │
    ┌──────▼───────┐
    │  /build      │ → Start coding task
    └──────┬───────┘
@@ -65,12 +69,21 @@ DoPlan CLI uses a structured development workflow that guides you from initial i
    └──────┬───────┘
           │
    ┌──────▼───────┐
+   │  /state      │ → Snapshot after coding
+   └──────┬───────┘
+          │
+   ┌──────▼───────┐
    │  Repeat      │ → Continue with next task
    └──────────────┘
           │
-5. RELEASE PHASE
+5. OPERATIONS PHASE
+   ┌──────▼─────────────┐
+   │  /report + /feedback│ → Share scans + capture input
+   └──────┬──────────────┘
+          │
+6. RELEASE PHASE
    ┌──────▼───────┐
-   │  /ship       │ → Release management
+   │  /ship       │ → Release management (after /safe + /cheap)
    └──────────────┘
 ```
 
@@ -215,11 +228,32 @@ The development phase transforms your approved plan into working code.
 
 **Output**: Implementation tasks generated in `.plan/TASKS.md`
 
-**Next Step**: Use `/build` to start coding
+**Next Step**: Snapshot state before you begin coding.
 
 ---
 
-### Step 2: Start Coding (`/build`)
+### Step 2: Snapshot State (`/state snapshot`)
+
+**Command**: `/state snapshot --reason "before build <task>" --label build`
+
+**What happens**:
+1. Captures the current `.plan/active_state.json`.
+2. Stores a timestamped entry in `.plan/history/`.
+3. Tags the snapshot with your reason/label for quick recall.
+4. Forms the baseline that `/report` and `/progress` will diff against.
+
+**Example**:
+```bash
+/state snapshot --reason "before build 2.1" --label pre-build
+```
+
+**Output**: `Snapshot saved: .plan/history/state-20251125T120000Z-pre-build.json`
+
+**Next Step**: Start coding with `/build`.
+
+---
+
+### Step 3: Start Coding (`/build`)
 
 **Command**: `/build` or `/build <task_id>`
 
@@ -239,11 +273,11 @@ The development phase transforms your approved plan into working code.
 
 **Output**: Task implementation begins
 
-**Next Step**: Complete the task, then use `/finished`
+**Next Step**: Track progress or complete the task, then use `/finished`.
 
 ---
 
-### Step 3: Track Progress (Optional) (`/progress`)
+### Step 4: Track Progress (Optional) (`/progress`)
 
 **Command**: `/progress`
 
@@ -265,11 +299,11 @@ Current task: 1.2 - Create API endpoints
 Next up: 1.3 - Implement authentication
 ```
 
-**Next Step**: Continue with `/build` or `/finished`
+**Next Step**: Continue with `/build` or `/finished`.
 
 ---
 
-### Step 4: Complete Task (`/finished`)
+### Step 5: Complete Task (`/finished`)
 
 **Command**: `/finished`
 
@@ -288,7 +322,7 @@ Next up: 1.3 - Implement authentication
 
 **Output**: Task completed, changes committed and pushed
 
-**Next Step**: Use `/build` to start next task, or `/ship` for release
+**Next Step**: Snapshot state again (`/state snapshot --reason "after build <task>"`), then loop back to `/build` or move toward `/report`/`/ship`.
 
 ---
 
@@ -329,6 +363,24 @@ The review phase ensures code quality before release.
 
 ---
 
+### Reporting & Stakeholder Updates
+
+**Purpose**: Keep leadership, QA, and product stakeholders informed with consistent artifacts.
+
+**Commands**:
+- `/report [path] [--preset exec|detailed]`
+  - Runs `scripts/scanreport` to refresh `.plan/reports/SCAN_REPORT_<date>.md` + JSON.
+  - Builds `SCAN_DIFF_<date>.md` highlighting state changes, `/progress` stats, visuals, and outstanding feedback.
+- `/feedback <type> "Title" "Details" [--author ...] [--github url]`
+  - Logs structured entries to `Docs/history/feedback.md` and `.json`.
+  - Feeds subsequent `/report` runs so regressions, bugs, and feature ideas stay visible.
+
+**Best Practice**:
+1. Run `/report` after every major `/finished` milestone or before demos.
+2. Capture stakeholder reactions via `/feedback` immediately so they are traceable.
+
+---
+
 ## Phase 4: Release Phase
 
 The release phase prepares and deploys your project.
@@ -354,6 +406,22 @@ The release phase prepares and deploys your project.
 
 ---
 
+### Operational Automation
+
+Use integration helpers to keep automation and GitHub metadata aligned with the workflow.
+
+#### `/branchci`
+- Reads `Docs/history/branch-matrix.json`.
+- Regenerates `.github/workflows/task-branches.yml` so task/, feature/, hotfix/ branches run the right checks.
+- Run it whenever you adjust branch naming or CI requirements.
+
+#### `/github info|issue|milestone`
+- `info` updates the README KPI block and refreshes `Docs/history/github-meta.json`.
+- `issue` and `milestone` print ready-to-run `gh` commands that inherit the detected repo slug.
+- Keeps documentation KPIs and GitHub tracking in lockstep with the CLI workflow.
+
+---
+
 ## Workflow Best Practices
 
 ### 1. Follow the Workflow Order
@@ -361,11 +429,16 @@ The release phase prepares and deploys your project.
 Always follow the workflow in order:
 1. `/tell` → Capture idea
 2. `/improve` → Brainstorm
-3. `/write` → Generate plans
+3. `/write` + `/change` → Generate/refine plans
 4. `/good` → Approve
 5. `/plan` → Generate tasks
-6. `/build` → Start coding
-7. `/finished` → Complete tasks
+6. `/state snapshot` → Capture baseline
+7. `/build` → Start coding
+8. `/progress` → Check status
+9. `/finished` → Complete task (auto-commit/push)
+10. `/state snapshot` → Capture delta
+11. `/report` + `/feedback` → Inform stakeholders
+12. `/safe` + `/cheap` + `/ship` → Release
 
 ### 2. Review Before Approving
 
@@ -383,9 +456,10 @@ Don't hesitate to use `/change` to refine documents:
 
 ### 4. Track Progress Regularly
 
-Use `/progress` regularly to:
+Use `/progress` and `/state diff` regularly to:
 - Monitor completion status
 - Identify blockers
+- Capture precise before/after deltas
 - Plan next steps
 
 ### 5. Complete Tasks Incrementally
@@ -395,12 +469,16 @@ Work on one task at a time:
 - Complete before moving on
 - Use `/finished` to track completion
 
-### 6. Leverage Agents
+### 6. Leverage Agents & Automation
 
 Use specialized commands when needed:
+- `/report` - Executive-ready scan reports
+- `/feedback` - Structured stakeholder input
 - `/safe` - Security review
 - `/cheap` - Cost optimization
 - `/ship` - Release management
+- `/branchci` - CI guardrails per branch type
+- `/github info|issue|milestone` - Keep KPIs + GitHub tracking synced
 
 ---
 

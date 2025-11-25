@@ -17,6 +17,12 @@ Welcome to the **DoPlan CLI** wiki! This is your comprehensive guide to using Do
 - 📦 **Offline-First**: Works completely offline after first run
 - 🔓 **Transparent**: All AI logic lives in markdown files - see and modify everything
 
+### 🔔 Latest Updates
+
+- **Command Workflow Refresh**: README + [Workflow](Workflow) now include `/state`, `/report`, `/feedback`, `/branchci`, and `/github` so every phase is documented end-to-end.
+- **Command Catalog**: The [Commands](Commands) page and README table list every slash command with phase + unlocks.
+- **Docs Sync**: `Docs/foundation/the-guide.md`, wiki, and CHANGELOG now stay in lockstep with the CLI via `/github info` and `/report`.
+
 ---
 
 ## 📚 Documentation Navigation
