@@ -41,8 +41,9 @@ scripts\build.bat
 # Set version explicitly
 VERSION=1.0.0 make build
 
-# Or with Go
-go build -ldflags "-X github.com/DoPlan-dev/CLI/internal/version.Version=1.0.0" -o doplan ./cmd/doplan
+# Or with Go (resolve module path dynamically to keep casing accurate)
+MODULE_PATH=$(go list -m)
+go build -ldflags "-X ${MODULE_PATH}/internal/version.Version=1.0.0" -o doplan ./cmd/doplan
 ```
 
 ---

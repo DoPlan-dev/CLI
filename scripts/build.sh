@@ -17,6 +17,10 @@ VERSION=${VERSION:-$(git describe --tags --always --dirty 2>/dev/null || echo "d
 BUILD_DIR="dist"
 BINARY_NAME="doplan"
 
+# Resolve module path once for ldflags (fallback keeps historical path)
+MODULE_PATH=$(go list -m 2>/dev/null || echo "github.com/DoPlan-dev/CLI")
+VERSION_SYMBOL="${MODULE_PATH}/internal/version.Version"
+
 echo -e "${GREEN}Building DoPlan CLI v${VERSION}${NC}"
 
 # Clean build directory
@@ -48,7 +52,7 @@ for platform in "${platforms[@]}"; do
     
     echo -e "${YELLOW}Building for ${GOOS}/${GOARCH}...${NC}"
     
-    env GOOS=$GOOS GOARCH=$GOARCH go build -ldflags "-X main.version=${VERSION}" -o ${output_path} ./cmd/doplan
+    env GOOS=$GOOS GOARCH=$GOARCH go build -ldflags "-X ${VERSION_SYMBOL}=${VERSION}" -o ${output_path} ./cmd/doplan
     
     # Create checksums
     if [ $GOOS = "windows" ]; then

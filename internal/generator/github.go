@@ -177,11 +177,16 @@ jobs:
       
       - name: Build
         run: |
+          set -e
           BINARY_NAME=doplan
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY_NAME=doplan.exe
           fi
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/DoPlan-dev/CLI/internal/version.Version=${{ steps.version.outputs.version }}" -o $BINARY_NAME ./cmd/doplan
+          MODULE_PATH=$(go list -m)
+          VERSION_SYMBOL="${MODULE_PATH}/internal/version.Version"
+          echo "Module path: $MODULE_PATH"
+          echo "Injecting version via: $VERSION_SYMBOL"
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X ${VERSION_SYMBOL}=${{ steps.version.outputs.version }}" -o $BINARY_NAME ./cmd/doplan
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}

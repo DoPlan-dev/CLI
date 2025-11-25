@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Synced documentation touchpoints (`README.md`, `Docs/foundation/the-guide.md`, `wiki/Commands.md`, `wiki/Workflow.md`, `wiki/Home.md`) so the new command workflow, `/report`, `/feedback`, `/state`, `/branchci`, and `/github` are consistently described across docs and wiki.
 
-## [1.1.0] - 2024-12-XX
+## [1.1.0] - 2025-01-15
 
 ### Added
 - **Comprehensive Test Suite**: Major test coverage improvements across all packages

@@ -14,6 +14,11 @@ REM Build directory
 set BUILD_DIR=dist
 set BINARY_NAME=doplan
 
+REM Resolve module path once (fallback to default casing if go list fails)
+for /f "tokens=*" %%i in ('go list -m 2^>nul') do set MODULE_PATH=%%i
+if "%MODULE_PATH%"=="" set MODULE_PATH=github.com/DoPlan-dev/CLI
+set VERSION_SYMBOL=%MODULE_PATH%/internal/version.Version
+
 echo Building DoPlan CLI v%VERSION%
 
 REM Clean build directory
@@ -35,7 +40,7 @@ for %%p in (%platforms%) do (
         
         set GOOS=!GOOS!
         set GOARCH=!GOARCH!
-        go build -ldflags "-X main.version=%VERSION%" -o !output_path! ./cmd/doplan
+        go build -ldflags "-X %VERSION_SYMBOL%=%VERSION%" -o !output_path! ./cmd/doplan
         
         REM Create checksum
         cd !output_dir!

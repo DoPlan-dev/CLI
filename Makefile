@@ -2,6 +2,9 @@
 
 # Version (can be overridden)
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
+# Determine module path once so ldflags always track the actual module/casing
+MODULE_PATH ?= $(shell go list -m 2>/dev/null || echo "github.com/DoPlan-dev/CLI")
+VERSION_SYMBOL := $(MODULE_PATH)/internal/version.Version
 
 # Build directory
 BUILD_DIR = dist
@@ -18,7 +21,7 @@ version: ## Show version information
 
 build: ## Build for current platform
 	@echo "Building DoPlan CLI v$(VERSION) for $(shell go env GOOS)/$(shell go env GOARCH)..."
-	@go build -ldflags "-X github.com/DoPlan-dev/CLI/internal/version.Version=$(VERSION)" -o $(BINARY_NAME) ./cmd/doplan
+	@go build -ldflags "-X $(VERSION_SYMBOL)=$(VERSION)" -o $(BINARY_NAME) ./cmd/doplan
 	@echo "✓ Built $(BINARY_NAME)"
 
 build-all: ## Build for all platforms
@@ -44,7 +47,7 @@ test-coverage: ## Run tests with coverage
 
 install: build ## Install to GOPATH/bin
 	@echo "Installing DoPlan CLI..."
-	@go install -ldflags "-X github.com/DoPlan-dev/CLI/internal/version.Version=$(VERSION)" ./cmd/doplan
+	@go install -ldflags "-X $(VERSION_SYMBOL)=$(VERSION)" ./cmd/doplan
 	@echo "✓ Installed to $(GOPATH)/bin/$(BINARY_NAME)"
 
 lint: ## Run linter
