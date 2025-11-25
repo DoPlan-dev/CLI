@@ -1,17 +1,13 @@
 <div align="center">
 
-# DoPlan CLI Banner
 
-```
 ██████╗░░█████╗░██████╗░██╗░░░░░░█████╗░███╗░░██╗
 ██╔══██╗██╔══██╗██╔══██╗██║░░░░░██╔══██╗████╗░██║
 ██║░░██║██║░░██║██████╔╝██║░░░░░███████║██╔██╗██║
 ██║░░██║██║░░██║██╔═══╝░██║░░░░░██╔══██║██║╚████║
 ██████╔╝╚█████╔╝██║░░░░░███████╗██║░░██║██║░╚███║
 ╚═════╝░░╚════╝░╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝
-```
 
-# 🚀 DoPlan CLI
 
 **Zero-install AI Project Director** - Bootstrap production-ready projects with a complete hierarchical AI agency system in seconds.
 
@@ -28,6 +24,9 @@
 [Installation](#-installation) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Features](#-features) • [Contributing](#-contributing)
 
 </div>
+
+
+# 🚀 DoPlan CLI
 
 ---
 
