@@ -5,9 +5,9 @@ import (
 	"io/fs"
 	"path/filepath"
 
-	"github.com/doplan/cli/internal/rules"
-	"github.com/doplan/cli/internal/utils"
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/internal/rules"
+	"github.com/DoPlan-dev/CLI/internal/utils"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // RulesGenerator generates the rules library by extracting embedded rules
@@ -89,4 +89,3 @@ func GenerateRules(request *models.ProjectRequest, projectPath string) error {
 	generator := &RulesGenerator{}
 	return generator.Generate(request, projectPath)
 }
-

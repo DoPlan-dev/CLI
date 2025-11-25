@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/doplan/cli/internal/utils"
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/internal/utils"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 // Agent represents an AI agent in the hierarchical agency system
@@ -425,4 +425,3 @@ func GenerateAgents(request *models.ProjectRequest, projectPath string) error {
 	generator := &AgentsGenerator{}
 	return generator.Generate(request, projectPath)
 }
-

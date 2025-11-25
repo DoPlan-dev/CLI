@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func TestOrchestrate_ValidRequest(t *testing.T) {

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/doplan/cli/internal/utils"
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/internal/utils"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func TestAgentsGenerator_Name(t *testing.T) {
@@ -273,4 +273,3 @@ func TestAgentsGenerator_Generate_AllAgentsContent(t *testing.T) {
 		})
 	}
 }
-

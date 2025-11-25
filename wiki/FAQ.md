@@ -113,7 +113,7 @@ See the [Commands Reference](Commands) for all commands.
 2. `/improve` - Brainstorm with the team
 3. `/write` - Generate planning documents
 4. `/good` - Approve the plan
-5. `/tasks` - Generate implementation tasks
+5. `/plan` - Generate implementation tasks
 6. `/build` - Start coding
 7. `/finished` - Complete tasks
 

@@ -8,8 +8,8 @@ import (
 func TestGetAllCommands(t *testing.T) {
 	commands := GetAllCommands()
 
-	// Should have 19 commands (11 core + 8 squad)
-	expectedCount := 19
+	// Should have 24 commands (11 core + supporting/system commands)
+	expectedCount := 24
 	if len(commands) != expectedCount {
 		t.Errorf("GetAllCommands() returned %d commands, want %d", len(commands), expectedCount)
 	}
@@ -22,7 +22,7 @@ func TestGetAllCommands(t *testing.T) {
 		"write",
 		"change",
 		"good",
-		"tasks",
+		"plan",
 		"load",
 		"build",
 		"progress",
@@ -116,7 +116,7 @@ func TestGetCoreCommands(t *testing.T) {
 	// Verify all are core commands
 	coreNames := []string{
 		"tell", "improve", "team", "write", "change",
-		"good", "tasks", "load", "build", "progress", "finished",
+		"good", "plan", "load", "build", "progress", "finished",
 	}
 
 	foundNames := make(map[string]bool)
@@ -134,15 +134,15 @@ func TestGetCoreCommands(t *testing.T) {
 func TestGetSquadCommands(t *testing.T) {
 	squadCommands := GetSquadCommands()
 
-	// Should have exactly 8 squad commands
-	if len(squadCommands) != 8 {
-		t.Errorf("GetSquadCommands() returned %d commands, want 8", len(squadCommands))
+	// Should have exactly 13 squad/support commands
+	if len(squadCommands) != 13 {
+		t.Errorf("GetSquadCommands() returned %d commands, want 13", len(squadCommands))
 	}
 
 	// Verify all are squad commands
 	squadNames := []string{
-		"secure", "roles", "money", "pretty",
-		"seo", "ship", "safe", "cheap",
+		"branchci", "report", "feedback", "state", "github",
+		"secure", "roles", "money", "pretty", "seo", "ship", "safe", "cheap",
 	}
 
 	foundNames := make(map[string]bool)
@@ -234,7 +234,13 @@ func TestCommandGitHubAutomation(t *testing.T) {
 	commandsWithGitHub := []string{"build", "finished"}
 
 	for _, cmdName := range commandsWithGitHub {
-		cmd := GetCommandByName(cmdName)
+		var cmd *Command
+		for _, c := range GetAllCommands() {
+			if c.Name == cmdName {
+				cmd = &c
+				break
+			}
+		}
 		if cmd == nil {
 			t.Fatalf("Command %s not found", cmdName)
 		}
@@ -244,4 +250,3 @@ func TestCommandGitHubAutomation(t *testing.T) {
 		}
 	}
 }
-

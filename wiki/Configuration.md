@@ -53,7 +53,7 @@ DoPlan CLI projects use a minimal configuration approach. Most configuration is 
 - `/improve` - Sets phase to "brainstorm"
 - `/write` - Sets phase to "writing"
 - `/good` - Sets phase to "approved", locked to true
-- `/tasks` - Sets phase to "tasks"
+- `/plan` - Sets phase to "tasks"
 - `/build` - Sets active_task
 - `/finished` - Updates completed, clears active_task
 
@@ -268,25 +268,25 @@ What happens when command is used
 
 ### Cursor Configuration
 
-**File**: `.cursorrules`
+**Location**: `.cursor/rules/`
 
-**Purpose**: Cursor IDE rules and configuration
+**Purpose**: Embedded rules library consumed by Cursor, Windsurf, Cline, Antigravity, and OpenCode
 
-**Format**: Markdown
+**Format**: Markdown files organized by category
 
-**Customization**: Edit directly
+**Customization**: Update `.cursor/rules/**` files or extend the library via DoPlan CLI
 
 ---
 
 ### Claude Code Configuration
 
-**File**: `CLAUDE.md`
+**File**: `docs/CLAUDE.md`
 
-**Purpose**: Claude Code IDE configuration
+**Purpose**: Claude Code quick-start guide (commands, rules location, workflows)
 
 **Format**: Markdown
 
-**Customization**: Edit directly
+**Customization**: Edit directly (lives under `docs/`)
 
 ---
 

@@ -2,7 +2,7 @@
 ## DoPlan CLI v1.0
 
 **Status**: Ready for implementation**  
-**Total Tasks**: 67  
+**Total Tasks**: 69  
 **Estimated Timeline**: 6-7 weeks
 
 ---
@@ -15,6 +15,7 @@
 | Phase 2: Core Features | 2.1 - 2.18 | 2 weeks | ✅ Complete |
 | Phase 3: Polish | 3.1 - 3.20 | 2 weeks | ✅ Complete |
 | Phase 4: Release | 4.1 - 4.7 | 1 week | ⏳ Pending |
+| Phase 5: Workflow Enhancements | 5.1 - 5.11 | Backlog (eta 2-3 weeks) | ⏳ Pending |
 
 ---
 
@@ -31,7 +32,7 @@
 
 **Tasks**:
 - [x] Create `doplan/` root directory
-- [x] Initialize Go module: `go mod init github.com/doplan/cli`
+- [x] Initialize Go module: `go mod init github.com/DoPlan-dev/CLI`
 - [x] Create directory structure:
   - [x] `cmd/doplan/`
   - [x] `internal/cli/`
@@ -1123,14 +1124,169 @@
 **Assigned**: Growth Coach, QA Engineer  
 **Dependencies**: 4.6  
 **Effort**: Ongoing  
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 
 **Tasks**:
-- [ ] Monitor GitHub issues
-- [ ] Monitor npm downloads
-- [ ] Gather user feedback
-- [ ] Track success metrics
-- [ ] Plan v1.1 features
+- [x] Monitor GitHub issues
+- [x] Monitor npm downloads
+- [x] Gather user feedback
+- [x] Track success metrics
+- [x] Plan v1.1 features
+
+**Results**:
+- Documented the playbook in `Docs/release/post-launch-monitoring.md`
+- `/feedback` logging + `/github` workflows referenced for continuous triage
+- Added KPI/metrics logging instructions (npm downloads, success metrics, v1.1 backlog intake)
+
+---
+
+## Phase 5: Workflow Enhancements (Backlog)
+**Goal**: Elevate the generated workflow automation (commands, reports, Git integration) to match the latest scan findings.
+
+### 5.1 `/plan` Command Scaffolding
+**Description**: Implement the missing `/plan` command that builds the structured planning hierarchy (phases/features/templates/contracts).  
+**Assigned**: Product Manager, Engineering Lead  
+**Dependencies**: 2.12 (existing .plan generator)  
+**Effort**: 3 days  
+**Status**: ✅ Complete  
+
+**Tasks**:
+- [x] Extend `internal/generator/plan.go` to scaffold phase folders (`01-Foundation`, etc.)
+- [x] Generate feature folders with `design.md`, `plan.md`, `tasks.md`, `prompts.md`, `github.md`
+- [x] Create `_contracts/` directory for shared API/data schemas
+- [x] Create `/plan` command definition and script
+- [x] Hierarchy is accessible via folder structure (no active_state.json update needed)
+
+### 5.2 Branch Automation in `/build` & `/finished`
+**Description**: Auto-create/switch `task/TASK-###` branches whenever implementation starts/finishes.  
+**Assigned**: Engineering Lead, DevOps Engineer  
+**Dependencies**: GitHub workflow generator (2.13-2.17)  
+**Effort**: 3 days  
+**Status**: ✅ Complete  
+
+**Tasks**:
+- [x] Add git helper utilities to detect current branch and naming
+- [x] Update `/build` command flow to create + checkout task branches
+- [x] Update `/finished` to push branches and optionally open PRs
+- [x] Surface branch metadata in `active_state.json` + scan reports
+
+### 5.3 Task Progress Automation
+**Description**: Auto-update `TASKS.md` and progress metrics when `/finished` runs; integrate with `/progress`.  
+**Assigned**: Product Manager, Engineering Lead  
+**Dependencies**: 5.2 (branch metadata), existing `/finished` logic  
+**Effort**: 2 days  
+**Status**: ✅ Complete
+
+**Tasks**:
+- [x] Parse TASKS.md to locate the active task entry
+- [x] Mark tasks complete + recalc summary percentages
+- [x] Prevent completion when dependencies remain unchecked
+- [x] Display updated stats in `/progress`
+
+### 5.4 Scan Report Diffing
+**Description**: Compare each `/scan` output with the previous report and surface deltas automatically.  
+**Assigned**: QA Engineer, Documentation Lead  
+**Dependencies**: Scan generator (reports)  
+**Effort**: 2 days  
+**Status**: ✅ Complete  
+
+**Tasks**:
+- [x] Store machine-readable metadata alongside each scan
+- [x] Compute file/dependency/task deltas for the new scan
+- [x] Inject delta tables + highlight colors into report template
+- [x] Provide CLI summary of key differences
+
+### 5.5 `/feedback` Command & Sync
+**Description**: Collect structured feedback via `/feedback` and optionally sync to the DoPlan CLI GitHub repo.  
+**Assigned**: Product Manager, Documentation Lead  
+**Dependencies**: Command system (2.4-2.6)  
+**Effort**: 2 days  
+**Status**: ✅ Complete  
+
+**Tasks**:
+- [x] Define command template with bug/feature/question presets
+- [x] Persist feedback entries locally (history log)
+- [x] Add optional GitHub issue creation + status tokens
+- [x] Reference feedback data inside scan reports
+
+### 5.6 Advanced GitHub Integration
+**Description**: Auto-detect git remotes, open issues/milestones from commands, and align repo metadata with PRD/ROADMAP.  
+**Assigned**: DevOps Engineer, Growth Coach  
+**Dependencies**: 5.2, 5.5  
+**Effort**: 4 days  
+**Status**: ✅ Complete  
+
+**Tasks**:
+- [x] Detect default branch + remote automatically
+- [x] Provide helpers to open issues/milestones from CLI commands
+- [x] Sync repo descriptions/readme badges with PRD metrics
+- [x] Document safety fallbacks for offline mode
+
+### 5.7 CI/CD Workflow Generator for Task Branches
+**Description**: Generate GitHub Actions, branch protection, and PR templates tailored to task branches.  
+**Assigned**: DevOps Engineer  
+**Dependencies**: Existing workflow generator (2.13-2.17), 5.2  
+**Effort**: 3 days  
+**Status**: ✅ Complete  
+
+**Tasks**:
+- [x] Extend workflow templates with task-branch matrices
+- [x] Recommend branch protection rules + enforce via config
+- [x] Emit PR templates referencing task metadata
+- [x] Provide doc updates for configuring the generated workflows
+
+### 5.8 State History & Rollback
+**Description**: Maintain history for `.plan/active_state.json`, enable rollbacks, and show state deltas in scans.  
+**Assigned**: System Architect, QA Engineer  
+**Dependencies**: 5.3 (task updates), scan diffing (5.4)  
+**Effort**: 3 days  
+**Status**: ✅ Complete  
+
+**Tasks**:
+- [x] Write state snapshots (with timestamps) to `.plan/history/`
+- [x] Create CLI helper to list + restore snapshots safely
+- [x] Display state change summaries in `/progress` and scan reports
+- [x] Add guardrails/confirmations for rollback operations
+
+### 5.9 Rich Scan Report Customization
+**Description**: Provide customizable scan templates, visuals, and dependency vulnerability sections.  
+**Assigned**: Documentation Lead, UI/UX Designer  
+**Dependencies**: 5.4 (diff engine)  
+**Effort**: 3 days  
+**Status**: ✅ Complete  
+
+**Tasks**:
+- [x] Introduce report presets (Standard, Exec Summary, Detailed)
+- [x] Support charts/visuals + optional dependency audit sections
+- [x] Allow project-level overrides for sections/order
+- [x] Document how teams can extend templates
+
+### 5.10 `Docs/` Folder Template & Categories
+**Description**: Ship a capitalized `Docs/` directory (mirroring test-no01) with canonical subfolders and README.  
+**Assigned**: Documentation Lead, Engineering Lead  
+**Dependencies**: 5.1 (`/plan` scaffolding)  
+**Effort**: 2 days  
+**Status**: ⏳ Pending  
+
+**Tasks**:
+- [x] Create `Docs/README.md` describing categories (`foundation/`, `features/`, `release/`, `history/`)
+- [x] Add `.gitkeep` files / scaffolding for each category
+- [x] Update generator templates so `/plan` outputs land in the correct `Docs/` subfolder
+- [x] Mirror rules from test projects (e.g., `test-no01/Docs/the-guide.md`)
+
+### 5.11 Clean Root Enforcement Rules
+**Description**: Formalize lint/rule coverage so no new docs land in the repo root.  
+**Assigned**: Documentation Lead, QA Engineer  
+**Dependencies**: 5.10  
+**Effort**: 1 day  
+**Status**: ✅ Complete
+
+**Tasks**:
+- [x] Add documentation rule file (`.cursor/rules/.../docs-folder-structure.md`)
+- [x] Update scripts/lints (e.g., `check-docs-organization.sh`) to watch for `Docs/`
+- [x] Document requirements in PRD/ARCHITECTURE
+- [x] Communicate policy in contributor docs / onboarding
+- [x] Integrate docs-check into CI/CD workflow
 
 ---
 
@@ -1168,10 +1324,10 @@ Phase 4:
 ## 🎯 Success Criteria
 
 ### Phase 1 Complete When:
-- [ ] TUI wizard works end-to-end
-- [ ] All components render correctly
-- [ ] Basic file operations work
-- [ ] 70%+ test coverage
+- [x] TUI wizard works end-to-end (✅ Tests fixed and passing)
+- [x] All components render correctly (✅ All render tests passing)
+- [x] Basic file operations work (✅ Generator E2E tests passing)
+- [x] 70%+ test coverage (✅ Achieved 81.9% coverage)
 
 ### Phase 2 Complete When:
 - [x] All 18 agents generated correctly

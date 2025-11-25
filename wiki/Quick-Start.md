@@ -203,7 +203,7 @@ This locks the plan and prepares it for task generation.
 Create implementation tasks from your approved plan:
 
 ```
-/tasks
+/plan
 ```
 
 This generates `TASKS.md` with organized, actionable tasks.
@@ -255,7 +255,7 @@ This marks the task complete, auto-commits your changes, and updates progress.
 2. `/improve` → Brainstorm
 3. `/write` → Generate plans
 4. `/good` → Approve
-5. `/tasks` → Generate tasks
+5. `/plan` → Generate tasks
 6. `/build` → Start coding
 
 See the [Commands Reference](Commands) for all available commands.
@@ -269,7 +269,7 @@ See the [Commands Reference](Commands) for all available commands.
 **A**: You can always:
 - Edit documents directly
 - Use `/change` to modify documents
-- Regenerate tasks with `/tasks`
+- Regenerate tasks with `/plan`
 - Start over by deleting and regenerating
 
 ### Q: How do the AI agents work?
@@ -317,7 +317,7 @@ code .
 /good
 
 # 7. Generate tasks
-/tasks
+/plan
 
 # 8. Start building
 /build

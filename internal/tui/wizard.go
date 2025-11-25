@@ -6,31 +6,21 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DoPlan-dev/CLI/internal/generator"
+	"github.com/DoPlan-dev/CLI/internal/version"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/doplan/cli/internal/generator"
-	"github.com/doplan/cli/pkg/models"
 )
 
-// Color definitions matching the design system
+// Color definitions - monochrome design
 var (
-	// Primary colors
-	purple = lipgloss.Color("#A855F7")
-	pink   = lipgloss.Color("#EC4899")
-
-	// Status colors
-	green  = lipgloss.Color("#10B981")
-	red    = lipgloss.Color("#EF4444")
-	blue   = lipgloss.Color("#3B82F6")
-	yellow = lipgloss.Color("#F59E0B")
-	white  = lipgloss.Color("#FFFFFF")
-
-	// Neutral colors
-	gray800 = lipgloss.Color("#1F2937")
-	gray900 = lipgloss.Color("#111827")
-	gray600 = lipgloss.Color("#4B5563")
-	gray400 = lipgloss.Color("#9CA3AF")
+	// Single color scheme (white/gray for monochrome)
+	primary   = lipgloss.Color("#FFFFFF") // White for primary text
+	secondary = lipgloss.Color("#CCCCCC") // Light gray for secondary text
+	tertiary  = lipgloss.Color("#888888") // Medium gray for tertiary text
+	dim       = lipgloss.Color("#666666") // Dim gray for less important text
 )
 
 // StepStatus represents the status of a generation step
@@ -70,6 +60,8 @@ type Model struct {
 	validationErr    string
 	selectedIDEIndex int
 	selectedIDE      string
+	selectedIDEs     map[string]bool
+	ideSelectionErr  string
 	steps            []GenerationStep
 	spinnerFrame     int
 	errorMessage     string
@@ -109,6 +101,11 @@ func InitialModel() Model {
 	ti.Width = 40
 	ti.Focus()
 
+	ideSelections := make(map[string]bool)
+	if ideOptions := getIDEInfo(); len(ideOptions) > 0 {
+		ideSelections[ideOptions[0].Name] = true
+	}
+
 	return Model{
 		state:            stateWelcome,
 		width:            80, // Default width
@@ -116,6 +113,8 @@ func InitialModel() Model {
 		projectName:      "",
 		selectedIDEIndex: 0, // Default to first IDE (Cursor)
 		selectedIDE:      "",
+		selectedIDEs:     ideSelections,
+		ideSelectionErr:  "",
 		steps:            getGenerationSteps(),
 		spinnerFrame:     0,
 		errorMessage:     "",
@@ -333,10 +332,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				return m, nil
 			} else if m.state == stateIDESelection {
-				// Select IDE and proceed to generating state
-				ideInfo := getIDEInfo()
-				if m.selectedIDEIndex >= 0 && m.selectedIDEIndex < len(ideInfo) {
-					m.selectedIDE = ideInfo[m.selectedIDEIndex].Name
+				// Require at least one IDE selection
+				selectedIDEs := m.getSelectedIDEs()
+				if len(selectedIDEs) == 0 {
+					m.ideSelectionErr = "Select at least one IDE (press Space to toggle)"
+					return m, nil
+				}
+				m.selectedIDE = selectedIDEs[0]
+				m.ideSelectionErr = ""
 					// Transition to generating state
 					if m.transitionToState(stateGenerating) {
 						// Initialize steps
@@ -351,7 +354,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 							tickSpinner,
 							startGenerationAsync(m),
 						)
-					}
 				}
 				return m, nil
 			} else if m.state == stateSuccess {
@@ -381,6 +383,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					// Wrap to top
 					m.selectedIDEIndex = 0
 				}
+				return m, nil
+			}
+			return m, nil
+
+		case " ":
+			if m.state == stateIDESelection {
+				m.toggleIDESelection(m.selectedIDEIndex)
+				m.ideSelectionErr = ""
 				return m, nil
 			}
 			return m, nil
@@ -483,7 +493,7 @@ func (m Model) renderProgressIndicator() string {
 	}
 
 	progressStyle := lipgloss.NewStyle().
-		Foreground(gray600).
+		Foreground(tertiary).
 		Align(lipgloss.Center).
 		MarginBottom(1).
 		Italic(true)
@@ -491,71 +501,142 @@ func (m Model) renderProgressIndicator() string {
 	return progressStyle.Render(fmt.Sprintf("Step %d of %d", currentStep, totalSteps))
 }
 
+// renderTopLine renders the top line with application name and version
+func renderTopLine() string {
+	appName := "doplan.dev"
+	versionStr := version.GetVersion()
+	if versionStr == "dev" {
+		versionStr = "Release"
+	} else {
+		versionStr = "Release"
+	}
+
+	topStyle := lipgloss.NewStyle().
+		Foreground(tertiary).
+		Width(80).
+		Align(lipgloss.Left)
+
+	// Format: "doplan.dev                                                                      Release"
+	line := fmt.Sprintf("%-70s %s", appName, versionStr)
+	return topStyle.Render(line)
+}
+
+// renderASCIIHeader renders the DoPlan ASCII art header
+func renderASCIIHeader() string {
+	asciiArt := `██████╗░░█████╗░██████╗░██╗░░░░░░█████╗░███╗░░██╗
+██╔══██╗██╔══██╗██╔══██╗██║░░░░░██╔══██╗████╗░██║
+██║░░██║██║░░██║██████╔╝██║░░░░░███████║██╔██╗██║
+██║░░██║██║░░██║██╔═══╝░██║░░░░░██╔══██║██║╚████║
+██████╔╝╚█████╔╝██║░░░░░███████╗██║░░██║██║░╚███║
+╚═════╝░░╚════╝░╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝`
+
+	// Center the ASCII art within 80-character width
+	// Each line is 49 characters, so we need 15 spaces on each side (80-49)/2 = 15.5 -> 15
+	lines := strings.Split(asciiArt, "\n")
+	var centeredLines []string
+	for _, line := range lines {
+		if len(line) > 0 {
+			// Center each line by padding with spaces
+			lineLen := len(line)
+			if lineLen < 80 {
+				paddingLen := (80 - lineLen) / 2
+				if paddingLen > 0 {
+					padding := strings.Repeat(" ", paddingLen)
+					centeredLines = append(centeredLines, padding+line)
+				} else {
+					centeredLines = append(centeredLines, line)
+				}
+			} else {
+				// Line is too long, just use it as-is
+				centeredLines = append(centeredLines, line)
+			}
+		}
+	}
+	centeredArt := strings.Join(centeredLines, "\n")
+
+	headerStyle := lipgloss.NewStyle().
+		Foreground(primary).
+		Width(80).
+		Align(lipgloss.Center).
+		MarginTop(2). // ~30px spacing above ASCII art header
+		MarginBottom(0)
+
+	return headerStyle.Render(centeredArt)
+}
+
+// renderBody renders the body section with content
+func renderBody(content string) string {
+	bodyStyle := lipgloss.NewStyle().
+		Width(80).
+		Align(lipgloss.Center).
+		Padding(1, 0)
+
+	return bodyStyle.Render(content)
+}
+
+// renderFooter renders the footer with navigation instructions
+func renderFooter() string {
+	footerStyle := lipgloss.NewStyle().
+		Foreground(dim).
+		Width(80).
+		Align(lipgloss.Center).
+		MarginTop(1)
+
+	// Footer format matching footer.md exactly (with 4 trailing spaces)
+	footer := "|    ↑/↓  Nav     |    Space / Select    |     Enter / Apply     |    "
+	return footerStyle.Render(footer)
+}
+
+// renderFullTUI renders the complete TUI layout according to documentation
+func renderFullTUI(bodyContent string) string {
+	topLine := renderTopLine()
+	asciiHeader := renderASCIIHeader()
+	body := renderBody(bodyContent)
+	footer := renderFooter()
+
+	// Top separator: 80 underscores (matching Top.md)
+	topSeparator := strings.Repeat("_", 80)
+
+	return fmt.Sprintf("%s\n%s\n%s\n%s\n\n%s\n%s",
+		topLine,
+		topSeparator,
+		asciiHeader,
+		body,
+		topSeparator,
+		footer,
+	)
+}
+
 // renderWelcome renders the welcome screen
 func (m Model) renderWelcome() string {
-	// Define styles
+	// Define styles for body content
 	titleStyle := lipgloss.NewStyle().
-		Foreground(purple).
+		Foreground(primary).
 		Bold(true).
-		Align(lipgloss.Center).
-		MarginTop(1).
-		MarginBottom(1)
-
-	subtitleStyle := lipgloss.NewStyle().
-		Foreground(pink).
-		Align(lipgloss.Center).
-		MarginBottom(2)
-
-	instructionStyle := lipgloss.NewStyle().
-		Foreground(white).
 		Align(lipgloss.Center).
 		MarginTop(2).
 		MarginBottom(1)
 
-	helpStyle := lipgloss.NewStyle().
-		Foreground(gray800).
+	subtitleStyle := lipgloss.NewStyle().
+		Foreground(secondary).
 		Align(lipgloss.Center).
-		MarginTop(1)
+		MarginBottom(3)
 
-	// Border style
-	borderStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(purple).
-		Padding(2, 4).
-		Width(m.width - 4).
-		Align(lipgloss.Center)
+	instructionStyle := lipgloss.NewStyle().
+		Foreground(secondary).
+		Align(lipgloss.Center).
+		MarginTop(2).
+		MarginBottom(1)
 
-	// ASCII art header with emoji
-	header := fmt.Sprintf("%s\n%s\n%s",
-		"🚀",
-		titleStyle.Render("DoPlan CLI"),
-		subtitleStyle.Render("Create professional projects\nin seconds"),
+	// Body content
+	bodyContent := fmt.Sprintf("%s\n%s\n%s",
+		titleStyle.Render("[>] Welcome to DoPlan CLI"),
+		subtitleStyle.Render("Create professional projects in seconds"),
+		instructionStyle.Render("Press Enter to continue\nPress 'q' to quit"),
 	)
 
-	// Instructions
-	instructions := instructionStyle.Render(
-		"Press Enter to continue\n" +
-			"Press 'q' to quit",
-	)
-
-	// Help text
-	help := helpStyle.Render("")
-
-	// Combine all elements
-	content := fmt.Sprintf("%s\n\n%s\n%s",
-		header,
-		instructions,
-		help,
-	)
-
-	// Apply border
-	return lipgloss.Place(
-		m.width,
-		lipgloss.Height(content),
-		lipgloss.Center,
-		lipgloss.Center,
-		borderStyle.Render(content),
-	)
+	// Use the documented TUI layout
+	return renderFullTUI(bodyContent)
 }
 
 // validateProjectName validates the project name and updates validation error
@@ -578,62 +659,38 @@ func (m *Model) validateProjectName(name string) bool {
 
 // renderProjectName renders the project name input screen
 func (m Model) renderProjectName() string {
-	// Define styles
+	// Define styles for body content
 	titleStyle := lipgloss.NewStyle().
-		Foreground(purple).
+		Foreground(primary).
 		Bold(true).
 		Align(lipgloss.Center).
-		MarginTop(1).
+		MarginTop(2).
 		MarginBottom(1)
 
 	subtitleStyle := lipgloss.NewStyle().
-		Foreground(pink).
+		Foreground(secondary).
 		Align(lipgloss.Center).
-		MarginBottom(2)
+		MarginBottom(3)
 
 	labelStyle := lipgloss.NewStyle().
-		Foreground(white).
+		Foreground(primary).
 		Bold(true).
 		MarginBottom(1)
 
 	errorStyle := lipgloss.NewStyle().
-		Foreground(red).
+		Foreground(primary).
 		MarginTop(1)
-
-	helpStyle := lipgloss.NewStyle().
-		Foreground(gray600).
-		MarginTop(1).
-		Italic(true)
-
-	// Determine border color based on validation
-	borderColor := purple
-	if m.textInput.Value() != "" {
-		if m.validationErr == "" {
-			borderColor = green // Valid input
-		} else {
-			borderColor = red // Invalid input
-		}
-	}
-
-	// Border style (changes color based on validation)
-	borderStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(borderColor).
-		Padding(2, 4).
-		Width(m.width - 4).
-		Align(lipgloss.Center)
 
 	// Input field style
 	inputStyle := lipgloss.NewStyle().
 		Width(40).
 		Align(lipgloss.Center)
 
-	// Header
-	header := fmt.Sprintf("%s\n%s\n%s",
-		"📝",
-		titleStyle.Render("Project Name"),
-		subtitleStyle.Render("Enter your project name"),
-	)
+	// Title
+	title := titleStyle.Render("[*] Project Name")
+
+	// Subtitle
+	subtitle := subtitleStyle.Render("Enter your project name")
 
 	// Label
 	label := labelStyle.Render("Project Name:")
@@ -644,121 +701,135 @@ func (m Model) renderProjectName() string {
 	// Character count
 	charCount := fmt.Sprintf("%d/50", len(m.textInput.Value()))
 	charCountStyle := lipgloss.NewStyle().
-		Foreground(gray600).
+		Foreground(tertiary).
 		MarginTop(1)
 	charCountDisplay := charCountStyle.Render(charCount)
 
 	// Error message
 	errorMsg := ""
 	if m.validationErr != "" {
-		errorMsg = errorStyle.Render("❌ " + m.validationErr)
+		errorMsg = errorStyle.Render("[X] " + m.validationErr)
 	}
 
 	// Progress indicator
 	progressIndicator := m.renderProgressIndicator()
 
-	// Help text
-	help := helpStyle.Render("Press Enter to continue • Press Esc to go back • Press 'q' to quit")
-
-	// Combine all elements
-	content := fmt.Sprintf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s",
-		header,
+	// Body content
+	bodyContent := fmt.Sprintf("%s\n%s\n%s\n%s\n%s\n%s\n%s",
+		title,
+		subtitle,
 		progressIndicator,
 		label,
 		inputField,
 		charCountDisplay,
 		errorMsg,
-		help,
 	)
 
-	// Apply border
-	return lipgloss.Place(
-		m.width,
-		lipgloss.Height(content),
-		lipgloss.Center,
-		lipgloss.Center,
-		borderStyle.Render(content),
-	)
+	// Use the documented TUI layout
+	return renderFullTUI(bodyContent)
+}
+
+// toggleIDESelection toggles the selection for the IDE at the given index.
+func (m *Model) toggleIDESelection(index int) {
+	ideInfo := getIDEInfo()
+	if index < 0 || index >= len(ideInfo) {
+		return
+	}
+	if m.selectedIDEs == nil {
+		m.selectedIDEs = make(map[string]bool)
+	}
+	name := ideInfo[index].Name
+	if m.selectedIDEs[name] {
+		delete(m.selectedIDEs, name)
+	} else {
+		m.selectedIDEs[name] = true
+	}
+}
+
+// getSelectedIDEs returns the current IDE selections in menu order.
+func (m Model) getSelectedIDEs() []string {
+	var selections []string
+	ideInfo := getIDEInfo()
+	for _, ide := range ideInfo {
+		if m.selectedIDEs != nil && m.selectedIDEs[ide.Name] {
+			selections = append(selections, ide.Name)
+		}
+	}
+
+	// Fallback to legacy single-select field for test scenarios.
+	if len(selections) == 0 && m.selectedIDE != "" {
+		selections = append(selections, m.selectedIDE)
+	}
+
+	return selections
 }
 
 // renderIDESelection renders the IDE selection menu screen
 func (m Model) renderIDESelection() string {
 	ideInfo := getIDEInfo()
 
-	// Define styles
+	// Define styles for body content
 	titleStyle := lipgloss.NewStyle().
-		Foreground(purple).
+		Foreground(primary).
 		Bold(true).
 		Align(lipgloss.Center).
-		MarginTop(1).
+		MarginTop(2).
 		MarginBottom(1)
 
 	subtitleStyle := lipgloss.NewStyle().
-		Foreground(pink).
+		Foreground(secondary).
 		Align(lipgloss.Center).
-		MarginBottom(2)
+		MarginBottom(3)
 
-	helpStyle := lipgloss.NewStyle().
-		Foreground(gray600).
-		MarginTop(2).
-		Italic(true)
+	// Title
+	title := titleStyle.Render("[*] Select Your IDE")
 
-	// Border style
-	borderStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(purple).
-		Padding(2, 4).
-		Width(m.width - 4).
-		Align(lipgloss.Center)
-
-	// Header
-	header := fmt.Sprintf("%s\n%s\n%s",
-		"💻",
-		titleStyle.Render("Select Your IDE"),
-		subtitleStyle.Render("Choose your preferred development environment"),
-	)
+	// Subtitle
+	subtitle := subtitleStyle.Render("Choose your preferred development environment")
 
 	// Build menu items
 	var menuItems []string
 	for i, ide := range ideInfo {
-		// Radio button (○ for unselected, ● for selected)
-		radioButton := "○"
-		if i == m.selectedIDEIndex {
-			radioButton = "●"
+		// Checkbox (☐ for unselected, ☑ for selected)
+		checkbox := "☐"
+		if m.selectedIDEs != nil && m.selectedIDEs[ide.Name] {
+			checkbox = "☑"
 		}
 
-		// Recommended star
-		star := ""
+		// Recommended indicator
+		recommended := ""
 		if ide.Recommended {
-			star = " ⭐"
+			recommended = " [*]"
 		}
 
 		// Item text
-		itemText := fmt.Sprintf("%s %s%s", radioButton, ide.Name, star)
+		itemText := fmt.Sprintf("%s %s%s", checkbox, ide.Name, recommended)
 
 		// Style based on selection
 		if i == m.selectedIDEIndex {
-			// Selected item: purple background, white text
+			// Selected item: inverted (white on black equivalent)
 			itemStyle := lipgloss.NewStyle().
-				Foreground(white).
-				Background(purple).
+				Foreground(primary).
 				Bold(true).
 				Padding(0, 1).
-				Margin(0, 0, 0, 2)
+				Margin(0, 0, 0, 0).
+				Align(lipgloss.Left)
 			itemText = itemStyle.Render(itemText)
 		} else {
-			// Unselected item: gray text
+			// Unselected item: dim text
 			itemStyle := lipgloss.NewStyle().
-				Foreground(gray600).
-				Margin(0, 0, 0, 2)
+				Foreground(tertiary).
+				Margin(0, 0, 0, 0).
+				Align(lipgloss.Left)
 			itemText = itemStyle.Render(itemText)
 		}
 
 		// Description
 		descStyle := lipgloss.NewStyle().
-			Foreground(gray600).
+			Foreground(tertiary).
 			Italic(true).
-			Margin(0, 0, 0, 6)
+			Margin(0, 0, 0, 0).
+			Align(lipgloss.Left)
 		description := descStyle.Render(ide.Description)
 
 		menuItems = append(menuItems, fmt.Sprintf("%s\n%s", itemText, description))
@@ -776,30 +847,52 @@ func (m Model) renderIDESelection() string {
 	// Progress indicator
 	progressIndicator := m.renderProgressIndicator()
 
-	// Help text
-	help := helpStyle.Render("Use ↑/↓ to navigate • Press Enter to select • Press Esc to go back • Press 'q' to quit")
+	// Create left-aligned container for menu with 40px (5 chars) left padding
+	// Add left padding directly to the menu string
+	padding := strings.Repeat(" ", 5) // 5 spaces = ~40px
+	menuLines := strings.Split(menu, "\n")
+	var paddedMenuLines []string
+	for _, line := range menuLines {
+		if line != "" {
+			paddedMenuLines = append(paddedMenuLines, padding+line)
+		} else {
+			paddedMenuLines = append(paddedMenuLines, line)
+		}
+	}
+	paddedMenu := strings.Join(paddedMenuLines, "\n")
 
-	// Combine all elements
-	content := fmt.Sprintf("%s\n\n%s\n\n%s\n\n%s",
-		header,
+	instructionStyle := lipgloss.NewStyle().
+		Foreground(tertiary).
+		Align(lipgloss.Center).
+		MarginTop(1)
+	instructions := instructionStyle.Render("Use ↑/↓ to navigate, Space to toggle selections, Enter to confirm")
+
+	errorStyle := lipgloss.NewStyle().
+		Foreground(primary).
+		MarginTop(1)
+	errorMsg := ""
+	if m.ideSelectionErr != "" {
+		errorMsg = errorStyle.Render("[X] " + m.ideSelectionErr)
+	}
+
+	// Body content - title and subtitle centered, menu left-aligned
+	bodyContent := fmt.Sprintf("%s\n%s\n%s\n\n%s\n%s\n%s",
+		title,
+		subtitle,
 		progressIndicator,
-		menu,
-		help,
+		paddedMenu,
+		instructions,
+		errorMsg,
 	)
 
-	// Apply border
-	return lipgloss.Place(
-		m.width,
-		lipgloss.Height(content),
-		lipgloss.Center,
-		lipgloss.Center,
-		borderStyle.Render(content),
-	)
+	// Use the documented TUI layout
+	return renderFullTUI(bodyContent)
 }
 
 // getSpinnerChar returns the spinner character for the current frame
 func (m Model) getSpinnerChar() string {
-	spinnerChars := []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
+	// ASCII spinner characters
+	spinnerChars := []string{"|", "/", "-", "\\", "|", "/", "-", "\\"}
 	return spinnerChars[m.spinnerFrame%len(spinnerChars)]
 }
 
@@ -807,13 +900,13 @@ func (m Model) getSpinnerChar() string {
 func (m Model) getStepIcon(step GenerationStep) string {
 	switch step.Status {
 	case stepCompleted:
-		return "✅"
+		return "[+]"
 	case stepInProgress:
-		return "⏳ " + m.getSpinnerChar()
+		return "[...] " + m.getSpinnerChar()
 	case stepFailed:
-		return "❌"
+		return "[X]"
 	default:
-		return "⏸"
+		return "[-]"
 	}
 }
 
@@ -821,13 +914,13 @@ func (m Model) getStepIcon(step GenerationStep) string {
 func (m Model) getStepColor(step GenerationStep) lipgloss.Color {
 	switch step.Status {
 	case stepCompleted:
-		return green
+		return primary
 	case stepInProgress:
-		return yellow
+		return secondary
 	case stepFailed:
-		return red
+		return primary
 	default:
-		return gray600
+		return tertiary
 	}
 }
 
@@ -851,32 +944,30 @@ func (m Model) renderProgressBar(percentage int, width int) string {
 	unfilled := width - filled
 
 	filledBar := lipgloss.NewStyle().
-		Background(purple).
-		Foreground(white).
-		Render(strings.Repeat("█", filled))
+		Foreground(primary).
+		Render(strings.Repeat("=", filled))
 
 	unfilledBar := lipgloss.NewStyle().
-		Background(gray800).
-		Foreground(gray600).
-		Render(strings.Repeat("░", unfilled))
+		Foreground(tertiary).
+		Render(strings.Repeat("-", unfilled))
 
 	return fmt.Sprintf("[%s%s] %d%%", filledBar, unfilledBar, percentage)
 }
 
 // renderGenerating renders the progress/generating screen
 func (m Model) renderGenerating() string {
-	// Define styles
+	// Define styles for body content
 	titleStyle := lipgloss.NewStyle().
-		Foreground(purple).
+		Foreground(primary).
 		Bold(true).
 		Align(lipgloss.Center).
-		MarginTop(1).
+		MarginTop(2).
 		MarginBottom(1)
 
 	subtitleStyle := lipgloss.NewStyle().
-		Foreground(pink).
+		Foreground(secondary).
 		Align(lipgloss.Center).
-		MarginBottom(2)
+		MarginBottom(3)
 
 	stepStyle := lipgloss.NewStyle().
 		Margin(0, 0, 0, 2)
@@ -885,20 +976,11 @@ func (m Model) renderGenerating() string {
 		Align(lipgloss.Center).
 		MarginTop(2)
 
-	// Border style
-	borderStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(purple).
-		Padding(2, 4).
-		Width(m.width - 4).
-		Align(lipgloss.Center)
+	// Title
+	title := titleStyle.Render("[...] Generating your project...")
 
-	// Header
-	header := fmt.Sprintf("%s\n%s\n%s",
-		"⚙️",
-		titleStyle.Render("Generating your project..."),
-		subtitleStyle.Render("This will only take a moment"),
-	)
+	// Subtitle
+	subtitle := subtitleStyle.Render("This will only take a moment")
 
 	// Build step list
 	var stepLines []string
@@ -924,21 +1006,16 @@ func (m Model) renderGenerating() string {
 	progressBarWidth := 30
 	progressBar := progressBarStyle.Render(m.renderProgressBar(progress, progressBarWidth))
 
-	// Combine all elements
-	content := fmt.Sprintf("%s\n\n%s\n\n%s",
-		header,
+	// Body content
+	bodyContent := fmt.Sprintf("%s\n%s\n\n%s\n\n%s",
+		title,
+		subtitle,
 		stepsText,
 		progressBar,
 	)
 
-	// Apply border
-	return lipgloss.Place(
-		m.width,
-		lipgloss.Height(content),
-		lipgloss.Center,
-		lipgloss.Center,
-		borderStyle.Render(content),
-	)
+	// Use the documented TUI layout
+	return renderFullTUI(bodyContent)
 }
 
 // getProjectStructureTree returns a tree representation of the generated project structure
@@ -947,7 +1024,7 @@ func (m Model) getProjectStructureTree() string {
 		m.projectName = "my-project"
 	}
 
-	tree := fmt.Sprintf(`✅ %s/
+	tree := fmt.Sprintf(`[+] %s/
   ├── .cursor/
   │   ├── agents/           # 18 full persona prompts
   │   ├── commands/         # Command definitions
@@ -968,81 +1045,65 @@ func (m Model) getProjectStructureTree() string {
 
 // renderSuccess renders the success screen
 func (m Model) renderSuccess() string {
-	// Define styles
+	// Define styles for body content
 	titleStyle := lipgloss.NewStyle().
-		Foreground(green).
+		Foreground(primary).
 		Bold(true).
 		Align(lipgloss.Center).
-		MarginTop(1).
+		MarginTop(2).
 		MarginBottom(1)
 
 	subtitleStyle := lipgloss.NewStyle().
-		Foreground(pink).
+		Foreground(secondary).
 		Align(lipgloss.Center).
-		MarginBottom(2)
+		MarginBottom(3)
 
 	treeStyle := lipgloss.NewStyle().
-		Foreground(white).
-		Margin(1, 0, 1, 2)
+		Foreground(primary).
+		Align(lipgloss.Left).
+		Margin(1, 0, 1, 0).
+		Width(80)
 
 	nextStepsTitleStyle := lipgloss.NewStyle().
-		Foreground(white).
+		Foreground(primary).
 		Bold(true).
 		MarginTop(2).
-		MarginBottom(1)
-
-	nextStepStyle := lipgloss.NewStyle().
-		Foreground(green).
-		Margin(0, 0, 0, 4)
-
-	helpStyle := lipgloss.NewStyle().
-		Foreground(gray600).
-		MarginTop(2).
-		Italic(true)
-
-	// Border style
-	borderStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(green).
-		Padding(2, 4).
-		Width(m.width - 4).
+		MarginBottom(1).
 		Align(lipgloss.Center)
 
-	// Header
-	header := fmt.Sprintf("%s\n%s\n%s",
-		"✨",
-		titleStyle.Render("Project created successfully!"),
-		subtitleStyle.Render("Your project is ready to go"),
-	)
+	nextStepStyle := lipgloss.NewStyle().
+		Foreground(secondary).
+		Margin(0, 0, 0, 0).
+		Align(lipgloss.Center)
 
-	// Project structure tree
+	// Title
+	title := titleStyle.Render("[+] Project created successfully!")
+
+	// Subtitle
+	subtitle := subtitleStyle.Render("Your project is ready to go")
+
+	// Project structure tree - left aligned
 	projectTree := treeStyle.Render(m.getProjectStructureTree())
 
 	// Next steps
 	nextStepsTitle := nextStepsTitleStyle.Render("Next steps:")
 
-	// Determine IDE command based on selected IDE
-	ideCommand := "code"
-	if m.selectedIDE != "" {
-		switch m.selectedIDE {
-		case "Cursor":
-			ideCommand = "cursor"
-		case "Claude Code":
-			ideCommand = "claude"
-		case "Antigravity":
-			ideCommand = "antigravity"
-		case "Windsurf":
-			ideCommand = "windsurf"
-		case "Cline":
-			ideCommand = "cline"
-		case "OpenCode":
-			ideCommand = "opencode"
-		default:
-			ideCommand = "code"
+	selectedIDEs := m.getSelectedIDEs()
+	var nextStep1 string
+	if len(selectedIDEs) <= 1 {
+		ideName := ""
+		if len(selectedIDEs) == 1 {
+			ideName = selectedIDEs[0]
 		}
+		nextStep1 = nextStepStyle.Render(fmt.Sprintf("1. Open with: %s ./%s", mapIDEToCommand(ideName), m.projectName))
+	} else {
+		var b strings.Builder
+		b.WriteString("1. Open with any of:\n")
+		for _, ide := range selectedIDEs {
+			b.WriteString(fmt.Sprintf("   - %s: %s ./%s\n", ide, mapIDEToCommand(ide), m.projectName))
+		}
+		nextStep1 = nextStepStyle.Render(b.String())
 	}
-
-	nextStep1 := nextStepStyle.Render(fmt.Sprintf("1. Open with: %s ./%s", ideCommand, m.projectName))
 	nextStep2 := nextStepStyle.Render("2. Then type /tell to begin")
 
 	nextSteps := fmt.Sprintf("%s\n%s\n%s",
@@ -1051,25 +1112,48 @@ func (m Model) renderSuccess() string {
 		nextStep2,
 	)
 
-	// Help text
-	help := helpStyle.Render("Press Enter to exit • Press 'q' to quit")
+	// Body content - title and subtitle centered, tree left-aligned, next steps centered
+	// Create a left-aligned container for tree only
+	leftAlignedTree := lipgloss.NewStyle().
+		Width(80).
+		Align(lipgloss.Left).
+		Render(projectTree)
 
-	// Combine all elements
-	content := fmt.Sprintf("%s\n\n%s\n\n%s\n\n%s",
-		header,
-		projectTree,
-		nextSteps,
-		help,
+	// Center the next steps section
+	centeredNextSteps := lipgloss.NewStyle().
+		Width(80).
+		Align(lipgloss.Center).
+		Render(nextSteps)
+
+	bodyContent := fmt.Sprintf("%s\n%s\n\n%s\n\n%s",
+		title,
+		subtitle,
+		leftAlignedTree,
+		centeredNextSteps,
 	)
 
-	// Apply border
-	return lipgloss.Place(
-		m.width,
-		lipgloss.Height(content),
-		lipgloss.Center,
-		lipgloss.Center,
-		borderStyle.Render(content),
-	)
+	// Use the documented TUI layout
+	return renderFullTUI(bodyContent)
+}
+
+// mapIDEToCommand maps a friendly IDE name to its CLI command.
+func mapIDEToCommand(ide string) string {
+	switch ide {
+	case "Cursor":
+		return "cursor"
+	case "Claude Code":
+		return "claude"
+	case "Antigravity":
+		return "antigravity"
+	case "Windsurf":
+		return "windsurf"
+	case "Cline":
+		return "cline"
+	case "OpenCode":
+		return "opencode"
+	default:
+		return "code"
+	}
 }
 
 // setError sets an error message and transitions to error state
@@ -1082,61 +1166,47 @@ func (m *Model) setError(message, suggestion string) {
 
 // renderError renders the error screen
 func (m Model) renderError() string {
-	// Define styles
+	// Define styles for body content
 	titleStyle := lipgloss.NewStyle().
-		Foreground(red).
+		Foreground(primary).
 		Bold(true).
 		Align(lipgloss.Center).
-		MarginTop(1).
+		MarginTop(2).
 		MarginBottom(1)
 
 	subtitleStyle := lipgloss.NewStyle().
-		Foreground(pink).
+		Foreground(secondary).
 		Align(lipgloss.Center).
-		MarginBottom(2)
+		MarginBottom(3)
 
 	errorMessageStyle := lipgloss.NewStyle().
-		Foreground(white).
+		Foreground(primary).
 		Margin(1, 0, 1, 2).
-		Width(m.width - 12).
+		Width(70).
 		Align(lipgloss.Left)
 
 	suggestionStyle := lipgloss.NewStyle().
-		Foreground(yellow).
+		Foreground(secondary).
 		Margin(1, 0, 1, 2).
-		Width(m.width - 12).
+		Width(70).
 		Align(lipgloss.Left).
 		Italic(true)
 
 	recoveryTitleStyle := lipgloss.NewStyle().
-		Foreground(white).
+		Foreground(primary).
 		Bold(true).
 		MarginTop(2).
 		MarginBottom(1)
 
 	recoveryOptionStyle := lipgloss.NewStyle().
-		Foreground(blue).
+		Foreground(secondary).
 		Margin(0, 0, 0, 4)
 
-	helpStyle := lipgloss.NewStyle().
-		Foreground(gray600).
-		MarginTop(2).
-		Italic(true)
+	// Title
+	title := titleStyle.Render("[X] Error")
 
-	// Border style
-	borderStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(red).
-		Padding(2, 4).
-		Width(m.width - 4).
-		Align(lipgloss.Center)
-
-	// Header
-	header := fmt.Sprintf("%s\n%s\n%s",
-		"❌",
-		titleStyle.Render("Error"),
-		subtitleStyle.Render("Something went wrong"),
-	)
+	// Subtitle
+	subtitle := subtitleStyle.Render("Something went wrong")
 
 	// Error message
 	errorMsg := errorMessageStyle.Render(m.errorMessage)
@@ -1144,7 +1214,7 @@ func (m Model) renderError() string {
 	// Suggestion
 	suggestion := ""
 	if m.errorSuggestion != "" {
-		suggestion = suggestionStyle.Render("💡 " + m.errorSuggestion)
+		suggestion = suggestionStyle.Render("[!] " + m.errorSuggestion)
 	}
 
 	// Recovery options
@@ -1161,33 +1231,30 @@ func (m Model) renderError() string {
 		recoveryOptions,
 	)
 
-	// Help text
-	help := helpStyle.Render("Use keyboard shortcuts to recover from this error")
-
-	// Combine all elements
-	content := fmt.Sprintf("%s\n\n%s\n%s\n\n%s\n\n%s",
-		header,
+	// Body content
+	bodyContent := fmt.Sprintf("%s\n%s\n\n%s\n%s\n\n%s",
+		title,
+		subtitle,
 		errorMsg,
 		suggestion,
 		recovery,
-		help,
 	)
 
-	// Apply border
-	return lipgloss.Place(
-		m.width,
-		lipgloss.Height(content),
-		lipgloss.Center,
-		lipgloss.Center,
-		borderStyle.Render(content),
-	)
+	// Use the documented TUI layout
+	return renderFullTUI(bodyContent)
 }
 
 // toProjectRequest converts the model to a ProjectRequest
 func (m Model) toProjectRequest() *models.ProjectRequest {
+	selectedIDEs := m.getSelectedIDEs()
+	primaryIDE := ""
+	if len(selectedIDEs) > 0 {
+		primaryIDE = selectedIDEs[0]
+	}
 	return &models.ProjectRequest{
 		ProjectName: m.projectName,
-		IDE:         m.selectedIDE,
+		IDE:         primaryIDE,
+		IDEs:        selectedIDEs,
 		ProjectType: "Fullstack", // Default project type
 	}
 }

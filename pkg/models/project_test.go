@@ -63,7 +63,7 @@ func TestProjectRequest_Validate(t *testing.T) {
 				IDE:         "",
 			},
 			wantErr: true,
-			errMsg:  "IDE is required",
+			errMsg:  "at least one IDE",
 		},
 		{
 			name: "valid with underscores",
@@ -102,6 +102,33 @@ func TestProjectRequest_Validate(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestProjectRequestValidateIDEs(t *testing.T) {
+	req := ProjectRequest{
+		ProjectName: "multi-ide",
+		IDEs:        []string{"Cursor", "cursor", "Claude Code"},
+	}
+	if err := req.Validate(); err != nil {
+		t.Fatalf("Validate() returned error for multi IDEs: %v", err)
+	}
+	if len(req.IDEs) != 2 {
+		t.Fatalf("expected 2 normalized IDEs, got %v", req.IDEs)
+	}
+	if req.IDEs[0] != "Cursor" || req.IDEs[1] != "Claude Code" {
+		t.Errorf("unexpected IDE order: %v", req.IDEs)
+	}
+	if req.IDE != "Cursor" {
+		t.Errorf("primary IDE should be first entry, got %q", req.IDE)
+	}
+
+	invalid := ProjectRequest{
+		ProjectName: "bad-ide",
+		IDEs:        []string{"UnknownIDE"},
+	}
+	if err := invalid.Validate(); err == nil {
+		t.Fatal("expected error for unsupported IDE")
 	}
 }
 
@@ -411,10 +438,10 @@ func intPtr(i int) *int {
 }
 
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(substr) == 0 || 
-		(len(s) > len(substr) && (s[:len(substr)] == substr || 
-		s[len(s)-len(substr):] == substr || 
-		containsSubstring(s, substr))))
+	return len(s) >= len(substr) && (s == substr || len(substr) == 0 ||
+		(len(s) > len(substr) && (s[:len(substr)] == substr ||
+			s[len(s)-len(substr):] == substr ||
+			containsSubstring(s, substr))))
 }
 
 func containsSubstring(s, substr string) bool {
@@ -425,4 +452,3 @@ func containsSubstring(s, substr string) bool {
 	}
 	return false
 }
-

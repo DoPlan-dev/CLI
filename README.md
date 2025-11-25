@@ -1,5 +1,16 @@
 <div align="center">
 
+# DoPlan CLI Banner
+
+```
+██████╗░░█████╗░██████╗░██╗░░░░░░█████╗░███╗░░██╗
+██╔══██╗██╔══██╗██╔══██╗██║░░░░░██╔══██╗████╗░██║
+██║░░██║██║░░██║██████╔╝██║░░░░░███████║██╔██╗██║
+██║░░██║██║░░██║██╔═══╝░██║░░░░░██╔══██║██║╚████║
+██████╔╝╚█████╔╝██║░░░░░███████╗██║░░██║██║░╚███║
+╚═════╝░░╚════╝░╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝
+```
+
 # 🚀 DoPlan CLI
 
 **Zero-install AI Project Director** - Bootstrap production-ready projects with a complete hierarchical AI agency system in seconds.
@@ -8,6 +19,9 @@
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 [![Go](https://img.shields.io/badge/go-1.23+-00ADD8?style=for-the-badge&logo=go)](https://golang.org/)
+[![CI](https://img.shields.io/github/actions/workflow/status/DoPlan-dev/CLI/ci.yml?style=for-the-badge&label=CI)](https://github.com/DoPlan-dev/CLI/actions/workflows/ci.yml)
+[![Branch Policy](https://img.shields.io/github/actions/workflow/status/DoPlan-dev/CLI/branch-protection.yml?style=for-the-badge&label=Branch%20Policy)](https://github.com/DoPlan-dev/CLI/actions/workflows/branch-protection.yml)
+[![NPM Downloads](https://img.shields.io/npm/dm/@doplan-dev/cli?style=for-the-badge&color=orange)](https://www.npmjs.com/package/@doplan-dev/cli)
 [![GitHub Stars](https://img.shields.io/github/stars/DoPlan-dev/CLI?style=for-the-badge&logo=github)](https://github.com/DoPlan-dev/CLI)
 [![GitHub Issues](https://img.shields.io/github/issues/DoPlan-dev/CLI?style=for-the-badge&logo=github)](https://github.com/DoPlan-dev/CLI/issues)
 
@@ -38,6 +52,19 @@
 - 🚀 **Complete Automation**: Project structure, agents, commands, rules, CI/CD, and boilerplate
 - 📦 **Offline-First**: Works completely offline after first run
 - 🔓 **Transparent**: All AI logic lives in markdown files - see and modify everything
+
+## 📈 KPIs & Targets
+<!-- KPIS:START -->
+- **Adoption**: 10,000+ projects created in first 6 months
+- **Engagement**: Average 5+ commands used per project
+- **Retention**: 30%+ users create second project
+- **Community**: 100+ GitHub stars, active discussions
+- **Quality**: < 1% bug reports, 4.5+ star rating
+- **Performance**: 95%+ of projects generated in < 5 seconds
+---
+<!-- KPIS:END -->
+> Generated via `/github info`. The helper caches metadata in `Docs/history/github-meta.json`, so KPI data stays available even when you're offline.
+
 
 ---
 
@@ -231,8 +258,11 @@ Once in your IDE, start using DoPlan commands:
 /improve → Team brainstorm session
 /write   → Generate PRD + Architecture + Design System
 /good    → Approve & lock the plan
-/tasks   → Generate implementation tasks
+/plan    → Generate execution plan + task hierarchy
 /build   → Start coding
+/report  → Generate scan metadata + diffs
+/feedback → Log structured feedback entries
+/state   → Snapshot or restore .plan/active_state
 ```
 
 ---
@@ -276,11 +306,11 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
 
 #### Development Commands
 
-- **`/tasks`** - Generate implementation tasks
+- **`/plan`** - Generate execution plan + tasks
   ```
-  /tasks
+  /plan
   ```
-  Creates TASKS.md from the approved plan.
+  Synthesizes TASKS.md from the approved plan and scaffolds phase folders.
 
 - **`/build`** - Start coding
   ```
@@ -291,12 +321,46 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
 - **`/progress`** - Show current progress
   ```
   /progress
+  go run scripts/progress/main.go --root .
   ```
+  Runs the Go helper at `scripts/progress/` to display totals plus the most recent `.plan/history` delta (phase/task/branch/completed changes). Pass `--json` for machine-readable output.
+
+- **`/state`** - Manage state snapshots & rollbacks
+  ```
+  /state list
+  /state diff --json
+  /state restore --file state-20251124T120000Z.json --yes
+  ```
+  Wraps `go run scripts/statehistory/main.go` so you can inspect history, capture snapshots (before/after `/build` and `/finished`), and safely restore `.plan/active_state.json`.
 
 - **`/finished`** - Mark task complete
   ```
   /finished
   ```
+
+#### Feedback & Reporting Commands
+
+- **`/feedback`** - Log structured product/bug feedback
+  ```
+  /feedback bug "QR download fails" "API returns 500 when Accept header missing" --author QA
+  ```
+  Saves to `Docs/history/feedback.md` (human readable) and `Docs/history/feedback.json` (consumed by automation).
+
+- **`/report`** - Generate scan metadata + diffs
+  ```
+  /report                       # current project
+  /report ./test/qr-generator/test-no01
+  ```
+  Runs `go run scripts/scanreport/main.go` to update `SCAN_REPORT_*.json`, create `SCAN_DIFF_<date>.md`, and append both the latest state-history summary and an embedded `/progress` snapshot (phase, completion %, upcoming tasks). Use `--preset exec` or `--preset detailed` for alternate templates (exec view, detailed visuals + dependency audit).
+  Customization:
+  - Create `.plan/reports/config.json` to set defaults:
+    ```json
+    {
+      "preset": "exec",
+      "sections": ["executive", "progress", "visuals", "state", "feedback"]
+    }
+    ```
+  - CLI flags override config; custom `sections` let you reorder or omit report blocks.
 
 #### Team & Information Commands
 
@@ -338,8 +402,8 @@ code .
 # 6. Review and approve
 /good
 
-# 7. Generate tasks
-/tasks
+# 7. Generate execution plan + tasks
+/plan
 
 # 8. Start building
 /build
@@ -347,6 +411,54 @@ code .
 # 9. Track progress
 /progress
 ```
+
+---
+
+## 🧠 Command Workflow
+
+```
+/tell → /improve → /write → /change → /good
+                    │
+                    ▼
+                 /plan → /build ⇆ /progress ⇆ /state
+                               │
+                               ▼
+                        /finished → /report → /ship
+                                      │
+                                      └── /feedback, /safe, /cheap, /branchci
+```
+
+- **Plan**: `/tell` through `/good` capture and approve strategy.
+- **Execute**: `/plan`, `/build`, `/progress`, `/state`, and `/finished` keep delivery disciplined and auditable.
+- **Operate**: `/report`, `/feedback`, `/ship`, `/safe`, `/cheap`, `/branchci`, `/github`, `/team`, and `/load` keep stakeholders aligned, secure, and informed.
+
+Every generated project ships with this workflow baked into `.plan`, `Docs/`, `.github/`, and the wiki so cursor-based IDEs can enforce it automatically.
+
+## 📟 Command Catalog
+
+| Command | Phase | What it unlocks |
+| --- | --- | --- |
+| `/tell` | Strategy | Capture project intent into `.plan/00_System/IDEA.md` |
+| `/improve` | Strategy | Brainstorm with all Level 1 managers |
+| `/write` | Strategy | Generate PRD, Architecture, Design System |
+| `/change` | Strategy | Patch any planning doc with natural language |
+| `/good` | Strategy | Lock planning set and advance to tasks |
+| `/plan` | Delivery | Expand planning docs into phased TASKS.md |
+| `/build [id]` | Delivery | Start next (or specific) implementation task |
+| `/progress` | Delivery | Summaries for total/completed tasks + upcoming work |
+| `/state <subcommand>` | Delivery | Snapshot, diff, and restore `.plan/active_state.json` |
+| `/finished` | Delivery | Mark tasks complete, auto-commit, and push |
+| `/feedback <type>` | Operations | Log bugs/features/questions into `Docs/history/feedback.*` |
+| `/report [path]` | Operations | Generate SCAN_REPORT metadata + diffs |
+| `/ship` | Operations | Release orchestration + versioning checklist |
+| `/safe` | Operations | Security review + dependency risk scan |
+| `/cheap` | Operations | Cost optimization playbook |
+| `/team` | Context | Display the 18-agent hierarchy |
+| `/load <context>` | Context | Inject extra domain knowledge for agents |
+| `/github <subcommand>` | Integrations | Sync KPIs, prep issues/milestones, update cache |
+| `/branchci` | Integrations | Regenerate per-branch workflow guardrails |
+
+👉 Looking for deeper explanations? See `Docs/foundation/the-guide.md` or the wiki pages for [Commands](https://github.com/DoPlan-dev/CLI/wiki/Commands) and [Workflow](https://github.com/DoPlan-dev/CLI/wiki/Workflow).
 
 ### Project Structure
 
@@ -362,13 +474,24 @@ my-project/
 ├── .plan/
 │   ├── 00_System/          # IDEA.md, PRD.md, ARCHITECTURE.md, DESIGN_SYSTEM.md
 │   ├── TASKS.md            # Implementation tasks
-│   └── active_state.json   # Project state
+│   ├── active_state.json   # Project state
+│   └── history/            # Time-stamped snapshots for rollback + reports
+├── Docs/                   # Optional capitalized docs (see test fixtures)
 ├── .github/
 │   └── workflows/          # CI/CD automation
 ├── src/                    # Your source code
 ├── STANDUP.md             # Daily standup notes
 └── README.md              # Project documentation
 ```
+
+---
+
+## 📑 Docs, Changelog & Wiki
+
+- `CHANGELOG.md` follows Keep a Changelog + SemVer. Check the **[latest entry](CHANGELOG.md)** before cutting a release or running `/ship`.
+- The `Docs/` tree mirrors what every generated project should publish (foundation, features, release, history). Use it as the canonical structure reference.
+- The **[GitHub wiki](https://github.com/DoPlan-dev/CLI/wiki)** stays in sync with this README—Commands, Workflow, Quick Start, and Troubleshooting are updated whenever the CLI changes.
+- Automation helpers such as `/report`, `/feedback`, `/state`, and `/github info` keep each of those artifacts aligned (KPI block, scan diffs, feedback logs, and state history).
 
 ---
 
@@ -410,6 +533,12 @@ Each agent has a specific role and expertise, working together to guide your pro
 - Documentation standards
 - Security practices
 - MCP tools integration
+
+### 🕒 State History & Rollback
+
+- `.plan/history/state-*.json` stores every update to `active_state.json`, captured automatically around `/build` and `/finished`
+- `/state` (backed by `go run scripts/statehistory/main.go`) lets you snapshot, list, diff, or restore with confirmation guardrails
+- `/progress` and `/report` surface the latest history diff so stakeholders always know *what* changed (phase, task, branch, completed tasks)
 
 ### 🎨 Beautiful Interactive TUI
 

@@ -64,7 +64,7 @@ This document outlines the complete structure for the DoPlan CLI GitHub Wiki.
 4. Brainstorming (`/improve`)
 5. Generating plans (`/write`)
 6. Approving (`/good`)
-7. Creating tasks (`/tasks`)
+7. Creating tasks (`/plan`)
 8. Building (`/build`)
 9. Completing your first feature
 
@@ -84,7 +84,7 @@ This document outlines the complete structure for the DoPlan CLI GitHub Wiki.
    - `/write` - Generate documents
    - `/change` - Edit documents
    - `/good` - Approve plan
-   - `/tasks` - Generate tasks
+   - `/plan` - Generate tasks
    - `/build` - Start coding
    - `/progress` - Track progress
    - `/finished` - Complete tasks
@@ -572,5 +572,7 @@ Brief description of what this page covers.
 
 **Last Updated**: [Date]
 **Maintained By**: Documentation Team
+
+
 
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/doplan/cli/internal/cli"
+	"github.com/DoPlan-dev/CLI/internal/cli"
 )
 
 func main() {
@@ -9,4 +9,3 @@ func main() {
 	// Execute the root Cobra command
 	cli.Execute()
 }
-

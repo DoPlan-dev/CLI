@@ -164,7 +164,7 @@ Contains planning documents and task management.
 - Effort estimates
 - Acceptance criteria
 
-**Created**: With `/tasks` command
+**Created**: With `/plan` command
 
 **Updated**: When tasks are completed with `/finished`
 
@@ -268,14 +268,10 @@ Contains planning documents and task management.
 
 ### IDE Configuration Files
 
-IDE-specific configuration files are generated based on your IDE choice:
+IDE-specific configuration lives in two places:
 
-- **Cursor**: `.cursorrules`
-- **Claude Code**: `CLAUDE.md`
-- **Antigravity**: `.antigravity/`
-- **Windsurf**: `.windsurf/`
-- **Cline**: `.cline/`
-- **OpenCode**: `.opencode/`
+- **Cursor / Windsurf / Antigravity / Cline / OpenCode**: `.cursor/rules/` (shared rules library)
+- **Claude Code**: `docs/CLAUDE.md`
 
 ---
 

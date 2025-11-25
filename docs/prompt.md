@@ -73,12 +73,27 @@ my-project/
 │       ├── release.yml      # Automated releases
 │       ├── changelog.yml   # Auto-updates changelog
 │       └── branch-protection.yml
-├── src/                    # Boilerplate code (Next.js, Tauri, Expo, etc.)
-├── CHANGELOG.md
-├── STANDUP.md
+├── src/                    # Created after /build when boilerplate is generated
+├── docs/
+│   ├── CHANGELOG.md
+│   ├── CLAUDE.md
+│   ├── foundation/
+│   ├── features/
+│   ├── release/
+│   └── history/
 ├── README.md
-└── [IDE config files]     # .cursorrules, CLAUDE.md, etc.
+└── .cursor/rules/         # Embedded rules library (AI guidance)
 ```
+
+### Generate Source Code
+
+Projects start plan-first. Run this when you're ready to build:
+
+```
+go run scripts/boilerplate/main.go --project .
+```
+
+The `/build` command references the same script when it detects the project still needs code scaffolding.
 
 ## 🤖 AI Agent System
 
@@ -179,9 +194,9 @@ Each agent file (`.cursor/agents/{name}.md`) contains:
    - Sets `locked: true` in active_state.json
    - Prepares for task generation
 
-7. **`/tasks`** - Generate TASKS.md
-   - Creates implementation tasks from approved plan
-   - Organized by phases
+7. **`/plan`** - Generate execution plan + TASKS.md
+   - Synthesizes implementation tasks from the approved plan
+   - Scaffolds phase + feature folders for execution
 
 8. **`/load`** - Inject context into AI agents
    - Loads rules or files into agent context
@@ -302,12 +317,12 @@ Generates Next.js 15.2.1 + React 19 + TypeScript 5.6.0 boilerplate.
 ## 💻 IDE Support
 
 ### Supported IDEs
-1. **Cursor** - `.cursorrules` file
-2. **Claude Code** - `CLAUDE.md` file
-3. **Antigravity** - `.antigravity/config.md` file
-4. **Windsurf** - `.windsurfrules` file
-5. **Cline** - `.cline/config.md` file
-6. **OpenCode** - `CONTEXT.md` file
+1. **Cursor** - Uses `.cursor/rules/**` library (no root config file)
+2. **Claude Code** - `docs/CLAUDE.md` quick-start guide
+3. **Antigravity** - Uses `.cursor/rules/**`
+4. **Windsurf** - Uses `.cursor/rules/**`
+5. **Cline** - Uses `.cursor/rules/**`
+6. **OpenCode** - Uses `.cursor/rules/**`
 
 ### IDE Config Content
 Each config file should:

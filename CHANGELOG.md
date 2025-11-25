@@ -8,6 +8,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Trust badges + command workflow/catalouge in `README.md` to highlight CI health, downloads, and the end-to-end IDE workflow.
+
+### Changed
+- Synced documentation touchpoints (`README.md`, `Docs/foundation/the-guide.md`, `wiki/Commands.md`, `wiki/Workflow.md`, `wiki/Home.md`) so the new command workflow, `/report`, `/feedback`, `/state`, `/branchci`, and `/github` are consistently described across docs and wiki.
+
+## [1.1.0] - 2025-01-15
+
+### Added
+- **Comprehensive Test Suite**: Major test coverage improvements across all packages
+  - Added tests for `internal/git` package (76.5% coverage): branch operations, repository detection, remote management
+  - Added tests for `internal/progress` package (91.9% coverage): task statistics, report formatting, progress computation
+  - Added tests for `internal/statehistory` package (73.8% coverage): snapshot management, state diffs, restoration
+  - Added tests for `internal/version` package (100% coverage): version retrieval and validation
+  - Added integration tests for `scripts/validate-brainstorm-templates`
+  - All tests run without cache (`-count=1`) to ensure fresh execution
+  - Improved error handling and edge case coverage
+
+### Added
+- **Task Progress Automation**: Automatic task completion with dependency checking
+  - `/finished` command now automatically updates TASKS.md task status and checklist items
+  - Dependency validation blocks task completion if required dependencies are unfinished
+  - Integrated with progress reporting for automatic percentage recalculation
+- **`/plan` Command**: Scaffold structured planning hierarchy with phase folders, feature folders, and contract directories
+  - Automatically parses TASKS.md to create phase folders (e.g., `01-foundation`, `02-core_features`)
+  - Generates feature folders for each task with templates: `design.md`, `plan.md`, `tasks.md`, `prompts.md`, `github.md`
+  - Creates `_contracts/` directory in each phase for shared API/data schemas
+- **Clean Root Enforcement Rules**: Automated documentation organization validation
+  - Enhanced `scripts/check-docs-organization.sh` to validate `Docs/` structure (capital D)
+  - Added `docs-check` job to CI/CD workflow to block non-compliant PRs
+  - Documented clean root policy in PRD, ARCHITECTURE, and contributor guidelines
+  - Enforces that all documentation lives under `Docs/` with canonical subdirectories
 - **GitHub Wiki Documentation**: Complete wiki with 20 comprehensive pages covering installation, usage, workflow, agents, rules, examples, and more
 - **Wiki Pages**: Home, Installation, Quick Start, Commands, FAQ, Troubleshooting, Workflow, Agents, Rules, First Project Tutorial, Contributing, Project Structure, Configuration, API Reference, Examples, Migration Guide, Development, Code of Conduct, Release Notes, and Wiki Maintenance Plan
 

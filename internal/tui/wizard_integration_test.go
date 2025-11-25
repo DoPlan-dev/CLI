@@ -2,7 +2,6 @@ package tui
 
 import (
 	"testing"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -47,16 +46,11 @@ func TestWizardIntegration_EndToEnd(t *testing.T) {
 		t.Errorf("Step 4: state = %v, want %v", model.state, stateGenerating)
 	}
 
-	// Step 5: Wait for generation to complete
-	for i := 0; i < 35; i++ {
-		timeMsg := time.Now()
-		newModel, _ = model.Update(timeMsg)
-		model = newModel.(Model)
-		if model.state == stateSuccess {
-			break
-		}
-	}
-
+	// Step 5: Simulate generation completion by sending generationCompleteMsg
+	// In real usage, this would be sent by the async generation goroutine
+	genCompleteMsg := generationCompleteMsg{err: nil}
+	newModel, _ = model.Update(genCompleteMsg)
+	model = newModel.(Model)
 	if model.state != stateSuccess {
 		t.Errorf("Step 5: state = %v, want %v", model.state, stateSuccess)
 	}
@@ -68,6 +62,9 @@ func TestWizardIntegration_EndToEnd(t *testing.T) {
 	}
 	if request.IDE == "" {
 		t.Error("toProjectRequest() IDE should not be empty")
+	}
+	if len(request.IDEs) == 0 {
+		t.Error("toProjectRequest() should include at least one IDE selection")
 	}
 }
 
@@ -166,4 +163,3 @@ func TestWizardIntegration_ValidationFlow(t *testing.T) {
 		t.Errorf("Valid name: state = %v, want %v", model.state, stateIDESelection)
 	}
 }
-

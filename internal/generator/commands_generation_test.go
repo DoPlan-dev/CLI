@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/doplan/cli/pkg/models"
+	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
 func TestCommandsGenerator_Name(t *testing.T) {
@@ -73,14 +73,14 @@ func TestCommandsGenerator_Generate_FileContent(t *testing.T) {
 	// Verify file content for a specific command
 	commandsDir := filepath.Join(tmpDir, ".cursor", "commands")
 	tellPath := filepath.Join(commandsDir, "tell.md")
-	
+
 	content, err := os.ReadFile(tellPath)
 	if err != nil {
 		t.Fatalf("Failed to read tell.md: %v", err)
 	}
 
 	contentStr := string(content)
-	
+
 	// Check for required sections
 	if !strings.Contains(contentStr, "# /tell") {
 		t.Error("tell.md should contain command title")
@@ -128,7 +128,7 @@ func TestCommandsGenerator_Generate_AllCommandsContent(t *testing.T) {
 			}
 
 			contentStr := string(content)
-			
+
 			// Check for command title
 			expectedTitle := "# /" + cmd.Name
 			if !strings.Contains(contentStr, expectedTitle) {
@@ -164,7 +164,7 @@ func TestCommandsGenerator_Generate_InvalidPath(t *testing.T) {
 	}
 
 	generator := &CommandsGenerator{}
-	
+
 	// Try to generate in a non-existent parent directory
 	invalidPath := filepath.Join("/nonexistent", "path", "test")
 	err := generator.Generate(request, invalidPath)
@@ -224,4 +224,3 @@ func TestGenerateCommands(t *testing.T) {
 		t.Error("GenerateCommands() should create .cursor/commands directory")
 	}
 }
-

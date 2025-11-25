@@ -9,9 +9,10 @@ import (
 
 // ProjectRequest represents a request to create a new project
 type ProjectRequest struct {
-	ProjectName string `json:"project_name"`
-	IDE         string `json:"ide"`
-	ProjectType string `json:"project_type"`
+	ProjectName string   `json:"project_name"`
+	IDE         string   `json:"ide,omitempty"`  // Primary IDE (maintained for backward compatibility)
+	IDEs        []string `json:"ides,omitempty"` // All IDEs selected by the user
+	ProjectType string   `json:"project_type"`
 }
 
 // Validate validates the ProjectRequest and returns an error if invalid
@@ -25,9 +26,21 @@ func (r *ProjectRequest) Validate() error {
 		return fmt.Errorf("project name '%s' is invalid: must contain only alphanumeric characters, hyphens, and underscores", r.ProjectName)
 	}
 
-	if r.IDE == "" {
-		return errors.New("IDE is required")
+	// Normalize IDE selections. Maintain backward compatibility with the single IDE field.
+	if len(r.IDEs) == 0 && r.IDE != "" {
+		r.IDEs = []string{r.IDE}
 	}
+	if len(r.IDEs) == 0 {
+		return errors.New("at least one IDE is required")
+	}
+
+	normalizedIDEs, err := normalizeIDEList(r.IDEs)
+	if err != nil {
+		return err
+	}
+	r.IDEs = normalizedIDEs
+	// Always keep the legacy IDE field in sync with the primary selection
+	r.IDE = r.IDEs[0]
 
 	// Set default project type if not specified
 	if r.ProjectType == "" {
@@ -67,12 +80,12 @@ type ProjectState struct {
 
 // Valid phases for project state
 const (
-	PhaseIdea        = "idea"
-	PhaseBrainstorm  = "brainstorm"
-	PhaseWriting     = "writing"
-	PhaseApproved    = "approved"
-	PhaseTasks       = "tasks"
-	PhaseBuilding    = "building"
+	PhaseIdea       = "idea"
+	PhaseBrainstorm = "brainstorm"
+	PhaseWriting    = "writing"
+	PhaseApproved   = "approved"
+	PhaseTasks      = "tasks"
+	PhaseBuilding   = "building"
 )
 
 // Validate validates the ProjectState and returns an error if invalid
@@ -114,7 +127,7 @@ func NewProjectState(phase string) *ProjectState {
 	return &ProjectState{
 		Phase:      phase,
 		ActiveTask: nil,
-		Completed: []int{},
+		Completed:  []int{},
 		Locked:     false,
 	}
 }
@@ -179,13 +192,41 @@ func GetSupportedIDEs() []string {
 
 // IsValidIDE checks if the given IDE name is supported
 func IsValidIDE(ide string) bool {
-	ide = strings.TrimSpace(ide)
-	supported := GetSupportedIDEs()
-	for _, supportedIDE := range supported {
-		if strings.EqualFold(ide, supportedIDE) {
-			return true
-		}
-	}
-	return false
+	_, ok := normalizeIDEName(ide)
+	return ok
 }
 
+// normalizeIDEList cleans, validates, and deduplicates the provided IDE list while
+// preserving the original order of selections.
+func normalizeIDEList(ides []string) ([]string, error) {
+	var normalized []string
+	seen := make(map[string]bool)
+	for _, ide := range ides {
+		canonical, ok := normalizeIDEName(ide)
+		if !ok {
+			return nil, fmt.Errorf("unsupported IDE: %s (supported: %v)", ide, GetSupportedIDEs())
+		}
+		if !seen[canonical] {
+			normalized = append(normalized, canonical)
+			seen[canonical] = true
+		}
+	}
+	if len(normalized) == 0 {
+		return nil, errors.New("at least one IDE is required")
+	}
+	return normalized, nil
+}
+
+// normalizeIDEName trims the input and returns the canonical supported IDE name if valid.
+func normalizeIDEName(ide string) (string, bool) {
+	trimmed := strings.TrimSpace(ide)
+	if trimmed == "" {
+		return "", false
+	}
+	for _, supported := range GetSupportedIDEs() {
+		if strings.EqualFold(trimmed, supported) {
+			return supported, true
+		}
+	}
+	return "", false
+}

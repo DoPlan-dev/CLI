@@ -126,6 +126,10 @@ Create here (root of docs/):
    - Use descriptive names: `RELEASE_NOTES_v1.0.0.md`
    - Use kebab-case for guides: `user-guide.md`, `api-reference.md`
 6. **Never create `.md` files in root** (except README.md and CHANGELOG.md)
+   - **Enforcement**: Run `./scripts/check-docs-organization.sh` before committing
+   - **CI/CD**: Automated checks will block PRs with root-level `.md` files
+   - **For Generated Projects**: All docs must live under `Docs/` (capital D) with canonical structure
+   - **Rule Reference**: `.cursor/rules/library/11-documentation/docs-folder-structure.md`
 
 ### Quick Decision Tree
 

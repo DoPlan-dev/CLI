@@ -1,3 +1,4 @@
+//go:build ignore
 // +build ignore
 
 // This script compresses all rules files in internal/rules/library/ using gzip.
@@ -9,7 +10,7 @@ import (
 	"io/fs"
 	"os"
 
-	"github.com/doplan/cli/internal/rules"
+	"github.com/DoPlan-dev/CLI/internal/rules"
 )
 
 func main() {
@@ -74,4 +75,3 @@ func main() {
 		totalOriginalSize-totalCompressedSize,
 		float64(totalOriginalSize-totalCompressedSize)/1024)
 }
-

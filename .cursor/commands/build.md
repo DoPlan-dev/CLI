@@ -14,11 +14,23 @@ When user types /build or /build <task_id>:
 1. **Determine Task**: 
    - If task_id provided, load that task
    - Otherwise, find next uncompleted task from TASKS.md
-2. **Load Task Context**: Read task details, dependencies, and related code
-3. **Activate Relevant Agents**: Activate agents needed for the task (Frontend Lead, Backend Lead, etc.)
-4. **Start Implementation**: Begin coding the task with full context
-5. **Update State**: Set active_task in .plan/active_state.json
-6. **Response**: "Building task [ID]: [Description]. Focus on this task only."
+2. **Bootstrap Boilerplate (first run only)**:
+   - If source files do not exist yet, run `go run scripts/boilerplate/main.go --project .`
+   - This materializes the appropriate stack (Next.js by default) so the task has code to modify
+   - Skip if the project already contains code for this task/stack
+3. **Check Git Status**: 
+   - Verify working tree is clean (no uncommitted changes)
+   - If dirty, warn user and block until clean
+4. **Create/Checkout Task Branch**: 
+   - Run `go run scripts/branch/main.go --action create --task [ID] --project .`
+   - This creates/checks out branch `task/[ID]` (e.g., `task/5.2`)
+   - Store branch name in `active_branch` field of `.plan/active_state.json`
+5. **Load Task Context**: Read task details, dependencies, and related code
+6. **Activate Relevant Agents**: Activate agents needed for the task (Frontend Lead, Backend Lead, etc.)
+7. **Start Implementation**: Begin coding the task with full context
+8. **Update State**: Set `active_task` and `active_branch` in `.plan/active_state.json`
+9. **Snapshot State**: Immediately log the new state with `go run scripts/statehistory/main.go snapshot --reason "build [ID]" --label build`
+10. **Response**: "Building task [ID]: [Description] on branch [branch_name]. Focus on this task only."
 
 ## Agent Involvement
 - **Engineering Lead**: Coordinates task execution
@@ -30,7 +42,9 @@ When user types /build or /build <task_id>:
 - .plan/active_state.json
 
 ## Files Modified
-- .plan/active_state.json (active_task updated)
+- .plan/active_state.json (active_task and active_branch updated)
+- .plan/history/state-*.json (automatic snapshot for audit/rollback)
+- Git: New branch created/checked out (task/[ID])
 - src/** (code files created/modified)
 
 ## GitHub Automation

@@ -35,8 +35,9 @@ scripts\build.bat
 # Set version explicitly
 VERSION=1.0.0 make build
 
-# Or with Go
-go build -ldflags "-X github.com/doplan/cli/internal/version.Version=1.0.0" -o doplan ./cmd/doplan
+# Or with Go (module path resolved dynamically)
+MODULE_PATH=$(go list -m)
+go build -ldflags "-X ${MODULE_PATH}/internal/version.Version=1.0.0" -o doplan ./cmd/doplan
 ```
 
 ## Distribution
@@ -92,7 +93,8 @@ The npm package automatically downloads the correct binary for your platform.
 Version is set at build time using Go's `-ldflags`:
 
 ```bash
-go build -ldflags "-X github.com/doplan/cli/internal/version.Version=1.0.0" ./cmd/doplan
+MODULE_PATH=$(go list -m)
+go build -ldflags "-X ${MODULE_PATH}/internal/version.Version=1.0.0" ./cmd/doplan
 ```
 
 The version can be checked with:

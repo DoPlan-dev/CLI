@@ -3,9 +3,10 @@ package cli
 import (
 	"fmt"
 	"os"
+	"strings"
 
-	"github.com/doplan/cli/internal/tui"
-	"github.com/doplan/cli/internal/version"
+	"github.com/DoPlan-dev/CLI/internal/tui"
+	"github.com/DoPlan-dev/CLI/internal/version"
 	"github.com/spf13/cobra"
 )
 
@@ -85,7 +86,18 @@ func runWizard() error {
 	// Generation is now handled inside the wizard, so if we get here,
 	// the project was successfully created
 	fmt.Printf("\n✨ Project '%s' created successfully!\n", request.ProjectName)
-	fmt.Printf("Open with: %s ./%s\n", getIDECommand(request.IDE), request.ProjectName)
+	if len(request.IDEs) <= 1 {
+		targetIDE := request.IDE
+		if len(request.IDEs) == 1 {
+			targetIDE = request.IDEs[0]
+		}
+		fmt.Printf("Open with: %s ./%s\n", getIDECommand(targetIDE), request.ProjectName)
+	} else {
+		fmt.Printf("Generated IDE configs for: %s\n", strings.Join(request.IDEs, ", "))
+		for _, ide := range request.IDEs {
+			fmt.Printf("- %s: %s ./%s\n", ide, getIDECommand(ide), request.ProjectName)
+		}
+	}
 	fmt.Printf("Then type /tell to begin\n")
 
 	return nil
@@ -110,4 +122,3 @@ func getIDECommand(ide string) string {
 		return "code"
 	}
 }
-

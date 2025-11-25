@@ -271,14 +271,14 @@ When you're satisfied with the planning documents:
 
 ---
 
-## Step 9: Generate Tasks (`/tasks`)
+## Step 9: Generate Tasks (`/plan`)
 
-### 9.1 Use the `/tasks` Command
+### 9.1 Use the `/plan` Command
 
 Type:
 
 ```
-/tasks
+/plan
 ```
 
 ### 9.2 What Gets Generated
@@ -391,7 +391,7 @@ Continue building and completing tasks:
 2. `/improve` - Brainstorm
 3. `/write` - Generate plans
 4. `/good` - Approve
-5. `/tasks` - Generate tasks
+5. `/plan` - Generate tasks
 6. `/build` - Start coding
 
 ### Pitfall 2: Not Reviewing Documents
@@ -420,7 +420,7 @@ Continue building and completing tasks:
 1. Review documents
 2. Use `/change` if needed
 3. Use `/good` to approve
-4. Then use `/tasks` and `/build`
+4. Then use `/plan` and `/build`
 
 ### Pitfall 5: Not Tracking Progress
 

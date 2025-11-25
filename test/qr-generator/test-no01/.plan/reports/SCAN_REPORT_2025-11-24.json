@@ -1,0 +1,66 @@
+{
+  "file": "SCAN_REPORT_2025-11-24.md",
+  "scan_date": "2025-11-24",
+  "project": "test-no01",
+  "report_type": "Full Project Scan",
+  "summary_hash": "c8273523476a68d90fdc84a60c22560fd42d3fb062909cb555e1016c5a1642f2",
+  "generated_at": "2025-11-24T15:30:27Z",
+  "executive_summary": [
+    "- The project has progressed into **phase4_testing** with the UX Engineer tackling `TASK-053: Improve error messages`. Core API endpoints (`/api/qr`, `/api/analytics`, `/api/health`) plus a full featured marketing/console page are implemented.",
+    "- Back-end services cover input validation, QR generation, in-memory caching, SQLite analytics logging, and per-IP rate limiting. Front-end flows (preview, download actions, analytics dashboard, docs accordion, API playground) provide a polished DX.",
+    "- Quality gates are in place: Vitest unit suites for services/utilities, Playwright e2e coverage of the playground experience, optional integration tests (feature-flagged via `TEST_BASE_URL`), and k6 load scripts. Existing coverage artifacts show **~92% statements** and **~82% branches** across the server-side code.",
+    "- Key risks: SQLite writes target `process.cwd()/data`, which is incompatible with read-only serverless runtimes; the Go code snippet emitted by `APIPlayground` is syntactically invalid; the health/analytics status lights remain **down** for empty datasets because `averageResponseTime` defaults to 0. Addressing these gaps plus wiring CI to run tests would stabilize the path to release.",
+    "---"
+  ],
+  "findings": [
+    "- `src/lib/db/database.ts` writes to `process.cwd()/data/qr-generator.db` using better-sqlite3. Serverless targets (Vercel, Netlify) provide read-only deployment filesystems, so writes will fail after build → `/api/*` endpoints crash.",
+    "- *Recommendation*: Swap to a hosted data store (e.g., Vercel Postgres/Blob, Turso, Supabase) or move analytics to an external service. If SQLite must remain, mount it via Neon/Turso or gate analytics to dev-only mode.",
+    "- `src/components/APIPlayground.tsx`: `generateCodeSnippet(\"go\")` injects raw JSON into `requestBody := ...` and then marshals it again, producing Go code that will not compile (JSON literal is not valid Go map/struct, and `json.Marshal` runs on an untyped literal).",
+    "- *Recommendation*: Emit idiomatic Go (define `payload := map[string]interface{}{...}` and marshal that) or stringify JSON into a `[]byte` literal before posting.",
+    "- `calculateAPIStatus` in `analytics-service.ts` returns `\"down\"` when `averageResponseTime === 0`, which is true before the first successful generation. `AnalyticsDisplay` therefore renders a red “down” badge on fresh deployments even though the API is healthy.",
+    "- *Recommendation*: Track a boolean flag for “has data” and default to `operational` (or `unknown`) when the DB is empty.",
+    "- Cache and rate-limit stores live in memory; on multi-instance or serverless cold starts, limits are not shared, and cache misses spike.",
+    "- *Recommendation*: Parameterize adapters so production can plug Redis/Upstash while dev keeps in-memory defaults.",
+    "- `src/app/api/health/route.ts` opens SQLite and never releases it, so repeated probes may hold needless file descriptors. While better-sqlite3 reuses the singleton, there is no circuit-breaker for DB corruption.",
+    "- *Recommendation*: Wrap health checks in try/catch that calls `closeDatabase()` on failures and returns actionable messages.",
+    "---"
+  ],
+  "next_actions": [
+    "- Migrate analytics storage to a deployment-friendly store or guard writes behind a feature flag configurable per environment.",
+    "- Fix the Go snippet generator and add snapshot tests to `tests/unit/components` (or a lightweight function-level test) to prevent regressions for other languages.",
+    "- Update `analyticsService.calculateAPIStatus` + `AnalyticsDisplay` to treat “no data yet” as a neutral/operational state; seed analytics during smoke tests.",
+    "- Add a coverage reporter that emits line stats and wire Vitest + Playwright to CI so scan reports can quote up-to-date results.",
+    "- Consider persisting rate-limit + cache state in Redis/Upstash (configurable via env) before launch to avoid bypassing protections under load.",
+    "---"
+  ],
+  "recent_feedback": [
+    {
+      "timestamp": "2025-11-24T13:43:51Z",
+      "type": "bug",
+      "title": "Sample feedback",
+      "details": "Example entry",
+      "author": "QA"
+    },
+    {
+      "timestamp": "2025-11-24T13:51:28Z",
+      "type": "bug",
+      "title": "Sample feedback",
+      "details": "Example entry",
+      "author": "QA"
+    },
+    {
+      "timestamp": "2025-11-24T13:53:06Z",
+      "type": "bug",
+      "title": "Sample feedback",
+      "details": "Example entry",
+      "author": "QA"
+    },
+    {
+      "timestamp": "2025-11-24T13:54:21Z",
+      "type": "bug",
+      "title": "Sample feedback",
+      "details": "Example entry",
+      "author": "QA"
+    }
+  ]
+}

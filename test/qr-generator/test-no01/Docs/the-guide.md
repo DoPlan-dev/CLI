@@ -132,13 +132,13 @@ This guide provides comprehensive documentation on using DoPlan CLI commands and
 
 ### Implementation Phase Commands
 
-#### `/tasks` - Generate Implementation Tasks
+#### `/plan` - Generate Implementation Tasks
 
 **Purpose:** Creates detailed, actionable implementation tasks from the approved plan
 
 **Usage:**
 ```
-/tasks
+/plan
 ```
 
 **What it generates:**
@@ -379,7 +379,7 @@ This workflow: finish → build next, keeps you moving forward efficiently.
 ### Phase 2: Implementation (2-6 hours)
 
 ```
-7. /tasks                       → Generate implementation tasks
+7. /plan                       → Generate implementation tasks
 8. /build                       → Start first task (or /build <task-number>)
 9. /progress                    → Check completion status
 10. /finished                   → Mark task complete
@@ -621,7 +621,7 @@ Check progress regularly to stay on track.
 - `/good` - Approve plan
 
 ### Implementation Commands
-- `/tasks` - Generate tasks
+- `/plan` - Generate tasks
 - `/build` - Start coding
 - `/progress` - Check status
 - `/finished` - Mark complete

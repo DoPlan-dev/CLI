@@ -13,7 +13,7 @@ This package provides access to the embedded rules library.
 ### Reading Files
 
 ```go
-import "github.com/doplan/cli/internal/rules"
+import "github.com/DoPlan-dev/CLI/internal/rules"
 
 // Read a file (with automatic decompression if needed)
 data, err := rules.ReadFileDecompressed("03-languages/go.md")
