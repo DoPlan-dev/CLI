@@ -193,4 +193,3 @@ func TestRollback_WithErrors(t *testing.T) {
 		t.Error("rollback() should remove tracked directories")
 	}
 }
-

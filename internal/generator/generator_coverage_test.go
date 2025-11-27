@@ -250,5 +250,3 @@ func TestOrchestrate_MultipleIDEs(t *testing.T) {
 		t.Error("Orchestrate() should create .cursor/agents for Cursor IDE")
 	}
 }
-
-

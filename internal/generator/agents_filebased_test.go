@@ -21,7 +21,7 @@ func TestLoadAgentsFromFiles(t *testing.T) {
 	if len(agents) < 18 {
 		t.Errorf("LoadAgentsFromFiles() returned %d agents, expected at least 18", len(agents))
 	}
-	
+
 	// Verify we loaded markdown files, not JSON
 	if len(agents) == 0 {
 		t.Fatal("No agents loaded")
@@ -231,4 +231,3 @@ func TestExtractAgents_FileContent(t *testing.T) {
 		t.Errorf("Agent category = %q, want %q", category, "leadership")
 	}
 }
-

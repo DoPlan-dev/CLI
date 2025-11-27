@@ -396,17 +396,17 @@ func TestScaffoldPlanHierarchy(t *testing.T) {
 		}
 	}
 
-		// Verify _contracts directory was created (if implemented)
-		contractsDir := filepath.Join(phase1Dir, "_contracts")
-		if _, err := os.Stat(contractsDir); os.IsNotExist(err) {
-			t.Log("_contracts directory may not be created in all cases")
-		} else {
-			// If it exists, verify README
-			contractsReadme := filepath.Join(contractsDir, "README.md")
-			if _, err := os.Stat(contractsReadme); os.IsNotExist(err) {
-				t.Log("Contracts README may not always be created")
-			}
+	// Verify _contracts directory was created (if implemented)
+	contractsDir := filepath.Join(phase1Dir, "_contracts")
+	if _, err := os.Stat(contractsDir); os.IsNotExist(err) {
+		t.Log("_contracts directory may not be created in all cases")
+	} else {
+		// If it exists, verify README
+		contractsReadme := filepath.Join(contractsDir, "README.md")
+		if _, err := os.Stat(contractsReadme); os.IsNotExist(err) {
+			t.Log("Contracts README may not always be created")
 		}
+	}
 }
 
 func TestScaffoldPlanHierarchy_InvalidTasksFile(t *testing.T) {
@@ -446,4 +446,3 @@ func TestScaffoldPlanHierarchy_NoTasksFile(t *testing.T) {
 		t.Error("ScaffoldPlanHierarchy() should return error for missing TASKS.md")
 	}
 }
-

@@ -369,4 +369,3 @@ func TestDocsGenerator_Generate_ErrorPaths_Coverage(t *testing.T) {
 		os.Chmod(readOnlyDir, 0755) // Restore
 	}
 }
-

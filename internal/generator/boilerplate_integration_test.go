@@ -140,4 +140,3 @@ func TestBoilerplateGenerator_Generate_NonNextJS(t *testing.T) {
 	// Non-NextJS projects may not generate boilerplate
 	_ = err
 }
-

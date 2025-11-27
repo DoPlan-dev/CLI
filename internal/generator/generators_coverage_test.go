@@ -433,4 +433,3 @@ func TestCopyLibraryFolders_ErrorPaths(t *testing.T) {
 		t.Error("copyLibraryFolders() should return error when central path is a file")
 	}
 }
-

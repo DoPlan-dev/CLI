@@ -119,7 +119,7 @@ func verifyRulesGenerated(t *testing.T, projectPath string) {
 			t.Errorf("Rules category %s should be generated in central location", category)
 		}
 	}
-	
+
 	// Also verify IDE location is accessible (symlink or copy)
 	ideRulesDir := filepath.Join(projectPath, ".cursor", "rules", "library")
 	if _, err := os.Stat(ideRulesDir); os.IsNotExist(err) {

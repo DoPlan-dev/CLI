@@ -142,4 +142,3 @@ func TestCopyLibraryFolders_WithNestedFiles(t *testing.T) {
 		t.Error("copyLibraryFolders() should copy nested files")
 	}
 }
-

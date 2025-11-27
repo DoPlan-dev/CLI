@@ -16,32 +16,32 @@ import (
 // Returns metadata map and markdown content
 func parseMarkdownWithFrontmatter(data []byte) (map[string]interface{}, string, error) {
 	content := string(data)
-	
+
 	// Match YAML frontmatter: ---\n...\n---
 	frontmatterRegex := regexp.MustCompile(`^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$`)
 	matches := frontmatterRegex.FindStringSubmatch(content)
-	
+
 	if len(matches) != 3 {
 		return nil, "", fmt.Errorf("invalid markdown frontmatter format")
 	}
-	
+
 	yamlContent := matches[1]
 	markdownContent := matches[2]
-	
+
 	// Simple YAML parser for our specific use case
 	// We'll parse the frontmatter manually since we know the structure
 	metadata := make(map[string]interface{})
-	
+
 	lines := strings.Split(yamlContent, "\n")
 	var currentKey string
 	var currentList []string
-	
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
 		}
-		
+
 		// Handle list items
 		if strings.HasPrefix(line, "- ") {
 			if currentKey != "" {
@@ -50,24 +50,24 @@ func parseMarkdownWithFrontmatter(data []byte) (map[string]interface{}, string, 
 			}
 			continue
 		}
-		
+
 		// Flush current list if any
 		if currentList != nil && currentKey != "" {
 			metadata[currentKey] = currentList
 			currentList = nil
 		}
-		
+
 		// Handle key-value pairs
 		if idx := strings.Index(line, ":"); idx > 0 {
 			currentKey = strings.TrimSpace(line[:idx])
 			value := strings.TrimSpace(line[idx+1:])
-			
+
 			// Remove quotes if present
 			if (strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`)) ||
 				(strings.HasPrefix(value, `'`) && strings.HasSuffix(value, `'`)) {
 				value = value[1 : len(value)-1]
 			}
-			
+
 			if value == "[]" || value == "" {
 				currentList = []string{}
 				metadata[currentKey] = currentList
@@ -77,12 +77,12 @@ func parseMarkdownWithFrontmatter(data []byte) (map[string]interface{}, string, 
 			}
 		}
 	}
-	
+
 	// Flush any remaining list
 	if currentList != nil && currentKey != "" {
 		metadata[currentKey] = currentList
 	}
-	
+
 	return metadata, markdownContent, nil
 }
 
@@ -309,4 +309,3 @@ func LoadAgentsFromDirectory(dir string) ([]Agent, error) {
 
 	return agents, nil
 }
-

@@ -191,4 +191,3 @@ func contains(slice []byte, subslice []byte) bool {
 	}
 	return false
 }
-

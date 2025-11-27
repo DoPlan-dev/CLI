@@ -281,5 +281,3 @@ func TestGenerateNextJSBoilerplate_AllFiles(t *testing.T) {
 		}
 	}
 }
-
-

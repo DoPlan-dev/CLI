@@ -395,7 +395,7 @@ func generateBrainstormTemplates(coreDir string, request *models.ProjectRequest)
 
 	// Try to load templates from embedded files first
 	templates := make(map[string]string)
-	
+
 	// Load phase templates
 	phases := map[string]string{
 		"phase-01.md": "01",

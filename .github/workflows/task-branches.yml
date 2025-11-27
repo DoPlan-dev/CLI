@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'task/*'
-  workflow_dispatch:{}
+  workflow_dispatch:
 
 jobs:
   task:

@@ -14,28 +14,28 @@ import (
 // parseCommandMarkdown parses a command markdown file with YAML frontmatter
 func parseCommandMarkdown(data []byte) (*Command, error) {
 	contentStr := string(data)
-	
+
 	// Split frontmatter and content
 	parts := strings.SplitN(contentStr, "---\n", 3)
 	if len(parts) < 3 {
 		return nil, fmt.Errorf("invalid markdown frontmatter format")
 	}
-	
+
 	frontmatter := parts[1]
 	markdownContent := parts[2]
-	
+
 	// Parse frontmatter (simple YAML parser for our use case)
 	metadata := make(map[string]interface{})
 	lines := strings.Split(frontmatter, "\n")
 	var currentKey string
 	var currentList []string
-	
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
 		}
-		
+
 		// Handle list items
 		if strings.HasPrefix(line, "- ") {
 			if currentKey != "" {
@@ -44,24 +44,24 @@ func parseCommandMarkdown(data []byte) (*Command, error) {
 			}
 			continue
 		}
-		
+
 		// Flush current list if any
 		if currentList != nil && currentKey != "" {
 			metadata[currentKey] = currentList
 			currentList = nil
 		}
-		
+
 		// Handle key-value pairs
 		if idx := strings.Index(line, ":"); idx > 0 {
 			currentKey = strings.TrimSpace(line[:idx])
 			value := strings.TrimSpace(line[idx+1:])
-			
+
 			// Remove quotes if present
 			if (strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`)) ||
 				(strings.HasPrefix(value, `'`) && strings.HasSuffix(value, `'`)) {
 				value = value[1 : len(value)-1]
 			}
-			
+
 			if value == "[]" || value == "" {
 				currentList = []string{}
 				metadata[currentKey] = currentList
@@ -71,15 +71,15 @@ func parseCommandMarkdown(data []byte) (*Command, error) {
 			}
 		}
 	}
-	
+
 	// Flush any remaining list
 	if currentList != nil && currentKey != "" {
 		metadata[currentKey] = currentList
 	}
-	
+
 	// Extract Action from markdown (everything after frontmatter)
 	action := strings.TrimSpace(markdownContent)
-	
+
 	// Build Command struct
 	cmd := &Command{
 		Name:        getString(metadata, "name"),
@@ -88,7 +88,7 @@ func parseCommandMarkdown(data []byte) (*Command, error) {
 		Description: getString(metadata, "description"),
 		Action:      action,
 	}
-	
+
 	// Parse optional fields
 	if agentInvolvement, ok := metadata["agentInvolvement"].([]string); ok {
 		cmd.AgentInvolvement = agentInvolvement
@@ -102,7 +102,7 @@ func parseCommandMarkdown(data []byte) (*Command, error) {
 	if examples, ok := metadata["examples"].([]string); ok {
 		cmd.Examples = examples
 	}
-	
+
 	// Optional string fields
 	cmd.GitHubAutomation = getString(metadata, "githubAutomation")
 	cmd.Requirements = getString(metadata, "requirements")
@@ -110,7 +110,7 @@ func parseCommandMarkdown(data []byte) (*Command, error) {
 	cmd.Customize = getString(metadata, "customize")
 	cmd.Options = getString(metadata, "options")
 	cmd.OfflineSafety = getString(metadata, "offlineSafety")
-	
+
 	return cmd, nil
 }
 
@@ -256,4 +256,3 @@ func GetAllCommandsFileBased() ([]Command, error) {
 
 	return commands, nil
 }
-

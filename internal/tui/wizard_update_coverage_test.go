@@ -11,46 +11,46 @@ import (
 // TestUpdate_AllMessageTypes tests Update with all message types to increase coverage
 func TestUpdate_AllMessageTypes(t *testing.T) {
 	tests := []struct {
-		name      string
+		name         string
 		initialState wizardState
-		msg        tea.Msg
-		expectState wizardState
-		setupModel func(*Model)
+		msg          tea.Msg
+		expectState  wizardState
+		setupModel   func(*Model)
 	}{
 		{
-			name:        "WindowSizeMsg updates width",
+			name:         "WindowSizeMsg updates width",
 			initialState: stateWelcome,
-			msg:         tea.WindowSizeMsg{Width: 100, Height: 30},
+			msg:          tea.WindowSizeMsg{Width: 100, Height: 30},
 			setupModel: func(m *Model) {
 				m.width = 80
 			},
 		},
 		{
-			name:        "Time message increments spinner in generating state",
+			name:         "Time message increments spinner in generating state",
 			initialState: stateGenerating,
-			msg:         time.Now(),
+			msg:          time.Now(),
 			setupModel: func(m *Model) {
 				m.spinnerFrame = 0
 			},
 		},
 		{
-			name:        "Time message ignored in non-generating state",
+			name:         "Time message ignored in non-generating state",
 			initialState: stateWelcome,
-			msg:         time.Now(),
+			msg:          time.Now(),
 			setupModel: func(m *Model) {
 				m.spinnerFrame = 0
 			},
 		},
 		{
-			name:        "Enter on welcome transitions to project name",
+			name:         "Enter on welcome transitions to project name",
 			initialState: stateWelcome,
-			msg:         tea.KeyMsg{Type: tea.KeyEnter},
-			expectState: stateProjectName,
+			msg:          tea.KeyMsg{Type: tea.KeyEnter},
+			expectState:  stateProjectName,
 		},
 		{
-			name:        "Enter on project name with valid name proceeds",
+			name:         "Enter on project name with valid name proceeds",
 			initialState: stateProjectName,
-			msg:         tea.KeyMsg{Type: tea.KeyEnter},
+			msg:          tea.KeyMsg{Type: tea.KeyEnter},
 			setupModel: func(m *Model) {
 				m.textInput.SetValue("valid-project")
 				m.textInput.Focus()
@@ -58,9 +58,9 @@ func TestUpdate_AllMessageTypes(t *testing.T) {
 			expectState: stateIDESelection,
 		},
 		{
-			name:        "Enter on project name with invalid name stays",
+			name:         "Enter on project name with invalid name stays",
 			initialState: stateProjectName,
-			msg:         tea.KeyMsg{Type: tea.KeyEnter},
+			msg:          tea.KeyMsg{Type: tea.KeyEnter},
 			setupModel: func(m *Model) {
 				m.textInput.SetValue("invalid@project")
 				m.textInput.Focus()
@@ -68,9 +68,9 @@ func TestUpdate_AllMessageTypes(t *testing.T) {
 			expectState: stateProjectName, // Should stay
 		},
 		{
-			name:        "Enter on IDE selection with selection proceeds",
+			name:         "Enter on IDE selection with selection proceeds",
 			initialState: stateIDESelection,
-			msg:         tea.KeyMsg{Type: tea.KeyEnter},
+			msg:          tea.KeyMsg{Type: tea.KeyEnter},
 			setupModel: func(m *Model) {
 				m.selectedIDEs = make(map[string]bool)
 				ideInfo := getIDEInfo()
@@ -81,9 +81,9 @@ func TestUpdate_AllMessageTypes(t *testing.T) {
 			expectState: stateGenerating,
 		},
 		{
-			name:        "Enter on IDE selection without selection shows error",
+			name:         "Enter on IDE selection without selection shows error",
 			initialState: stateIDESelection,
-			msg:         tea.KeyMsg{Type: tea.KeyEnter},
+			msg:          tea.KeyMsg{Type: tea.KeyEnter},
 			setupModel: func(m *Model) {
 				m.selectedIDEs = make(map[string]bool) // Empty
 			},
@@ -264,10 +264,10 @@ func TestStartGenerationAsync_ValidationError(t *testing.T) {
 // TestToProjectRequest_AllCases tests toProjectRequest with various selections
 func TestToProjectRequest_AllCases(t *testing.T) {
 	tests := []struct {
-		name         string
-		setupModel   func(*Model)
-		expectIDEs   int
-		expectName   string
+		name       string
+		setupModel func(*Model)
+		expectIDEs int
+		expectName string
 	}{
 		{
 			name: "With selected IDEs",
@@ -348,5 +348,3 @@ func TestRenderASCIIHeader_EdgeCases(t *testing.T) {
 		t.Errorf("renderASCIIHeader() should have multiple lines, got %d", len(lines))
 	}
 }
-
-

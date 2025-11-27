@@ -56,12 +56,12 @@ func TestInit_GeneratingState(t *testing.T) {
 // TestUpdate_AllKeyMessages tests Update function edge cases to increase 65% -> 95%+
 func TestUpdate_AllKeyMessages(t *testing.T) {
 	tests := []struct {
-		name           string
-		initialState   wizardState
-		key            string
-		expectState    wizardState
-		expectQuit     bool
-		setupModel     func(*Model)
+		name         string
+		initialState wizardState
+		key          string
+		expectState  wizardState
+		expectQuit   bool
+		setupModel   func(*Model)
 	}{
 		{
 			name:         "Quit with ctrl+c",
@@ -229,10 +229,10 @@ func TestUpdate_TimeMessage(t *testing.T) {
 // TestUpdate_GenerationCompleteMsg tests Update with generation complete messages
 func TestUpdate_GenerationCompleteMsg(t *testing.T) {
 	tests := []struct {
-		name         string
-		err          error
-		expectState  wizardState
-		expectError  bool
+		name        string
+		err         error
+		expectState wizardState
+		expectError bool
 	}{
 		{
 			name:        "Success - no error",
@@ -398,7 +398,7 @@ func TestValidateProjectName_EdgeCases(t *testing.T) {
 		{"Short name (valid per rules)", "ab", true}, // IsValidProjectName doesn't check length
 		{"Invalid characters", "my@project", false},
 		{"Starts with number (valid per rules)", "123project", true}, // IsValidProjectName allows numbers at start
-		{"Only numbers (valid per rules)", "12345", true}, // IsValidProjectName allows all numbers
+		{"Only numbers (valid per rules)", "12345", true},            // IsValidProjectName allows all numbers
 		{"Valid with dash", "my-project-name", true},
 		{"Invalid with space", "my project", false},
 		{"Invalid with special chars", "my.project", false},
@@ -423,4 +423,3 @@ type testError struct {
 func (e *testError) Error() string {
 	return e.message
 }
-

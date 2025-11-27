@@ -45,19 +45,19 @@ func TestCommandsGenerator_Generate(t *testing.T) {
 	// Commands are now in category folders, check central location
 	centralCommandsDir := filepath.Join(tmpDir, ".do", "core", "commands")
 	commands := GetAllCommands()
-	
+
 	for _, cmd := range commands {
 		category := cmd.Category
 		if category == "" {
 			category = "other"
 		}
-		
+
 		// Check central location (where files are actually created)
 		centralCommandPath := filepath.Join(centralCommandsDir, category, cmd.Name+".md")
 		if _, err := os.Stat(centralCommandPath); os.IsNotExist(err) {
 			t.Errorf("CommandsGenerator.Generate() should create file %s in central location", cmd.Name+".md")
 		}
-		
+
 		// Check IDE location (symlink or copy)
 		ideCommandPath := filepath.Join(commandsDir, category, cmd.Name+".md")
 		if _, err := os.Stat(ideCommandPath); os.IsNotExist(err) {
@@ -90,7 +90,7 @@ func TestCommandsGenerator_Generate_FileContent(t *testing.T) {
 	centralCommandsDir := filepath.Join(tmpDir, ".do", "core", "commands")
 	// "tell" command is in "core" category
 	tellPath := filepath.Join(centralCommandsDir, "core", "tell.md")
-	
+
 	// If not found in core, try other categories
 	if _, err := os.Stat(tellPath); os.IsNotExist(err) {
 		// Search all categories
@@ -158,7 +158,7 @@ func TestCommandsGenerator_Generate_AllCommandsContent(t *testing.T) {
 			if category == "" {
 				category = "other"
 			}
-			
+
 			// Check central location
 			commandPath := filepath.Join(centralCommandsDir, category, cmd.Name+".md")
 			content, err := os.ReadFile(commandPath)
@@ -299,7 +299,7 @@ func TestCommandsGenerator_Generate_MultipleIDEs(t *testing.T) {
 	if len(commands) == 0 {
 		t.Fatalf("No commands found")
 	}
-	
+
 	// Check central location for first command
 	firstCmd := commands[0]
 	category := firstCmd.Category

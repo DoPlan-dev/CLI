@@ -130,32 +130,32 @@ func TestRenderTopLine_EdgeCases(t *testing.T) {
 // TestRenderBody_EdgeCases tests renderBody edge cases
 func TestRenderBody_EdgeCases(t *testing.T) {
 	tests := []struct {
-		name     string
-		content  string
+		name         string
+		content      string
 		wantNonEmpty bool
 		wantContains string
 	}{
 		{
-			name:     "Empty content",
-			content:  "",
+			name:         "Empty content",
+			content:      "",
 			wantNonEmpty: false,
 			wantContains: "",
 		},
 		{
-			name:     "Single line content",
-			content:  "Hello",
+			name:         "Single line content",
+			content:      "Hello",
 			wantNonEmpty: true,
 			wantContains: "Hello",
 		},
 		{
-			name:     "Multi-line content",
-			content:  "Line 1\nLine 2\nLine 3",
+			name:         "Multi-line content",
+			content:      "Line 1\nLine 2\nLine 3",
 			wantNonEmpty: true,
 			wantContains: "Line 1", // May be styled/wrapped, so just check first line
 		},
 		{
-			name:     "Long content",
-			content:  strings.Repeat("A", 200),
+			name:         "Long content",
+			content:      strings.Repeat("A", 200),
 			wantNonEmpty: true,
 			wantContains: "A", // Just verify it's rendered
 		},
@@ -311,4 +311,3 @@ func TestGetProjectStructureTree_AllCases(t *testing.T) {
 		})
 	}
 }
-

@@ -36,8 +36,11 @@
 
 ### 1. Final Verification
 ```bash
-# Run all tests
-go test ./... -v
+# Run full pre-release checks (tests, coverage, lint, vet)
+make pre-release
+
+# Or use the alias
+make release-check
 
 # Build and test
 make build
@@ -45,6 +48,21 @@ make build
 
 # Verify binary size
 ls -lh doplan
+```
+
+**Note**: The `pre-release` command will:
+- Format code (`make fmt`)
+- Run go vet (`make vet`)
+- Run linter (`make lint`)
+- Run tests with coverage check (`make test-coverage-check`)
+  - Generates `coverage.out` and `coverage.html`
+  - Validates coverage meets minimum threshold (default: 80%)
+  - Fails if coverage is below threshold
+
+**Custom Coverage Threshold**:
+```bash
+# Use a custom coverage threshold (e.g., 85%)
+make pre-release COVERAGE_THRESHOLD=85
 ```
 
 ### 2. Update Version

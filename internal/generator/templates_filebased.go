@@ -205,4 +205,3 @@ func ExtractTemplates(targetDir string) error {
 
 	return nil
 }
-

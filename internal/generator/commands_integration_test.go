@@ -196,4 +196,3 @@ func TestCreateCommandCategorySymlinks_ExistingSymlink(t *testing.T) {
 }
 
 // Helper functions are in agents_integration_test.go
-

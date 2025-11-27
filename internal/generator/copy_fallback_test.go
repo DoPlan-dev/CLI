@@ -221,4 +221,3 @@ func TestCopyCommands_NonExistentCentralDir(t *testing.T) {
 		t.Error("copyCommands() should return error for non-existent central directory")
 	}
 }
-
