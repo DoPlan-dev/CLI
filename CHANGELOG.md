@@ -7,11 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-11-27
+
 ### Added
-- Trust badges + command workflow/catalouge in `README.md` to highlight CI health, downloads, and the end-to-end IDE workflow.
+- **Content Management System**: New `internal/content` package for centralized content management
+  - Organized agent definitions into categorized subdirectories (design, documentation, engineering, leadership, product, quality, release)
+  - Structured command definitions in `internal/content/commands/` with core, optimize, and tools categories
+  - Template system for agents and commands with file-based generation support
+- **Template Reorganization**: Moved all templates from `.plan/templates/` to `internal/content/templates/documents/`
+  - Preserved all 8 template categories (strategy, architecture_design, delivery_execution, quality_testing, operations_support, governance_compliance, business_finance, people_process)
+  - Maintained brainstorm templates with all 6 phases
+- **Documentation Structure**: Reorganized documentation into `docs/` directory (lowercase)
+  - Moved documentation from `Docs/` to `docs/` for consistency
+  - Organized into subdirectories: design, development, features, foundation, history, reference, release, reports
+- **New Command Files**: Added command definitions in `internal/content/commands/`
+  - Core commands: build, hello, meeting, plan, status, tell, write
+  - Tools commands: access, feedback, permissions, security, state
+  - Optimize command placeholder
 
 ### Changed
-- Synced documentation touchpoints (`README.md`, `Docs/foundation/the-guide.md`, `wiki/Commands.md`, `wiki/Workflow.md`, `wiki/Home.md`) so the new command workflow, `/report`, `/feedback`, `/state`, `/branchci`, and `/github` are consistently described across docs and wiki.
+- **Content Generation**: Switched from embedded content to file-based content system
+  - New file-based generators for agents, commands, and templates
+  - Improved maintainability and extensibility of content
+- **Project Structure**: Removed legacy test project (`test/qr-generator/test-no01/`)
+- **Workflow Improvements**: Fixed YAML syntax errors in GitHub Actions workflows
+- **Build System**: Removed legacy `scripts/boilerplate` helper (projects expected to bring their own starter code)
+
+### Fixed
+- Fixed YAML syntax errors in `.github/workflows/task-branches.yml`
+  - Corrected `workflow_dispatch` syntax
+  - Fixed echo command formatting in Publish Image step
 
 ## [1.1.0] - 2025-01-15
 
