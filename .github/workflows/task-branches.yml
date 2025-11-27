@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'task/*'
-  workflow_dispatch:
 
 jobs:
   task:
@@ -51,7 +50,7 @@ jobs:
       - name: Build CLI
         run: go build ./cmd/doplan
       - name: Publish Image
-        run: echo 'TODO: add publish step'
+        run: echo "TODO: add publish step"
 
   summary:
     runs-on: ubuntu-latest
