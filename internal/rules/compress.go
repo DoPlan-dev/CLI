@@ -7,20 +7,39 @@ import (
 	"io"
 )
 
+var readRulesFile = ReadFile
+var bufferFactory = func() compressBuffer {
+	return &bytes.Buffer{}
+}
+
+var gzipWriterFactory = func(w io.Writer) gzipWriter {
+	return gzip.NewWriter(w)
+}
+
+type compressBuffer interface {
+	io.Writer
+	Bytes() []byte
+}
+
+type gzipWriter interface {
+	Write(p []byte) (int, error)
+	Close() error
+}
+
 // CompressData compresses data using gzip
 func CompressData(data []byte) ([]byte, error) {
-	var buf bytes.Buffer
-	writer := gzip.NewWriter(&buf)
-	
+	buf := bufferFactory()
+	writer := gzipWriterFactory(buf)
+
 	if _, err := writer.Write(data); err != nil {
 		writer.Close()
 		return nil, fmt.Errorf("failed to write compressed data: %w", err)
 	}
-	
+
 	if err := writer.Close(); err != nil {
 		return nil, fmt.Errorf("failed to close gzip writer: %w", err)
 	}
-	
+
 	return buf.Bytes(), nil
 }
 
@@ -31,12 +50,12 @@ func DecompressData(compressed []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to create gzip reader: %w", err)
 	}
 	defer reader.Close()
-	
+
 	var buf bytes.Buffer
 	if _, err := io.Copy(&buf, reader); err != nil {
 		return nil, fmt.Errorf("failed to decompress data: %w", err)
 	}
-	
+
 	return buf.Bytes(), nil
 }
 
@@ -48,11 +67,11 @@ func IsCompressed(data []byte) bool {
 
 // ReadFileDecompressed reads a file and decompresses it if needed
 func ReadFileDecompressed(name string) ([]byte, error) {
-	data, err := ReadFile(name)
+	data, err := readRulesFile(name)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// If data is compressed, decompress it
 	if IsCompressed(data) {
 		decompressed, err := DecompressData(data)
@@ -61,8 +80,7 @@ func ReadFileDecompressed(name string) ([]byte, error) {
 		}
 		return decompressed, nil
 	}
-	
+
 	// Data is not compressed, return as-is
 	return data, nil
 }
-

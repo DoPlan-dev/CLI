@@ -165,7 +165,7 @@ func TestFormatMarkdown(t *testing.T) {
 
 func TestCompute(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 	os.MkdirAll(historyDir, 0755)
@@ -225,7 +225,7 @@ func TestCompute_MissingFiles(t *testing.T) {
 
 func TestCompute_EmptyTasks(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 	os.MkdirAll(historyDir, 0755)
@@ -279,4 +279,3 @@ func TestFallback(t *testing.T) {
 		})
 	}
 }
-

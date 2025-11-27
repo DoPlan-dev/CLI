@@ -520,8 +520,9 @@ cd /tmp/test-claude-config
 cd test-project
 ls .cursor/rules  # Verify rules library is present
 
-# Generate boilerplate after planning (simulates the /build flow)
-go run scripts/boilerplate/main.go --project .
+# Generate application code after planning (simulates the /build flow)
+# Use whichever stack generator fits your project; for example:
+npx create-next-app@latest .
 test -f package.json && echo "✅ Boilerplate generated on demand"
 ```
 

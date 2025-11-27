@@ -87,13 +87,7 @@ my-project/
 
 ### Generate Source Code
 
-Projects start plan-first. Run this when you're ready to build:
-
-```
-go run scripts/boilerplate/main.go --project .
-```
-
-The `/build` command references the same script when it detects the project still needs code scaffolding.
+Projects start plan-first. When you're ready to build, scaffold the stack with your preferred tool (for example `npx create-next-app`, `pnpm create`, `go mod init`, etc.). The legacy `scripts/boilerplate` helper has been removed, so `/build` expects you to bring or generate the starter code manually.
 
 ## 🤖 AI Agent System
 

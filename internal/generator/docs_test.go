@@ -35,10 +35,10 @@ func TestDocsGenerator_Generate(t *testing.T) {
 		t.Fatalf("DocsGenerator.Generate() error = %v", err)
 	}
 
-	// Verify README.md was created
-	readmePath := filepath.Join(tmpDir, "README.md")
+	// Verify docs/overview/README.md was created
+	readmePath := filepath.Join(tmpDir, "docs", "overview", "README.md")
 	if _, err := os.Stat(readmePath); os.IsNotExist(err) {
-		t.Error("DocsGenerator.Generate() should create README.md")
+		t.Error("DocsGenerator.Generate() should create docs/overview/README.md")
 	}
 }
 
@@ -62,10 +62,10 @@ func TestDocsGenerator_Generate_FileContent(t *testing.T) {
 	}
 
 	// Verify README.md content
-	readmePath := filepath.Join(tmpDir, "README.md")
+	readmePath := filepath.Join(tmpDir, "docs", "overview", "README.md")
 	content, err := os.ReadFile(readmePath)
 	if err != nil {
-		t.Fatalf("Failed to read README.md: %v", err)
+		t.Fatalf("Failed to read docs/overview/README.md: %v", err)
 	}
 
 	contentStr := string(content)
@@ -104,22 +104,22 @@ func TestGenerateDocumentation(t *testing.T) {
 		t.Fatalf("GenerateDocumentation() error = %v", err)
 	}
 
-	// Verify README.md was created
-	readmePath := filepath.Join(tmpDir, "README.md")
+	// Verify docs/overview/README.md was created
+	readmePath := filepath.Join(tmpDir, "docs", "overview", "README.md")
 	if _, err := os.Stat(readmePath); os.IsNotExist(err) {
-		t.Error("GenerateDocumentation() should create README.md")
+		t.Error("GenerateDocumentation() should create docs/overview/README.md")
 	}
 
 	// Verify STANDUP.md was created in .do/plan/
 	standupPath := filepath.Join(tmpDir, ".do", "plan", "STANDUP.md")
-		if _, err := os.Stat(standupPath); os.IsNotExist(err) {
+	if _, err := os.Stat(standupPath); os.IsNotExist(err) {
 		t.Error("GenerateDocumentation() should create .do/plan/STANDUP.md")
 	}
 
-	// Verify CHANGELOG.md was created in docs/
-	changelogPath := filepath.Join(tmpDir, "docs", "CHANGELOG.md")
+	// Verify CHANGELOG.md was created in docs/history/
+	changelogPath := filepath.Join(tmpDir, "docs", "history", "CHANGELOG.md")
 	if _, err := os.Stat(changelogPath); os.IsNotExist(err) {
-		t.Error("GenerateDocumentation() should create docs/CHANGELOG.md")
+		t.Error("GenerateDocumentation() should create docs/history/CHANGELOG.md")
 	}
 
 	// Verify rules README was created
@@ -146,10 +146,10 @@ func TestGenerateSTANDUP(t *testing.T) {
 		t.Fatalf("generateSTANDUP() error = %v", err)
 	}
 
-	standupPath := filepath.Join(tmpDir, ".plan", "STANDUP.md")
+	standupPath := filepath.Join(tmpDir, ".do", "plan", "STANDUP.md")
 	content, err := os.ReadFile(standupPath)
 	if err != nil {
-		t.Fatalf("Failed to read .plan/STANDUP.md: %v", err)
+		t.Fatalf("Failed to read .do/plan/STANDUP.md: %v", err)
 	}
 
 	contentStr := string(content)
@@ -181,10 +181,10 @@ func TestGenerateCHANGELOG(t *testing.T) {
 		t.Fatalf("generateCHANGELOG() error = %v", err)
 	}
 
-	changelogPath := filepath.Join(tmpDir, "docs", "CHANGELOG.md")
+	changelogPath := filepath.Join(tmpDir, "docs", "history", "CHANGELOG.md")
 	content, err := os.ReadFile(changelogPath)
 	if err != nil {
-		t.Fatalf("Failed to read docs/CHANGELOG.md: %v", err)
+		t.Fatalf("Failed to read docs/history/CHANGELOG.md: %v", err)
 	}
 
 	contentStr := string(content)

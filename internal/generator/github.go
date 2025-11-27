@@ -240,9 +240,9 @@ jobs:
       - name: Generate release notes
         id: release_notes
         run: |
-          if [ -f docs/CHANGELOG.md ]; then
-            # Extract release notes from docs/CHANGELOG.md
-            awk '/^## \[v'"${{ steps.version.outputs.version }}"'\]/,/^## \[/' docs/CHANGELOG.md | head -n -1 > release_notes.txt || echo "Release v${{ steps.version.outputs.version }}" > release_notes.txt
+          if [ -f docs/history/CHANGELOG.md ]; then
+            # Extract release notes from docs/history/CHANGELOG.md
+            awk '/^## \[v'"${{ steps.version.outputs.version }}"'\]/,/^## \[/' docs/history/CHANGELOG.md | head -n -1 > release_notes.txt || echo "Release v${{ steps.version.outputs.version }}" > release_notes.txt
           else
             echo "Release v${{ steps.version.outputs.version }}" > release_notes.txt
           fi
@@ -270,7 +270,7 @@ func generateChangelogWorkflow(workflowsDir string, request *models.ProjectReque
 on:
   push:
     paths:
-      - 'docs/CHANGELOG.md'
+      - 'docs/history/CHANGELOG.md'
     branches:
       - main
 
@@ -291,7 +291,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet docs/CHANGELOG.md; then
+          if git diff --quiet docs/history/CHANGELOG.md; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -300,8 +300,8 @@ jobs:
       - name: Commit changes
         if: steps.changes.outputs.changed == 'true'
         run: |
-          git add docs/CHANGELOG.md
-          git commit -m "chore: update docs/CHANGELOG.md [skip ci]"
+          git add docs/history/CHANGELOG.md
+          git commit -m "chore: update docs/history/CHANGELOG.md [skip ci]"
           git push
 `
 	path := filepath.Join(workflowsDir, "changelog.yml")

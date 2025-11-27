@@ -54,7 +54,7 @@ func WriteFile(path string, data []byte) error {
 
 	// Write atomically: create temp file, write data, rename
 	tempFile := sanitized + ".tmp"
-	
+
 	// Remove temp file if it exists (cleanup from previous failed write)
 	_ = os.Remove(tempFile)
 
@@ -178,16 +178,16 @@ func CheckPermissions(path string) error {
 func checkWritePermissions(dirPath string) error {
 	// Try to create a test file
 	testFile := filepath.Join(dirPath, ".doplan_test_write")
-	
+
 	// Remove test file if it exists
 	_ = os.Remove(testFile)
 
 	// Try to create the test file
 	file, err := os.Create(testFile)
 	if err != nil {
-		return fmt.Errorf("insufficient permissions to write to %s: %w", dirPath, err)
+		return fmt.Errorf("insufficient permissions to write to %s: %w. Hint: run `npx --yes @doplan-dev/cli goplan access all` (or target `.do/system` / `docs`) from your project root, then try again.", dirPath, err)
 	}
-	
+
 	// Clean up
 	file.Close()
 	_ = os.Remove(testFile)
@@ -219,3 +219,78 @@ func IsFile(path string) bool {
 	return !info.IsDir()
 }
 
+// CreateSymlink creates a symbolic link from linkPath to targetPath.
+// On Windows, this may require administrator privileges.
+// Returns an error if the symlink cannot be created.
+func CreateSymlink(linkPath, targetPath string) error {
+	// Ensure parent directory exists
+	parentDir := filepath.Dir(linkPath)
+	if err := CreateDirectory(parentDir); err != nil {
+		return fmt.Errorf("failed to create parent directory for symlink: %w", err)
+	}
+
+	// Remove existing link/file if it exists
+	if PathExists(linkPath) {
+		if err := os.Remove(linkPath); err != nil {
+			return fmt.Errorf("failed to remove existing path before creating symlink: %w", err)
+		}
+	}
+
+	// Calculate relative path for better portability
+	relTarget, err := filepath.Rel(filepath.Dir(linkPath), targetPath)
+	if err != nil {
+		// If relative path calculation fails, use absolute path
+		relTarget = targetPath
+	}
+
+	// Create the symlink
+	if err := os.Symlink(relTarget, linkPath); err != nil {
+		return fmt.Errorf("failed to create symlink from %s to %s: %w", linkPath, relTarget, err)
+	}
+
+	return nil
+}
+
+// IsSymlink checks if a path is a symbolic link
+func IsSymlink(path string) bool {
+	info, err := os.Lstat(path)
+	if err != nil {
+		return false
+	}
+	return info.Mode()&os.ModeSymlink != 0
+}
+
+// CopyDirectory recursively copies a directory from src to dst
+func CopyDirectory(src, dst string) error {
+	// Create destination directory
+	if err := CreateDirectory(dst); err != nil {
+		return fmt.Errorf("failed to create destination directory: %w", err)
+	}
+
+	// Walk source directory
+	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Calculate relative path
+		relPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+
+		dstPath := filepath.Join(dst, relPath)
+
+		if info.IsDir() {
+			return CreateDirectory(dstPath)
+		}
+
+		// Read and copy file
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		return WriteFile(dstPath, data)
+	})
+}

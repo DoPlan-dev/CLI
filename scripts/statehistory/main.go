@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,41 +13,47 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		usage()
-		os.Exit(1)
+	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))
+}
+
+func run(args []string, stdout, stderr io.Writer) int {
+	if len(args) == 0 {
+		usage(stdout)
+		return 1
 	}
 
-	cmd := os.Args[1]
+	cmd := args[0]
 	var err error
 	switch cmd {
 	case "snapshot":
-		err = runSnapshot(os.Args[2:])
+		err = runSnapshot(args[1:], stdout)
 	case "list":
-		err = runList(os.Args[2:])
+		err = runList(args[1:], stdout)
 	case "diff":
-		err = runDiff(os.Args[2:])
+		err = runDiff(args[1:], stdout)
 	case "restore":
-		err = runRestore(os.Args[2:])
+		err = runRestore(args[1:], stdout)
 	case "help", "-h", "--help":
-		usage()
-		return
+		usage(stdout)
+		return 0
 	default:
-		fmt.Printf("unknown command: %s\n\n", cmd)
-		usage()
-		os.Exit(1)
+		fmt.Fprintf(stderr, "unknown command: %s\n\n", cmd)
+		usage(stdout)
+		return 1
 	}
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
+		fmt.Fprintf(stderr, "error: %v\n", err)
+		return 1
 	}
+	return 0
 }
 
-func runSnapshot(args []string) error {
+func runSnapshot(args []string, stdout io.Writer) error {
 	fs := flag.NewFlagSet("snapshot", flag.ExitOnError)
-	statePath := fs.String("state", ".plan/active_state.json", "Path to active_state.json")
-	historyDir := fs.String("history", ".plan/history", "Directory for history snapshots")
+	fs.SetOutput(io.Discard)
+	statePath := fs.String("state", ".do/system/history/active_state.json", "Path to active_state.json")
+	historyDir := fs.String("history", ".do/system/history", "Directory for history snapshots")
 	reason := fs.String("reason", "", "Reason or trigger for this snapshot")
 	label := fs.String("label", "", "Optional suffix appended to the file name")
 	if err := fs.Parse(args); err != nil {
@@ -57,13 +64,14 @@ func runSnapshot(args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Snapshot saved: %s (%s)\n", snap.Path, snap.ID)
+	fmt.Fprintf(stdout, "Snapshot saved: %s (%s)\n", snap.Path, snap.ID)
 	return nil
 }
 
-func runList(args []string) error {
+func runList(args []string, stdout io.Writer) error {
 	fs := flag.NewFlagSet("list", flag.ExitOnError)
-	historyDir := fs.String("history", ".plan/history", "Directory for history snapshots")
+	fs.SetOutput(io.Discard)
+	historyDir := fs.String("history", ".do/system/history", "Directory for history snapshots")
 	limit := fs.Int("limit", 10, "Maximum entries to display (0 = all)")
 	jsonOut := fs.Bool("json", false, "Emit JSON instead of text")
 	if err := fs.Parse(args); err != nil {
@@ -87,26 +95,27 @@ func runList(args []string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(string(data))
+		fmt.Fprintln(stdout, string(data))
 		return nil
 	}
 
 	if len(snaps) == 0 {
-		fmt.Println("No state snapshots found.")
+		fmt.Fprintln(stdout, "No state snapshots found.")
 		return nil
 	}
 
-	fmt.Printf("Found %d snapshot(s):\n", len(snaps))
+	fmt.Fprintf(stdout, "Found %d snapshot(s):\n", len(snaps))
 	for _, snap := range snaps {
-		fmt.Printf("- %s | %s | reason: %s | file: %s\n",
+		fmt.Fprintf(stdout, "- %s | %s | reason: %s | file: %s\n",
 			snap.ID, snap.CapturedAt.Format(timeFmt()), valueOrDefault(snap.Reason, "(none)"), filepath.Base(snap.Path))
 	}
 	return nil
 }
 
-func runDiff(args []string) error {
+func runDiff(args []string, stdout io.Writer) error {
 	fs := flag.NewFlagSet("diff", flag.ExitOnError)
-	historyDir := fs.String("history", ".plan/history", "Directory for history snapshots")
+	fs.SetOutput(io.Discard)
+	historyDir := fs.String("history", ".do/system/history", "Directory for history snapshots")
 	fromID := fs.String("from", "", "Older snapshot ID or file")
 	toID := fs.String("to", "", "Newer snapshot ID or file (defaults to latest)")
 	jsonOut := fs.Bool("json", false, "Emit JSON instead of Markdown summary")
@@ -165,18 +174,19 @@ func runDiff(args []string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(string(data))
+		fmt.Fprintln(stdout, string(data))
 		return nil
 	}
 
-	fmt.Println(statehistory.FormatDiff(diff))
+	fmt.Fprintln(stdout, statehistory.FormatDiff(diff))
 	return nil
 }
 
-func runRestore(args []string) error {
+func runRestore(args []string, stdout io.Writer) error {
 	fs := flag.NewFlagSet("restore", flag.ExitOnError)
-	historyDir := fs.String("history", ".plan/history", "Directory for history snapshots")
-	statePath := fs.String("state", ".plan/active_state.json", "Path to active_state.json")
+	fs.SetOutput(io.Discard)
+	historyDir := fs.String("history", ".do/system/history", "Directory for history snapshots")
+	statePath := fs.String("state", ".do/system/history/active_state.json", "Path to active_state.json")
 	fileID := fs.String("file", "", "Snapshot ID or file name to restore")
 	confirm := fs.Bool("yes", false, "Confirm rollback (required)")
 	capture := fs.Bool("snapshot", true, "Capture a new snapshot after restore")
@@ -200,23 +210,23 @@ func runRestore(args []string) error {
 	if err := statehistory.RestoreSnapshot(*statePath, snap); err != nil {
 		return err
 	}
-	fmt.Printf("State restored to snapshot %s (%s).\n", snap.ID, filepath.Base(snap.Path))
+	fmt.Fprintf(stdout, "State restored to snapshot %s (%s).\n", snap.ID, filepath.Base(snap.Path))
 
 	if *capture {
 		_, err = statehistory.SaveSnapshot(*statePath, *historyDir, fmt.Sprintf("Rollback to %s (%s)", snap.ID, *reason), "rollback")
 		if err != nil {
 			return fmt.Errorf("post-restore snapshot failed: %w", err)
 		}
-		fmt.Println("Post-restore snapshot captured.")
+		fmt.Fprintln(stdout, "Post-restore snapshot captured.")
 	}
 	return nil
 }
 
-func usage() {
-	fmt.Println(`Usage: statehistory <command> [options]
+func usage(w io.Writer) {
+	fmt.Fprintln(w, `Usage: statehistory <command> [options]
 
 Commands:
-  snapshot   Capture the current .plan/active_state.json as a history entry
+  snapshot   Capture the current .do/plan/active_state.json as a history entry
   list       Show existing snapshots (latest first)
   diff       Compare two snapshots (default: latest vs previous)
   restore    Restore active_state.json from a snapshot (requires --yes)

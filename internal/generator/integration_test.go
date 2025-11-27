@@ -52,57 +52,61 @@ func TestFullProjectGeneration(t *testing.T) {
 }
 
 func verifyAgentsGenerated(t *testing.T, projectPath string) {
-	agentsDir := filepath.Join(projectPath, ".cursor", "agents")
-	if _, err := os.Stat(agentsDir); os.IsNotExist(err) {
-		t.Error("Agents directory should be created")
+	// Check central location (where files are actually created)
+	centralAgentsDir := filepath.Join(projectPath, ".do", "core", "agents")
+	if _, err := os.Stat(centralAgentsDir); os.IsNotExist(err) {
+		t.Error("Central agents directory should be created")
 		return
 	}
 
 	// Check for some expected agent files (using actual file names from agents.go)
-	expectedAgents := []string{
-		"project_orchestrator.md",
-		"product_manager.md",
-		"engineering_lead.md",
+	// Files are now in category folders
+	expectedAgents := map[string]string{
+		"project_orchestrator.md": "leadership",
+		"product_manager.md":      "product",
+		"engineering_lead.md":     "engineering",
 	}
 
-	for _, agent := range expectedAgents {
-		agentPath := filepath.Join(agentsDir, agent)
+	for agentFile, category := range expectedAgents {
+		agentPath := filepath.Join(centralAgentsDir, category, agentFile)
 		if _, err := os.Stat(agentPath); os.IsNotExist(err) {
-			t.Errorf("Agent file %s should be generated", agent)
+			t.Errorf("Agent file %s should be generated in category %s", agentFile, category)
 		}
 	}
 }
 
 func verifyCommandsGenerated(t *testing.T, projectPath string) {
-	commandsDir := filepath.Join(projectPath, ".cursor", "commands")
-	if _, err := os.Stat(commandsDir); os.IsNotExist(err) {
-		t.Error("Commands directory should be created")
+	// Check central location (where files are actually created)
+	centralCommandsDir := filepath.Join(projectPath, ".do", "core", "commands")
+	if _, err := os.Stat(centralCommandsDir); os.IsNotExist(err) {
+		t.Error("Central commands directory should be created")
 		return
 	}
 
-	// Check for some expected command files
-	expectedCommands := []string{
-		"tell.md",
-		"build.md",
-		"write.md",
+	// Check for some expected command files (now in category folders)
+	expectedCommands := map[string]string{
+		"tell.md":  "core",
+		"build.md": "core",
+		"write.md": "core",
 	}
 
-	for _, cmd := range expectedCommands {
-		cmdPath := filepath.Join(commandsDir, cmd)
+	for cmdFile, category := range expectedCommands {
+		cmdPath := filepath.Join(centralCommandsDir, category, cmdFile)
 		if _, err := os.Stat(cmdPath); os.IsNotExist(err) {
-			t.Errorf("Command file %s should be generated", cmd)
+			t.Errorf("Command file %s should be generated in category %s", cmdFile, category)
 		}
 	}
 }
 
 func verifyRulesGenerated(t *testing.T, projectPath string) {
-	rulesDir := filepath.Join(projectPath, ".cursor", "rules", "library")
-	if _, err := os.Stat(rulesDir); os.IsNotExist(err) {
-		t.Error("Rules library directory should be created")
+	// Check central location (where rules are actually extracted)
+	centralRulesDir := filepath.Join(projectPath, ".do", "core", "library")
+	if _, err := os.Stat(centralRulesDir); os.IsNotExist(err) {
+		t.Error("Central rules library directory should be created")
 		return
 	}
 
-	// Check for category directories
+	// Check for category directories in central location
 	expectedCategories := []string{
 		"01-core-workflow",
 		"03-languages",
@@ -110,24 +114,30 @@ func verifyRulesGenerated(t *testing.T, projectPath string) {
 	}
 
 	for _, category := range expectedCategories {
-		categoryPath := filepath.Join(rulesDir, category)
+		categoryPath := filepath.Join(centralRulesDir, category)
 		if _, err := os.Stat(categoryPath); os.IsNotExist(err) {
-			t.Errorf("Rules category %s should be generated", category)
+			t.Errorf("Rules category %s should be generated in central location", category)
 		}
+	}
+	
+	// Also verify IDE location is accessible (symlink or copy)
+	ideRulesDir := filepath.Join(projectPath, ".cursor", "rules", "library")
+	if _, err := os.Stat(ideRulesDir); os.IsNotExist(err) {
+		t.Error("IDE rules library directory should be created (symlink or copy)")
 	}
 }
 
 func verifyPlanGenerated(t *testing.T, projectPath string) {
-	planDir := filepath.Join(projectPath, ".plan")
+	planDir := filepath.Join(projectPath, ".do")
 	if _, err := os.Stat(planDir); os.IsNotExist(err) {
-		t.Error(".plan directory should be created")
+		t.Error(".do directory should be created")
 		return
 	}
 
 	// Check for system directory
-	systemDir := filepath.Join(planDir, "00_System")
+	systemDir := filepath.Join(planDir, "system")
 	if _, err := os.Stat(systemDir); os.IsNotExist(err) {
-		t.Error(".plan/00_System directory should be created")
+		t.Error(".do/system directory should be created")
 	}
 
 	// Check for required files
@@ -141,8 +151,10 @@ func verifyPlanGenerated(t *testing.T, projectPath string) {
 
 	for _, file := range requiredFiles {
 		var filePath string
-		if file == "TASKS.md" || file == "active_state.json" {
-			filePath = filepath.Join(planDir, file)
+		if file == "TASKS.md" {
+			filePath = filepath.Join(planDir, "plan", file)
+		} else if file == "active_state.json" {
+			filePath = filepath.Join(planDir, "system", "history", file)
 		} else {
 			filePath = filepath.Join(systemDir, file)
 		}
@@ -219,7 +231,7 @@ func TestGeneratorPipelineOrder(t *testing.T) {
 		{"Agents", filepath.Join(projectPath, ".cursor", "agents")},
 		{"Commands", filepath.Join(projectPath, ".cursor", "commands")},
 		{"Rules", filepath.Join(projectPath, ".cursor", "rules", "library")},
-		{"Plan", filepath.Join(projectPath, ".plan")},
+		{"Plan", filepath.Join(projectPath, ".do")},
 		{"GitHub", filepath.Join(projectPath, ".github", "workflows")},
 	}
 
@@ -231,22 +243,22 @@ func TestGeneratorPipelineOrder(t *testing.T) {
 }
 
 func verifyDocumentationGenerated(t *testing.T, projectPath string) {
-	// Check for README.md
-	readmePath := filepath.Join(projectPath, "README.md")
+	// Check for docs/overview/README.md
+	readmePath := filepath.Join(projectPath, "docs", "overview", "README.md")
 	if _, err := os.Stat(readmePath); os.IsNotExist(err) {
-		t.Error("Documentation generator should create README.md")
+		t.Error("Documentation generator should create docs/overview/README.md")
 	}
 
-	// Check for STANDUP.md in .plan/
-	standupPath := filepath.Join(projectPath, ".plan", "STANDUP.md")
+	// Check for STANDUP.md in .do/plan/
+	standupPath := filepath.Join(projectPath, ".do", "plan", "STANDUP.md")
 	if _, err := os.Stat(standupPath); os.IsNotExist(err) {
-		t.Error("Documentation generator should create .plan/STANDUP.md")
+		t.Error("Documentation generator should create .do/plan/STANDUP.md")
 	}
 
-	// Check for CHANGELOG.md in docs/
-	changelogPath := filepath.Join(projectPath, "docs", "CHANGELOG.md")
+	// Check for CHANGELOG.md in docs/history/
+	changelogPath := filepath.Join(projectPath, "docs", "history", "CHANGELOG.md")
 	if _, err := os.Stat(changelogPath); os.IsNotExist(err) {
-		t.Error("Documentation generator should create docs/CHANGELOG.md")
+		t.Error("Documentation generator should create docs/history/CHANGELOG.md")
 	}
 
 	// Check for rules README
@@ -257,9 +269,9 @@ func verifyDocumentationGenerated(t *testing.T, projectPath string) {
 }
 
 func verifyIDEConfigsGenerated(t *testing.T, projectPath string) {
-	// Check for CLAUDE.md under docs/
-	claudePath := filepath.Join(projectPath, "docs", "CLAUDE.md")
-	if _, err := os.Stat(claudePath); os.IsNotExist(err) {
-		t.Error("IDE generator should create docs/CLAUDE.md")
+	// Check for .cursorrules (default IDE config for Cursor)
+	cursorrulesPath := filepath.Join(projectPath, ".cursorrules")
+	if _, err := os.Stat(cursorrulesPath); os.IsNotExist(err) {
+		t.Error("IDE generator should create .cursorrules for Cursor")
 	}
 }

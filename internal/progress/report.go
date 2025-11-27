@@ -35,7 +35,7 @@ type Report struct {
 
 // Compute assembles a progress report for the supplied project root.
 func Compute(root string) (*Report, error) {
-	planDir := filepath.Join(root, ".plan")
+	planDir := filepath.Join(root, ".do")
 	statePath := filepath.Join(planDir, "active_state.json")
 	tasksPath := filepath.Join(planDir, "TASKS.md")
 	historyDir := filepath.Join(planDir, "history")

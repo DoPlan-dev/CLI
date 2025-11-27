@@ -1,0 +1,18 @@
+# {{.Name}}
+
+## Role
+{{.Role}}
+
+## System Prompt
+{{.SystemPrompt}}
+
+## Responsibilities
+{{range .Responsibilities}}- {{.}}
+{{end}}
+## Reports To
+{{if .ReportsTo}}{{.ReportsTo}}{{else}}None (Top Level){{end}}
+
+## Manages
+{{if .Manages}}{{range .Manages}}- {{.}}
+{{end}}{{else}}None{{end}}
+

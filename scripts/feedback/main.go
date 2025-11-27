@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,22 +20,34 @@ type FeedbackEntry struct {
 	GitHubURL string `json:"github_url,omitempty"`
 }
 
+var now = time.Now
+
 func main() {
-	projectPath := flag.String("project", ".", "Path to project root")
-	fbType := flag.String("type", "note", "Feedback type: bug | feature | question | note")
-	title := flag.String("title", "", "Short title / summary")
-	details := flag.String("details", "", "Detailed feedback text")
-	author := flag.String("author", "anonymous", "Author or reporter name")
-	github := flag.String("github", "", "Optional GitHub issue URL")
-	flag.Parse()
+	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))
+}
+
+func run(args []string, stdout, stderr io.Writer) int {
+	fs := flag.NewFlagSet("feedback", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	projectPath := fs.String("project", ".", "Path to project root")
+	fbType := fs.String("type", "note", "Feedback type: bug | feature | question | note")
+	title := fs.String("title", "", "Short title / summary")
+	details := fs.String("details", "", "Detailed feedback text")
+	author := fs.String("author", "anonymous", "Author or reporter name")
+	github := fs.String("github", "", "Optional GitHub issue URL")
+
+	if err := fs.Parse(args); err != nil {
+		fmt.Fprintf(stderr, "failed to parse flags: %v\n", err)
+		return 2
+	}
 
 	if strings.TrimSpace(*title) == "" {
-		fmt.Fprintln(os.Stderr, "--title is required")
-		os.Exit(1)
+		fmt.Fprintln(stderr, "--title is required")
+		return 1
 	}
 
 	entry := FeedbackEntry{
-		Timestamp: time.Now().UTC().Format(time.RFC3339),
+		Timestamp: now().UTC().Format(time.RFC3339),
 		Type:      strings.ToLower(*fbType),
 		Title:     strings.TrimSpace(*title),
 		Details:   strings.TrimSpace(*details),
@@ -44,24 +57,25 @@ func main() {
 
 	historyDir := filepath.Join(*projectPath, "Docs", "history")
 	if err := os.MkdirAll(historyDir, 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to create Docs/history: %v\n", err)
-		os.Exit(1)
+		fmt.Fprintf(stderr, "failed to create Docs/history: %v\n", err)
+		return 1
 	}
 
 	markdownPath := filepath.Join(historyDir, "feedback.md")
 	jsonPath := filepath.Join(historyDir, "feedback.json")
 
 	if err := appendMarkdown(markdownPath, entry); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to append markdown: %v\n", err)
-		os.Exit(1)
+		fmt.Fprintf(stderr, "failed to append markdown: %v\n", err)
+		return 1
 	}
 
 	if err := appendJSON(jsonPath, entry); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to append json: %v\n", err)
-		os.Exit(1)
+		fmt.Fprintf(stderr, "failed to append json: %v\n", err)
+		return 1
 	}
 
-	fmt.Printf("Feedback logged to %s and %s\n", markdownPath, jsonPath)
+	fmt.Fprintf(stdout, "Feedback logged to %s and %s\n", markdownPath, jsonPath)
+	return 0
 }
 
 func appendMarkdown(path string, entry FeedbackEntry) error {

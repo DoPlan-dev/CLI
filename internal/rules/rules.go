@@ -31,4 +31,3 @@ func WalkDir(root string, fn fs.WalkDirFunc) error {
 	}
 	return fs.WalkDir(embeddedRules, path, fn)
 }
-

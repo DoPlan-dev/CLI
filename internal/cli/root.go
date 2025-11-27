@@ -6,9 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/DoPlan-dev/CLI/internal/tui"
 	"github.com/DoPlan-dev/CLI/internal/version"
-	"github.com/spf13/cobra"
 )
 
 const (

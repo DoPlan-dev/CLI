@@ -59,6 +59,6 @@ vendor/
 go.work
 go.work.sum
 
-# Documentation - keep organized in docs/
+# Documentation - keep organized in Docs/
 # Only README.md and CHANGELOG.md should be in root
-# All other .md files should be in docs/ directory
+# All other documentation should be in Docs/ directory with proper subdirectories

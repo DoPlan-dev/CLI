@@ -3,7 +3,8 @@
   "version": "1.1.0",
   "description": "🚀 Zero-install AI Project Director - Bootstrap production-ready projects with a complete hierarchical AI agency system in seconds. Includes 18 AI agents, 1000+ rules library, interactive TUI, and full automation for project structure, CI/CD, and boilerplate.",
   "bin": {
-    "doplan": "bin/doplan.js"
+    "doplan": "bin/doplan.js",
+    "goplan": "bin/goplan.js"
   },
   "scripts": {
     "postinstall": "node scripts/download.js",
@@ -27,7 +28,9 @@
   },
   "files": [
     "bin/doplan.js",
+    "bin/goplan.js",
     "scripts/download.js",
+    "scripts/doplan/access.sh",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"

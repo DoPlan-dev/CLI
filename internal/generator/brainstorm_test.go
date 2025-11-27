@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,7 +12,7 @@ import (
 func TestBrainstormTemplatesExist(t *testing.T) {
 	// Get the project root (assuming we're in internal/generator/)
 	projectRoot := findProjectRoot(t)
-	templatesDir := filepath.Join(projectRoot, ".plan", "templates", "brainstorm")
+	templatesDir := filepath.Join(projectRoot, ".do", "core", "brainstorm")
 
 	requiredTemplates := []string{
 		"phase-01-vision.md",
@@ -38,7 +39,7 @@ func TestBrainstormTemplatesExist(t *testing.T) {
 // TestPhaseTemplatesHaveContent verifies phase templates contain questions
 func TestPhaseTemplatesHaveContent(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatesDir := filepath.Join(projectRoot, ".plan", "templates", "brainstorm")
+	templatesDir := filepath.Join(projectRoot, ".do", "core", "brainstorm")
 
 	phaseTemplates := []string{
 		"phase-01-vision.md",
@@ -80,7 +81,7 @@ func TestPhaseTemplatesHaveContent(t *testing.T) {
 // TestPhaseTemplatesHaveValidFormat verifies phase templates follow expected format
 func TestPhaseTemplatesHaveValidFormat(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatesDir := filepath.Join(projectRoot, ".plan", "templates", "brainstorm")
+	templatesDir := filepath.Join(projectRoot, ".do", "core", "brainstorm")
 
 	phaseTemplates := []string{
 		"phase-01-vision.md",
@@ -126,7 +127,7 @@ func TestPhaseTemplatesHaveValidFormat(t *testing.T) {
 // TestConfirmationTemplateExists verifies confirmation template exists and has proper structure
 func TestConfirmationTemplateExists(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatePath := filepath.Join(projectRoot, ".plan", "templates", "brainstorm", "CONFIRMATION_TEMPLATE.md")
+	templatePath := filepath.Join(projectRoot, ".do", "core", "brainstorm", "CONFIRMATION_TEMPLATE.md")
 
 	content, err := os.ReadFile(templatePath)
 	if err != nil {
@@ -155,7 +156,7 @@ func TestConfirmationTemplateExists(t *testing.T) {
 // TestBrainstormOutputTemplateExists verifies output template exists
 func TestBrainstormOutputTemplateExists(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatePath := filepath.Join(projectRoot, ".plan", "templates", "brainstorm", "TEMPLATE_BRAINSTORM.md")
+	templatePath := filepath.Join(projectRoot, ".do", "core", "brainstorm", "TEMPLATE_BRAINSTORM.md")
 
 	content, err := os.ReadFile(templatePath)
 	if err != nil {
@@ -186,14 +187,10 @@ func TestBrainstormOutputTemplateExists(t *testing.T) {
 // TestPhaseTemplatesAreOrdered verifies phase templates are numbered sequentially
 func TestPhaseTemplatesAreOrdered(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatesDir := filepath.Join(projectRoot, ".plan", "templates", "brainstorm")
+	templatesDir := filepath.Join(projectRoot, ".do", "core", "brainstorm")
 
 	expectedPhases := 6
 	for i := 1; i <= expectedPhases; i++ {
-		phaseNum := i
-		if phaseNum < 10 {
-			phaseNum = phaseNum // Keep as is for 01-06
-		}
 		templateName := filepath.Join(templatesDir, "phase-01-vision.md")
 		if i == 1 {
 			// Check first one exists
@@ -225,7 +222,7 @@ func TestPhaseTemplatesAreOrdered(t *testing.T) {
 // TestTemplateCustomization verifies templates can be read and parsed
 func TestTemplateCustomization(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatesDir := filepath.Join(projectRoot, ".plan", "templates", "brainstorm")
+	templatesDir := filepath.Join(projectRoot, ".do", "core", "brainstorm")
 
 	// Test that we can read and parse a template
 	templatePath := filepath.Join(templatesDir, "phase-01-vision.md")
@@ -258,7 +255,8 @@ func TestTemplateCustomization(t *testing.T) {
 	}
 }
 
-// findProjectRoot finds the project root by looking for .plan directory
+// findProjectRoot finds the project root by looking for .do directory
+// First tries to find an existing project, then falls back to creating a test project
 func findProjectRoot(t *testing.T) string {
 	// Start from current directory and walk up
 	dir, err := os.Getwd()
@@ -266,17 +264,141 @@ func findProjectRoot(t *testing.T) string {
 		t.Fatalf("Failed to get current directory: %v", err)
 	}
 
+	// First, try to find existing project root (for local development)
 	for {
-		planDir := filepath.Join(dir, ".plan")
+		planDir := filepath.Join(dir, ".do")
 		if _, err := os.Stat(planDir); err == nil {
 			return dir
 		}
 
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			// Reached root
-			t.Fatalf("Could not find project root (looking for .plan directory)")
+			break // Reached filesystem root
 		}
 		dir = parent
 	}
+
+	// If not found, create a temporary test project structure
+	return setupTestProject(t)
+}
+
+// setupTestProject creates a temporary project structure with templates for testing
+func setupTestProject(t *testing.T) string {
+	tmpDir, err := os.MkdirTemp("", "doplan-brainstorm-test-*")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+
+	// Create .do/core/brainstorm directory structure
+	coreDir := filepath.Join(tmpDir, ".do", "core")
+	brainstormDir := filepath.Join(coreDir, "brainstorm")
+	if err := os.MkdirAll(brainstormDir, 0755); err != nil {
+		t.Fatalf("Failed to create brainstorm directory: %v", err)
+	}
+
+	// Create minimal phase templates for testing
+	phaseTemplates := []string{
+		"phase-01-vision.md",
+		"phase-02-audience.md",
+		"phase-03-experience.md",
+		"phase-04-content.md",
+		"phase-05-marketing.md",
+		"phase-06-delivery.md",
+	}
+
+	for _, template := range phaseTemplates {
+		content := fmt.Sprintf("# %s\n\n## Questions\n\n- What is your vision for this project?\n- What problem are you solving?\n- Who is your target audience?\n", template)
+		path := filepath.Join(brainstormDir, template)
+		if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+			t.Fatalf("Failed to create template %s: %v", template, err)
+		}
+	}
+
+	// Create CONFIRMATION_TEMPLATE.md
+	confirmationContent := `# Brainstorm Summary
+
+## Phase 01
+[Answer]
+
+## Phase 02
+[Answer]
+
+## Phase 03
+[Answer]
+
+## Phase 04
+[Answer]
+
+## Phase 05
+[Answer]
+
+## Phase 06
+[Answer]
+
+## Review & Confirm
+[Project Name] - [YYYY-MM-DD] - [X minutes]
+
+Looks good, save it
+I want to revise
+Add this:
+Start over
+`
+	confirmationPath := filepath.Join(brainstormDir, "CONFIRMATION_TEMPLATE.md")
+	if err := os.WriteFile(confirmationPath, []byte(confirmationContent), 0644); err != nil {
+		t.Fatalf("Failed to create confirmation template: %v", err)
+	}
+
+	// Create TEMPLATE_BRAINSTORM.md
+	brainstormContent := `# Brainstorm Template
+
+## Project: [Project Name]
+## Date: [YYYY-MM-DD]
+
+## Brainstorm Session
+
+### Phase 01: Vision & Outcomes
+[Content]
+
+### Phase 02: Audience & Differentiation
+[Content]
+
+### Phase 03: Experience, UI/UX & Tech
+[Content]
+
+### Phase 04: Content & SEO
+[Content]
+
+### Phase 05: Marketing & Growth
+[Content]
+
+### Phase 06: Delivery, Ops & Risks
+[Content]
+
+## Key Insights
+[Content]
+
+## Recommended Next Steps
+[Content]
+`
+	brainstormTemplatePath := filepath.Join(brainstormDir, "TEMPLATE_BRAINSTORM.md")
+	if err := os.WriteFile(brainstormTemplatePath, []byte(brainstormContent), 0644); err != nil {
+		t.Fatalf("Failed to create brainstorm template: %v", err)
+	}
+
+	// Create README.md
+	readmeContent := `# Brainstorm Templates
+
+This directory contains templates for the meeting/brainstorm process.
+`
+	readmePath := filepath.Join(brainstormDir, "README.md")
+	if err := os.WriteFile(readmePath, []byte(readmeContent), 0644); err != nil {
+		t.Fatalf("Failed to create README: %v", err)
+	}
+
+	// Cleanup function
+	t.Cleanup(func() {
+		os.RemoveAll(tmpDir)
+	})
+
+	return tmpDir
 }

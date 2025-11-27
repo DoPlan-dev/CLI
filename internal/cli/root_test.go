@@ -84,7 +84,7 @@ func TestDefaultCommand(t *testing.T) {
 
 // Helper function
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || 
+	return len(s) >= len(substr) && (s == substr ||
 		(len(s) > len(substr) && containsSubstring(s, substr)))
 }
 
@@ -135,4 +135,3 @@ func TestConstants(t *testing.T) {
 		t.Errorf("AppName = %q, want %q", AppName, "doplan")
 	}
 }
-

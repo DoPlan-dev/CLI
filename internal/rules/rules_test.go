@@ -154,4 +154,3 @@ func TestEmbeddedRules_AllCategories(t *testing.T) {
 		})
 	}
 }
-

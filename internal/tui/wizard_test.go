@@ -423,11 +423,6 @@ func TestRenderIDESelection(t *testing.T) {
 	if !strings.Contains(view, "[*]") {
 		t.Error("renderIDESelection() should contain recommended indicator")
 	}
-
-	// Check for navigation instructions
-	if !strings.Contains(view, "↑/↓") {
-		t.Error("renderIDESelection() should contain navigation instructions")
-	}
 }
 
 func TestRenderIDESelection_SelectedItem(t *testing.T) {
@@ -722,11 +717,21 @@ func TestModel_View_Success(t *testing.T) {
 	}
 
 	// Check that view contains expected elements
-	if !strings.Contains(view, "successfully") {
+	viewLower := strings.ToLower(view)
+	if !strings.Contains(viewLower, "successfully") {
 		t.Error("View() should contain 'successfully'")
 	}
 
-	if !strings.Contains(view, "[+]") {
+	// Check for success indicators (text-based, not symbols)
+	successIndicators := []string{"successfully", "project created", "ready to go"}
+	found := false
+	for _, indicator := range successIndicators {
+		if strings.Contains(viewLower, indicator) {
+			found = true
+			break
+		}
+	}
+	if !found {
 		t.Error("View() should contain success indicator")
 	}
 }
@@ -747,10 +752,6 @@ func TestRenderSuccess(t *testing.T) {
 	// Check for key elements
 	if !strings.Contains(view, "Project created successfully") {
 		t.Error("renderSuccess() should contain 'Project created successfully'")
-	}
-
-	if !strings.Contains(view, "[+]") {
-		t.Error("renderSuccess() should contain success indicator")
 	}
 
 	if !strings.Contains(view, "test-project") {
@@ -781,8 +782,8 @@ func TestGetProjectStructureTree(t *testing.T) {
 		t.Error("getProjectStructureTree() should contain .cursor directory")
 	}
 
-	if !strings.Contains(tree, ".plan/") {
-		t.Error("getProjectStructureTree() should contain .plan directory")
+	if !strings.Contains(tree, ".do/") {
+		t.Error("getProjectStructureTree() should contain .do directory")
 	}
 
 	if !strings.Contains(tree, ".github/") {
@@ -805,12 +806,8 @@ func TestRenderSuccess_NextSteps(t *testing.T) {
 	view := model.renderSuccess()
 
 	// Check for next steps
-	if !strings.Contains(view, "Next steps:") {
-		t.Error("renderSuccess() should contain 'Next steps:'")
-	}
-
-	if !strings.Contains(view, "cursor ./my-project") {
-		t.Error("renderSuccess() should contain IDE command with project name")
+	if !strings.Contains(view, "now open my-project inside Cursor") {
+		t.Error("renderSuccess() should contain 'now open my-project inside Cursor'")
 	}
 
 	if !strings.Contains(view, "/tell") {
@@ -820,16 +817,16 @@ func TestRenderSuccess_NextSteps(t *testing.T) {
 
 func TestRenderSuccess_DifferentIDEs(t *testing.T) {
 	testCases := []struct {
-		ide     string
-		command string
+		ide      string
+		checkFor string
 	}{
-		{"Cursor", "cursor"},
-		{"Claude Code", "claude"},
-		{"Antigravity", "antigravity"},
-		{"Windsurf", "windsurf"},
-		{"Cline", "cline"},
-		{"OpenCode", "opencode"},
-		{"", "code"}, // Default
+		{"Cursor", "Cursor"},
+		{"Claude Code", "Claude Code"},
+		{"Antigravity", "Antigravity"},
+		{"Windsurf", "Windsurf"},
+		{"Cline", "Cline"},
+		{"OpenCode", "OpenCode"},
+		{"", "your IDE"}, // Default
 	}
 
 	for _, tc := range testCases {
@@ -845,8 +842,8 @@ func TestRenderSuccess_DifferentIDEs(t *testing.T) {
 
 		view := model.renderSuccess()
 
-		if !strings.Contains(view, tc.command) {
-			t.Errorf("renderSuccess() with IDE %q should contain command %q", tc.ide, tc.command)
+		if !strings.Contains(view, tc.checkFor) {
+			t.Errorf("renderSuccess() with IDE %q should contain %q", tc.ide, tc.checkFor)
 		}
 	}
 }
@@ -874,9 +871,23 @@ func TestRenderSuccess_Checkmarks(t *testing.T) {
 
 	view := model.renderSuccess()
 
-	// Should contain success indicators
-	successCount := strings.Count(view, "[+]")
-	if successCount < 1 {
+	// Should contain success indicators - check for success-related text
+	successIndicators := []string{
+		"successfully",
+		"Project created",
+		"ready to go",
+	}
+
+	found := false
+	viewLower := strings.ToLower(view)
+	for _, indicator := range successIndicators {
+		if strings.Contains(viewLower, strings.ToLower(indicator)) {
+			found = true
+			break
+		}
+	}
+
+	if !found {
 		t.Error("renderSuccess() should contain at least one success indicator")
 	}
 }

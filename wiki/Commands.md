@@ -14,6 +14,25 @@ DoPlan CLI uses a slash-command system (`/command`) that activates specific AI a
 
 ---
 
+## Command Workflow Map
+
+| Phase | Commands | Output |
+| --- | --- | --- |
+| Capture & Align | `/tell`, `/improve` | IDEA.md, BRAINSTORM.md |
+| Document & Approve | `/write`, `/change`, `/good` | PRD.md, ARCHITECTURE.md, DESIGN_SYSTEM.md, approved state |
+| Create the Roadmap | `/plan` | TASKS.md with phased breakdown + task metadata |
+| Build Loop | `/state snapshot`, `/build`, `/progress`, `/finished`, `/state snapshot` | Traceable task execution, auto commits, before/after history |
+| Operate & Ship | `/report`, `/feedback`, `/team`, `/load`, `/safe`, `/cheap`, `/ship`, `/github`, `/branchci` | Reports, feedback logs, readiness checklists, CI guardrails, release assets |
+
+Use this table as a quick reference: run the commands left-to-right whenever you start a new project or repeat a task loop.
+
+### Optional Onboarding & Discovery
+
+- **`/hello` (Tutorial)** – Optional first-run experience that captures your profile, explains the agent hierarchy, and creates a quick-reference pack. See [Hello Tutorial](Hello-Tutorial) for the full flow.
+- **`/meeting` (Discovery)** – Adaptive interview that populates BRAINSTORM.md, plans content, and prepares for `/write`. See [Meeting Command](Meeting-Command) for details.
+
+---
+
 ## Core Commands
 
 ### `/tell` - Capture Project Idea
@@ -713,7 +732,7 @@ You can use multiple commands in sequence:
 | `/plan` | Core | None | No |
 | `/build` | Core | Optional: task_id | No |
 | `/progress` | Core | None | No |
-| `/state` | Core | Subcommand: snapshot/list/diff/restore | No |
+| `/state` | Core | Modes: snapshot · list · diff · restore | No |
 | `/finished` | Core | None | Yes |
 | `/team` | Team | None | No |
 | `/load` | Team | Required: path/context | No |
@@ -723,7 +742,7 @@ You can use multiple commands in sequence:
 | `/safe` | Specialized | None | No |
 | `/cheap` | Specialized | None | No |
 | `/branchci` | Integrations | Optional: regenerate flag | No |
-| `/github` | Integrations | Subcommand: info/issue/milestone | No |
+| `/github` | Integrations | Actions: info · issue · milestone · ci · release | No |
 
 ---
 
@@ -732,6 +751,8 @@ You can use multiple commands in sequence:
 - [Workflow Guide](Workflow) - Complete development workflow
 - [Agents Documentation](Agents) - Understanding AI agents
 - [Quick Start](Quick-Start) - Getting started guide
+- [Hello Tutorial](Hello-Tutorial) - Optional `/hello` onboarding walkthrough
+- [Meeting Command](Meeting-Command) - Adaptive discovery interview reference
 - [FAQ](FAQ) - Frequently asked questions
 - [Home](Home) - Wiki home page
 

@@ -19,7 +19,7 @@ var (
 	ErrInsufficientSnapshots = errors.New("not enough state snapshots")
 )
 
-// ActiveState mirrors the structure inside .plan/active_state.json.
+// ActiveState mirrors the structure inside .do/plan/active_state.json.
 type ActiveState struct {
 	Phase        string   `json:"phase"`
 	ActiveTask   string   `json:"active_task"`

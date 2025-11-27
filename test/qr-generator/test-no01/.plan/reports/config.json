@@ -1,4 +1,0 @@
-{
-  "preset": "exec",
-  "sections": ["executive", "progress", "visuals", "state", "feedback"]
-}

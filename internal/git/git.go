@@ -138,4 +138,3 @@ func IsGitRepository(projectPath string) bool {
 	cmd.Dir = projectPath
 	return cmd.Run() == nil
 }
-

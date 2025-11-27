@@ -94,30 +94,29 @@ func TestEndToEnd_AllFilesGenerated(t *testing.T) {
 
 	// Verify all expected files exist
 	expectedFiles := []string{
-		// Root documentation
-		"README.md",
-		".plan/STANDUP.md",
-		"docs/CHANGELOG.md",
+		// Documentation
+		"docs/overview/README.md",
+		".do/plan/STANDUP.md",
+		"docs/history/CHANGELOG.md",
 		// IDE configs
-		"docs/CLAUDE.md",
-		// Agents
-		".cursor/agents/project_orchestrator.md",
-		".cursor/agents/product_manager.md",
-		".cursor/agents/engineering_lead.md",
-		// Commands
-		".cursor/commands/tell.md",
-		".cursor/commands/build.md",
-		".cursor/commands/write.md",
-		// Rules
+		".cursorrules",
+		// Agents (now in category folders - check central location)
+		".do/core/agents/leadership/project_orchestrator.md",
+		".do/core/agents/product/product_manager.md",
+		".do/core/agents/engineering/engineering_lead.md",
+		// Commands (now in category folders)
+		".do/core/commands/core/tell.md",
+		".do/core/commands/core/build.md",
+		".do/core/commands/core/write.md",
+		// Rules (check central location or IDE location)
+		".do/core/library/01-core-workflow/README.md",
 		".cursor/rules/README.md",
-		".cursor/rules/library/01-core-workflow/README.md",
-		".cursor/rules/library/03-languages/go.md",
 		// Plan
-		".plan/00_System/IDEA.md",
-		".plan/00_System/PRD.md",
-		".plan/00_System/ARCHITECTURE.md",
-		".plan/TASKS.md",
-		".plan/active_state.json",
+		".do/system/IDEA.md",
+		".do/system/PRD.md",
+		".do/system/ARCHITECTURE.md",
+		".do/plan/TASKS.md",
+		".do/system/history/active_state.json",
 		// GitHub workflows
 		".github/workflows/ci.yml",
 		".github/workflows/release.yml",
@@ -261,10 +260,25 @@ func TestEndToEnd_AllIDEs(t *testing.T) {
 			projectPath := filepath.Join(tmpDir, projectName)
 
 			// Verify IDE-specific configs were generated
-			if ide == "Claude Code" || ide == "Cursor" {
-				claudePath := filepath.Join(projectPath, "docs", "CLAUDE.md")
-				if _, err := os.Stat(claudePath); os.IsNotExist(err) {
-					t.Errorf("Expected docs/CLAUDE.md for IDE %s", ide)
+			var expectedConfigPath string
+			switch ide {
+			case "Cursor":
+				expectedConfigPath = filepath.Join(projectPath, ".cursorrules")
+			case "Claude Code":
+				expectedConfigPath = filepath.Join(projectPath, "docs", "CLAUDE.md")
+			case "Antigravity":
+				expectedConfigPath = filepath.Join(projectPath, ".antigravity", "config.md")
+			case "Windsurf":
+				expectedConfigPath = filepath.Join(projectPath, ".windsurf", "config.md")
+			case "Cline":
+				expectedConfigPath = filepath.Join(projectPath, ".cline", "config.md")
+			case "OpenCode":
+				expectedConfigPath = filepath.Join(projectPath, "opencode.json")
+			}
+
+			if expectedConfigPath != "" {
+				if _, err := os.Stat(expectedConfigPath); os.IsNotExist(err) {
+					t.Errorf("Expected config file %s for IDE %s", expectedConfigPath, ide)
 				}
 			}
 
@@ -294,8 +308,10 @@ func verifyCompleteProjectStructure(t *testing.T, projectPath string) {
 	expectedDirs := []string{
 		".cursor/agents",
 		".cursor/commands",
-		".cursor/rules/library",
-		".plan/00_System",
+		".cursor/rules",
+		".do/system",
+		".do/core",
+		".do/plan",
 		".github/workflows",
 	}
 
@@ -306,31 +322,58 @@ func verifyCompleteProjectStructure(t *testing.T, projectPath string) {
 		}
 	}
 
-	// Verify agents (should have 18 agents)
-	agentsDir := filepath.Join(projectPath, ".cursor", "agents")
-	agentFiles, err := os.ReadDir(agentsDir)
+	// Verify agents (should have 18 agents in category folders)
+	centralAgentsDir := filepath.Join(projectPath, ".do", "core", "agents")
+	agentCount := 0
+	err := filepath.Walk(centralAgentsDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && filepath.Ext(path) == ".md" {
+			agentCount++
+		}
+		return nil
+	})
 	if err != nil {
 		t.Errorf("Failed to read agents directory: %v", err)
-	} else if len(agentFiles) < 18 {
-		t.Errorf("Expected at least 18 agent files, found %d", len(agentFiles))
+	} else if agentCount < 18 {
+		t.Errorf("Expected at least 18 agent files, found %d", agentCount)
 	}
 
-	// Verify commands (should have 11 core + 8 squad commands = 19)
-	commandsDir := filepath.Join(projectPath, ".cursor", "commands")
-	commandFiles, err := os.ReadDir(commandsDir)
+	// Verify commands (should have 13 commands in category folders)
+	centralCommandsDir := filepath.Join(projectPath, ".do", "core", "commands")
+	commandCount := 0
+	err = filepath.Walk(centralCommandsDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && filepath.Ext(path) == ".md" {
+			commandCount++
+		}
+		return nil
+	})
 	if err != nil {
 		t.Errorf("Failed to read commands directory: %v", err)
-	} else if len(commandFiles) < 19 {
-		t.Errorf("Expected at least 19 command files, found %d", len(commandFiles))
+	} else if commandCount < 13 {
+		t.Errorf("Expected at least 13 command files, found %d", commandCount)
 	}
 
-	// Verify rules library has categories
-	rulesDir := filepath.Join(projectPath, ".cursor", "rules", "library")
-	ruleCategories, err := os.ReadDir(rulesDir)
+	// Verify rules library has categories (check central location)
+	centralRulesDir := filepath.Join(projectPath, ".do", "core", "library")
+	ruleCategories, err := os.ReadDir(centralRulesDir)
 	if err != nil {
 		t.Errorf("Failed to read rules directory: %v", err)
-	} else if len(ruleCategories) < 10 {
-		t.Errorf("Expected at least 10 rule categories, found %d", len(ruleCategories))
+	} else {
+		// Count only directories (categories)
+		categoryCount := 0
+		for _, entry := range ruleCategories {
+			if entry.IsDir() {
+				categoryCount++
+			}
+		}
+		if categoryCount < 10 {
+			t.Errorf("Expected at least 10 rule categories, found %d", categoryCount)
+		}
 	}
 
 	// Verify all 4 GitHub workflows
@@ -344,9 +387,9 @@ func verifyCompleteProjectStructure(t *testing.T, projectPath string) {
 
 	// Verify documentation files
 	docs := map[string]string{
-		"README.md":    "README.md",
-		"STANDUP.md":   ".plan/STANDUP.md",
-		"CHANGELOG.md": "docs/CHANGELOG.md",
+		"Overview README": "docs/overview/README.md",
+		"STANDUP.md":      ".do/plan/STANDUP.md",
+		"CHANGELOG.md":    "docs/history/CHANGELOG.md",
 	}
 	for name, path := range docs {
 		docPath := filepath.Join(projectPath, path)

@@ -123,21 +123,27 @@ Cursor supports MCP for extended functionality:
    - Connect to internal systems and APIs
 
 ## Agent Hierarchy
-This project uses a hierarchical AI agency structure. All agents are defined in .cursor/agents/
+This project uses a hierarchical AI agency structure. All agents are defined in .do/core/agents/ (symlinked to .cursor/agents/)
 
 Reference agents in chat using @agent-name (e.g., @frontend_lead, @backend_lead)
 
 ## Commands
-All commands are defined in .cursor/commands/. Type any command (e.g., /tell, /write) to activate it.
+All commands are defined in .do/core/commands/ (symlinked to .cursor/commands/). Type any command (e.g., /tell, /write) to activate it.
 
 Available commands:
+- /hello - Welcome, tutorial, and command introductions (subcommands: goplan, meeting, plan, build, github)
 - /tell - Capture your idea
-- /improve - Brainstorm improvements
-- /write - Generate documents
-- /good - Approve changes
-- /plan - Generate execution plan
-- /build - Start coding
-- /tasks - View and manage tasks
+- /meeting - Adaptive discovery meeting with progress tracking and timing
+- /write - Generate documents & content (subcommands: plan, content, change, prd, architecture, design, etc.)
+- /plan - Generate execution plan (subcommands: everything, phases, next, phase {no} tasks, phases tasks, all tasks)
+- /build - Start coding with auto-completion detection
+- /status - Show progress and reports (subcommands: report, full)
+- /github - GitHub operations (subcommands: info, issue, milestone, ci, release)
+- /state - State management (subcommands: snapshot, list, diff, restore)
+- /feedback - Log feedback
+- /security - Security review/audit (subcommands: review, audit, both)
+- /permissions - Design RBAC system
+- /optimize - Project optimization (subcommands: design, finance, performance)
 
 ## Rules System
 
@@ -149,7 +155,7 @@ Rules serve as Cursor's long-term memory for your project:
 - Persist across conversations and sessions
 
 ### Rules Library
-Stack-specific rules are organized in .cursor/rules/library/ directory. These rules guide the AI's behavior for:
+Stack-specific rules are organized in .cursor/rules/ directory. Each category folder (e.g., 01-core-workflow, 03-languages) is symlinked from .do/core/library/. These rules guide the AI's behavior for:
 - Language-specific conventions (Go, JavaScript, TypeScript, Python)
 - Framework best practices (React, Next.js, Express)
 - Testing standards (Jest, Vitest, Go testing)
@@ -238,13 +244,14 @@ For complex projects:
 Current project state is tracked in .do/active_state.json
 
 ## Workflow
-1. **Add Documentation Sources**: Configure @Docs with your docs/, .do/, and README.md
-2. **Reference Context**: Use @docs or @filename when asking questions
-3. **Capture Ideas**: Type /tell to capture your idea
-4. **Brainstorm**: Type /improve to brainstorm and refine
-5. **Plan**: Type /plan to generate the execution plan
-6. **Code**: Type /build to start coding with Agent Mode (Ctrl+I)
-7. **Review**: Type /good to approve completed work
+1. **Welcome** (New Users): Type /hello for first-time tutorial and setup
+2. **Add Documentation Sources**: Configure @Docs with your docs/, .do/, and README.md
+3. **Reference Context**: Use @docs or @filename when asking questions
+4. **Capture Ideas**: Type /tell to capture your idea
+5. **Meeting**: Type /meeting to start discovery meeting with progress tracking
+6. **Plan**: Type /plan to generate the execution plan (or use subcommands for phase-by-phase planning)
+7. **Code**: Type /build to start coding with Agent Mode (Ctrl+I) and auto-completion detection
+8. **Status**: Type /status to check progress and generate reports
 
 For complex questions, use Ask Mode (Ctrl+L) instead of Composer (Ctrl+I).
 
@@ -305,13 +312,19 @@ Reference agents in prompts: "Act as the frontend_lead and review this component
 ## Commands
 All commands are defined in .claude/commands/. These commands provide structured workflows:
 
+- /hello - Welcome, tutorial, and command introductions (subcommands: goplan, meeting, plan, build, github)
 - /tell - Capture your idea
-- /improve - Brainstorm improvements
-- /write - Generate documents
-- /good - Approve changes
-- /plan - Generate execution plan
-- /build - Start coding
-- /tasks - View and manage tasks
+- /meeting - Adaptive discovery meeting with progress tracking and timing
+- /write - Generate documents & content (subcommands: plan, content, change, prd, architecture, design, etc.)
+- /plan - Generate execution plan (subcommands: everything, phases, next, phase {no} tasks, phases tasks, all tasks)
+- /build - Start coding with auto-completion detection
+- /status - Show progress and reports (subcommands: report, full)
+- /github - GitHub operations (subcommands: info, issue, milestone, ci, release)
+- /state - State management (subcommands: snapshot, list, diff, restore)
+- /feedback - Log feedback
+- /security - Security review/audit (subcommands: review, audit, both)
+- /permissions - Design RBAC system
+- /optimize - Project optimization (subcommands: design, finance, performance)
 
 ## Rules
 Stack-specific rules are organized in .claude/rules/library/ directory. Claude Code automatically references these rules when:
@@ -444,13 +457,12 @@ Reference agents: "Use the frontend_lead agent to refactor this component"
 ## Commands
 All commands are defined in .antigravity/commands/. These commands integrate with Antigravity's agent system:
 
+- /hello - First-time welcome and tutorial experience
 - /tell - Capture your idea (creates a task for agents)
-- /improve - Brainstorm improvements (agents generate improvement plans)
+- /meeting - Discovery meeting with adaptive speed options (agents generate improvement plans)
 - /write - Generate documents (agents create documentation)
-- /good - Approve agent work
 - /plan - Generate execution plan (agents create detailed plans)
 - /build - Start coding (agents execute the plan)
-- /tasks - View and manage agent tasks
 
 ## Rules
 Stack-specific rules are organized in .antigravity/rules/library/ directory. Agents reference these rules when:
@@ -488,7 +500,7 @@ Recommended: **Agent Decides** - allows agents to work autonomously while checki
 3. **Review**: Review the agent's plan (if Review Policy requires it)
 4. **Execute**: Agents implement the plan, making code changes
 5. **Validate**: Agents run tests and validate their work
-6. **Approve**: Use /good to approve completed work
+6. **Status**: Use /status to check progress and generate reports
 
 ## Agent-Driven Development
 Agents can:
@@ -559,13 +571,19 @@ Reference agents in chat: @agent-name (e.g., @frontend_lead, @backend_lead)
 ## Commands
 All commands are defined in .windsurf/commands/. Type any command to activate it:
 
+- /hello - Welcome, tutorial, and command introductions (subcommands: goplan, meeting, plan, build, github)
 - /tell - Capture your idea
-- /improve - Brainstorm improvements
-- /write - Generate documents
-- /good - Approve changes
-- /plan - Generate execution plan
-- /build - Start coding
-- /tasks - View and manage tasks
+- /meeting - Adaptive discovery meeting with progress tracking and timing
+- /write - Generate documents & content (subcommands: plan, content, change, prd, architecture, design, etc.)
+- /plan - Generate execution plan (subcommands: everything, phases, next, phase {no} tasks, phases tasks, all tasks)
+- /build - Start coding with auto-completion detection
+- /status - Show progress and reports (subcommands: report, full)
+- /github - GitHub operations (subcommands: info, issue, milestone, ci, release)
+- /state - State management (subcommands: snapshot, list, diff, restore)
+- /feedback - Log feedback
+- /security - Security review/audit (subcommands: review, audit, both)
+- /permissions - Design RBAC system
+- /optimize - Project optimization (subcommands: design, finance, performance)
 
 ## Model Context Protocol (MCP)
 
@@ -628,13 +646,14 @@ Current project state is tracked in .do/active_state.json
 Windsurf can read and update this state during agent execution.
 
 ## Usage Workflow
-1. **Capture Ideas**: Type /tell to capture your idea
+1. **Welcome** (New Users): Type /hello for first-time tutorial
+2. **Capture Ideas**: Type /tell to capture your idea
 2. **Plan**: Cascade agents create a plan using Memories & Rules
 3. **Review Plan**: Type /plan to review the execution plan
 4. **Code Generation**: Use Command (Cmd/Ctrl+I) for inline edits or Cascade for complex tasks
 5. **Agent Execution**: Type /build to start coding with agent assistance
 6. **Reference Context**: Agents automatically reference rules and memories
-7. **Approve**: Type /good to approve completed work
+7. **Status**: Type /status to check progress and generate reports
 
 ## Context Management
 - **@filename**: Reference specific files in chat
@@ -691,13 +710,19 @@ Reference agents in chat: @agent-name (e.g., @frontend_lead, @backend_lead)
 ## Commands
 All commands are defined in .windsurf/commands/. Type any command to activate it:
 
+- /hello - Welcome, tutorial, and command introductions (subcommands: goplan, meeting, plan, build, github)
 - /tell - Capture your idea
-- /improve - Brainstorm improvements
-- /write - Generate documents
-- /good - Approve changes
-- /plan - Generate execution plan
-- /build - Start coding
-- /tasks - View and manage tasks
+- /meeting - Adaptive discovery meeting with progress tracking and timing
+- /write - Generate documents & content (subcommands: plan, content, change, prd, architecture, design, etc.)
+- /plan - Generate execution plan (subcommands: everything, phases, next, phase {no} tasks, phases tasks, all tasks)
+- /build - Start coding with auto-completion detection
+- /status - Show progress and reports (subcommands: report, full)
+- /github - GitHub operations (subcommands: info, issue, milestone, ci, release)
+- /state - State management (subcommands: snapshot, list, diff, restore)
+- /feedback - Log feedback
+- /security - Security review/audit (subcommands: review, audit, both)
+- /permissions - Design RBAC system
+- /optimize - Project optimization (subcommands: design, finance, performance)
 
 ## Quick Reference
 - **Command**: Cmd/Ctrl+I for inline edits (highlight code first to edit selection)
@@ -720,12 +745,14 @@ Current project state is tracked in .do/active_state.json
 Windsurf can read and update this state during agent execution.
 
 ## Usage Workflow
-1. Type /tell to capture your idea
-2. Windsurf agents create a plan using Memories & Rules
-3. Type /plan to review the execution plan
+1. Type /hello for first-time welcome and tutorial (new users)
+1. Type /hello for first-time welcome and tutorial (new users)
+2. Type /tell to capture your idea
+3. Windsurf agents create a plan using Memories & Rules
+4. Type /plan to review the execution plan
 4. Use Command (Cmd/Ctrl+I) for inline edits or Cascade for complex tasks
 5. Agents reference rules and memories automatically
-6. Type /good to approve completed work
+6. Type /status to check progress and generate reports
 
 ## Context Management
 - Use @filename to reference specific files
@@ -872,13 +899,19 @@ Activate agents: "As the backend_lead, review this API design"
 ## Commands
 All commands are defined in .cline/commands/. Use these commands in Cline chat:
 
+- /hello - Welcome, tutorial, and command introductions (subcommands: goplan, meeting, plan, build, github)
 - /tell - Capture your idea
-- /improve - Brainstorm improvements
-- /write - Generate documents
-- /good - Approve changes
-- /plan - Generate execution plan
-- /build - Start coding
-- /tasks - View and manage tasks
+- /meeting - Adaptive discovery meeting with progress tracking and timing
+- /write - Generate documents & content (subcommands: plan, content, change, prd, architecture, design, etc.)
+- /plan - Generate execution plan (subcommands: everything, phases, next, phase {no} tasks, phases tasks, all tasks)
+- /build - Start coding with auto-completion detection
+- /status - Show progress and reports (subcommands: report, full)
+- /github - GitHub operations (subcommands: info, issue, milestone, ci, release)
+- /state - State management (subcommands: snapshot, list, diff, restore)
+- /feedback - Log feedback
+- /security - Security review/audit (subcommands: review, audit, both)
+- /permissions - Design RBAC system
+- /optimize - Project optimization (subcommands: design, finance, performance)
 
 ## Rules
 Stack-specific rules are organized in .cline/rules/library/ directory.

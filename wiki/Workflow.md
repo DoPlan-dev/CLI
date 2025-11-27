@@ -15,6 +15,20 @@ DoPlan CLI uses a structured development workflow that guides you from initial i
 
 ---
 
+## Command Workflow Snapshot
+
+1. **Capture & Align** – `/tell` records the idea and `/improve` collects cross-functional insights so IDEA.md and BRAINSTORM.md hold the right context.
+2. **Document & Approve** – `/write` generates PRD/Architecture/Design System, `/change` refines them, and `/good` locks the set for task generation.
+3. **Create the Roadmap** – `/plan` converts the approved plan into TASKS.md with phased task breakdowns, dependencies, and acceptance criteria.
+4. **Build Loop** – Repeat `/state snapshot` → `/build` → `/progress` → `/finished` → `/state snapshot` for each task so history stays auditable and commits stay automatic.
+5. **Operate & Ship** – Use `/report`, `/feedback`, `/team`, `/load`, `/safe`, `/cheap`, `/ship`, `/github`, and `/branchci` to keep stakeholders aligned, enforce readiness, and release confidently.
+
+> Need a refresher before you begin? Run the optional `/hello` flow documented in [Hello Tutorial](Hello-Tutorial), then dive deeper into the discovery interview with [Meeting Command](Meeting-Command).
+
+The detailed sections below dive deeper into each phase, but this snapshot shows how the commands connect end to end.
+
+---
+
 ## Complete Development Workflow
 
 ### Workflow Diagram

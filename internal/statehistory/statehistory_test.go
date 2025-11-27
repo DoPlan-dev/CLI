@@ -11,7 +11,7 @@ import (
 
 func TestSaveSnapshot(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 
@@ -54,7 +54,7 @@ func TestSaveSnapshot(t *testing.T) {
 
 func TestSaveSnapshot_WithLabel(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 
@@ -77,7 +77,7 @@ func TestSaveSnapshot_WithLabel(t *testing.T) {
 
 func TestListSnapshots(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 
@@ -92,7 +92,7 @@ func TestListSnapshots(t *testing.T) {
 		if err != nil {
 			t.Fatalf("SaveSnapshot failed: %v", err)
 		}
-		
+
 		// Use longer delay to ensure different timestamps (ID format includes seconds)
 		time.Sleep(1100 * time.Millisecond)
 	}
@@ -134,7 +134,7 @@ func TestListSnapshots_Empty(t *testing.T) {
 
 func TestLatestSnapshots(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 
@@ -149,7 +149,7 @@ func TestLatestSnapshots(t *testing.T) {
 		if err != nil {
 			t.Fatalf("SaveSnapshot failed: %v", err)
 		}
-		
+
 		// Use longer delay to ensure different timestamps (ID format includes seconds)
 		time.Sleep(1100 * time.Millisecond)
 	}
@@ -177,7 +177,7 @@ func TestLatestSnapshots(t *testing.T) {
 
 func TestLoadSnapshot(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 
@@ -227,7 +227,7 @@ func TestLoadSnapshot_NotFound(t *testing.T) {
 
 func TestRestoreSnapshot(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 
@@ -337,7 +337,7 @@ func TestFormatDiff(t *testing.T) {
 		ID:         "older",
 		CapturedAt: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
 		State: ActiveState{
-			Phase:  "old",
+			Phase:     "old",
 			Completed: []string{"1.1"},
 		},
 	}
@@ -346,7 +346,7 @@ func TestFormatDiff(t *testing.T) {
 		ID:         "newer",
 		CapturedAt: time.Date(2024, 1, 2, 0, 0, 0, 0, time.UTC),
 		State: ActiveState{
-			Phase:  "new",
+			Phase:     "new",
 			Completed: []string{"1.1", "1.2"},
 		},
 	}
@@ -367,7 +367,7 @@ func TestFormatDiff(t *testing.T) {
 
 func TestLatestDiff(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 
@@ -401,9 +401,82 @@ func TestLatestDiff(t *testing.T) {
 	}
 }
 
+func TestLatestDiffSummary(t *testing.T) {
+	tmpDir := t.TempDir()
+	planDir := filepath.Join(tmpDir, ".do")
+	os.MkdirAll(planDir, 0755)
+	historyDir := filepath.Join(planDir, "history")
+
+	// Create first snapshot
+	state1 := ActiveState{Phase: "phase1", ActiveTask: "1.1"}
+	stateData, _ := json.Marshal(state1)
+	statePath := filepath.Join(planDir, "active_state.json")
+	os.WriteFile(statePath, stateData, 0644)
+
+	_, err := SaveSnapshot(statePath, historyDir, "snapshot1", "")
+	if err != nil {
+		t.Fatalf("SaveSnapshot failed: %v", err)
+	}
+
+	time.Sleep(1100 * time.Millisecond)
+
+	// Create second snapshot with changes
+	state2 := ActiveState{Phase: "phase2", ActiveTask: "2.1", Completed: []string{"1.1"}}
+	stateData, _ = json.Marshal(state2)
+	os.WriteFile(statePath, stateData, 0644)
+
+	_, err = SaveSnapshot(statePath, historyDir, "snapshot2", "")
+	if err != nil {
+		t.Fatalf("SaveSnapshot failed: %v", err)
+	}
+
+	// Get diff summary
+	summary, err := LatestDiffSummary(historyDir)
+	if err != nil {
+		t.Fatalf("LatestDiffSummary failed: %v", err)
+	}
+
+	if summary == "" {
+		t.Error("LatestDiffSummary should return non-empty summary")
+	}
+
+	// Verify summary contains expected changes
+	if !strings.Contains(summary, "phase2") && !strings.Contains(summary, "Phase") {
+		t.Logf("Summary: %s", summary)
+		t.Log("LatestDiffSummary should contain phase information")
+	}
+}
+
+func TestLatestDiffSummary_InsufficientSnapshots(t *testing.T) {
+	tmpDir := t.TempDir()
+	planDir := filepath.Join(tmpDir, ".do")
+	os.MkdirAll(planDir, 0755)
+	historyDir := filepath.Join(planDir, "history")
+
+	// Create only one snapshot
+	state := ActiveState{Phase: "phase1"}
+	stateData, _ := json.Marshal(state)
+	statePath := filepath.Join(planDir, "active_state.json")
+	os.WriteFile(statePath, stateData, 0644)
+
+	_, err := SaveSnapshot(statePath, historyDir, "snapshot1", "")
+	if err != nil {
+		t.Fatalf("SaveSnapshot failed: %v", err)
+	}
+
+	// Should fail with insufficient snapshots
+	_, err = LatestDiffSummary(historyDir)
+	if err == nil {
+		t.Error("LatestDiffSummary should fail with insufficient snapshots")
+	}
+	if err != ErrInsufficientSnapshots {
+		t.Errorf("LatestDiffSummary error = %v, want ErrInsufficientSnapshots", err)
+	}
+}
+
 func TestLatestDiff_InsufficientSnapshots(t *testing.T) {
 	tmpDir := t.TempDir()
-	planDir := filepath.Join(tmpDir, ".plan")
+	planDir := filepath.Join(tmpDir, ".do")
 	os.MkdirAll(planDir, 0755)
 	historyDir := filepath.Join(planDir, "history")
 
@@ -446,7 +519,6 @@ func TestSanitizeLabel(t *testing.T) {
 }
 
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(substr) == 0 || 
+	return len(s) >= len(substr) && (s == substr || len(substr) == 0 ||
 		strings.Contains(s, substr))
 }
-

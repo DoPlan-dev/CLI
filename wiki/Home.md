@@ -19,8 +19,9 @@ Welcome to the **DoPlan CLI** wiki! This is your comprehensive guide to using Do
 
 ### 🔔 Latest Updates
 
-- **Command Workflow Refresh**: README + [Workflow](Workflow) now include `/state`, `/report`, `/feedback`, `/branchci`, and `/github` so every phase is documented end-to-end.
+- **Command Workflow Refresh**: README, [Commands](Commands), and [Workflow](Workflow) now show the Capture & Align → Roadmap → Build Loop → Operate stages so you can follow the entire sequence without thinking about nested options.
 - **Command Catalog**: The [Commands](Commands) page and README table list every slash command with phase + unlocks.
+- **New Deep Dives**: [Hello Tutorial](Hello-Tutorial) covers the optional onboarding flow and [Meeting Command](Meeting-Command) explains the adaptive discovery interview.
 - **Docs Sync**: `Docs/foundation/the-guide.md`, wiki, and CHANGELOG now stay in lockstep with the CLI via `/github info` and `/report`.
 
 ---
@@ -34,6 +35,7 @@ New to DoPlan CLI? Start here:
 - **[Installation](Installation)** - Install DoPlan CLI on your platform
 - **[Quick Start](Quick-Start)** - Get up and running in 5 minutes
 - **[First Project Tutorial](First-Project-Tutorial)** - Complete step-by-step guide
+- **[Hello Tutorial](Hello-Tutorial)** - Optional `/hello` walkthrough before you run `/tell`
 
 ### 📖 Core Documentation
 
@@ -43,6 +45,7 @@ Essential guides for using DoPlan CLI:
 - **[Workflow](Workflow)** - Development workflow guide
 - **[Agents](Agents)** - Understanding the AI agent system
 - **[Rules Library](Rules)** - Using and customizing rules
+- **[Meeting Command](Meeting-Command)** - Adaptive discovery session details
 
 ### 🎓 Advanced Topics
 

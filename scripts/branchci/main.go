@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,26 +24,34 @@ type MatrixConfig struct {
 	Branches    []BranchMatrix `json:"branches"`
 }
 
-var (
-	outputDir  = flag.String("out", ".github/workflows", "Directory for generated workflow")
-	matrixFile = flag.String("matrix", "Docs/history/branch-matrix.json", "Matrix configuration file")
-)
-
 func main() {
-	flag.Parse()
+	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))
+}
+
+func run(args []string, stdout, stderr io.Writer) int {
+	fs := flag.NewFlagSet("branchci", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	outputDir := fs.String("out", ".github/workflows", "Directory for generated workflow")
+	matrixFile := fs.String("matrix", "Docs/history/branch-matrix.json", "Matrix configuration file")
+
+	if err := fs.Parse(args); err != nil {
+		fmt.Fprintf(stderr, "failed to parse flags: %v\n", err)
+		return 2
+	}
 
 	matrix := loadMatrix(*matrixFile)
 	workflow := renderWorkflow(matrix)
 	path := filepath.Join(*outputDir, "task-branches.yml")
 	if err := os.MkdirAll(*outputDir, 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to create workflows dir: %v\n", err)
-		os.Exit(1)
+		fmt.Fprintf(stderr, "failed to create workflows dir: %v\n", err)
+		return 1
 	}
 	if err := os.WriteFile(path, []byte(workflow), 0644); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to write workflow: %v\n", err)
-		os.Exit(1)
+		fmt.Fprintf(stderr, "failed to write workflow: %v\n", err)
+		return 1
 	}
-	fmt.Printf("Workflow generated: %s\n", path)
+	fmt.Fprintf(stdout, "Workflow generated: %s\n", path)
+	return 0
 }
 
 func loadMatrix(path string) MatrixConfig {

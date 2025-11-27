@@ -13,17 +13,17 @@ func TestRenderCommandMarkdown(t *testing.T) {
 		Action: `When user types /tell or /tell <idea>:
 
 1. **Capture the idea**: If idea is provided inline, save it. Otherwise, prompt user for their project idea.
-2. **Save to IDEA.md**: Write the idea to .plan/00_System/IDEA.md
+2. **Save to IDEA.md**: Write the idea to .do/system/IDEA.md
 3. **Activate Project Orchestrator**: The Project Orchestrator analyzes the idea and activates appropriate agents.
-4. **Response**: "Idea captured! Your project idea has been saved. Type /improve to brainstorm with the team."`,
+4. **Response**: "Idea captured! Your project idea has been saved. Type /meeting to start the discovery meeting with the team."`,
 		AgentInvolvement: []string{
 			"Project Orchestrator",
 			"Product Manager",
 		},
 		FilesRead: []string{},
 		FilesModified: []string{
-			".plan/00_System/IDEA.md",
-			".plan/active_state.json",
+			".do/system/IDEA.md",
+			".do/plan/active_state.json",
 		},
 		Examples: []string{
 			"/tell",
@@ -61,7 +61,7 @@ func TestRenderCommandMarkdown(t *testing.T) {
 	if !strings.Contains(markdown, "## Files Modified") {
 		t.Error("Markdown should contain Files Modified section")
 	}
-	if !strings.Contains(markdown, ".plan/00_System/IDEA.md") {
+	if !strings.Contains(markdown, ".do/system/IDEA.md") {
 		t.Error("Markdown should contain file paths")
 	}
 }
@@ -211,8 +211,8 @@ func TestRenderCommandMarkdown_Formatting(t *testing.T) {
 			"/build 1.2",
 		},
 		FilesRead: []string{
-			".plan/TASKS.md",
-			".plan/active_state.json",
+			".do/plan/TASKS.md",
+			".do/plan/active_state.json",
 		},
 		FilesModified: []string{
 			".plan/active_state.json",

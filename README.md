@@ -253,16 +253,36 @@ code .  # or your preferred IDE
 Once in your IDE, start using DoPlan commands:
 
 ```
-/tell    → Capture your project idea
-/improve → Team brainstorm session
-/write   → Generate PRD + Architecture + Design System
-/good    → Approve & lock the plan
-/plan    → Generate execution plan + task hierarchy
-/build   → Start coding
-/report  → Generate scan metadata + diffs
-/feedback → Log structured feedback entries
-/state   → Snapshot or restore .plan/active_state
+/tell      → Capture your project idea
+/improve   → Brainstorm with the leadership team
+/write     → Generate PRD + Architecture + Design System
+/change    → Patch any planning doc with natural language updates
+/good      → Approve & lock the plan
+/plan      → Generate execution plan + task hierarchy
+/build     → Start the next (or specific) task
+/progress  → Check totals, current task, and what's next
+/state     → Snapshot, list, diff, or restore project history
+/finished  → Auto-commit, push, and move to the next task
+/report    → Generate scan metadata + diffs
+/feedback  → Log structured feedback entries
 ```
+
+### 4. (Optional) Re-run the beginner access patch
+
+The CLI now auto-applies this patch right after it scaffolds your project, guaranteeing `.do/` plus the organized docs folders (e.g., `docs/overview`, `docs/references`, `docs/tutorials`, `docs/history`) are writable. If you later move the repo into a locked folder (or clone it on a different machine), rerun:
+
+```bash
+npx --yes @doplan-dev/cli goplan access all
+```
+
+You can also target a single path if you already have others set up:
+
+```bash
+npx --yes @doplan-dev/cli goplan access .do/system   # only system files
+npx --yes @doplan-dev/cli goplan access docs         # only docs/
+```
+
+This script simply creates the required folders/files and fixes permissions—perfect for beginners who don't want to touch Go tooling.
 
 ---
 
@@ -283,7 +303,7 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
   ```
   /improve
   ```
-  Activates Product Manager, Engineering Lead, and Design Manager for interactive brainstorming.
+  Activates Product, Engineering, Design, QA, Release, and Documentation leads to surface opportunities, blockers, and acceleration ideas. Outputs `.plan/00_System/BRAINSTORM.md`.
 
 - **`/write`** - Generate planning documents
   ```
@@ -322,7 +342,7 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
   /progress
   go run scripts/progress/main.go --root .
   ```
-  Runs the Go helper at `scripts/progress/` to display totals plus the most recent `.plan/history` delta (phase/task/branch/completed changes). Pass `--json` for machine-readable output.
+  Runs the Go helper at `scripts/progress/` to display totals plus the most recent `.do/system/history` delta (phase/task/branch/completed changes). Pass `--json` for machine-readable output.
 
 - **`/state`** - Manage state snapshots & rollbacks
   ```
@@ -330,7 +350,7 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
   /state diff --json
   /state restore --file state-20251124T120000Z.json --yes
   ```
-  Wraps `go run scripts/statehistory/main.go` so you can inspect history, capture snapshots (before/after `/build` and `/finished`), and safely restore `.plan/active_state.json`.
+  Wraps `go run scripts/statehistory/main.go` so you can inspect history, capture snapshots (before/after `/build` and `/finished`), and safely restore `.do/system/history/active_state.json`.
 
 - **`/finished`** - Mark task complete
   ```
@@ -352,7 +372,7 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
   ```
   Runs `go run scripts/scanreport/main.go` to update `SCAN_REPORT_*.json`, create `SCAN_DIFF_<date>.md`, and append both the latest state-history summary and an embedded `/progress` snapshot (phase, completion %, upcoming tasks). Use `--preset exec` or `--preset detailed` for alternate templates (exec view, detailed visuals + dependency audit).
   Customization:
-  - Create `.plan/reports/config.json` to set defaults:
+  - Create `.do/reports/config.json` to set defaults:
     ```json
     {
       "preset": "exec",
@@ -415,37 +435,27 @@ code .
 
 ## 🧠 Command Workflow
 
-```
-/tell → /improve → /write → /change → /good
-                    │
-                    ▼
-                 /plan → /build ⇆ /progress ⇆ /state
-                               │
-                               ▼
-                        /finished → /report → /ship
-                                      │
-                                      └── /feedback, /safe, /cheap, /branchci
-```
+1. **Capture & Align** – Start with `/tell` to record the idea, then `/improve` to gather Product, Engineering, Design, QA, Release, and Documentation insights into IDEA.md and BRAINSTORM.md.
+2. **Document & Approve** – `/write` turns those insights into PRD/Architecture/Design System, `/change` lets you refine any doc, and `/good` locks the set so tasks can be generated.
+3. **Create the Roadmap** – `/plan` turns the approved documents into phased TASKS.md so every feature has context, acceptance criteria, and branch guidance.
+4. **Build Loop** – For each task: `/state snapshot` → `/build` → iterate with `/progress` as needed → `/finished` (auto commit/push) → `/state snapshot` again. This loop keeps history diffable and the task board honest.
+5. **Operate & Ship** – Keep everyone aligned with `/report`, `/feedback`, `/team`, and `/load`, harden the release with `/safe` + `/cheap`, and ship confidently with `/ship`, `/github`, and `/branchci`.
 
-- **Plan**: `/tell` through `/good` capture and approve strategy.
-- **Execute**: `/plan`, `/build`, `/progress`, `/state`, and `/finished` keep delivery disciplined and auditable.
-- **Operate**: `/report`, `/feedback`, `/ship`, `/safe`, `/cheap`, `/branchci`, `/github`, `/team`, and `/load` keep stakeholders aligned, secure, and informed.
-
-Every generated project ships with this workflow baked into `.plan`, `Docs/`, `.github/`, and the wiki so cursor-based IDEs can enforce it automatically.
+This end-to-end loop is generated with every project, so the same commands are available in Cursor, Claude Code, Windsurf, Antigravity, Cline, and OpenCode without extra setup.
 
 ## 📟 Command Catalog
 
 | Command | Phase | What it unlocks |
 | --- | --- | --- |
 | `/tell` | Strategy | Capture project intent into `.plan/00_System/IDEA.md` |
-| `/improve` | Strategy | Brainstorm with all Level 1 managers |
+| `/improve` | Strategy | Cross-functional brainstorm saved to `.plan/00_System/BRAINSTORM.md` |
 | `/write` | Strategy | Generate PRD, Architecture, Design System |
 | `/change` | Strategy | Patch any planning doc with natural language |
-| `/good` | Strategy | Lock planning set and advance to tasks |
-| `/plan` | Delivery | Expand planning docs into phased TASKS.md |
-| `/build [id]` | Delivery | Start next (or specific) implementation task |
+| `/good` | Strategy | Lock the planning set and advance to tasks |
+| `/plan` | Delivery | Expand planning docs into phased `TASKS.md` |
+| `/build [id]` | Delivery | Start the next (or specific) implementation task |
 | `/progress` | Delivery | Summaries for total/completed tasks + upcoming work |
-| `/state <subcommand>` | Delivery | Snapshot, diff, and restore `.plan/active_state.json` |
+| `/state` | Delivery | Snapshot, diff, and restore `.do/system/history/active_state.json` |
 | `/finished` | Delivery | Mark tasks complete, auto-commit, and push |
 | `/feedback <type>` | Operations | Log bugs/features/questions into `Docs/history/feedback.*` |
 | `/report [path]` | Operations | Generate SCAN_REPORT metadata + diffs |
@@ -454,7 +464,7 @@ Every generated project ships with this workflow baked into `.plan`, `Docs/`, `.
 | `/cheap` | Operations | Cost optimization playbook |
 | `/team` | Context | Display the 18-agent hierarchy |
 | `/load <context>` | Context | Inject extra domain knowledge for agents |
-| `/github <subcommand>` | Integrations | Sync KPIs, prep issues/milestones, update cache |
+| `/github` | Integrations | Sync KPIs, prep issues/milestones, update cache |
 | `/branchci` | Integrations | Regenerate per-branch workflow guardrails |
 
 👉 Looking for deeper explanations? See `Docs/foundation/the-guide.md` or the wiki pages for [Commands](https://github.com/DoPlan-dev/CLI/wiki/Commands) and [Workflow](https://github.com/DoPlan-dev/CLI/wiki/Workflow).
@@ -470,7 +480,7 @@ my-project/
 │   ├── commands/            # Command definitions
 │   └── rules/               # 1000+ rules library
 │       └── library/         # Tech stack rules
-├── .plan/
+├── .do/
 │   ├── 00_System/          # IDEA.md, PRD.md, ARCHITECTURE.md, DESIGN_SYSTEM.md
 │   ├── TASKS.md            # Implementation tasks
 │   ├── active_state.json   # Project state
@@ -535,7 +545,7 @@ Each agent has a specific role and expertise, working together to guide your pro
 
 ### 🕒 State History & Rollback
 
-- `.plan/history/state-*.json` stores every update to `active_state.json`, captured automatically around `/build` and `/finished`
+- `.do/system/history/state-*.json` stores every update to `active_state.json`, captured automatically around `/build` and `/finished`
 - `/state` (backed by `go run scripts/statehistory/main.go`) lets you snapshot, list, diff, or restore with confirmation guardrails
 - `/progress` and `/report` surface the latest history diff so stakeholders always know *what* changed (phase, task, branch, completed tasks)
 

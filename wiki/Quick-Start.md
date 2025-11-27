@@ -102,6 +102,7 @@ my-awesome-app/
 └── STANDUP.md               # Daily standup notes
 ```
 
+Want to see how each directory evolves during the workflow? Jump to the full [Project Structure](Project-Structure) reference.
 ### 🤖 AI Agents
 
 18 specialized agents ready to help:

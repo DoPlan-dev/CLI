@@ -146,4 +146,3 @@ func TestRenderAgentMarkdown_Formatting(t *testing.T) {
 		t.Error("Responsibilities should be formatted as list items (starting with '- ')")
 	}
 }
-

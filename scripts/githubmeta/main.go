@@ -6,6 +6,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -24,23 +25,40 @@ type GitMeta struct {
 }
 
 var (
-	projectPath    = flag.String("project", ".", "Path to project root")
-	syncReadme     = flag.Bool("sync-readme", false, "Update README KPI block")
-	issueTitle     = flag.String("issue-title", "", "Issue title to compose gh command")
-	issueBody      = flag.String("issue-body", "", "Issue body text")
-	milestoneTitle = flag.String("milestone-title", "", "Milestone title to compose command")
-	milestoneDue   = flag.String("milestone-due", "", "Optional milestone due date")
+	detectGitFunc           = detectGit
+	extractSuccessMetricsFn = extractSuccessMetrics
+	writeMetaFunc           = writeMeta
+	updateReadmeKPIsFunc    = updateReadmeKPIs
+	printIssueCommandFunc   = printIssueCommand
+	printMilestoneFunc      = printMilestoneCommand
+	timeNow                 = time.Now
 )
 
 func main() {
-	flag.Parse()
+	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))
+}
 
-	gitInfo, err := detectGit(*projectPath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Git detection failed: %v\n", err)
+func run(args []string, stdout, stderr io.Writer) int {
+	fs := flag.NewFlagSet("githubmeta", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	projectPath := fs.String("project", ".", "Path to project root")
+	syncReadme := fs.Bool("sync-readme", false, "Update README KPI block")
+	issueTitle := fs.String("issue-title", "", "Issue title to compose gh command")
+	issueBody := fs.String("issue-body", "", "Issue body text")
+	milestoneTitle := fs.String("milestone-title", "", "Milestone title to compose command")
+	milestoneDue := fs.String("milestone-due", "", "Optional milestone due date")
+
+	if err := fs.Parse(args); err != nil {
+		fmt.Fprintf(stderr, "failed to parse flags: %v\n", err)
+		return 2
 	}
 
-	metrics := extractSuccessMetrics(filepath.Join(*projectPath, ".plan", "00_System", "PRD.md"))
+	gitInfo, err := detectGitFunc(*projectPath)
+	if err != nil {
+		fmt.Fprintf(stderr, "Git detection failed: %v\n", err)
+	}
+
+	metrics := extractSuccessMetricsFn(filepath.Join(*projectPath, ".do", "system", "PRD.md"))
 
 	meta := GitMeta{
 		RemoteName:     gitInfo.RemoteName,
@@ -48,30 +66,31 @@ func main() {
 		RepoSlug:       gitInfo.RepoSlug,
 		DefaultBranch:  gitInfo.DefaultBranch,
 		SuccessMetrics: metrics,
-		UpdatedAt:      time.Now().UTC().Format(time.RFC3339),
+		UpdatedAt:      timeNow().UTC().Format(time.RFC3339),
 	}
 
-	if err := writeMeta(*projectPath, meta); err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: failed to persist meta: %v\n", err)
+	if err := writeMetaFunc(*projectPath, meta); err != nil {
+		fmt.Fprintf(stderr, "Warning: failed to persist meta: %v\n", err)
 	}
 
 	if *syncReadme {
-		if err := updateReadmeKPIs(*projectPath, metrics); err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to sync README KPIs: %v\n", err)
+		if err := updateReadmeKPIsFunc(*projectPath, metrics); err != nil {
+			fmt.Fprintf(stderr, "Failed to sync README KPIs: %v\n", err)
 		} else {
-			fmt.Println("README KPI block updated.")
+			fmt.Fprintln(stdout, "README KPI block updated.")
 		}
 	}
 
 	if *issueTitle != "" {
-		printIssueCommand(meta, *issueTitle, *issueBody)
+		printIssueCommandFunc(meta, *issueTitle, *issueBody)
 	}
 
 	if *milestoneTitle != "" {
-		printMilestoneCommand(meta, *milestoneTitle, *milestoneDue)
+		printMilestoneFunc(meta, *milestoneTitle, *milestoneDue)
 	}
 
-	fmt.Printf("GitHub metadata captured. Remote=%s (%s) DefaultBranch=%s\n", meta.RemoteName, meta.RepoSlug, meta.DefaultBranch)
+	fmt.Fprintf(stdout, "GitHub metadata captured. Remote=%s (%s) DefaultBranch=%s\n", meta.RemoteName, meta.RepoSlug, meta.DefaultBranch)
+	return 0
 }
 
 type gitInfo struct {

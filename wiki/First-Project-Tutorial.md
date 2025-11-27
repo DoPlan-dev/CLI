@@ -91,7 +91,7 @@ code .  # or your IDE's command
 
 ---
 
-## Step 3: Understand the Structure
+## Step 3: Understand the Project Structure
 
 ### 3.1 Explore the Directory
 
@@ -112,6 +112,8 @@ my-first-app/
 ├── src/                # Your source code
 ├── README.md           # Project documentation
 └── STANDUP.md          # Daily standup notes
+
+Need the full breakdown of every folder? See the dedicated [Project Structure](Project-Structure) reference.
 ```
 
 ### 3.2 Key Files

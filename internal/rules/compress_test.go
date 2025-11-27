@@ -2,6 +2,8 @@ package rules
 
 import (
 	"bytes"
+	"errors"
+	"io"
 	"testing"
 )
 
@@ -102,7 +104,7 @@ func TestReadFileDecompressed(t *testing.T) {
 func TestCompressionRatio(t *testing.T) {
 	// Test with a larger text that should compress well
 	original := bytes.Repeat([]byte("This is a test string that should compress well. "), 100)
-	
+
 	compressed, err := CompressData(original)
 	if err != nil {
 		t.Fatalf("CompressData() error = %v", err)
@@ -128,3 +130,211 @@ func TestCompressionRatio(t *testing.T) {
 	}
 }
 
+func TestCompressData_ErrorHandling(t *testing.T) {
+	// Test with very large data (should still work)
+	largeData := bytes.Repeat([]byte("test"), 1000000)
+	compressed, err := CompressData(largeData)
+	if err != nil {
+		t.Fatalf("CompressData() with large data error = %v", err)
+	}
+	if len(compressed) == 0 {
+		t.Error("CompressData() should compress large data")
+	}
+
+	// Verify we can decompress it
+	decompressed, err := DecompressData(compressed)
+	if err != nil {
+		t.Fatalf("DecompressData() error = %v", err)
+	}
+	if !bytes.Equal(largeData, decompressed) {
+		t.Error("Large data compression/decompression failed")
+	}
+}
+
+func TestDecompressData_InvalidData(t *testing.T) {
+	// Test with invalid gzip data
+	invalidData := []byte("not a valid gzip file")
+	_, err := DecompressData(invalidData)
+	if err == nil {
+		t.Error("DecompressData() should return error for invalid gzip data")
+	}
+
+	// Test with empty data
+	_, err = DecompressData([]byte{})
+	if err == nil {
+		t.Error("DecompressData() should return error for empty data")
+	}
+
+	// Test with partial gzip header
+	partialData := []byte{0x1f, 0x8b} // Only magic bytes, not complete
+	_, err = DecompressData(partialData)
+	if err == nil {
+		t.Error("DecompressData() should return error for incomplete gzip data")
+	}
+}
+
+func TestReadFileDecompressed_WithCompressedData(t *testing.T) {
+	// Create a test scenario where we have compressed data
+	// Since embedded files are not compressed, we test the logic path
+
+	// Test reading actual file (uncompressed)
+	data, err := ReadFileDecompressed("01-core-workflow/README.md")
+	if err != nil {
+		t.Fatalf("ReadFileDecompressed() error = %v", err)
+	}
+
+	if len(data) == 0 {
+		t.Error("ReadFileDecompressed() should return non-empty data")
+	}
+
+	// Verify it's not compressed (embedded files are not compressed)
+	if IsCompressed(data) {
+		t.Error("ReadFileDecompressed() should return decompressed data")
+	}
+}
+
+func TestReadFileDecompressed_DecompressionError(t *testing.T) {
+	// We can't easily test the decompression error path with embedded files
+	// since they're not compressed. But we can verify the function handles
+	// the case where ReadFile succeeds but decompression fails.
+
+	// Test with non-existent file (should error before decompression)
+	_, err := ReadFileDecompressed("nonexistent/file.md")
+	if err == nil {
+		t.Error("ReadFileDecompressed() should return error for non-existent file")
+	}
+}
+
+func TestReadFileDecompressedWithStub(t *testing.T) {
+	original := []byte("stubbed data")
+	compressed, err := CompressData(original)
+	if err != nil {
+		t.Fatalf("CompressData() error = %v", err)
+	}
+
+	readRulesFile = func(string) ([]byte, error) {
+		return compressed, nil
+	}
+	defer func() { readRulesFile = ReadFile }()
+
+	data, err := ReadFileDecompressed("stub.md")
+	if err != nil {
+		t.Fatalf("ReadFileDecompressed() error = %v", err)
+	}
+	if !bytes.Equal(original, data) {
+		t.Errorf("expected %q, got %q", original, data)
+	}
+}
+
+func TestReadFileDecompressedStubError(t *testing.T) {
+	readRulesFile = func(string) ([]byte, error) {
+		return []byte{0x1f, 0x8b, 0x00}, nil
+	}
+	defer func() { readRulesFile = ReadFile }()
+
+	if _, err := ReadFileDecompressed("stub.md"); err == nil {
+		t.Error("expected decompression error")
+	}
+}
+
+func TestCompressData_EmptyData(t *testing.T) {
+	// Test with empty data
+	compressed, err := CompressData([]byte{})
+	if err != nil {
+		t.Fatalf("CompressData() with empty data error = %v", err)
+	}
+
+	// Empty data should still compress (to a small gzip header)
+	if len(compressed) == 0 {
+		t.Error("CompressData() should return compressed data even for empty input")
+	}
+
+	// Verify we can decompress it back to empty
+	decompressed, err := DecompressData(compressed)
+	if err != nil {
+		t.Fatalf("DecompressData() error = %v", err)
+	}
+	if len(decompressed) != 0 {
+		t.Error("Empty data should decompress to empty")
+	}
+}
+
+func TestDecompressData_WithCompressedEmpty(t *testing.T) {
+	// Compress empty data
+	compressed, err := CompressData([]byte{})
+	if err != nil {
+		t.Fatalf("CompressData() error = %v", err)
+	}
+
+	// Decompress it
+	decompressed, err := DecompressData(compressed)
+	if err != nil {
+		t.Fatalf("DecompressData() error = %v", err)
+	}
+
+	if len(decompressed) != 0 {
+		t.Error("Decompressed empty data should be empty")
+	}
+}
+
+func TestCompressData_WriterError(t *testing.T) {
+	origBufferFactory := bufferFactory
+	origGzipFactory := gzipWriterFactory
+	defer func() {
+		bufferFactory = origBufferFactory
+		gzipWriterFactory = origGzipFactory
+	}()
+
+	errWrite := errors.New("write boom")
+	bufferFactory = func() compressBuffer { return &bytes.Buffer{} }
+	gzipWriterFactory = func(io.Writer) gzipWriter {
+		return &stubGzipWriter{writeErr: errWrite}
+	}
+
+	if _, err := CompressData([]byte("data")); err == nil || !errors.Is(err, errWrite) {
+		t.Fatalf("expected write error, got %v", err)
+	}
+}
+
+func TestCompressData_CloseError(t *testing.T) {
+	origBufferFactory := bufferFactory
+	origGzipFactory := gzipWriterFactory
+	defer func() {
+		bufferFactory = origBufferFactory
+		gzipWriterFactory = origGzipFactory
+	}()
+
+	errClose := errors.New("close boom")
+	bufferFactory = func() compressBuffer { return &bytes.Buffer{} }
+	gzipWriterFactory = func(io.Writer) gzipWriter {
+		return &stubGzipWriter{closeErr: errClose, bytesWritten: true}
+	}
+
+	if _, err := CompressData([]byte("data")); err == nil || !errors.Is(err, errClose) {
+		t.Fatalf("expected close error, got %v", err)
+	}
+}
+
+type stubGzipWriter struct {
+	writeErr     error
+	closeErr     error
+	bytesWritten bool
+}
+
+func (s *stubGzipWriter) Write(p []byte) (int, error) {
+	if s.writeErr != nil {
+		return 0, s.writeErr
+	}
+	s.bytesWritten = true
+	return len(p), nil
+}
+
+func (s *stubGzipWriter) Close() error {
+	if s.closeErr != nil {
+		return s.closeErr
+	}
+	if !s.bytesWritten {
+		return errors.New("no data written")
+	}
+	return nil
+}

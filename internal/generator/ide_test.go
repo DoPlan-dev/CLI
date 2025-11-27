@@ -26,7 +26,7 @@ func TestIDEGenerator_Generate_Cursor(t *testing.T) {
 
 	request := &models.ProjectRequest{
 		ProjectName: "test-project",
-		IDE:         "Cursor",
+		IDEs:        []string{"Cursor"},
 		ProjectType: "Fullstack",
 	}
 
@@ -35,10 +35,10 @@ func TestIDEGenerator_Generate_Cursor(t *testing.T) {
 		t.Fatalf("IDEGenerator.Generate() error = %v", err)
 	}
 
-	// Verify CLAUDE.md was also created in docs/
-	claudePath := filepath.Join(tmpDir, "docs", "CLAUDE.md")
-	if _, err := os.Stat(claudePath); os.IsNotExist(err) {
-		t.Error("IDEGenerator.Generate() should create docs/CLAUDE.md")
+	// Verify .cursorrules was created
+	cursorrulesPath := filepath.Join(tmpDir, ".cursorrules")
+	if _, err := os.Stat(cursorrulesPath); os.IsNotExist(err) {
+		t.Error("IDEGenerator.Generate() should create .cursorrules for Cursor")
 	}
 }
 
@@ -52,7 +52,7 @@ func TestIDEGenerator_Generate_ClaudeCode(t *testing.T) {
 
 	request := &models.ProjectRequest{
 		ProjectName: "test-project",
-		IDE:         "Claude Code",
+		IDEs:        []string{"Claude Code"},
 		ProjectType: "Fullstack",
 	}
 
@@ -78,7 +78,7 @@ func TestIDEGenerator_Generate_FileContent(t *testing.T) {
 
 	request := &models.ProjectRequest{
 		ProjectName: "test-project",
-		IDE:         "Cursor",
+		IDEs:        []string{"Claude Code"},
 		ProjectType: "Fullstack",
 	}
 
@@ -106,6 +106,42 @@ func TestIDEGenerator_Generate_FileContent(t *testing.T) {
 	}
 }
 
+func TestIDEGenerator_Generate_MultipleIDEs(t *testing.T) {
+	// Create temporary directory
+	tmpDir, err := os.MkdirTemp("", "doplan-test-*")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	request := &models.ProjectRequest{
+		ProjectName: "test-project",
+		IDEs:        []string{"Cursor", "Claude Code", "Windsurf", "Antigravity", "Cline", "OpenCode"},
+		ProjectType: "Fullstack",
+	}
+
+	generator := &IDEGenerator{}
+	if err := generator.Generate(request, tmpDir); err != nil {
+		t.Fatalf("IDEGenerator.Generate() error = %v", err)
+	}
+
+	// Verify all IDE configs were created
+	expectedFiles := map[string]string{
+		"Cursor":      filepath.Join(tmpDir, ".cursorrules"),
+		"Claude Code": filepath.Join(tmpDir, "docs", "CLAUDE.md"),
+		"Windsurf":    filepath.Join(tmpDir, ".windsurfrules"),
+		"Antigravity": filepath.Join(tmpDir, ".antigravity", "config.md"),
+		"Cline":       filepath.Join(tmpDir, ".cline", "config.md"),
+		"OpenCode":    filepath.Join(tmpDir, "opencode.json"),
+	}
+
+	for ide, path := range expectedFiles {
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			t.Errorf("IDEGenerator.Generate() should create config for %s at %s", ide, path)
+		}
+	}
+}
+
 func TestGenerateIDEConfigs(t *testing.T) {
 	// Create temporary directory
 	tmpDir, err := os.MkdirTemp("", "doplan-test-*")
@@ -116,7 +152,7 @@ func TestGenerateIDEConfigs(t *testing.T) {
 
 	request := &models.ProjectRequest{
 		ProjectName: "test-project",
-		IDE:         "Cursor",
+		IDEs:        []string{"Cursor"},
 		ProjectType: "Fullstack",
 	}
 
@@ -124,9 +160,9 @@ func TestGenerateIDEConfigs(t *testing.T) {
 		t.Fatalf("GenerateIDEConfigs() error = %v", err)
 	}
 
-	// Verify CLAUDE.md was created
-	claudePath := filepath.Join(tmpDir, "docs", "CLAUDE.md")
-	if _, err := os.Stat(claudePath); os.IsNotExist(err) {
-		t.Error("GenerateIDEConfigs() should create docs/CLAUDE.md")
+	// Verify .cursorrules was created for Cursor
+	cursorrulesPath := filepath.Join(tmpDir, ".cursorrules")
+	if _, err := os.Stat(cursorrulesPath); os.IsNotExist(err) {
+		t.Error("GenerateIDEConfigs() should create .cursorrules for Cursor")
 	}
 }

@@ -14,4 +14,3 @@ func TestVersionVariable(t *testing.T) {
 		t.Error("Version variable should not be empty")
 	}
 }
-

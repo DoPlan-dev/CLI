@@ -1,0 +1,34 @@
+# /{{.Name}}
+
+## Trigger
+{{.Trigger}}{{if .Examples}}
+
+## Examples
+{{range .Examples}}- {{.}}
+{{end}}{{end}}
+
+## Action
+{{.Action}}
+
+## Agent Involvement
+{{range .AgentInvolvement}}- **{{.}}**
+{{end}}{{if .FilesRead}}
+## Files Read
+{{range .FilesRead}}- {{.}}
+{{end}}{{end}}{{if .FilesModified}}
+## Files Modified
+{{range .FilesModified}}- {{.}}
+{{end}}{{end}}{{if .GitHubAutomation}}
+## GitHub Automation
+{{.GitHubAutomation}}{{end}}{{if .Requirements}}
+## Requirements
+{{.Requirements}}{{end}}{{if .Notes}}
+## Notes
+{{.Notes}}{{end}}{{if .Customize}}
+## Customize
+{{.Customize}}{{end}}{{if .Options}}
+## Options
+{{.Options}}{{end}}{{if .OfflineSafety}}
+## Offline Safety
+{{.OfflineSafety}}{{end}}
+

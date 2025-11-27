@@ -173,6 +173,7 @@ func GetAllAgents() []Agent {
 				"Threat modeling",
 			},
 			FileName: "security_lead.md",
+			Category: "engineering",
 		},
 		{
 			Name:         "Performance Engineer",
@@ -188,6 +189,7 @@ func GetAllAgents() []Agent {
 				"Performance guidelines",
 			},
 			FileName: "performance_engineer.md",
+			Category: "engineering",
 		},
 		{
 			Name:         "Design & UX Manager",
@@ -203,6 +205,7 @@ func GetAllAgents() []Agent {
 				"User research",
 			},
 			FileName: "design_manager.md",
+			Category: "design",
 		},
 		{
 			Name:         "UI/UX Designer",
@@ -218,6 +221,7 @@ func GetAllAgents() []Agent {
 				"Usability and accessibility",
 			},
 			FileName: "ui_ux_designer.md",
+			Category: "design",
 		},
 		{
 			Name:         "QA & Reliability Manager",
@@ -233,6 +237,7 @@ func GetAllAgents() []Agent {
 				"Quality metrics",
 			},
 			FileName: "qa_manager.md",
+			Category: "quality",
 		},
 		{
 			Name:         "QA Engineer",
@@ -248,6 +253,7 @@ func GetAllAgents() []Agent {
 				"Regression testing",
 			},
 			FileName: "qa_engineer.md",
+			Category: "quality",
 		},
 		{
 			Name:         "Release & Growth Manager",
@@ -266,6 +272,7 @@ func GetAllAgents() []Agent {
 				"Go-to-market",
 			},
 			FileName: "release_manager.md",
+			Category: "release",
 		},
 		{
 			Name:         "Release Captain",
@@ -281,6 +288,7 @@ func GetAllAgents() []Agent {
 				"Release notes",
 			},
 			FileName: "release_captain.md",
+			Category: "release",
 		},
 		{
 			Name:         "Growth Coach",
@@ -296,6 +304,7 @@ func GetAllAgents() []Agent {
 				"Growth metrics",
 			},
 			FileName: "growth_coach.md",
+			Category: "release",
 		},
 		{
 			Name:         "Documentation Lead",
@@ -311,6 +320,7 @@ func GetAllAgents() []Agent {
 				"Documentation quality",
 			},
 			FileName: "documentation_lead.md",
+			Category: "documentation",
 		},
 		{
 			Name:         "Documentation Writer",
@@ -326,6 +336,7 @@ func GetAllAgents() []Agent {
 				"Documentation maintenance",
 			},
 			FileName: "documentation_writer.md",
+			Category: "documentation",
 		},
 	}
 }
@@ -374,11 +385,19 @@ const agentTemplate = `# {{.Name}}
 `
 
 // RenderAgentMarkdown renders an agent to markdown format
+// Uses file-based template if available, falls back to hardcoded template
 func RenderAgentMarkdown(agent *Agent) (string, error) {
 	if agent == nil {
 		return "", fmt.Errorf("agent cannot be nil")
 	}
 
+	// Try file-based template first
+	rendered, err := RenderAgentMarkdownFileBased(agent)
+	if err == nil {
+		return rendered, nil
+	}
+
+	// Fallback to hardcoded template
 	tmpl, err := template.New("agent").Parse(agentTemplate)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse template: %w", err)
@@ -415,8 +434,13 @@ func (g *AgentsGenerator) Generate(request *models.ProjectRequest, projectPath s
 		return fmt.Errorf("failed to create central agents directory: %w", err)
 	}
 
-	// Get all agents
-	agents := GetAllAgents()
+	// Get all agents (try file-based first, fallback to hardcoded)
+	agents, err := GetAllAgentsFileBased()
+	if err != nil {
+		// Log the error but continue with fallback
+		// The GetAllAgentsFileBased already falls back to GetAllAgents() internally
+		agents = GetAllAgents()
+	}
 
 	// Check if central agents already exist and have content
 	hasContent := false
@@ -426,16 +450,28 @@ func (g *AgentsGenerator) Generate(request *models.ProjectRequest, projectPath s
 
 	// Only generate if central agents directory is empty
 	if !hasContent {
-		// Generate each agent file in central location
+		// Generate each agent file in central location, organized by category
 		for _, agent := range agents {
+			// Determine category (default to "other" if not set)
+			category := agent.Category
+			if category == "" {
+				category = "other"
+			}
+
+			// Create category directory if it doesn't exist
+			categoryDir := filepath.Join(centralAgentsDir, category)
+			if err := utils.CreateDirectory(categoryDir); err != nil {
+				return fmt.Errorf("failed to create category directory %s: %w", category, err)
+			}
+
 			// Render agent markdown
 			markdown, err := RenderAgentMarkdown(&agent)
 			if err != nil {
 				return fmt.Errorf("failed to render agent %s: %w", agent.Name, err)
 			}
 
-			// Write agent file
-			agentPath := filepath.Join(centralAgentsDir, agent.FileName)
+			// Write agent file in category folder
+			agentPath := filepath.Join(categoryDir, agent.FileName)
 			if err := utils.WriteFile(agentPath, []byte(markdown)); err != nil {
 				return fmt.Errorf("failed to write agent file %s: %w", agent.FileName, err)
 			}
@@ -455,8 +491,13 @@ func (g *AgentsGenerator) Generate(request *models.ProjectRequest, projectPath s
 			return fmt.Errorf("failed to create parent directory for %s: %w", ide, err)
 		}
 
-		// Try to create symlink, fallback to copying if symlink fails
-		if err := createAgentsSymlink(ideAgentsDir, centralAgentsDir); err != nil {
+		// Ensure IDE agents directory exists
+		if err := utils.CreateDirectory(ideAgentsDir); err != nil {
+			return fmt.Errorf("failed to create agents directory for %s: %w", ide, err)
+		}
+
+		// Create symlinks for each agent category folder
+		if err := createAgentCategorySymlinks(ideAgentsDir, centralAgentsDir); err != nil {
 			// Fallback: copy agents if symlink creation fails
 			if err := copyAgents(ideAgentsDir, centralAgentsDir, agents); err != nil {
 				return fmt.Errorf("failed to create agents for %s (symlink and copy both failed): %w", ide, err)
@@ -467,50 +508,81 @@ func (g *AgentsGenerator) Generate(request *models.ProjectRequest, projectPath s
 	return nil
 }
 
-// createAgentsSymlink creates a symlink from ideAgentsDir to centralAgentsDir
-func createAgentsSymlink(ideAgentsDir, centralAgentsDir string) error {
-	// Remove existing directory/link if it exists
-	if utils.PathExists(ideAgentsDir) {
-		// Check if it's already a symlink pointing to the right place
-		if utils.IsSymlink(ideAgentsDir) {
-			target, err := os.Readlink(ideAgentsDir)
-			if err == nil {
-				// Resolve to absolute path for comparison
-				absTarget, _ := filepath.Abs(target)
-				absCentral, _ := filepath.Abs(centralAgentsDir)
-				if absTarget == absCentral || filepath.Clean(absTarget) == filepath.Clean(absCentral) {
-					// Already correctly linked
-					return nil
+// createAgentCategorySymlinks creates symlinks for each category folder in agents
+func createAgentCategorySymlinks(ideAgentsDir, centralAgentsDir string) error {
+	// Read all folders in the central agents directory
+	entries, err := os.ReadDir(centralAgentsDir)
+	if err != nil {
+		return fmt.Errorf("failed to read central agents directory: %w", err)
+	}
+
+	var firstError error
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+
+		folderName := entry.Name()
+		centralFolderPath := filepath.Join(centralAgentsDir, folderName)
+		ideFolderPath := filepath.Join(ideAgentsDir, folderName)
+
+		// Remove existing symlink/directory if it exists
+		if utils.PathExists(ideFolderPath) {
+			// Check if it's already a symlink pointing to the right place
+			if utils.IsSymlink(ideFolderPath) {
+				target, err := os.Readlink(ideFolderPath)
+				if err == nil {
+					// Resolve to absolute path for comparison
+					absTarget, _ := filepath.Abs(target)
+					absCentral, _ := filepath.Abs(centralFolderPath)
+					if absTarget == absCentral || filepath.Clean(absTarget) == filepath.Clean(absCentral) {
+						// Already correctly linked, skip
+						continue
+					}
 				}
 			}
+			// Remove existing directory/link
+			if err := os.RemoveAll(ideFolderPath); err != nil {
+				if firstError == nil {
+					firstError = fmt.Errorf("failed to remove existing folder %s: %w", folderName, err)
+				}
+				continue
+			}
 		}
-		// Remove existing directory/link
-		if err := os.RemoveAll(ideAgentsDir); err != nil {
-			return fmt.Errorf("failed to remove existing agents directory: %w", err)
+
+		// Create symlink for this folder
+		if err := utils.CreateSymlink(ideFolderPath, centralFolderPath); err != nil {
+			if firstError == nil {
+				firstError = fmt.Errorf("failed to create symlink for folder %s: %w", folderName, err)
+			}
+			// Continue trying other folders
+			continue
 		}
 	}
 
-	// Create symlink
-	return utils.CreateSymlink(ideAgentsDir, centralAgentsDir)
+	return firstError
 }
 
-// copyAgents copies agents from central location to IDE directory (fallback)
+// copyAgents copies agent category folders from central location to IDE directory (fallback)
 func copyAgents(ideAgentsDir, centralAgentsDir string, agents []Agent) error {
-	if err := utils.CreateDirectory(ideAgentsDir); err != nil {
-		return fmt.Errorf("failed to create agents directory: %w", err)
+	// Read all folders in the central agents directory
+	entries, err := os.ReadDir(centralAgentsDir)
+	if err != nil {
+		return fmt.Errorf("failed to read central agents directory: %w", err)
 	}
 
-	for _, agent := range agents {
-		src := filepath.Join(centralAgentsDir, agent.FileName)
-		dst := filepath.Join(ideAgentsDir, agent.FileName)
-		
-		data, err := os.ReadFile(src)
-		if err != nil {
-			return fmt.Errorf("failed to read agent file %s: %w", agent.FileName, err)
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
 		}
-		
-		if err := utils.WriteFile(dst, data); err != nil {
-			return fmt.Errorf("failed to copy agent file %s: %w", agent.FileName, err)
+
+		folderName := entry.Name()
+		centralFolderPath := filepath.Join(centralAgentsDir, folderName)
+		ideFolderPath := filepath.Join(ideAgentsDir, folderName)
+
+		// Copy the entire folder recursively
+		if err := utils.CopyDirectory(centralFolderPath, ideFolderPath); err != nil {
+			return fmt.Errorf("failed to copy folder %s: %w", folderName, err)
 		}
 	}
 

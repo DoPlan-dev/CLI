@@ -12,8 +12,8 @@ import (
 
 func TestPlanGenerator_Name(t *testing.T) {
 	generator := &PlanGenerator{}
-	if got := generator.Name(); got != ".plan Structure" {
-		t.Errorf("PlanGenerator.Name() = %v, want %v", got, ".plan Structure")
+	if got := generator.Name(); got != ".do Structure" {
+		t.Errorf("PlanGenerator.Name() = %v, want %v", got, ".do Structure")
 	}
 }
 
@@ -36,10 +36,10 @@ func TestPlanGenerator_Generate(t *testing.T) {
 		t.Fatalf("PlanGenerator.Generate() error = %v", err)
 	}
 
-	// Verify .plan/00_System directory was created
-	systemDir := filepath.Join(tmpDir, ".plan", "00_System")
+	// Verify .do/system directory was created
+	systemDir := filepath.Join(tmpDir, ".do", "system")
 	if _, err := os.Stat(systemDir); os.IsNotExist(err) {
-		t.Error("PlanGenerator.Generate() should create .plan/00_System directory")
+		t.Error("PlanGenerator.Generate() should create .do/system directory")
 	}
 
 	// Verify all required files exist
@@ -59,13 +59,13 @@ func TestPlanGenerator_Generate(t *testing.T) {
 	}
 
 	// Verify TASKS.md exists
-	tasksPath := filepath.Join(tmpDir, ".plan", "TASKS.md")
+	tasksPath := filepath.Join(tmpDir, ".do", "plan", "TASKS.md")
 	if _, err := os.Stat(tasksPath); os.IsNotExist(err) {
 		t.Error("PlanGenerator.Generate() should create TASKS.md")
 	}
 
 	// Verify active_state.json exists and is valid
-	statePath := filepath.Join(tmpDir, ".plan", "active_state.json")
+	statePath := filepath.Join(tmpDir, ".do", "system", "history", "active_state.json")
 	if _, err := os.Stat(statePath); os.IsNotExist(err) {
 		t.Error("PlanGenerator.Generate() should create active_state.json")
 	}
@@ -110,7 +110,7 @@ func TestPlanGenerator_Generate_FileContent(t *testing.T) {
 	}
 
 	// Verify PRD.md contains project name
-	prdPath := filepath.Join(tmpDir, ".plan", "00_System", "PRD.md")
+	prdPath := filepath.Join(tmpDir, ".do", "system", "PRD.md")
 	content, err := os.ReadFile(prdPath)
 	if err != nil {
 		t.Fatalf("Failed to read PRD.md: %v", err)
@@ -122,7 +122,7 @@ func TestPlanGenerator_Generate_FileContent(t *testing.T) {
 	}
 
 	// Verify IDEA.md has expected structure
-	ideaPath := filepath.Join(tmpDir, ".plan", "00_System", "IDEA.md")
+	ideaPath := filepath.Join(tmpDir, ".do", "system", "IDEA.md")
 	ideaContent, err := os.ReadFile(ideaPath)
 	if err != nil {
 		t.Fatalf("Failed to read IDEA.md: %v", err)
@@ -153,8 +153,8 @@ func TestGeneratePlan(t *testing.T) {
 	}
 
 	// Verify directory was created
-	systemDir := filepath.Join(tmpDir, ".plan", "00_System")
+	systemDir := filepath.Join(tmpDir, ".do", "system")
 	if _, err := os.Stat(systemDir); os.IsNotExist(err) {
-		t.Error("GeneratePlan() should create .plan/00_System directory")
+		t.Error("GeneratePlan() should create .do/system directory")
 	}
 }

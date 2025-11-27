@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -8,6 +9,105 @@ import (
 	"github.com/DoPlan-dev/CLI/pkg/models"
 )
 
+type mockGenerator struct {
+	name   string
+	err    error
+	onRun  func(projectPath string)
+	called bool
+}
+
+func (m *mockGenerator) Generate(_ *models.ProjectRequest, projectPath string) error {
+	m.called = true
+	if m.onRun != nil {
+		m.onRun(projectPath)
+	}
+	return m.err
+}
+
+func (m *mockGenerator) Name() string {
+	return m.name
+}
+
+func withTempCWD(t *testing.T, dir string) func() {
+	t.Helper()
+	oldDir, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("failed to get working directory: %v", err)
+	}
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("failed to change directory: %v", err)
+	}
+	return func() {
+		_ = os.Chdir(oldDir)
+	}
+}
+
+func TestOrchestrate_UsesGenerationSteps(t *testing.T) {
+	t.Cleanup(func() { generationStepFactory = defaultGenerationSteps })
+
+	successGen := &mockGenerator{name: "success"}
+	generationStepFactory = func() []GenerationStep {
+		return []GenerationStep{{Generator: successGen, Name: "mock"}}
+	}
+
+	tmp := t.TempDir()
+	restore := withTempCWD(t, tmp)
+	defer restore()
+
+	req := &models.ProjectRequest{
+		ProjectName: "orchestrate_success",
+		IDEs:        []string{"Cursor"},
+	}
+
+	if err := Orchestrate(req); err != nil {
+		t.Fatalf("Orchestrate() error = %v", err)
+	}
+	if !successGen.called {
+		t.Fatal("expected mock generator to be called")
+	}
+	projectPath := filepath.Join(tmp, "orchestrate_success")
+	if _, err := os.Stat(projectPath); err != nil {
+		t.Fatalf("expected project directory to exist: %v", err)
+	}
+}
+
+func TestOrchestrate_RollbackOnFailure(t *testing.T) {
+	t.Cleanup(func() { generationStepFactory = defaultGenerationSteps })
+
+	failGen := &mockGenerator{
+		name: "fail",
+		err:  errors.New("boom"),
+		onRun: func(projectPath string) {
+			// create dummy file to verify rollback cleans up
+			_ = os.WriteFile(filepath.Join(projectPath, "temp.txt"), []byte("temp"), 0644)
+		},
+	}
+	generationStepFactory = func() []GenerationStep {
+		return []GenerationStep{{Generator: failGen, Name: "mock"}}
+	}
+
+	tmp := t.TempDir()
+	restore := withTempCWD(t, tmp)
+	defer restore()
+
+	req := &models.ProjectRequest{
+		ProjectName: "orchestrate_failure",
+		IDEs:        []string{"Cursor"},
+	}
+
+	err := Orchestrate(req)
+	if err == nil {
+		t.Fatal("Orchestrate() expected error, got nil")
+	}
+	if !failGen.called {
+		t.Fatal("expected mock generator to be called")
+	}
+
+	projectPath := filepath.Join(tmp, "orchestrate_failure")
+	if _, statErr := os.Stat(projectPath); !os.IsNotExist(statErr) {
+		t.Fatalf("expected project directory to be removed, got err=%v", statErr)
+	}
+}
 func TestOrchestrate_ValidRequest(t *testing.T) {
 	tmpDir := t.TempDir()
 

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -93,14 +94,36 @@ var presetConfigs = map[string]presetConfig{
 	},
 }
 
+var (
+	outWriter                 io.Writer = os.Stdout
+	errWriter                 io.Writer = os.Stderr
+	summarizeStateHistoryFunc           = summarizeStateHistory
+	summarizeProgressFunc               = summarizeProgress
+	renderVisualsFunc                   = renderVisuals
+	renderDependencyAuditFunc           = renderDependencyAudit
+)
+
 func main() {
-	projectDir := flag.String("project", ".", "Path to the project root containing .plan/reports")
-	presetFlag := flag.String("preset", "standard", "Report preset: standard, exec, or detailed")
-	flag.Parse()
+	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))
+}
+
+func run(args []string, stdout, stderr io.Writer) int {
+	outWriter = stdout
+	errWriter = stderr
+
+	fs := flag.NewFlagSet("scanreport", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	projectDir := fs.String("project", ".", "Path to the project root containing .do/reports")
+	presetFlag := fs.String("preset", "standard", "Report preset: standard, exec, or detailed")
+
+	if err := fs.Parse(args); err != nil {
+		fmt.Fprintf(errWriter, "error: %v\n", err)
+		return 2
+	}
 
 	presetValue := strings.ToLower(strings.TrimSpace(*presetFlag))
 	userSetPreset := false
-	flag.Visit(func(f *flag.Flag) {
+	fs.Visit(func(f *flag.Flag) {
 		if f.Name == "preset" {
 			userSetPreset = true
 		}
@@ -113,48 +136,48 @@ func main() {
 
 	baseCfg, ok := presetConfigs[presetValue]
 	if !ok {
-		fmt.Fprintf(os.Stderr, "unknown preset %q (valid: standard, exec, detailed)\n", presetValue)
-		os.Exit(1)
+		fmt.Fprintf(errWriter, "unknown preset %q (valid: standard, exec, detailed)\n", presetValue)
+		return 1
 	}
 	cfg := baseCfg
 	if custom := normalizedSections(cfgFile); len(custom) > 0 {
 		cfg.Sections = custom
 	}
 
-	reportsDir := filepath.Join(*projectDir, ".plan", "reports")
+	reportsDir := filepath.Join(*projectDir, ".do", "reports")
 	if _, err := os.Stat(reportsDir); err != nil {
-		fmt.Fprintf(os.Stderr, "reports directory not found: %s\n", reportsDir)
-		os.Exit(1)
+		fmt.Fprintf(errWriter, "reports directory not found: %s\n", reportsDir)
+		return 1
 	}
 
 	reportFiles, err := listReportFiles(reportsDir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to list reports: %v\n", err)
-		os.Exit(1)
+		fmt.Fprintf(errWriter, "failed to list reports: %v\n", err)
+		return 1
 	}
 	if len(reportFiles) == 0 {
-		fmt.Println("No scan reports found.")
-		return
+		fmt.Fprintln(outWriter, "No scan reports found.")
+		return 0
 	}
 
 	var metadataFiles []string
 	for _, file := range reportFiles {
 		meta, err := parseReport(filepath.Join(reportsDir, file), *projectDir)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "failed to parse %s: %v\n", file, err)
+			fmt.Fprintf(errWriter, "failed to parse %s: %v\n", file, err)
 			continue
 		}
 		metaPath := filepath.Join(reportsDir, strings.TrimSuffix(file, filepath.Ext(file))+".json")
 		if err := writeMetadata(metaPath, meta); err != nil {
-			fmt.Fprintf(os.Stderr, "failed to write metadata for %s: %v\n", file, err)
+			fmt.Fprintf(errWriter, "failed to write metadata for %s: %v\n", file, err)
 			continue
 		}
 		metadataFiles = append(metadataFiles, metaPath)
 	}
 
 	if len(reportFiles) < 2 {
-		fmt.Println("Report metadata generated. (Only one report present; skipping diff.)")
-		return
+		fmt.Fprintln(outWriter, "Report metadata generated. (Only one report present; skipping diff.)")
+		return 0
 	}
 
 	latest := reportFiles[len(reportFiles)-1]
@@ -162,19 +185,19 @@ func main() {
 
 	latestMeta, err := loadMetadata(filepath.Join(reportsDir, strings.TrimSuffix(latest, filepath.Ext(latest))+".json"))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to load metadata for %s: %v\n", latest, err)
-		return
+		fmt.Fprintf(errWriter, "failed to load metadata for %s: %v\n", latest, err)
+		return 1
 	}
 	previousMeta, err := loadMetadata(filepath.Join(reportsDir, strings.TrimSuffix(previous, filepath.Ext(previous))+".json"))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to load metadata for %s: %v\n", previous, err)
-		return
+		fmt.Fprintf(errWriter, "failed to load metadata for %s: %v\n", previous, err)
+		return 1
 	}
 
-	stateSummary := summarizeStateHistory(*projectDir)
-	progressSummary, progressReport := summarizeProgress(*projectDir)
-	visualSummary := renderVisuals(progressReport)
-	dependencyAudit := renderDependencyAudit(*projectDir)
+	stateSummary := summarizeStateHistoryFunc(*projectDir)
+	progressSummary, progressReport := summarizeProgressFunc(*projectDir)
+	visualSummary := renderVisualsFunc(progressReport)
+	dependencyAudit := renderDependencyAuditFunc(*projectDir)
 
 	sections := diffSections{
 		Executive:  renderDiff(latestMeta.ExecutiveSummary, previousMeta.ExecutiveSummary),
@@ -190,12 +213,13 @@ func main() {
 	diffContent := buildDiff(latestMeta, previousMeta, sections, cfg)
 	diffFile := filepath.Join(reportsDir, fmt.Sprintf("SCAN_DIFF_%s.md", sanitizeDate(latestMeta.ScanDate)))
 	if err := os.WriteFile(diffFile, []byte(diffContent), 0644); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to write diff file: %v\n", err)
-		return
+		fmt.Fprintf(errWriter, "failed to write diff file: %v\n", err)
+		return 1
 	}
 
-	fmt.Printf("Generated metadata for %d reports.\n", len(metadataFiles))
-	fmt.Printf("Diff written to %s (current vs previous).\n", diffFile)
+	fmt.Fprintf(outWriter, "Generated metadata for %d reports.\n", len(metadataFiles))
+	fmt.Fprintf(outWriter, "Diff written to %s (current vs previous).\n", diffFile)
+	return 0
 }
 
 func listReportFiles(dir string) ([]string, error) {
@@ -460,7 +484,7 @@ func sanitizeDate(input string) string {
 }
 
 func summarizeStateHistory(projectRoot string) string {
-	historyDir := filepath.Join(projectRoot, ".plan", "history")
+	historyDir := filepath.Join(projectRoot, ".do", "system", "history")
 	diff, err := statehistory.LatestDiff(historyDir)
 	if err != nil {
 		if errors.Is(err, statehistory.ErrInsufficientSnapshots) {
@@ -644,14 +668,14 @@ var validSections = map[string]bool{
 }
 
 func loadReportConfig(projectRoot string) *reportConfig {
-	path := filepath.Join(projectRoot, ".plan", "reports", "config.json")
+	path := filepath.Join(projectRoot, ".do", "reports", "config.json")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil
 	}
 	var cfg reportConfig
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		fmt.Fprintf(os.Stderr, "warning: invalid report config: %v\n", err)
+		fmt.Fprintf(errWriter, "warning: invalid report config: %v\n", err)
 		return nil
 	}
 	return &cfg

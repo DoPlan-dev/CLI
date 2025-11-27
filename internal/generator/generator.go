@@ -41,6 +41,20 @@ type GenerationContext struct {
 // - Uses os.MkdirAll for directory creation (works on all platforms)
 // - Atomic file writes ensure data integrity across platforms
 // - Path sanitization prevents path traversal attacks
+var generationStepFactory = defaultGenerationSteps
+
+func defaultGenerationSteps() []GenerationStep {
+	return []GenerationStep{
+		{Generator: &AgentsGenerator{}, Name: "AI Agents"},
+		{Generator: &CommandsGenerator{}, Name: "Commands"},
+		{Generator: &RulesGenerator{}, Name: "Rules Library"},
+		{Generator: &PlanGenerator{}, Name: ".do Structure"},
+		{Generator: &GitHubGenerator{}, Name: "GitHub Workflows"},
+		{Generator: &IDEGenerator{}, Name: "IDE Configs"},
+		{Generator: &DocsGenerator{}, Name: "Documentation"},
+	}
+}
+
 func Orchestrate(request *models.ProjectRequest) error {
 	// Comprehensive input validation
 	if err := request.Validate(); err != nil {
@@ -98,17 +112,7 @@ func Orchestrate(request *models.ProjectRequest) error {
 	ctx.CreatedDirs = append(ctx.CreatedDirs, projectPath)
 
 	// Define generation pipeline
-	steps := []GenerationStep{
-		{Generator: &AgentsGenerator{}, Name: "AI Agents"},
-		{Generator: &CommandsGenerator{}, Name: "Commands"},
-		{Generator: &RulesGenerator{}, Name: "Rules Library"},
-		{Generator: &PlanGenerator{}, Name: ".plan Structure"},
-		{Generator: &GitHubGenerator{}, Name: "GitHub Workflows"},
-		{Generator: &IDEGenerator{}, Name: "IDE Configs"},
-		{Generator: &DocsGenerator{}, Name: "Documentation"},
-		// {Generator: &DirectoryGenerator{}, Name: "Directory Structure"}, // Placeholder
-		// End of steps slice
-	}
+	steps := generationStepFactory()
 
 	// Track generation start time for performance monitoring
 	startTime := time.Now()

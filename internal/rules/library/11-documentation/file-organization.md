@@ -69,7 +69,7 @@ Examples:
 - Use numeric prefix (01, 02, 03...) for ordering
 - Use PascalCase or Title Case for feature names
 - Separate words with underscores or hyphens
-- Match the task ID from `.plan/TASKS.md` when applicable
+- Match the task ID from `.do/plan/TASKS.md` when applicable
 
 ### Custom Category Naming
 When creating new categories, follow this pattern:
@@ -165,8 +165,8 @@ Before creating any markdown file:
 ## Integration with Commands
 When using DoPlan commands:
 - `/write` - Generates docs in appropriate `docs/` subfolders
-- `/plan` - Mirrors `.plan/` content to `docs/foundation/`
-- `/build` - Creates feature docs in `docs/features/` and (on first run) executes `go run scripts/boilerplate/main.go --project .` to materialize code scaffolding
+- `/plan` - Mirrors `.do/` content to `docs/foundation/`
+- `/build` - Creates feature docs in `docs/features/` and (on first run) prompts the user to scaffold code with their preferred tool (the legacy `scripts/boilerplate` helper has been removed)
 - `/finished` - Moves completed feature docs to appropriate locations
 
 ## Maintenance
