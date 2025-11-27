@@ -7,12 +7,12 @@ import (
 	"testing"
 )
 
-// TestLoadPhaseTemplates simulates loading all phase templates as the /improve command would
+// TestLoadPhaseTemplates simulates loading all phase templates as the /meeting command would
 func TestLoadPhaseTemplates(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatesDir := filepath.Join(projectRoot, ".plan", "templates", "brainstorm")
+	templatesDir := filepath.Join(projectRoot, ".do", "core", "brainstorm")
 
-	// Simulate what /improve command does: load all phase templates in order
+	// Simulate what /meeting command does: load all phase templates in order
 	phaseFiles := []string{
 		"phase-01-vision.md",
 		"phase-02-audience.md",
@@ -77,7 +77,8 @@ func TestLoadPhaseTemplates(t *testing.T) {
 // TestLoadConfirmationTemplate simulates loading the confirmation template
 func TestLoadConfirmationTemplate(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatePath := filepath.Join(projectRoot, ".plan", "templates", "brainstorm", "CONFIRMATION_TEMPLATE.md")
+	// Templates are in .do/core/brainstorm/ not .do/core/templates/brainstorm/
+	templatePath := filepath.Join(projectRoot, ".do", "core", "brainstorm", "CONFIRMATION_TEMPLATE.md")
 
 	content, err := os.ReadFile(templatePath)
 	if err != nil {
@@ -123,7 +124,8 @@ func TestLoadConfirmationTemplate(t *testing.T) {
 // TestLoadOutputTemplate simulates loading the output template for BRAINSTORM.md
 func TestLoadOutputTemplate(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatePath := filepath.Join(projectRoot, ".plan", "templates", "brainstorm", "TEMPLATE_BRAINSTORM.md")
+	// Templates are in .do/core/brainstorm/ not .do/core/templates/brainstorm/
+	templatePath := filepath.Join(projectRoot, ".do", "core", "brainstorm", "TEMPLATE_BRAINSTORM.md")
 
 	content, err := os.ReadFile(templatePath)
 	if err != nil {
@@ -198,7 +200,7 @@ func TestTemplateQuestionExtraction(t *testing.T) {
 // TestTemplateCustomizationWorkflow simulates customizing a template
 func TestTemplateCustomizationWorkflow(t *testing.T) {
 	projectRoot := findProjectRoot(t)
-	templatesDir := filepath.Join(projectRoot, ".plan", "templates", "brainstorm")
+	templatesDir := filepath.Join(projectRoot, ".do", "core", "brainstorm")
 
 	// Test that we can read, modify, and validate a template
 	originalPath := filepath.Join(templatesDir, "phase-01-vision.md")

@@ -110,10 +110,10 @@ func TestGenerateDocumentation(t *testing.T) {
 		t.Error("GenerateDocumentation() should create README.md")
 	}
 
-	// Verify STANDUP.md was created in .plan/
-	standupPath := filepath.Join(tmpDir, ".plan", "STANDUP.md")
-	if _, err := os.Stat(standupPath); os.IsNotExist(err) {
-		t.Error("GenerateDocumentation() should create .plan/STANDUP.md")
+	// Verify STANDUP.md was created in .do/plan/
+	standupPath := filepath.Join(tmpDir, ".do", "plan", "STANDUP.md")
+		if _, err := os.Stat(standupPath); os.IsNotExist(err) {
+		t.Error("GenerateDocumentation() should create .do/plan/STANDUP.md")
 	}
 
 	// Verify CHANGELOG.md was created in docs/

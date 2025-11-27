@@ -3,6 +3,7 @@ package generator
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"path/filepath"
 	"text/template"
 
@@ -26,6 +27,7 @@ type Agent struct {
 
 	// File Information
 	FileName string // Output filename (e.g., "project_orchestrator.md")
+	Category string // Category folder (e.g., "leadership", "engineering", "design")
 }
 
 // GetAllAgents returns all 18 base agents with their definitions
@@ -52,6 +54,7 @@ func GetAllAgents() []Agent {
 				"Ensure project meets all success criteria",
 			},
 			FileName: "project_orchestrator.md",
+			Category: "leadership",
 		},
 		{
 			Name:         "Product Manager",
@@ -67,6 +70,7 @@ func GetAllAgents() []Agent {
 				"User research and personas",
 			},
 			FileName: "product_manager.md",
+			Category: "product",
 		},
 		{
 			Name:         "Engineering Lead",
@@ -89,6 +93,7 @@ func GetAllAgents() []Agent {
 				"Architecture documentation",
 			},
 			FileName: "engineering_lead.md",
+			Category: "engineering",
 		},
 		{
 			Name:         "System Architect",
@@ -104,6 +109,7 @@ func GetAllAgents() []Agent {
 				"Architecture documentation",
 			},
 			FileName: "system_architect.md",
+			Category: "engineering",
 		},
 		{
 			Name:         "Frontend Lead",
@@ -119,6 +125,7 @@ func GetAllAgents() []Agent {
 				"Frontend performance",
 			},
 			FileName: "frontend_lead.md",
+			Category: "engineering",
 		},
 		{
 			Name:         "Backend Lead",
@@ -134,6 +141,7 @@ func GetAllAgents() []Agent {
 				"Backend performance",
 			},
 			FileName: "backend_lead.md",
+			Category: "engineering",
 		},
 		{
 			Name:         "DevOps Engineer",
@@ -149,6 +157,7 @@ func GetAllAgents() []Agent {
 				"System reliability",
 			},
 			FileName: "devops_engineer.md",
+			Category: "engineering",
 		},
 		{
 			Name:         "Security Lead",
@@ -391,33 +400,141 @@ func (g *AgentsGenerator) Name() string {
 	return "AI Agents"
 }
 
-// Generate creates the .cursor/agents/ directory and generates all agent markdown files
+// Generate creates IDE-specific agents/ directories and generates all agent markdown files
 func (g *AgentsGenerator) Generate(request *models.ProjectRequest, projectPath string) error {
-	// Create .cursor/agents/ directory
-	agentsDir := filepath.Join(projectPath, ".cursor", "agents")
-	if err := utils.CreateDirectory(agentsDir); err != nil {
-		return fmt.Errorf("failed to create agents directory: %w", err)
+	// Ensure IDEs list is populated (for backward compatibility)
+	if len(request.IDEs) == 0 && request.IDE != "" {
+		request.IDEs = []string{request.IDE}
+	}
+
+	// Central location for agents: .do/core/agents/
+	centralAgentsDir := filepath.Join(projectPath, ".do", "core", "agents")
+
+	// Create central agents directory
+	if err := utils.CreateDirectory(centralAgentsDir); err != nil {
+		return fmt.Errorf("failed to create central agents directory: %w", err)
 	}
 
 	// Get all agents
 	agents := GetAllAgents()
 
-	// Generate each agent file
-	for _, agent := range agents {
-		// Render agent markdown
-		markdown, err := RenderAgentMarkdown(&agent)
+	// Check if central agents already exist and have content
+	hasContent := false
+	if entries, err := os.ReadDir(centralAgentsDir); err == nil && len(entries) > 0 {
+		hasContent = true
+	}
+
+	// Only generate if central agents directory is empty
+	if !hasContent {
+		// Generate each agent file in central location
+		for _, agent := range agents {
+			// Render agent markdown
+			markdown, err := RenderAgentMarkdown(&agent)
+			if err != nil {
+				return fmt.Errorf("failed to render agent %s: %w", agent.Name, err)
+			}
+
+			// Write agent file
+			agentPath := filepath.Join(centralAgentsDir, agent.FileName)
+			if err := utils.WriteFile(agentPath, []byte(markdown)); err != nil {
+				return fmt.Errorf("failed to write agent file %s: %w", agent.FileName, err)
+			}
+		}
+	}
+
+	// Create symlinks in each IDE's agents directory pointing to central location
+	for _, ide := range request.IDEs {
+		ideAgentsDir, err := getIDEAgentsDir(projectPath, ide)
 		if err != nil {
-			return fmt.Errorf("failed to render agent %s: %w", agent.Name, err)
+			return fmt.Errorf("failed to get agents directory for %s: %w", ide, err)
 		}
 
-		// Write agent file
-		agentPath := filepath.Join(agentsDir, agent.FileName)
-		if err := utils.WriteFile(agentPath, []byte(markdown)); err != nil {
-			return fmt.Errorf("failed to write agent file %s: %w", agent.FileName, err)
+		// Ensure parent directory exists
+		parentDir := filepath.Dir(ideAgentsDir)
+		if err := utils.CreateDirectory(parentDir); err != nil {
+			return fmt.Errorf("failed to create parent directory for %s: %w", ide, err)
+		}
+
+		// Try to create symlink, fallback to copying if symlink fails
+		if err := createAgentsSymlink(ideAgentsDir, centralAgentsDir); err != nil {
+			// Fallback: copy agents if symlink creation fails
+			if err := copyAgents(ideAgentsDir, centralAgentsDir, agents); err != nil {
+				return fmt.Errorf("failed to create agents for %s (symlink and copy both failed): %w", ide, err)
+			}
 		}
 	}
 
 	return nil
+}
+
+// createAgentsSymlink creates a symlink from ideAgentsDir to centralAgentsDir
+func createAgentsSymlink(ideAgentsDir, centralAgentsDir string) error {
+	// Remove existing directory/link if it exists
+	if utils.PathExists(ideAgentsDir) {
+		// Check if it's already a symlink pointing to the right place
+		if utils.IsSymlink(ideAgentsDir) {
+			target, err := os.Readlink(ideAgentsDir)
+			if err == nil {
+				// Resolve to absolute path for comparison
+				absTarget, _ := filepath.Abs(target)
+				absCentral, _ := filepath.Abs(centralAgentsDir)
+				if absTarget == absCentral || filepath.Clean(absTarget) == filepath.Clean(absCentral) {
+					// Already correctly linked
+					return nil
+				}
+			}
+		}
+		// Remove existing directory/link
+		if err := os.RemoveAll(ideAgentsDir); err != nil {
+			return fmt.Errorf("failed to remove existing agents directory: %w", err)
+		}
+	}
+
+	// Create symlink
+	return utils.CreateSymlink(ideAgentsDir, centralAgentsDir)
+}
+
+// copyAgents copies agents from central location to IDE directory (fallback)
+func copyAgents(ideAgentsDir, centralAgentsDir string, agents []Agent) error {
+	if err := utils.CreateDirectory(ideAgentsDir); err != nil {
+		return fmt.Errorf("failed to create agents directory: %w", err)
+	}
+
+	for _, agent := range agents {
+		src := filepath.Join(centralAgentsDir, agent.FileName)
+		dst := filepath.Join(ideAgentsDir, agent.FileName)
+		
+		data, err := os.ReadFile(src)
+		if err != nil {
+			return fmt.Errorf("failed to read agent file %s: %w", agent.FileName, err)
+		}
+		
+		if err := utils.WriteFile(dst, data); err != nil {
+			return fmt.Errorf("failed to copy agent file %s: %w", agent.FileName, err)
+		}
+	}
+
+	return nil
+}
+
+// getIDEAgentsDir returns the agents directory path for the given IDE
+func getIDEAgentsDir(projectPath, ide string) (string, error) {
+	switch ide {
+	case "Cursor":
+		return filepath.Join(projectPath, ".cursor", "agents"), nil
+	case "Claude Code":
+		return filepath.Join(projectPath, ".claude", "agents"), nil
+	case "Antigravity":
+		return filepath.Join(projectPath, ".antigravity", "agents"), nil
+	case "Windsurf":
+		return filepath.Join(projectPath, ".windsurf", "agents"), nil
+	case "Cline":
+		return filepath.Join(projectPath, ".cline", "agents"), nil
+	case "OpenCode":
+		return filepath.Join(projectPath, ".opencode", "agents"), nil
+	default:
+		return "", fmt.Errorf("unsupported IDE: %s", ide)
+	}
 }
 
 // GenerateAgents is a convenience function that creates an AgentsGenerator and generates agents
