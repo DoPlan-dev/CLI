@@ -35,7 +35,7 @@ The `/hello` command is your optional onboarding walkthrough. Run it once to mee
    - Prints the 18-agent hierarchy (Project Orchestrator, leads, QA, Growth, Docs, etc.).
 
 3. **Support Mode Selection**  
-   - Choose **Guided Mode** (check-ins after each `/finished`) or **Independent Mode** (silent partner).  
+   - Choose **Guided Mode** (check-ins after each `/done`) or **Independent Mode** (silent partner).  
    - Saved as `development_support_mode`; you can change it later via `/hello` re-run or manual edit.
 
 4. **Command Walkthrough**  

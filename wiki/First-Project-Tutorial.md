@@ -330,7 +330,7 @@ Follow the agent's guidance to implement the task:
 
 ---
 
-## Step 11: Complete Your First Task (`/finished`)
+## Step 11: Complete Your First Task (`/done`)
 
 ### 11.1 Use the `/finished` Command
 

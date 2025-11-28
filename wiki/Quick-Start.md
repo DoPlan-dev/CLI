@@ -236,7 +236,7 @@ See how you're doing:
 When you finish a task:
 
 ```
-/finished
+/done
 ```
 
 This marks the task complete, auto-commits your changes, and updates progress.
@@ -327,7 +327,7 @@ code .
 /progress
 
 # 10. Complete tasks
-/finished
+/done
 ```
 
 ---

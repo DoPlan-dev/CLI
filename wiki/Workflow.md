@@ -20,7 +20,7 @@ DoPlan CLI uses a structured development workflow that guides you from initial i
 1. **Capture & Align** – `/tell` records the idea and `/improve` collects cross-functional insights so IDEA.md and BRAINSTORM.md hold the right context.
 2. **Document & Approve** – `/write` generates PRD/Architecture/Design System, `/change` refines them, and `/good` locks the set for task generation.
 3. **Create the Roadmap** – `/plan` converts the approved plan into TASKS.md with phased task breakdowns, dependencies, and acceptance criteria.
-4. **Build Loop** – Repeat `/state snapshot` → `/build` → `/progress` → `/finished` → `/state snapshot` for each task so history stays auditable and commits stay automatic.
+4. **Build Loop** – Repeat `/state snapshot` → `/build` → `/progress` → `/done` → `/state snapshot` for each task so history stays auditable and commits stay automatic.
 5. **Operate & Ship** – Use `/report`, `/feedback`, `/team`, `/load`, `/safe`, `/cheap`, `/ship`, `/github`, and `/branchci` to keep stakeholders aligned, enforce readiness, and release confidently.
 
 > Need a refresher before you begin? Run the optional `/hello` flow documented in [Hello Tutorial](Hello-Tutorial), then dive deeper into the discovery interview with [Meeting Command](Meeting-Command).
@@ -79,7 +79,7 @@ The detailed sections below dive deeper into each phase, but this snapshot shows
    └──────┬───────┘
           │
    ┌──────▼───────┐
-   │  /finished   │ → Complete task (auto-commit)
+   │  /done   │ → Complete task (auto-commit)
    └──────┬───────┘
           │
    ┌──────▼───────┐
@@ -287,7 +287,7 @@ The development phase transforms your approved plan into working code.
 
 **Output**: Task implementation begins
 
-**Next Step**: Track progress or complete the task, then use `/finished`.
+**Next Step**: Track progress or complete the task, then use `/done`.
 
 ---
 
@@ -313,13 +313,13 @@ Current task: 1.2 - Create API endpoints
 Next up: 1.3 - Implement authentication
 ```
 
-**Next Step**: Continue with `/build` or `/finished`.
+**Next Step**: Continue with `/build` or `/done`.
 
 ---
 
-### Step 5: Complete Task (`/finished`)
+### Step 5: Complete Task (`/done`)
 
-**Command**: `/finished`
+**Command**: `/done`
 
 **What happens**:
 1. Marks task complete in TASKS.md
@@ -331,7 +331,7 @@ Next up: 1.3 - Implement authentication
 
 **Example**:
 ```bash
-/finished
+/done
 ```
 
 **Output**: Task completed, changes committed and pushed
@@ -390,7 +390,7 @@ The review phase ensures code quality before release.
   - Feeds subsequent `/report` runs so regressions, bugs, and feature ideas stay visible.
 
 **Best Practice**:
-1. Run `/report` after every major `/finished` milestone or before demos.
+1. Run `/report` after every major `/done` milestone or before demos.
 2. Capture stakeholder reactions via `/feedback` immediately so they are traceable.
 
 ---
@@ -449,7 +449,7 @@ Always follow the workflow in order:
 6. `/state snapshot` → Capture baseline
 7. `/build` → Start coding
 8. `/progress` → Check status
-9. `/finished` → Complete task (auto-commit/push)
+9. `/done` → Complete task (auto-commit/push)
 10. `/state snapshot` → Capture delta
 11. `/report` + `/feedback` → Inform stakeholders
 12. `/safe` + `/cheap` + `/ship` → Release
@@ -481,7 +481,7 @@ Use `/progress` and `/state diff` regularly to:
 Work on one task at a time:
 - Focus on current task
 - Complete before moving on
-- Use `/finished` to track completion
+- Use `/done` to track completion
 
 ### 6. Leverage Agents & Automation
 
@@ -562,11 +562,11 @@ For adding features:
 # 6. Build
 /build
 # ... implement task ...
-/finished
+/done
 
 # 7. Continue
 /build
-/finished
+/done
 # ... repeat ...
 ```
 
@@ -596,14 +596,14 @@ For adding features:
 # 7. Build incrementally
 /build
 # ... work on task ...
-/finished
+/done
 
 # 8. Track progress
 /progress
 
 # 9. Continue building
 /build
-/finished
+/done
 # ... repeat for all tasks ...
 ```
 

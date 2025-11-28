@@ -241,14 +241,14 @@ Creates `.plan/TASKS.md` with tasks broken down by:
 
 ---
 
-#### `/finished` - Mark Task Complete
+#### `/done` - Mark Task Complete
 
 **Purpose:** Marks a task as complete and updates project state
 
 **Usage:**
 ```
-/finished           # Mark current task complete
-/finished <number>  # Mark specific task complete
+/done           # Mark current task complete
+/done <number>  # Mark specific task complete
 ```
 
 **What it does:**
@@ -259,7 +259,7 @@ Creates `.plan/TASKS.md` with tasks broken down by:
 
 **Workflow:**
 ```
-/finished
+/done
 /build
 ```
 
@@ -326,7 +326,7 @@ This workflow: finish → build next, keeps you moving forward efficiently.
 - Produces human-readable or JSON diffs between any two states
 - Restores state with guardrails (confirmation + optional auto-snapshot)
 
-> Snapshot before `/build` and after `/finished` so `/progress` and `/report` can highlight exact deltas.
+> Snapshot before `/build` and after `/done` so `/progress` and `/report` can highlight exact deltas.
 
 ---
 
@@ -477,7 +477,7 @@ This workflow: finish → build next, keeps you moving forward efficiently.
 8. /state snapshot --reason "pre-build" → Capture baseline before coding
 9. /build                        → Start next task (or /build <task-number>)
 10. /progress                    → Check completion status (optional but recommended)
-11. /finished                    → Mark task complete (auto-commit + push)
+11. /done                    → Mark task complete (auto-commit + push)
 12. /state snapshot --reason "post-finish" → Record completion delta
 13. Repeat steps 9-12            → Continue through remaining tasks
 ```
@@ -723,7 +723,7 @@ Check progress regularly to stay on track.
 - `/plan` - Generate tasks
 - `/build` - Start coding
 - `/progress` - Check status
-- `/finished` - Mark complete
+- `/done` - Mark complete
 
 ### Helper Commands
 - `/team` - Show agents
