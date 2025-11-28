@@ -351,7 +351,7 @@ Now that you've created your first project:
 2. **[Commands Reference](Commands)** - Learn all available commands
 3. **[Workflow Guide](Workflow)** - Understand the complete workflow
 4. **[Agents Documentation](Agents)** - Learn about the AI agents
-5. **[Workflow Guide](Workflow)** - Complete workflow and best practices
+5. **[Examples](Examples)** - See example projects and use cases
 
 ---
 

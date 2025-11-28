@@ -442,7 +442,7 @@ Now that you've completed your first project:
 1. **[Workflow Guide](Workflow)** - Understand the complete workflow
 2. **[Commands Reference](Commands)** - Learn all available commands
 3. **[Agents Documentation](Agents)** - Understand the AI agents
-4. **[Workflow Guide](Workflow)** - Complete workflow and best practices
+4. **[Examples](Examples)** - See example projects and use cases
 5. **[Development Guide](Development)** - Advanced patterns and techniques
 
 ---
