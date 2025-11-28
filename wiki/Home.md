@@ -51,11 +51,9 @@ Essential guides for using DoPlan CLI:
 
 Take your DoPlan CLI usage to the next level:
 
-- **[Advanced Usage](Advanced)** - Advanced patterns and techniques
-- **[Architecture](Architecture)** - Technical architecture deep dive
-- **[Customization](Customization)** - Customizing agents, commands, and rules
-- **[IDE Integration](IDE-Integration)** - Setting up your IDE
-- **[Best Practices](Best-Practices)** - Development and usage best practices
+- **[Development](Development)** - Development setup and advanced patterns
+- **[Configuration](Configuration)** - Customizing agents, commands, and rules
+- **[Troubleshooting](Troubleshooting)** - Advanced troubleshooting and solutions
 
 ### 🔧 Technical Reference
 
@@ -106,7 +104,7 @@ Want to contribute to DoPlan CLI?
 | [Workflow](Workflow) | Complete development workflow |
 | [Agents](Agents) | Understanding the 18 AI agents |
 | [Rules Library](Rules) | Using the rules library |
-| [IDE Integration](IDE-Integration) | Setting up your IDE |
+| [Configuration](Configuration) | Configuration and setup |
 
 ---
 
