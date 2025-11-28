@@ -338,7 +338,7 @@ Common issues and solutions when using DoPlan CLI.
 
 4. **Check IDE Settings**: Ensure AI features are enabled
 
-5. **See IDE Integration Guide**: Check [IDE Integration](IDE-Integration) for specific setup
+5. **See Configuration Guide**: Check [Configuration](Configuration) for specific setup
 
 ---
 
@@ -648,7 +648,7 @@ When reporting an issue, please include:
 - [Installation](Installation) - Installation guide
 - [FAQ](FAQ) - Frequently asked questions
 - [Commands Reference](Commands) - Command details
-- [IDE Integration](IDE-Integration) - IDE setup
+- [Configuration](Configuration) - IDE setup and configuration
 - [Home](Home) - Wiki home page
 
 ---

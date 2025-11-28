@@ -374,7 +374,7 @@ golangci-lint run
 
 - [Contributing Guide](Contributing) - How to contribute
 - [API Reference](API-Reference) - API documentation
-- [Architecture](Architecture) - System architecture
+- [Project Structure](Project-Structure) - System architecture and structure
 - [Home](Home) - Wiki home page
 
 ---

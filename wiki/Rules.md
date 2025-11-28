@@ -600,7 +600,7 @@ Rules are organized in `.cursor/rules/library/`:
 
 - [Commands Reference](Commands) - Using `/load` command
 - [Agents Documentation](Agents) - How agents use rules
-- [Customization Guide](Customization) - Customizing rules
+- [Configuration Guide](Configuration) - Customizing rules
 - [Workflow Guide](Workflow) - Rules in workflow
 - [Home](Home) - Wiki home page
 

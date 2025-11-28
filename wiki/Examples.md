@@ -456,7 +456,7 @@ Project-specific guidelines
 - [Quick Start](Quick-Start) - Getting started
 - [First Project Tutorial](First-Project-Tutorial) - Step-by-step tutorial
 - [Workflow Guide](Workflow) - Complete workflow
-- [Customization Guide](Customization) - Customization examples
+- [Configuration Guide](Configuration) - Configuration and customization examples
 - [Home](Home) - Wiki home page
 
 ---

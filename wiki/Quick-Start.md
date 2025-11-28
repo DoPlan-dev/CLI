@@ -279,7 +279,7 @@ See the [Commands Reference](Commands) for all available commands.
 
 ### Q: Can I customize the agents or commands?
 
-**A**: Yes! All agent definitions are in `.cursor/agents/` and commands are in `.cursor/commands/`. You can modify them to fit your needs. See the [Customization Guide](Customization).
+**A**: Yes! All agent definitions are in `.cursor/agents/` and commands are in `.cursor/commands/`. You can modify them to fit your needs. See the [Configuration Guide](Configuration).
 
 ### Q: What if I need help?
 
@@ -351,7 +351,7 @@ Now that you've created your first project:
 2. **[Commands Reference](Commands)** - Learn all available commands
 3. **[Workflow Guide](Workflow)** - Understand the complete workflow
 4. **[Agents Documentation](Agents)** - Learn about the AI agents
-5. **[Best Practices](Best-Practices)** - Development best practices
+5. **[Workflow Guide](Workflow)** - Complete workflow and best practices
 
 ---
 

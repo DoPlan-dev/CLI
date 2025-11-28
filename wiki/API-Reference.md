@@ -534,7 +534,7 @@ Load with:
 - [Commands Reference](Commands) - Command details
 - [Project Structure](Project-Structure) - File structure
 - [Configuration Reference](Configuration) - Configuration API
-- [Customization Guide](Customization) - Extension examples
+- [Configuration Guide](Configuration) - Extension examples
 - [Home](Home) - Wiki home page
 
 ---

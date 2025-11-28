@@ -431,7 +431,7 @@ Test configuration changes:
 
 - [Project Structure](Project-Structure) - Project layout
 - [Workflow Guide](Workflow) - How configuration is used
-- [Customization Guide](Customization) - Customizing configuration
+- [Development Guide](Development) - Advanced customization and development
 - [API Reference](API-Reference) - Configuration API
 - [Home](Home) - Wiki home page
 

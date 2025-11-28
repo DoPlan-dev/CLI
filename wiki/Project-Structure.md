@@ -462,7 +462,7 @@ What happens when command is used
 
 - [Configuration Reference](Configuration) - Configuration details
 - [Workflow Guide](Workflow) - How structure is used
-- [Customization Guide](Customization) - Customizing structure
+- [Configuration Guide](Configuration) - Customizing structure
 - [Quick Start](Quick-Start) - Getting started
 - [Home](Home) - Wiki home page
 

@@ -645,7 +645,7 @@ User: /ship
 
 - [Workflow Guide](Workflow) - How agents work in the workflow
 - [Commands Reference](Commands) - Commands that activate agents
-- [Customization Guide](Customization) - Customizing agents
+- [Configuration Guide](Configuration) - Customizing agents
 - [Rules Library](Rules) - Rules that guide agents
 - [Home](Home) - Wiki home page
 

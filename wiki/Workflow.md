@@ -638,7 +638,7 @@ The workflow uses `active_state.json` to track progress:
 - [Agents Documentation](Agents) - Understanding AI agents
 - [Quick Start](Quick-Start) - Getting started guide
 - [First Project Tutorial](First-Project-Tutorial) - Detailed tutorial
-- [Best Practices](Best-Practices) - Development best practices
+- [Workflow Guide](Workflow) - Complete workflow and best practices
 - [Home](Home) - Wiki home page
 
 ---

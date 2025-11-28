@@ -151,7 +151,7 @@ DoPlan CLI supports 6 AI-powered IDEs:
 - Cline
 - OpenCode
 
-See [IDE Integration](IDE-Integration) for setup guides.
+See [Configuration](Configuration) for setup guides.
 
 ### How do the AI agents work?
 
@@ -177,7 +177,7 @@ See the [Rules Library Documentation](Rules) for details.
 
 Yes! All agent definitions are in `.cursor/agents/` and commands are in `.cursor/commands/`. You can modify them to fit your needs.
 
-See the [Customization Guide](Customization) for details.
+See the [Configuration Guide](Configuration) for details.
 
 ### How does the command system work?
 
@@ -224,7 +224,7 @@ The generated project structure is minimal. The rules library is embedded but do
 **Solution**: 
 1. Ensure you're using a supported IDE
 2. Check IDE configuration files
-3. See [IDE Integration](IDE-Integration) for setup
+3. See [Configuration](Configuration) for setup
 
 ### Agents not working
 
@@ -264,11 +264,11 @@ Open a feature request on [GitHub](https://github.com/DoPlan-dev/CLI/issues).
 
 ### Can I add new agents?
 
-Yes! You can add custom agents to your project. See the [Customization Guide](Customization).
+Yes! You can add custom agents to your project. See the [Configuration Guide](Configuration).
 
 ### Can I add new commands?
 
-Yes! You can add custom commands to your project. See the [Customization Guide](Customization).
+Yes! You can add custom commands to your project. See the [Configuration Guide](Configuration).
 
 ### How do I contribute to the rules library?
 
