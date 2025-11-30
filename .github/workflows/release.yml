@@ -164,6 +164,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup npm
+        run: |
+          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+          npm whoami || echo "NPM_TOKEN not set, skipping npm publish"
+
+      - name: Publish to npm
+        if: env.NPM_TOKEN != ''
+        run: |
+          npm publish --access public
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Commit version bump
         run: |
           git config --local user.email "action@github.com"
