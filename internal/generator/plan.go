@@ -55,6 +55,12 @@ func (g *PlanGenerator) Generate(request *models.ProjectRequest, projectPath str
 		return fmt.Errorf("failed to create .do/plan directory: %w", err)
 	}
 
+	// Create backup directory (for project backups)
+	backupDir := filepath.Join(projectPath, ".do", "backup")
+	if err := utils.CreateDirectory(backupDir); err != nil {
+		return fmt.Errorf("failed to create .do/backup directory: %w", err)
+	}
+
 	// Generate IDEA.md
 	if err := generateIDEA(systemDir, request); err != nil {
 		return fmt.Errorf("failed to generate IDEA.md: %w", err)
@@ -2084,4 +2090,13 @@ All content follows current SEO best practices.`,
 func GeneratePlan(request *models.ProjectRequest, projectPath string) error {
 	generator := &PlanGenerator{}
 	return generator.Generate(request, projectPath)
+}
+
+// SyncPlanDocumentation syncs plan documentation to the docs/ directory.
+// This is a stub implementation that currently does nothing.
+// TODO: Implement documentation syncing functionality
+func SyncPlanDocumentation(projectPath string) error {
+	// Stub implementation - no-op for now
+	// Future implementation should sync plan documentation from .do/plan/ to docs/
+	return nil
 }
