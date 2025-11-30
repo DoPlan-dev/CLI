@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2025-11-30
+
+### Fixed
+- **npx compatibility**: Added wrapper script (`bin/cli.js`) to support `npx @doplan-dev/cli` with multiple commands. Changed `bin` field to string format for proper npx behavior. Now supports:
+  - `npx @doplan-dev/cli` → runs doplan (default)
+  - `npx @doplan-dev/cli doplan` → runs doplan
+  - `npx @doplan-dev/cli goplan` → runs goplan
+
 ## [1.3.1] - 2025-11-30
 
 ### Fixed
