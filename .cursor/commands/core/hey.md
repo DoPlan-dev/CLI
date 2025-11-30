@@ -1,0 +1,1 @@
+../../../.do/core/commands/core/hey.md

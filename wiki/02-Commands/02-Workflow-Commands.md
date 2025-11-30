@@ -81,6 +81,33 @@ The `/hey` command provides an interactive onboarding experience for new users a
 - Builds relationship level
 - Records memorable moments
 
+### Performance Optimization
+
+**Fast Path for New Projects**
+
+The `/hey` command is optimized for instant response on new projects:
+
+- **New Projects**: Skips heavy engagement system initialization for immediate response
+  - No memory card exists → Fast path activated
+  - No achievement/challenge checks needed
+  - No reward processing required
+  - Lightweight tracking only
+
+- **Existing Projects**: Full engagement system with personalized experience
+  - Memory card detected → Full initialization
+  - Achievement and challenge checks
+  - Personalized greetings and rewards
+  - Complete engagement tracking
+
+**Why This Matters**
+
+For new projects, everything is already saved in files, so `/hey` doesn't need to:
+- Load memory card multiple times (Brain, Achievements, Challenges, DopamineTiming)
+- Process engagement checks for users who haven't earned anything yet
+- Initialize systems that aren't needed for first-time users
+
+**Result**: `/hey` responds instantly on new projects while maintaining full functionality for existing projects.
+
 ---
 
 ## `/do` - Idea Capture & Discovery

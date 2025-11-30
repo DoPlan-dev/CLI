@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.3] - 2025-11-30
+
+### Removed
+- **goplan command**: Removed `goplan` command and wrapper script. Now only `npx @doplan-dev/cli` is supported, which runs the `doplan` command directly.
+
 ## [1.3.2] - 2025-11-30
 
 ### Fixed

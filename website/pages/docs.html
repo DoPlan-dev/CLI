@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DoPlan Documentation - Enterprise-grade AI development workflow with 18 agents, 1000+ rules, and powerful automation">
+    <title>Documentation - DoPlan | doplan.dev</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/docs.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="dark-theme">
+    <!-- Navigation -->
+    <nav class="minimal-nav">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-code"></i>
+                    <span class="logo">DoPlan</span>
+                    <span class="domain">.dev</span>
+                </a>
+            </div>
+            <div class="nav-links-minimal">
+                <a href="../index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="docs.html" class="active">
+                    <i class="fas fa-book"></i>
+                    <span>Docs</span>
+                </a>
+                <a href="https://github.com/DoPlan-dev/CLI" target="_blank" rel="noopener">
+                    <i class="fab fa-github"></i>
+                    <span>GitHub</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Documentation Content -->
+    <section class="docs-section">
+        <div class="container">
+            <div class="docs-layout">
+                <!-- Sidebar -->
+                <aside class="docs-sidebar">
+                    <nav class="docs-nav">
+                        <h3>
+                            <i class="fas fa-book-open"></i>
+                            Documentation
+                        </h3>
+                        <ul>
+                            <li><a href="#overview"><i class="fas fa-circle-notch"></i> Overview</a></li>
+                            <li><a href="#why-doplan"><i class="fas fa-star"></i> Why DoPlan?</a></li>
+                            <li><a href="#agents"><i class="fas fa-users"></i> AI Agent System</a></li>
+                            <li><a href="#rules"><i class="fas fa-book"></i> Rules Library</a></li>
+                            <li><a href="#workflow"><i class="fas fa-project-diagram"></i> The Workflow</a></li>
+                            <li><a href="#commands"><i class="fas fa-terminal"></i> Commands</a></li>
+                            <li><a href="#automation"><i class="fas fa-magic"></i> Automation</a></li>
+                            <li><a href="#github"><i class="fab fa-github"></i> GitHub Integration</a></li>
+                            <li><a href="#getting-started"><i class="fas fa-rocket"></i> Getting Started</a></li>
+                            <li><a href="#examples"><i class="fas fa-code"></i> Examples</a></li>
+                        </ul>
+                    </nav>
+                </aside>
+
+                <!-- Main Content -->
+                <main class="docs-content">
+                    <h1>
+                        <i class="fas fa-book"></i>
+                        DoPlan Documentation
+                    </h1>
+                    
+                    <section id="overview">
+                        <h2>
+                            <i class="fas fa-info-circle"></i>
+                            Overview
+                        </h2>
+                        <p>DoPlan is an enterprise-grade AI-powered development workflow that transforms how you build software. It's not just a tool—it's a complete development system with intelligent agents, comprehensive rules, and powerful automation.</p>
+                        <div class="workflow-banner">
+                            <code>/hey</code> → <code>/do</code> → <code>/plan</code> → <code>/dev</code>
+                        </div>
+                        <p>Behind this simple workflow lies a sophisticated system: <strong>18 specialized AI agents</strong>, <strong>1000+ embedded rules</strong>, <strong>automated GitHub workflows</strong>, and <strong>intelligent project organization</strong>.</p>
+                    </section>
+
+                    <section id="why-doplan">
+                        <h2>
+                            <i class="fas fa-star"></i>
+                            Why DoPlan?
+                        </h2>
+                        
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <h3>
+                                    <i class="fas fa-graduation-cap"></i>
+                                    Interactive Teaching
+                                </h3>
+                                <p>DoPlan doesn't just execute commands—it teaches you. The <code>/hey</code> command provides personalized tutorials, explains the system architecture, and adapts to your experience level. It's like having a senior developer mentor you through every step.</p>
+                                <ul>
+                                    <li>Personalized onboarding based on experience</li>
+                                    <li>Interactive test drives before real execution</li>
+                                    <li>Context-aware explanations</li>
+                                    <li>Reference materials auto-generated</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-card">
+                                <h3>
+                                    <i class="fas fa-sitemap"></i>
+                                    Automated Organization
+                                </h3>
+                                <p>Every project is automatically organized into phases, features, and tasks. No more scattered files or confusion about what to build next. DoPlan creates a complete project structure with documentation, prompts, and workflows for each feature.</p>
+                                <ul>
+                                    <li>Phase-based project structure</li>
+                                    <li>Feature folders with complete documentation</li>
+                                    <li>Automatic task hierarchy generation</li>
+                                    <li>Self-contained feature documentation</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-card">
+                                <h3>
+                                    <i class="fas fa-robot"></i>
+                                    Intelligent Agents
+                                </h3>
+                                <p>18 specialized AI agents work together in a hierarchical structure. Each agent has deep expertise in their domain—from Product Management to Security to Performance Engineering. They don't just follow instructions; they think, plan, and execute like a real development team.</p>
+                                <ul>
+                                    <li>18 specialized domain experts</li>
+                                    <li>Hierarchical coordination</li>
+                                    <li>Context-aware decision making</li>
+                                    <li>Automatic agent activation</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-card">
+                                <h3>
+                                    <i class="fas fa-code-branch"></i>
+                                    GitHub Automation
+                                </h3>
+                                <p>Complete GitHub workflow automation. From branch creation to CI/CD setup to release management—all automated. One command sets up your entire CI/CD pipeline. Automatic commits, pushes, and conventional commit formatting.</p>
+                                <ul>
+                                    <li>Automatic branch creation</li>
+                                    <li>Conventional commits</li>
+                                    <li>One-command CI/CD setup</li>
+                                    <li>Automated releases</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="agents">
+                        <h2>
+                            <i class="fas fa-users"></i>
+                            AI Agent System
+                        </h2>
+                        <p>DoPlan uses a hierarchical AI agency with 18 specialized agents. Each agent has deep expertise and works collaboratively to deliver production-ready results.</p>
+                        
+                        <div class="agent-hierarchy">
+                            <div class="agent-level">
+                                <h3>Project Orchestrator</h3>
+                                <p class="agent-role">Coordinates all agents and project execution</p>
+                            </div>
+                            
+                            <div class="agent-level">
+                                <h3>Product Manager</h3>
+                                <p class="agent-role">Manages requirements, roadmap, and product strategy</p>
+                            </div>
+                            
+                            <div class="agent-level">
+                                <h3>Engineering Lead</h3>
+                                <p class="agent-role">Coordinates technical implementation</p>
+                                <div class="agent-children">
+                                    <div class="agent-item">
+                                        <strong>System Architect</strong> - Designs system architecture
+                                    </div>
+                                    <div class="agent-item">
+                                        <strong>Frontend Lead</strong> - Manages frontend development
+                                    </div>
+                                    <div class="agent-item">
+                                        <strong>Backend Lead</strong> - Manages backend development
+                                    </div>
+                                    <div class="agent-item">
+                                        <strong>DevOps Engineer</strong> - Handles infrastructure and deployment
+                                    </div>
+                                    <div class="agent-item">
+                                        <strong>Security Lead</strong> - Ensures security best practices
+                                    </div>
+                                    <div class="agent-item">
+                                        <strong>Performance Engineer</strong> - Optimizes performance
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="agent-level">
+                                <h3>Design & UX Manager</h3>
+                                <p class="agent-role">Manages design system and user experience</p>
+                                <div class="agent-children">
+                                    <div class="agent-item">
+                                        <strong>UI/UX Designer</strong> - Creates user interfaces
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="agent-level">
+                                <h3>QA & Reliability Manager</h3>
+                                <p class="agent-role">Manages quality assurance</p>
+                                <div class="agent-children">
+                                    <div class="agent-item">
+                                        <strong>QA Engineer</strong> - Tests and validates code
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="agent-level">
+                                <h3>Release & Growth Manager</h3>
+                                <p class="agent-role">Manages releases and growth</p>
+                                <div class="agent-children">
+                                    <div class="agent-item">
+                                        <strong>Release Captain</strong> - Coordinates releases
+                                    </div>
+                                    <div class="agent-item">
+                                        <strong>Growth Coach</strong> - Drives user growth
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="agent-level">
+                                <h3>Documentation Lead</h3>
+                                <p class="agent-role">Manages documentation</p>
+                                <div class="agent-children">
+                                    <div class="agent-item">
+                                        <strong>Documentation Writer</strong> - Writes documentation
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="rules">
+                        <h2>
+                            <i class="fas fa-book"></i>
+                            Rules Library
+                        </h2>
+                        <p>DoPlan includes <strong>1000+ embedded rules</strong> covering best practices for all major tech stacks. These aren't just suggestions—they're battle-tested patterns that ensure production-ready code.</p>
+                        
+                        <div class="rules-categories">
+                            <div class="rule-category">
+                                <h3>Core Workflow</h3>
+                                <p>GitHub workflow automation, command-agent integration, continuous workflows</p>
+                            </div>
+                            <div class="rule-category">
+                                <h3>AI Agents</h3>
+                                <p>Agent interaction guidelines, coordination patterns, context management</p>
+                            </div>
+                            <div class="rule-category">
+                                <h3>Languages</h3>
+                                <p>Go, Python, TypeScript, JavaScript, Rust, and more</p>
+                            </div>
+                            <div class="rule-category">
+                                <h3>Frameworks</h3>
+                                <p>Next.js, React, Express, Vue, Angular, Django, Flask</p>
+                            </div>
+                            <div class="rule-category">
+                                <h3>Databases</h3>
+                                <p>PostgreSQL, MongoDB, Redis, MySQL, SQLite patterns</p>
+                            </div>
+                            <div class="rule-category">
+                                <h3>Testing</h3>
+                                <p>Jest, Vitest, pytest, Go testing, E2E testing strategies</p>
+                            </div>
+                            <div class="rule-category">
+                                <h3>DevOps & CI/CD</h3>
+                                <p>GitHub Actions, Docker, Kubernetes, deployment strategies</p>
+                            </div>
+                            <div class="rule-category">
+                                <h3>Security</h3>
+                                <p>Authentication, authorization, encryption, vulnerability prevention</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="workflow">
+                        <h2>
+                            <i class="fas fa-project-diagram"></i>
+                            The Workflow
+                        </h2>
+                        
+                        <article class="command-doc">
+                            <h3>
+                                <code>/hey</code> - Interactive Onboarding
+                            </h3>
+                            <p>Your first command! DoPlan doesn't assume you know everything. It teaches you, adapts to your experience level, and creates personalized reference materials.</p>
+                            <h4>What makes it powerful:</h4>
+                            <ul>
+                                <li><i class="fas fa-check"></i> <strong>Personalized Experience:</strong> Adapts to beginner, intermediate, or advanced developers</li>
+                                <li><i class="fas fa-check"></i> <strong>Interactive Tutorial:</strong> Walk through commands with test drives before real execution</li>
+                                <li><i class="fas fa-check"></i> <strong>System Overview:</strong> Visual agent hierarchy, workflow explanation, best practices</li>
+                                <li><i class="fas fa-check"></i> <strong>Reference Materials:</strong> Auto-generates QUICK_REFERENCE.md, AGENT_HIERARCHY.md, COMMAND_EXAMPLES.md</li>
+                                <li><i class="fas fa-check"></i> <strong>Support Mode Selection:</strong> Choose Guided Mode (step-by-step) or Independent Mode</li>
+                            </ul>
+                            <h4>When to use:</h4>
+                            <p>First time using DoPlan, or when you need a refresher on capabilities.</p>
+                        </article>
+
+                        <article class="command-doc">
+                            <h3>
+                                <code>/do</code> - Intelligent Discovery
+                            </h3>
+                            <p>Capture your app idea and automatically start an adaptive discovery meeting. This isn't a static form—it's an intelligent conversation that adapts to your project type and experience level.</p>
+                            <h4>Usage:</h4>
+                            <pre><code>/do
+/do app idea prompt
+/do app idea prompt "Build a task management app"</code></pre>
+                            <h4>What makes it powerful:</h4>
+                            <ul>
+                                <li><i class="fas fa-check"></i> <strong>Adaptive Interview:</strong> Questions change based on project type (SaaS, Mobile App, Website, etc.)</li>
+                                <li><i class="fas fa-check"></i> <strong>Speed Options:</strong> Quick Start (5-10 min), Standard (15-20 min), Comprehensive (30-45 min), Deep Dive (60+ min)</li>
+                                <li><i class="fas fa-check"></i> <strong>Experience-Based:</strong> Beginner-friendly or deep technical discussions</li>
+                                <li><i class="fas fa-check"></i> <strong>Phase-by-Phase:</strong> 6 comprehensive phases covering vision, audience, UX, content, marketing, delivery</li>
+                                <li><i class="fas fa-check"></i> <strong>Progress Tracking:</strong> Real-time progress bars, timing information, phase summaries</li>
+                                <li><i class="fas fa-check"></i> <strong>Content Planning:</strong> Automatically identifies content needs (legal pages, blog, SEO, etc.)</li>
+                                <li><i class="fas fa-check"></i> <strong>GitHub Integration:</strong> Verifies and sets up GitHub workflows during discovery</li>
+                            </ul>
+                            <h4>When to use:</h4>
+                            <p>When you have a new project idea or want to start a discovery session.</p>
+                        </article>
+
+                        <article class="command-doc">
+                            <h3>
+                                <code>/plan</code> - Comprehensive Planning
+                            </h3>
+                            <p>Generate complete planning documents, execution plans, and content. This command has extensive subcommands that make it incredibly powerful.</p>
+                            <h4>Usage:</h4>
+                            <pre><code>/plan                    # Generate planning docs (first time) or show menu
+/plan docs               # Generate PRD, Architecture, Design System
+/plan tasks              # Generate execution plan and tasks
+/plan everything         # Generate all planning docs + execution plan
+/plan content            # Generate content (app pages, legal, blog, etc.)
+/plan edit prd Add dark mode  # Edit existing documents
+/plan phases             # Plan phase by phase
+/plan next               # Plan next phase
+/plan phase 1 tasks      # Create tasks for specific phase</code></pre>
+                            <h4>What makes it powerful:</h4>
+                            <ul>
+                                <li><i class="fas fa-check"></i> <strong>Complete Documentation:</strong> PRD.md, ARCHITECTURE.md, DESIGN_SYSTEM.md generated by specialized agents</li>
+                                <li><i class="fas fa-check"></i> <strong>Automated Organization:</strong> Creates phase folders (01-Foundation, 02-Core, 03-Enhancement)</li>
+                                <li><i class="fas fa-check"></i> <strong>Feature Folders:</strong> Each feature gets design.md, plan.md, tasks.md, prompts.md, github.md</li>
+                                <li><i class="fas fa-check"></i> <strong>Content Generation:</strong> SEO-ready app pages, legal documents, blog posts, marketing content</li>
+                                <li><i class="fas fa-check"></i> <strong>Document Editing:</strong> Natural language editing (e.g., "Add dark mode")</li>
+                                <li><i class="fas fa-check"></i> <strong>Flexible Planning:</strong> Full planning, phase-by-phase, or selective updates</li>
+                            </ul>
+                            <h4>When to use:</h4>
+                            <p>After completing the discovery meeting (<code>/do</code>).</p>
+                        </article>
+
+                        <article class="command-doc">
+                            <h3>
+                                <code>/dev</code> - Intelligent Development
+                            </h3>
+                            <p>Start coding with full context, automatic branch management, and intelligent task tracking.</p>
+                            <h4>Usage:</h4>
+                            <pre><code>/dev        # Start next uncompleted task
+/dev 1.2     # Start specific task 1.2
+/dev 3       # Start task 3</code></pre>
+                            <h4>What makes it powerful:</h4>
+                            <ul>
+                                <li><i class="fas fa-check"></i> <strong>Automatic Branching:</strong> Creates task/1.2 branches automatically</li>
+                                <li><i class="fas fa-check"></i> <strong>Agent Activation:</strong> Automatically activates relevant agents (Frontend Lead, Backend Lead, etc.)</li>
+                                <li><i class="fas fa-check"></i> <strong>State Snapshots:</strong> Automatic state tracking for rollback capability</li>
+                                <li><i class="fas fa-check"></i> <strong>Task Context:</strong> Loads complete task documentation, dependencies, and related code</li>
+                                <li><i class="fas fa-check"></i> <strong>Auto-Detection:</strong> Agents detect task completion and prompt for confirmation</li>
+                                <li><i class="fas fa-check"></i> <strong>Git Safety:</strong> Ensures clean working tree before starting</li>
+                            </ul>
+                            <h4>When to use:</h4>
+                            <p>After planning is complete (<code>/plan</code>), ready to start coding.</p>
+                        </article>
+                    </section>
+
+                    <section id="commands">
+                        <h2>
+                            <i class="fas fa-cog"></i>
+                            System Commands
+                        </h2>
+                        <p>While DoPlan has only <strong>5 main commands</strong>, the power lies in the <strong>15+ subcommands</strong> that make each command incredibly versatile.</p>
+                        
+                        <article class="command-doc">
+                            <h3>
+                                <code>/sys</code> - System Management
+                            </h3>
+                            <p>All system-related operations consolidated under one powerful command. This is where DoPlan's automation really shines.</p>
+                            
+                            <h4>Subcommands:</h4>
+                            <div class="subcommands-grid">
+                                <div class="subcommand-item">
+                                    <code>/sys status</code>
+                                    <p><strong>Progress Tracking:</strong> Shows task completion, current phase, progress percentage, state deltas. Generates comprehensive scan reports with metadata and diffs.</p>
+                                    <div class="subcommand-details">
+                                        <code>/sys status</code> - Show progress<br>
+                                        <code>/sys status report</code> - Generate scan report<br>
+                                        <code>/sys status full</code> - Progress + report
+                                    </div>
+                                </div>
+                                <div class="subcommand-item">
+                                    <code>/sys optimize</code>
+                                    <p><strong>Multi-Domain Optimization:</strong> UI/UX improvements, cost analysis, performance optimization. Agents analyze and provide actionable recommendations.</p>
+                                    <div class="subcommand-details">
+                                        <code>/sys optimize design</code> - UI/UX improvements<br>
+                                        <code>/sys optimize finance</code> - Cost optimization<br>
+                                        <code>/sys optimize performance</code> - Performance tuning<br>
+                                        <code>/sys optimize all</code> - Run all optimizations
+                                    </div>
+                                </div>
+                                <div class="subcommand-item">
+                                    <code>/sys access</code>
+                                    <p><strong>Permission Management:</strong> Fixes permissions and creates missing folders. Ensures DoPlan can write reference docs and state files.</p>
+                                </div>
+                                <div class="subcommand-item">
+                                    <code>/sys github</code>
+                                    <p><strong>GitHub Automation:</strong> Complete GitHub workflow automation. Sync README, create issues, manage milestones, generate CI/CD workflows, plan releases.</p>
+                                    <div class="subcommand-details">
+                                        <code>/sys github info</code> - Sync README with KPIs<br>
+                                        <code>/sys github issue</code> - Create formatted issues<br>
+                                        <code>/sys github ci</code> - Generate CI/CD workflows<br>
+                                        <code>/sys github release</code> - Release management
+                                    </div>
+                                </div>
+                                <div class="subcommand-item">
+                                    <code>/sys role</code>
+                                    <p><strong>RBAC Design:</strong> Security Lead and Backend Lead design complete role-based access control systems with role definitions and permissions.</p>
+                                </div>
+                                <div class="subcommand-item">
+                                    <code>/sys control</code>
+                                    <p><strong>System Control Panel:</strong> Toggle agents, roles, or the entire DoPlan automation layer on/off. Use it to pause operations during maintenance or incidents.</p>
+                                    <div class="subcommand-details">
+                                        <code>/sys control agents on/off</code> – Enable or disable all agents<br>
+                                        <code>/sys control roles on/off</code> – Activate or deactivate specific role groups<br>
+                                        <code>/sys control system on/off</code> – Kill switch for the entire DoPlan system (requires multi-step confirmation)
+                                    </div>
+                                </div>
+                                <div class="subcommand-item">
+                                    <code>/sys security</code>
+                                    <p><strong>Security Operations:</strong> Comprehensive security review and audit. Vulnerability assessment, compliance checking, security report generation.</p>
+                                    <div class="subcommand-details">
+                                        <code>/sys security review</code> - Security review<br>
+                                        <code>/sys security audit</code> - Full security audit<br>
+                                        <code>/sys security</code> - Show security menu
+                                    </div>
+                                </div>
+                                <div class="subcommand-item">
+                                    <code>/sys state</code>
+                                    <p><strong>State Management:</strong> Complete state snapshot system for audit trails and rollback capability. Track every change, compare states, restore when needed.</p>
+                                    <div class="subcommand-details">
+                                        <code>/sys state snapshot</code> - Create snapshot<br>
+                                        <code>/sys state list</code> - List snapshots<br>
+                                        <code>/sys state diff</code> - Compare states<br>
+                                        <code>/sys state restore</code> - Restore state
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </section>
+
+                    <section id="automation">
+                        <h2>
+                            <i class="fas fa-magic"></i>
+                            Automation Features
+                        </h2>
+                        <p>DoPlan automates everything that slows you down, so you can focus on building.</p>
+                        
+                        <div class="automation-grid">
+                            <div class="automation-item">
+                                <h3>
+                                    <i class="fas fa-code-branch"></i>
+                                    Git Automation
+                                </h3>
+                                <ul>
+                                    <li>Automatic branch creation (task/1.2, feature/auth, bugfix/login)</li>
+                                    <li>Conventional commit formatting (feat:, fix:, docs:)</li>
+                                    <li>Automatic push after task completion</li>
+                                    <li>Clean working tree verification</li>
+                                    <li>State snapshot on every task start/finish</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="automation-item">
+                                <h3>
+                                    <i class="fas fa-folder-tree"></i>
+                                    Project Organization
+                                </h3>
+                                <ul>
+                                    <li>Automatic phase folder creation</li>
+                                    <li>Feature folder generation with complete documentation</li>
+                                    <li>Contract directories for shared schemas</li>
+                                    <li>Task hierarchy generation from planning docs</li>
+                                    <li>Self-contained feature documentation</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="automation-item">
+                                <h3>
+                                    <i class="fas fa-file-alt"></i>
+                                    Document Generation
+                                </h3>
+                                <ul>
+                                    <li>PRD, Architecture, Design System generation</li>
+                                    <li>SEO-ready content creation</li>
+                                    <li>Legal document generation</li>
+                                    <li>Marketing content creation</li>
+                                    <li>Natural language document editing</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="automation-item">
+                                <h3>
+                                    <i class="fas fa-tasks"></i>
+                                    Task Management
+                                </h3>
+                                <ul>
+                                    <li>Automatic task detection from planning docs</li>
+                                    <li>Task completion auto-detection</li>
+                                    <li>Progress tracking and reporting</li>
+                                    <li>Next task suggestion</li>
+                                    <li>Task dependency management</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="github">
+                        <h2>
+                            <i class="fab fa-github"></i>
+                            GitHub Integration
+                        </h2>
+                        <p>Complete GitHub workflow automation. Set up professional CI/CD pipelines, manage releases, and maintain repository health—all with simple commands.</p>
+                        
+                        <article class="command-doc">
+                            <h3>Automated CI/CD</h3>
+                            <p>One command sets up your entire CI/CD pipeline:</p>
+                            <pre><code>/sys github ci</code></pre>
+                            <p>This generates GitHub Actions workflows that:</p>
+                            <ul>
+                                <li>Run tests on every branch</li>
+                                <li>Lint code automatically</li>
+                                <li>Build binaries for multiple platforms</li>
+                                <li>Enforce branch protection policies</li>
+                                <li>Support branch-based job matrices</li>
+                            </ul>
+                        </article>
+                        
+                        <article class="command-doc">
+                            <h3>Repository Management</h3>
+                            <p>Keep your repository in sync with your project:</p>
+                            <pre><code>/sys github info</code></pre>
+                            <p>Automatically:</p>
+                            <ul>
+                                <li>Syncs README with project KPIs from PRD</li>
+                                <li>Updates repository metadata</li>
+                                <li>Shows project health metrics</li>
+                                <li>Maintains offline metadata cache</li>
+                            </ul>
+                        </article>
+                        
+                        <article class="command-doc">
+                            <h3>Issue & Milestone Management</h3>
+                            <pre><code>/sys github issue "Title" "Description"
+/sys github milestone "MVP"</code></pre>
+                            <p>Creates properly formatted GitHub issues and milestones with links to project documentation.</p>
+                        </article>
+                        
+                        <article class="command-doc">
+                            <h3>Release Automation</h3>
+                            <pre><code>/sys github release</code></pre>
+                            <p>Complete release management:</p>
+                            <ul>
+                                <li>Version management and semantic versioning</li>
+                                <li>Automatic release note generation from CHANGELOG</li>
+                                <li>Deployment planning</li>
+                                <li>Release workflow automation</li>
+                            </ul>
+                        </article>
+                    </section>
+
+                    <section id="getting-started">
+                        <h2>
+                            <i class="fas fa-rocket"></i>
+                            Getting Started
+                        </h2>
+                        <ol>
+                            <li><strong>Install:</strong> <code>npx @doplan-dev/cli init</code></li>
+                            <li><strong>Learn:</strong> Type <code>/hey</code> for interactive onboarding</li>
+                            <li><strong>Start:</strong> Type <code>/do</code> to capture your idea and begin discovery</li>
+                            <li><strong>Plan:</strong> Type <code>/plan</code> to generate all planning documents</li>
+                            <li><strong>Build:</strong> Type <code>/dev</code> to start development</li>
+                        </ol>
+                        <p>That's it! No configuration needed. DoPlan handles project structure, documentation, GitHub workflows, and organization automatically.</p>
+                    </section>
+
+                    <section id="examples">
+                        <h2>
+                            <i class="fas fa-code"></i>
+                            Complete Workflow Example
+                        </h2>
+                        
+                        <pre><code># Step 1: Interactive onboarding
+/hey
+
+# Step 2: Start your project
+/do app idea prompt "Build a task management app"
+
+# Step 3: Generate planning documents
+/plan docs
+
+# Step 4: Generate execution plan
+/plan tasks
+
+# Step 5: Start development
+/dev
+
+# Step 6: Check progress
+/sys status
+
+# Step 7: Set up GitHub CI/CD
+/sys github ci
+
+# Step 8: Continue development
+/dev</code></pre>
+                        
+                        <h3>Real-World Impact</h3>
+                        <p>What would take hours or days manually, DoPlan does in minutes:</p>
+                        <ul>
+                            <li><strong>Project Setup:</strong> 5 seconds vs. 2-3 hours manually</li>
+                            <li><strong>Planning Documents:</strong> Minutes vs. days of writing</li>
+                            <li><strong>CI/CD Setup:</strong> One command vs. hours of configuration</li>
+                            <li><strong>Git Management:</strong> Automatic vs. manual branch/commit management</li>
+                            <li><strong>Documentation:</strong> Auto-generated vs. writing from scratch</li>
+                        </ul>
+                    </section>
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-dark">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-code"></i>
+                    <span class="logo">DoPlan</span>
+                    <span class="domain">.dev</span>
+                </div>
+                <div class="footer-links">
+                    <a href="../index.html">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="docs.html">
+                        <i class="fas fa-book"></i>
+                        <span>Documentation</span>
+                    </a>
+                    <a href="https://github.com/DoPlan-dev/CLI" target="_blank" rel="noopener">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 DoPlan. All rights reserved.</p>
+                <p class="footer-made-by">
+                    <i class="fas fa-tools"></i>
+                    Made by DoPlan CLI
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -51,6 +51,7 @@ All major features
 - [Git Automation](./06-Features/03-Git-Automation.md)
 - [Learning Support](./06-Features/04-Learning-Support.md)
 - [Personalization](./06-Features/05-Personalization.md)
+- [Backup and Restore](./06-Features/06-Backup-and-Restore.md)
 
 ### 🎓 [07. Learning & Education](./07-Learning-Education/)
 Educational content for all levels
@@ -109,6 +110,7 @@ Quick reference guides
 - [State Management](./06-Features/02-State-Management.md)
 - [Git Automation](./06-Features/03-Git-Automation.md)
 - [Learning Support](./06-Features/04-Learning-Support.md)
+- [Backup and Restore](./06-Features/06-Backup-and-Restore.md)
 
 ### Learning
 - [Beginners](./07-Learning-Education/01-For-Beginners.md)
@@ -127,7 +129,7 @@ Quick reference guides
 ## 📊 Statistics
 
 - **9 Main Sections**
-- **52 Documentation Files**
+- **53 Documentation Files**
 - **Complete Coverage** of all features
 - **No Outdated Content** - All new and accurate
 

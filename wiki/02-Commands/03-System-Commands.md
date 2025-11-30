@@ -37,10 +37,14 @@ DoPlan System Control Panel:
 │   ├── test      - Run standard security tests
 │   ├── release test - Run pre-release security tests
 │   └── audit     - Run a comprehensive security audit
-└── control       - System control (agents, roles, global kill switch)
-    ├── system on|off - Global kill switch (requires confirmation)
-    ├── agents on|off - Enable/disable agents
-    └── roles on|off - Enable/disable roles
+├── backup        - Create project backups
+│   └── --type    - Backup type (project, plan, project-plan, full)
+├── restore       - Restore from backup
+│   └── --dry-run - Preview restore without applying
+├── migrate       - Guided migration assistant
+└── memory        - Memory card export/restore
+    ├── export    - Export memory card
+    └── restore   - Restore memory card
 ```
 
 ---
@@ -393,6 +397,176 @@ Control DoPlan's system features: enable/disable agents, roles, or the entire sy
 /sys control system off
 # → Disable entire system (with confirmation)
 ```
+
+---
+
+## `/sys backup` - Create Backup
+
+### Overview
+
+Create compressed backups of your project with flexible options.
+
+### Usage
+
+```bash
+/sys backup                              # Interactive mode
+/sys backup --type project              # Project files only
+/sys backup --type plan                 # Planning folder only
+/sys backup --type project-plan         # Project + planning
+/sys backup --type full                 # Everything
+/sys backup --type full --description "Before update"  # With description
+```
+
+### Backup Types
+
+- **`project`** - Project files only (excludes `.do/` and `.cursor/`)
+- **`plan`** - Planning folder only (`.do/plan/`)
+- **`project-plan`** - Project files + planning folder
+- **`full`** - Complete backup (everything)
+
+### When to Use
+
+- Before DoPlan updates
+- Before major refactoring
+- Before task restructuring
+- For project transfers
+- For disaster recovery
+
+### Example
+
+```bash
+/sys backup --type project-plan --description "Before DoPlan update"
+# ✅ Backup created: backup-20250115-143022-project-plan.doplan
+#    Location: .do/backup/backup-20250115-143022-project-plan.doplan
+#    Type: project-plan
+#    Size: 2.45 MB
+```
+
+**See**: [Backup and Restore](../06-Features/06-Backup-and-Restore.md) for complete documentation.
+
+---
+
+## `/sys restore` - Restore Backup
+
+### Overview
+
+Restore your project from a compressed backup file.
+
+### Usage
+
+```bash
+/sys restore                             # Interactive mode
+/sys restore backup-20250115-143022-project-plan.doplan  # By filename
+/sys restore --dry-run backup-20250115-143022-project-plan.doplan  # Preview
+```
+
+### What It Does
+
+1. Lists available backups (if interactive)
+2. Shows backup information
+3. Verifies backup integrity
+4. Checks version compatibility
+5. Creates safety backup of current state
+6. Restores files
+7. Shows restore results
+
+### Safety Features
+
+- **Automatic safety backup** - Creates full backup before restore
+- **Integrity verification** - Validates backup file
+- **Version checking** - Warns about version differences
+- **Dry-run mode** - Preview without applying
+
+### Example
+
+```bash
+/sys restore backup-20250115-143022-project-plan.doplan
+# 📦 Backup Information:
+#    File: backup-20250115-143022-project-plan.doplan
+#    Type: project-plan
+#    Created: 2025-01-15T14:30:22Z
+#    Version: 1.0.0
+#    Files: 127
+# ✅ Backup integrity verified
+# ✅ Safety backup created
+# ✅ Restore Complete!
+#    Files restored: 127
+```
+
+**See**: [Backup and Restore](../06-Features/06-Backup-and-Restore.md) for complete documentation.
+
+---
+
+## `/sys migrate` - Migration Assistant
+
+### Overview
+
+Guided migration assistant for DoPlan updates.
+
+### Usage
+
+```bash
+/sys migrate
+```
+
+### What It Does
+
+1. Detects old DoPlan structure
+2. Suggests appropriate backup type
+3. Guides you through update process
+4. Helps restore after update
+
+### When to Use
+
+- When updating DoPlan
+- When migrating from old structure
+- When you need guidance on backups
+
+**See**: [Backup and Restore](../06-Features/06-Backup-and-Restore.md) for complete documentation.
+
+---
+
+## `/sys memory` - Memory Card Management
+
+### Overview
+
+Export or restore memory card (user preferences, engagement data).
+
+### Usage
+
+```bash
+/sys memory export    # Export memory card
+/sys memory restore   # Restore memory card
+```
+
+### What's Included
+
+- User preferences and work style
+- Command usage statistics
+- Achievements and challenges
+- Engagement metrics
+- Project history and context
+
+### When to Use
+
+- Transfer preferences to new project
+- Restore engagement data
+- Share user profile between projects
+- Backup personalization data
+
+### Example
+
+```bash
+# Export
+/sys memory export
+# ✅ Memory card exported to: memory_card_export-20250115-143022.json
+
+# Restore
+/sys memory restore
+# ✅ Memory card restored from: memory_card_export-20250115-143022.json
+```
+
+**See**: [Backup and Restore](../06-Features/06-Backup-and-Restore.md) for complete documentation.
 
 ---
 

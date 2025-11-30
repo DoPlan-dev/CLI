@@ -9,6 +9,7 @@ DoPlan is packed with powerful features that make development engaging, educatio
 3. [Git Automation](./03-Git-Automation.md) - Auto-commit and push
 4. [Learning Support](./04-Learning-Support.md) - Educational features
 5. [Personalization](./05-Personalization.md) - Adaptive experience
+6. [Backup and Restore](./06-Backup-and-Restore.md) - Project backup and recovery
 
 ---
 
@@ -19,6 +20,7 @@ DoPlan is packed with powerful features that make development engaging, educatio
 - **Git Automation** - Commits, pushes, PRs
 - **Learning Support** - Educational at every step
 - **Personalization** - Adapts to you
+- **Backup and Restore** - Protect your work with flexible backups
 
 ---
 
