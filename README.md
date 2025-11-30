@@ -467,7 +467,7 @@ This end-to-end loop is generated with every project, so the same commands are a
 | `/github` | Integrations | Sync KPIs, prep issues/milestones, update cache |
 | `/branchci` | Integrations | Regenerate per-branch workflow guardrails |
 
-👉 Looking for deeper explanations? See `Docs/foundation/the-guide.md` or the wiki pages for [Commands](https://github.com/DoPlan-dev/CLI/wiki/Commands) and [Workflow](https://github.com/DoPlan-dev/CLI/wiki/Workflow).
+👉 Looking for deeper explanations? See `docs/foundation/the-guide.md` or the [Complete Wiki](https://github.com/DoPlan-dev/CLI/tree/main/wiki) for [Commands](https://github.com/DoPlan-dev/CLI/blob/main/wiki/02-Commands/01-Command-Overview.md) and [Workflow](https://github.com/DoPlan-dev/CLI/blob/main/wiki/05-Workflow/01-Complete-Workflow.md).
 
 ### Project Structure
 
@@ -499,7 +499,7 @@ my-project/
 
 - `CHANGELOG.md` follows Keep a Changelog + SemVer. Check the **[latest entry](CHANGELOG.md)** before cutting a release or running `/ship`.
 - The `Docs/` tree mirrors what every generated project should publish (foundation, features, release, history). Use it as the canonical structure reference.
-- The **[GitHub wiki](https://github.com/DoPlan-dev/CLI/wiki)** stays in sync with this README—Commands, Workflow, Quick Start, and Troubleshooting are updated whenever the CLI changes.
+- The **[Complete Wiki](https://github.com/DoPlan-dev/CLI/tree/main/wiki)** is now organized in the repository with 9 sections and 52 files covering all features. The [GitHub Wiki](https://github.com/DoPlan-dev/CLI/wiki) serves as a gateway to the complete documentation.
 - Automation helpers such as `/report`, `/feedback`, `/state`, and `/github info` keep each of those artifacts aligned (KPI block, scan diffs, feedback logs, and state history).
 
 ---
@@ -586,30 +586,37 @@ DoPlan generates:
 
 ## 📚 Documentation
 
-### Getting Started
+### Complete Wiki
 
-- [Installation Guide](https://github.com/DoPlan-dev/CLI/wiki/Installation) - Detailed installation for all platforms
-- [Quick Start Tutorial](https://github.com/DoPlan-dev/CLI/wiki/Quick-Start) - 5-minute tutorial
-- [Command Reference](https://github.com/DoPlan-dev/CLI/wiki/Commands) - Complete command documentation
+The comprehensive DoPlan CLI documentation is organized in the repository's **[wiki directory](https://github.com/DoPlan-dev/CLI/tree/main/wiki)** with 9 main sections:
 
-### Guides
+- **[01. Getting Started](https://github.com/DoPlan-dev/CLI/tree/main/wiki/01-Getting-Started)** - Installation, first project, quick tour
+- **[02. Commands](https://github.com/DoPlan-dev/CLI/tree/main/wiki/02-Commands)** - Complete command documentation
+- **[03. Engagement System](https://github.com/DoPlan-dev/CLI/tree/main/wiki/03-Engagement-System)** - Achievements, challenges, rewards
+- **[04. Memory and Brain](https://github.com/DoPlan-dev/CLI/tree/main/wiki/04-Memory-and-Brain)** - Personalization features
+- **[05. Workflow](https://github.com/DoPlan-dev/CLI/tree/main/wiki/05-Workflow)** - Complete workflow guides
+- **[06. Features](https://github.com/DoPlan-dev/CLI/tree/main/wiki/06-Features)** - Time tracking, state management, etc.
+- **[07. Learning & Education](https://github.com/DoPlan-dev/CLI/tree/main/wiki/07-Learning-Education)** - Educational content
+- **[08. Advanced Topics](https://github.com/DoPlan-dev/CLI/tree/main/wiki/08-Advanced)** - Power user features
+- **[09. Reference](https://github.com/DoPlan-dev/CLI/tree/main/wiki/09-Reference)** - Quick reference guides
 
-- [Workflow Guide](https://github.com/DoPlan-dev/CLI/wiki/Workflow) - End-to-end project creation
-- [Agent System](https://github.com/DoPlan-dev/CLI/wiki/Agents) - Understanding the AI agency
-- [Rules Library](https://github.com/DoPlan-dev/CLI/wiki/Rules) - Using and customizing rules
-- [Advanced Usage](https://github.com/DoPlan-dev/CLI/wiki/Advanced) - Customization and extensibility
+**[View Complete Wiki Index](https://github.com/DoPlan-dev/CLI/blob/main/wiki/INDEX.md)** | **[Wiki README](https://github.com/DoPlan-dev/CLI/blob/main/wiki/README.md)** | **[GitHub Wiki Gateway](https://github.com/DoPlan-dev/CLI/wiki)**
 
-### Reference
+### Quick Links
 
-- [Architecture](https://github.com/DoPlan-dev/CLI/wiki/Architecture) - Technical deep dive
-- [Troubleshooting](https://github.com/DoPlan-dev/CLI/wiki/Troubleshooting) - Common issues and solutions
-- [FAQ](https://github.com/DoPlan-dev/CLI/wiki/FAQ) - Frequently asked questions
+**Getting Started:**
+- [Installation Guide](https://github.com/DoPlan-dev/CLI/blob/main/wiki/01-Getting-Started/02-Installation.md)
+- [First Project Tutorial](https://github.com/DoPlan-dev/CLI/blob/main/wiki/01-Getting-Started/03-First-Project.md)
+- [Quick Tour](https://github.com/DoPlan-dev/CLI/blob/main/wiki/01-Getting-Started/04-Quick-Tour.md)
 
-### Contributing
+**Essential Guides:**
+- [Command Overview](https://github.com/DoPlan-dev/CLI/blob/main/wiki/02-Commands/01-Command-Overview.md)
+- [Complete Workflow](https://github.com/DoPlan-dev/CLI/blob/main/wiki/05-Workflow/01-Complete-Workflow.md)
+- [Engagement System](https://github.com/DoPlan-dev/CLI/blob/main/wiki/03-Engagement-System/01-Overview.md)
 
-- [Contributing Guide](https://github.com/DoPlan-dev/CLI/wiki/Contributing) - How to contribute
-- [Development Setup](https://github.com/DoPlan-dev/CLI/wiki/Development) - Building from source
-- [Code of Conduct](https://github.com/DoPlan-dev/CLI/wiki/Code-of-Conduct) - Community guidelines
+**Reference:**
+- [Troubleshooting](https://github.com/DoPlan-dev/CLI/blob/main/wiki/08-Advanced/04-Troubleshooting.md)
+- [Contributing Guide](https://github.com/DoPlan-dev/CLI/blob/main/wiki/08-Advanced/05-Contributing.md)
 
 ---
 
@@ -625,7 +632,7 @@ We welcome contributions! Whether it's:
 
 Every contribution helps make DoPlan better for everyone.
 
-See our [Contributing Guide](https://github.com/DoPlan-dev/CLI/wiki/Contributing) for details.
+See our [Contributing Guide](https://github.com/DoPlan-dev/CLI/blob/main/wiki/08-Advanced/05-Contributing.md) for details.
 
 ---
 
@@ -650,7 +657,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **NPM Package**: [https://www.npmjs.com/package/@doplan-dev/cli](https://www.npmjs.com/package/@doplan-dev/cli)
 - **Issues**: [https://github.com/DoPlan-dev/CLI/issues](https://github.com/DoPlan-dev/CLI/issues)
 - **Discussions**: [https://github.com/DoPlan-dev/CLI/discussions](https://github.com/DoPlan-dev/CLI/discussions)
-- **Wiki**: [https://github.com/DoPlan-dev/CLI/wiki](https://github.com/DoPlan-dev/CLI/wiki)
+- **Complete Wiki**: [https://github.com/DoPlan-dev/CLI/tree/main/wiki](https://github.com/DoPlan-dev/CLI/tree/main/wiki)
+- **GitHub Wiki**: [https://github.com/DoPlan-dev/CLI/wiki](https://github.com/DoPlan-dev/CLI/wiki)
 
 ---
 
@@ -658,6 +666,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ by the DoPlan Team**
 
-[⭐ Star us on GitHub](https://github.com/DoPlan-dev/CLI) • [🐛 Report Bug](https://github.com/DoPlan-dev/CLI/issues) • [💡 Request Feature](https://github.com/DoPlan-dev/CLI/issues) • [📖 Documentation](https://github.com/DoPlan-dev/CLI/wiki)
+[⭐ Star us on GitHub](https://github.com/DoPlan-dev/CLI) • [🐛 Report Bug](https://github.com/DoPlan-dev/CLI/issues) • [💡 Request Feature](https://github.com/DoPlan-dev/CLI/issues) • [📖 Complete Wiki](https://github.com/DoPlan-dev/CLI/tree/main/wiki)
 
 </div>

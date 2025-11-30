@@ -460,9 +460,8 @@ What happens when command is used
 
 ## Related Pages
 
-- [Configuration Reference](Configuration) - Configuration details
+- [Configuration Reference](Configuration) - Configuration details and customizing structure
 - [Workflow Guide](Workflow) - How structure is used
-- [Configuration Guide](Configuration) - Customizing structure
 - [Quick Start](Quick-Start) - Getting started
 - [Home](Home) - Wiki home page
 

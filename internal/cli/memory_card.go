@@ -24,75 +24,75 @@ type MemoryCard struct {
 	WorkStyle       string `json:"work_style,omitempty"`       // "fast" or "thoughtful"
 	Personality     string `json:"personality,omitempty"`      // "thinker" or "copier"
 	Dream           string `json:"dream,omitempty"`            // "change_world" or "build_others"
-	Motivation      string `json:"motivation,omitempty"`        // "money" or "success"
+	Motivation      string `json:"motivation,omitempty"`       // "money" or "success"
 	ExperienceLevel string `json:"experience_level,omitempty"` // "beginner", "intermediate", "advanced"
 
 	// Communication Preferences
 	CommunicationStyle string `json:"communication_style,omitempty"` // "brief", "detailed", "balanced"
-	FeedbackFrequency  string `json:"feedback_frequency,omitempty"`    // "frequent", "moderate", "minimal"
-	DetailLevel        string `json:"detail_level,omitempty"`          // "high", "medium", "low"
-	EncouragementStyle string `json:"encouragement_style,omitempty"`   // "enthusiastic", "supportive", "professional"
-	ErrorHandlingPref  string `json:"error_handling_pref,omitempty"`   // "gentle", "direct", "educational"
+	FeedbackFrequency  string `json:"feedback_frequency,omitempty"`  // "frequent", "moderate", "minimal"
+	DetailLevel        string `json:"detail_level,omitempty"`        // "high", "medium", "low"
+	EncouragementStyle string `json:"encouragement_style,omitempty"` // "enthusiastic", "supportive", "professional"
+	ErrorHandlingPref  string `json:"error_handling_pref,omitempty"` // "gentle", "direct", "educational"
 
 	// Learning & Preferences
 	PreferredTechStack []string `json:"preferred_tech_stack,omitempty"`
 	ProjectTypes       []string `json:"project_types,omitempty"`
-	Interests          []string `json:"interests,omitempty"` // Topics user is interested in
+	Interests          []string `json:"interests,omitempty"`      // Topics user is interested in
 	LearningGoals      []string `json:"learning_goals,omitempty"` // What user wants to learn
 	PainPoints         []string `json:"pain_points,omitempty"`    // Common challenges user faces
 
 	// Relationship Data
-	ConversationHistory []ConversationEntry `json:"conversation_history,omitempty"` // Structured conversation history
-	MemorableMoments    []MemorableMoment   `json:"memorable_moments,omitempty"`     // Special moments to remember
-	Achievements        []Achievement       `json:"achievements,omitempty"`         // User milestones and wins
-	Preferences         map[string]interface{} `json:"preferences,omitempty"`      // Flexible preferences storage
+	ConversationHistory []ConversationEntry    `json:"conversation_history,omitempty"` // Structured conversation history
+	MemorableMoments    []MemorableMoment      `json:"memorable_moments,omitempty"`    // Special moments to remember
+	Achievements        []Achievement          `json:"achievements,omitempty"`         // User milestones and wins
+	Preferences         map[string]interface{} `json:"preferences,omitempty"`          // Flexible preferences storage
 
 	// Usage Patterns
-	CommandUsage      map[string]int       `json:"command_usage,omitempty"`      // How often each command is used
-	FavoriteCommands  []string             `json:"favorite_commands,omitempty"`  // Commands user prefers
-	StruggledFeatures []string             `json:"struggled_features,omitempty"` // Features user had trouble with
-	HelpfulFeatures   []string             `json:"helpful_features,omitempty"`  // Features user found helpful
-	TimePreferences   map[string]string    `json:"time_preferences,omitempty"`   // Preferred times for different activities
-	
+	CommandUsage      map[string]int    `json:"command_usage,omitempty"`      // How often each command is used
+	FavoriteCommands  []string          `json:"favorite_commands,omitempty"`  // Commands user prefers
+	StruggledFeatures []string          `json:"struggled_features,omitempty"` // Features user had trouble with
+	HelpfulFeatures   []string          `json:"helpful_features,omitempty"`   // Features user found helpful
+	TimePreferences   map[string]string `json:"time_preferences,omitempty"`   // Preferred times for different activities
+
 	// Challenge Tracking
-	CompletedChallenges []string            `json:"completed_challenges,omitempty"` // List of completed challenge IDs
-	ChallengeAttempts  map[string]int      `json:"challenge_attempts,omitempty"`  // Number of attempts per challenge
+	CompletedChallenges []string       `json:"completed_challenges,omitempty"` // List of completed challenge IDs
+	ChallengeAttempts   map[string]int `json:"challenge_attempts,omitempty"`   // Number of attempts per challenge
 
 	// Relationship Metrics
-	ToneLevel       int     `json:"tone_level,omitempty"`       // 0-10, increases with usage, affects formality and warmth
-	RelationshipLevel int   `json:"relationship_level,omitempty"` // 0-100, overall relationship strength
-	TrustLevel      int     `json:"trust_level,omitempty"`     // 0-10, how much user trusts agent suggestions
-	EngagementScore float64 `json:"engagement_score,omitempty"` // 0-1, how engaged user is
-	Score           int     `json:"score,omitempty"`            // Total achievement score
+	ToneLevel         int     `json:"tone_level,omitempty"`         // 0-10, increases with usage, affects formality and warmth
+	RelationshipLevel int     `json:"relationship_level,omitempty"` // 0-100, overall relationship strength
+	TrustLevel        int     `json:"trust_level,omitempty"`        // 0-10, how much user trusts agent suggestions
+	EngagementScore   float64 `json:"engagement_score,omitempty"`   // 0-1, how engaged user is
+	Score             int     `json:"score,omitempty"`              // Total achievement score
 
 	// Context Awareness
-	CurrentProject     string    `json:"current_project,omitempty"`     // Active project name
+	CurrentProject     string    `json:"current_project,omitempty"`      // Active project name
 	CurrentPhase       string    `json:"current_phase,omitempty"`        // Current workflow phase
 	LastCommand        string    `json:"last_command,omitempty"`         // Last command executed
-	LastCommandTime    time.Time `json:"last_command_time,omitempty"`   // When last command was run
-	SessionCount       int       `json:"session_count,omitempty"`       // Total number of sessions
+	LastCommandTime    time.Time `json:"last_command_time,omitempty"`    // When last command was run
+	SessionCount       int       `json:"session_count,omitempty"`        // Total number of sessions
 	AverageSessionTime float64   `json:"average_session_time,omitempty"` // Average session duration in minutes
 }
 
 // ConversationEntry represents a structured conversation interaction
 type ConversationEntry struct {
-	Timestamp   time.Time `json:"timestamp,omitempty"`
-	Command     string    `json:"command,omitempty"`
-	UserInput   string    `json:"user_input,omitempty"`
-	AgentResponse string  `json:"agent_response,omitempty"`
-	Sentiment   string    `json:"sentiment,omitempty"` // "positive", "neutral", "negative", "frustrated", "excited"
-	Insight     string    `json:"insight,omitempty"`   // Key insight learned from this interaction
-	Duration    float64   `json:"duration,omitempty"`   // Duration in seconds
+	Timestamp     time.Time `json:"timestamp,omitempty"`
+	Command       string    `json:"command,omitempty"`
+	UserInput     string    `json:"user_input,omitempty"`
+	AgentResponse string    `json:"agent_response,omitempty"`
+	Sentiment     string    `json:"sentiment,omitempty"` // "positive", "neutral", "negative", "frustrated", "excited"
+	Insight       string    `json:"insight,omitempty"`   // Key insight learned from this interaction
+	Duration      float64   `json:"duration,omitempty"`  // Duration in seconds
 }
 
 // MemorableMoment represents a special moment in the user-agent relationship
 type MemorableMoment struct {
 	Timestamp   time.Time `json:"timestamp,omitempty"`
-	Type        string    `json:"type,omitempty"`        // "achievement", "breakthrough", "joke", "challenge_overcome", "first_time"
+	Type        string    `json:"type,omitempty"` // "achievement", "breakthrough", "joke", "challenge_overcome", "first_time"
 	Title       string    `json:"title,omitempty"`
 	Description string    `json:"description,omitempty"`
-	Emotion     string    `json:"emotion,omitempty"`      // "happy", "proud", "excited", "relieved", "grateful"
-	Context     string    `json:"context,omitempty"`     // What was happening when this occurred
+	Emotion     string    `json:"emotion,omitempty"` // "happy", "proud", "excited", "relieved", "grateful"
+	Context     string    `json:"context,omitempty"` // What was happening when this occurred
 }
 
 // Achievement represents a user milestone or accomplishment
@@ -113,12 +113,12 @@ func LoadMemoryCard() (*MemoryCard, error) {
 	}
 
 	cardPath := filepath.Join(homeDir, ".doplan", "memory_card.json")
-	
+
 	// If doesn't exist, create new one
 	if !utils.PathExists(cardPath) {
 		card := &MemoryCard{
 			FirstMet:          time.Now(),
-			LastInteraction:  time.Now(),
+			LastInteraction:   time.Now(),
 			ToneLevel:         0,
 			RelationshipLevel: 0,
 			TrustLevel:        5, // Start with neutral trust
@@ -211,13 +211,13 @@ func SaveMemoryCard(card *MemoryCard) error {
 	}
 
 	cardPath := filepath.Join(cardDir, "memory_card.json")
-	
+
 	// Update interaction tracking
 	card.LastInteraction = time.Now()
-	
+
 	// Only increment project count if this is a new project
 	// (This should be called explicitly when starting a new project, not on every save)
-	
+
 	// Update relationship metrics
 	card.UpdateRelationshipMetrics()
 
@@ -226,7 +226,12 @@ func SaveMemoryCard(card *MemoryCard) error {
 		return fmt.Errorf("failed to marshal memory card: %w", err)
 	}
 
-	return utils.WriteFile(cardPath, data)
+	// Invalidate cache after saving
+	err = utils.WriteFile(cardPath, data)
+	if err == nil {
+		invalidateMemoryCardCache()
+	}
+	return err
 }
 
 // UpdateFromConversation updates memory card based on user responses
@@ -274,7 +279,7 @@ func (m *MemoryCard) RecordCommandUsage(command string) {
 		m.CommandUsage = make(map[string]int)
 	}
 	m.CommandUsage[command]++
-	
+
 	// Update favorite commands (top 5 most used)
 	m.updateFavoriteCommands()
 }
@@ -285,12 +290,12 @@ func (m *MemoryCard) updateFavoriteCommands() {
 		cmd   string
 		count int
 	}
-	
+
 	var sorted []cmdUsage
 	for cmd, count := range m.CommandUsage {
 		sorted = append(sorted, cmdUsage{cmd, count})
 	}
-	
+
 	// Simple sort (bubble sort for small lists)
 	for i := 0; i < len(sorted)-1; i++ {
 		for j := i + 1; j < len(sorted); j++ {
@@ -299,7 +304,7 @@ func (m *MemoryCard) updateFavoriteCommands() {
 			}
 		}
 	}
-	
+
 	// Get top 5
 	m.FavoriteCommands = []string{}
 	for i := 0; i < len(sorted) && i < 5; i++ {
@@ -318,12 +323,12 @@ func (m *MemoryCard) AddMemorableMoment(momentType, title, description, emotion,
 		Context:     context,
 	}
 	m.MemorableMoments = append(m.MemorableMoments, moment)
-	
+
 	// Keep only last 50 memorable moments
 	if len(m.MemorableMoments) > 50 {
 		m.MemorableMoments = m.MemorableMoments[len(m.MemorableMoments)-50:]
 	}
-	
+
 	// Increase relationship level
 	if m.RelationshipLevel < 100 {
 		m.RelationshipLevel += 2
@@ -341,12 +346,12 @@ func (m *MemoryCard) AddAchievement(id, title, description, category, project st
 		Project:     project,
 	}
 	m.Achievements = append(m.Achievements, achievement)
-	
+
 	// Keep only last 100 achievements
 	if len(m.Achievements) > 100 {
 		m.Achievements = m.Achievements[len(m.Achievements)-100:]
 	}
-	
+
 	// Create memorable moment for significant achievements
 	if category == "milestone" || category == "project" {
 		m.AddMemorableMoment("achievement", title, description, "proud", fmt.Sprintf("Completed %s in project %s", title, project))
@@ -357,7 +362,7 @@ func (m *MemoryCard) AddAchievement(id, title, description, category, project st
 func (m *MemoryCard) UpdateRelationshipMetrics() {
 	// Relationship level based on multiple factors
 	baseLevel := m.ToneLevel * 5 // Tone contributes up to 50 points
-	
+
 	// Add points for interaction frequency
 	daysSinceFirst := time.Since(m.FirstMet).Hours() / 24
 	if daysSinceFirst > 0 {
@@ -368,19 +373,19 @@ func (m *MemoryCard) UpdateRelationshipMetrics() {
 			baseLevel += 10
 		}
 	}
-	
+
 	// Add points for memorable moments
 	baseLevel += len(m.MemorableMoments) * 2
-	
+
 	// Add points for achievements
 	baseLevel += len(m.Achievements)
-	
+
 	// Cap at 100
 	if baseLevel > 100 {
 		baseLevel = 100
 	}
 	m.RelationshipLevel = baseLevel
-	
+
 	// Update engagement score (0-1)
 	if m.SessionCount > 0 {
 		avgTimeBetweenSessions := time.Since(m.FirstMet).Hours() / float64(m.SessionCount)
@@ -441,7 +446,7 @@ func (m *MemoryCard) GetGreeting() string {
 			}
 			return fmt.Sprintf("Hey %s! 👋 Back for more? Let's build something awesome together!", m.UserName)
 		}
-		
+
 		// Medium relationship level (40-79)
 		if m.RelationshipLevel >= 40 {
 			if isReturning {
@@ -449,14 +454,14 @@ func (m *MemoryCard) GetGreeting() string {
 			}
 			return fmt.Sprintf("Hey %s! 👋 Good to have you back. Let's create something great together!", m.UserName)
 		}
-		
+
 		// Low relationship level (0-39)
 		if m.ProjectsCount > 1 {
 			return fmt.Sprintf("Hello %s! 👋 Welcome back. Ready to work on another project?", m.UserName)
 		}
 		return fmt.Sprintf("Hello %s! 👋 Let's turn your idea into reality!", m.UserName)
 	}
-	
+
 	// First time or no name
 	if m.RelationshipLevel == 0 {
 		return "Hello! 👋 I'm DoPlan, your AI development partner. Let's get started!"
@@ -489,7 +494,7 @@ func (m *MemoryCard) GetEncouragement() string {
 		}
 		return "I believe in you! We've accomplished so much together. Let's keep the momentum going! 💪"
 	}
-	
+
 	// Medium relationship level
 	if m.RelationshipLevel >= 40 {
 		if m.Motivation == "change_world" {
@@ -501,7 +506,7 @@ func (m *MemoryCard) GetEncouragement() string {
 		}
 		return "Let's build something amazing together! 🚀"
 	}
-	
+
 	// Low relationship level - more general
 	if m.Motivation == "change_world" {
 		return "Building something to change the world is ambitious! 🌍 I'm here to help you make it happen."
@@ -520,19 +525,19 @@ func (m *MemoryCard) GetPersonalizedTip() string {
 		lastPainPoint := m.PainPoints[len(m.PainPoints)-1]
 		return fmt.Sprintf("💡 Tip: I noticed you've struggled with %s before. Want me to help you approach it differently this time?", lastPainPoint)
 	}
-	
+
 	// Check for learning goals
 	if len(m.LearningGoals) > 0 {
 		goal := m.LearningGoals[len(m.LearningGoals)-1]
 		return fmt.Sprintf("💡 Tip: Since you're interested in learning %s, this project is a great opportunity to practice!", goal)
 	}
-	
+
 	// Check favorite commands
 	if len(m.FavoriteCommands) > 0 {
 		favCmd := m.FavoriteCommands[0]
 		return fmt.Sprintf("💡 Tip: I see you love using /%s! It's one of my favorites too. Want to explore it more?", favCmd)
 	}
-	
+
 	return "💡 Tip: Take it one step at a time. Every great project starts with a single command!"
 }
 
@@ -554,4 +559,3 @@ func (m *MemoryCard) GetContextualMessage(context string) string {
 		return ""
 	}
 }
-
