@@ -735,9 +735,9 @@ This helps you monitor and optimize DoPlan's performance.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			monitor := GetDefaultPerformanceMonitor()
 			report := monitor.GetReport()
-			
+
 			fmt.Fprint(cmd.OutOrStdout(), report.String())
-			
+
 			return nil
 		},
 	}
