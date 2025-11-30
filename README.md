@@ -52,6 +52,8 @@
 - 🚀 **Complete Automation**: Project structure, agents, commands, rules, CI/CD, and boilerplate
 - 📦 **Offline-First**: Works completely offline after first run
 - 🔓 **Transparent**: All AI logic lives in markdown files - see and modify everything
+- 🧠 **Memory & Brain**: Personalizes every interaction, learns your preferences, adapts to your style
+- 🏆 **Engagement System**: 200+ achievements, 30+ challenges, score tracking, and rewards
 - 💾 **Backup & Restore**: Full project backup and restore functionality
 - 📊 **Performance Monitoring**: Built-in performance metrics and cache statistics
 
@@ -256,18 +258,12 @@ code .  # or your preferred IDE
 Once in your IDE, start using DoPlan commands:
 
 ```
-/tell      → Capture your project idea
-/improve   → Brainstorm with the leadership team
-/write     → Generate PRD + Architecture + Design System
-/change    → Patch any planning doc with natural language updates
-/good      → Approve & lock the plan
+/hey       → Welcome, tutorial, and command introductions
+/do        → Capture project idea, conduct meeting, and refine
 /plan      → Generate execution plan + task hierarchy
-/build     → Start the next (or specific) task
-/progress  → Check totals, current task, and what's next
-/state     → Snapshot, list, diff, or restore project history
-/finished  → Auto-commit, push, and move to the next task
-/report    → Generate scan metadata + diffs
-/feedback  → Log structured feedback entries
+/dev       → Start development workflow for a feature
+/done      → Mark current task complete and auto-commit/push
+/sys       → System control panel (engagement, performance, backup, etc.)
 ```
 
 ### 4. (Optional) Re-run the beginner access patch
@@ -297,70 +293,43 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
 
 #### Project Planning Commands
 
-- **`/tell`** - Capture your project idea
+- **`/hey`** - Welcome, tutorial, and command introductions
   ```
-  /tell I want to build a task management app with React and Node.js
+  /hey
   ```
+  Interactive onboarding experience for first-time users or when you need a refresher. Provides tutorial, system overview, and creates reference materials.
 
-- **`/improve`** - Team brainstorm session
+- **`/do`** - Capture project idea, conduct meeting, and refine
   ```
-  /improve
+  /do                    # Full ideation workflow
+  /do feature            # Add single feature idea
+  /do now                # Fast-track with detailed prompt/PRD
+  /do i'm lucky          # Get AI-suggested ideas
   ```
-  Activates Product, Engineering, Design, QA, Release, and Documentation leads to surface opportunities, blockers, and acceleration ideas. Outputs `.plan/00_System/BRAINSTORM.md`.
-
-- **`/write`** - Generate planning documents
-  ```
-  /write
-  ```
-  Generates PRD, Architecture, and Design System documents.
-
-- **`/change`** - Edit any document
-  ```
-  /change prd Add dark mode support
-  /change architecture Use PostgreSQL instead of MongoDB
-  ```
-
-- **`/good`** - Approve & lock the plan
-  ```
-  /good
-  ```
-  Locks the current plan and enables task generation.
-
-#### Development Commands
+  Captures your project idea through iterative conversation, conducts discovery meeting, and refines suggestions. Generates IDEA.md, BRAINSTORM.md, and REFINEMENTS.md.
 
 - **`/plan`** - Generate execution plan + tasks
   ```
   /plan
   ```
-  Synthesizes TASKS.md from the approved plan and scaffolds phase folders.
+  Reads IDEA.md and BRAINSTORM.md, then generates TASKS.md with organized phases and feature folders.
 
-- **`/build`** - Start coding
-  ```
-  /build        # Start next task
-  /build 3      # Start specific task
-  ```
+#### Development Commands
 
-- **`/progress`** - Show current progress
+- **`/dev`** - Start development workflow
   ```
-  /progress
-  go run scripts/progress/main.go --root .
+  /dev              # Start next task
+  /dev --feature "auth"  # Start specific feature
   ```
-  Runs the Go helper at `scripts/progress/` to display totals plus the most recent `.do/system/history` delta (phase/task/branch/completed changes). Pass `--json` for machine-readable output.
+  Finds next available task (or specific task), creates/checks out Git branch, syncs documentation, and starts time tracking.
 
-- **`/state`** - Manage state snapshots & rollbacks
+- **`/done`** - Mark task complete
   ```
-  /state list
-  /state diff --json
-  /state restore --file state-20251124T120000Z.json --yes
+  /done
   ```
-  Wraps `go run scripts/statehistory/main.go` so you can inspect history, capture snapshots (before/after `/build` and `/finished`), and safely restore `.do/system/history/active_state.json`.
+  Marks current task as complete, auto-commits with conventional format, pushes to remote, and moves to next task.
 
-- **`/finished`** - Mark task complete
-  ```
-  /finished
-  ```
-
-#### Feedback & Reporting Commands
+#### System Commands
 
 - **`/feedback`** - Log structured product/bug feedback
   ```
@@ -421,37 +390,30 @@ npx @doplan-dev/cli
 cd my-awesome-project
 code .
 
-# 3. In your IDE, start planning:
-/tell I want to build a social media dashboard with real-time analytics
+# 3. In your IDE, start with onboarding (first time):
+/hey
 
-# 4. Brainstorm with the team
-/improve
+# 4. Capture your project idea
+/do
 
-# 5. Generate planning documents
-/write
-
-# 6. Review and approve
-/good
-
-# 7. Generate execution plan + tasks
+# 5. Generate execution plan + tasks
 /plan
 
-# 8. Start building
-/build
+# 6. Start development
+/dev
 
-# 9. Track progress
-/progress
+# 7. Mark task complete when done
+/done
 ```
 
 ---
 
 ## 🧠 Command Workflow
 
-1. **Capture & Align** – Start with `/tell` to record the idea, then `/improve` to gather Product, Engineering, Design, QA, Release, and Documentation insights into IDEA.md and BRAINSTORM.md.
-2. **Document & Approve** – `/write` turns those insights into PRD/Architecture/Design System, `/change` lets you refine any doc, and `/good` locks the set so tasks can be generated.
-3. **Create the Roadmap** – `/plan` turns the approved documents into phased TASKS.md so every feature has context, acceptance criteria, and branch guidance.
-4. **Build Loop** – For each task: `/state snapshot` → `/build` → iterate with `/progress` as needed → `/finished` (auto commit/push) → `/state snapshot` again. This loop keeps history diffable and the task board honest.
-5. **Operate & Ship** – Keep everyone aligned with `/report`, `/feedback`, `/team`, and `/load`, harden the release with `/safe` + `/cheap`, and ship confidently with `/ship`, `/github`, and `/branchci`.
+1. **Onboard & Capture** – Start with `/hey` for onboarding (first time), then `/do` to capture your project idea through iterative conversation, which automatically conducts a discovery meeting and refinement phase.
+2. **Plan** – `/plan` reads IDEA.md and BRAINSTORM.md, then generates phased TASKS.md with organized phases and feature folders.
+3. **Develop** – For each task: `/dev` (starts task, creates branch) → code → `/done` (auto commit/push) → repeat.
+4. **Manage & Monitor** – Use `/sys` commands to view engagement dashboard, performance metrics, create backups, manage memory card, and control system settings.
 
 This end-to-end loop is generated with every project, so the same commands are available in Cursor, Claude Code, Windsurf, Antigravity, Cline, and OpenCode without extra setup.
 
@@ -459,30 +421,20 @@ This end-to-end loop is generated with every project, so the same commands are a
 
 | Command | Phase | What it unlocks |
 | --- | --- | --- |
-| `/tell` | Strategy | Capture project intent into `.plan/00_System/IDEA.md` |
-| `/improve` | Strategy | Cross-functional brainstorm saved to `.plan/00_System/BRAINSTORM.md` |
-| `/write` | Strategy | Generate PRD, Architecture, Design System |
-| `/change` | Strategy | Patch any planning doc with natural language |
-| `/good` | Strategy | Lock the planning set and advance to tasks |
+| `/hey` | Onboarding | Welcome, tutorial, and command introductions |
+| `/do` | Strategy | Capture project idea, conduct meeting, refine suggestions → generates IDEA.md, BRAINSTORM.md, REFINEMENTS.md |
 | `/plan` | Delivery | Expand planning docs into phased `TASKS.md` |
-| `/build [id]` | Delivery | Start the next (or specific) implementation task |
-| `/progress` | Delivery | Summaries for total/completed tasks + upcoming work |
-| `/state` | Delivery | Snapshot, diff, and restore `.do/system/history/active_state.json` |
-| `/finished` | Delivery | Mark tasks complete, auto-commit, and push |
-| `/feedback <type>` | Operations | Log bugs/features/questions into `Docs/history/feedback.*` |
-| `/report [path]` | Operations | Generate SCAN_REPORT metadata + diffs |
-| `/ship` | Operations | Release orchestration + versioning checklist |
-| `/safe` | Operations | Security review + dependency risk scan |
-| `/cheap` | Operations | Cost optimization playbook |
-| `/team` | Context | Display the 18-agent hierarchy |
-| `/load <context>` | Context | Inject extra domain knowledge for agents |
+| `/dev [feature]` | Delivery | Start the next (or specific) implementation task |
+| `/done` | Delivery | Mark tasks complete, auto-commit, and push |
+| `/sys` | Operations | System control panel |
+| `/sys engagement` | Context | View engagement dashboard and statistics |
 | `/sys performance` | Operations | View performance metrics and cache statistics |
 | `/sys backup` | Operations | Create compressed project backups |
 | `/sys restore` | Operations | Restore project from backup |
 | `/sys memory` | Operations | Export/import memory card |
-| `/sys engagement` | Context | View engagement dashboard and statistics |
-| `/github` | Integrations | Sync KPIs, prep issues/milestones, update cache |
-| `/branchci` | Integrations | Regenerate per-branch workflow guardrails |
+| `/sys role` | Operations | Manage roles and permissions |
+| `/sys security` | Operations | Security settings and tests |
+| `/sys control` | Operations | System control panel |
 
 👉 Looking for deeper explanations? See `docs/foundation/the-guide.md` or the [Complete Wiki](https://github.com/DoPlan-dev/CLI/tree/main/wiki) for [Commands](https://github.com/DoPlan-dev/CLI/blob/main/wiki/02-Commands/01-Command-Overview.md) and [Workflow](https://github.com/DoPlan-dev/CLI/blob/main/wiki/05-Workflow/01-Complete-Workflow.md).
 
@@ -582,6 +534,52 @@ Each agent has a specific role and expertise, working together to guide your pro
 - Safe restore with dry-run mode and version compatibility checks
 - Memory card export/import for easy migration
 - Migration assistant for project upgrades
+
+### 🧠 Memory & Brain System
+
+DoPlan learns about you and personalizes every interaction:
+
+- **Memory Card** - Your personal relationship file stored at `~/.doplan/memory_card.json`
+  - Remembers your identity, preferences, and communication style
+  - Tracks your learning goals, tech stack, and pain points
+  - Builds relationship history across all projects
+  - Works globally across all your DoPlan projects
+
+- **Brain System** - Intelligent personalization layer
+  - Personalizes agent responses to match your style
+  - Adjusts tone based on relationship level
+  - Provides context-aware guidance
+  - Matches responses to your experience level
+  - Offers personalized encouragement and motivation
+
+- **View & Manage**: Use `/sys memory` to export/import your memory card or `/sys engagement` to see your relationship stats
+
+### 🏆 Engagement System
+
+Make development fun and motivating with achievements, challenges, and rewards:
+
+- **Achievement System** - 200+ achievements for milestones
+  - Score milestones (100, 250, 1,000, 10,000+ points)
+  - Project achievements (First Steps, Serial Builder, Project Master)
+  - Command usage achievements (Hello There!, Code Machine)
+  - Learning achievements (Student, Tech Master)
+  - Relationship achievements (Trust Builder, Best Friend)
+
+- **Challenge System** - 30+ high-scoring challenges
+  - First-time task challenges (300-2000 points each)
+  - Milestone challenges for major accomplishments
+  - Special event challenges
+
+- **Score System** - Points-based progression (0-100,000+)
+  - Earn points from achievements and challenges
+  - Track progress through score ranges
+  - Unlock new achievements as you progress
+  - View your score via `/sys engagement`
+
+- **Reward System** - Strategic reward scheduling
+  - Celebrations at key milestones
+  - Personalized encouragement
+  - Dopamine timing for optimal motivation
 
 ### 🎨 Beautiful Interactive TUI
 
