@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2025-11-30
+
+### Fixed
+- **npm bin configuration**: Fixed incorrect `"@doplan-dev/cli"` bin entry that would create a `cli` command instead of the intended behavior. Removed the incorrect entry and kept `doplan` and `goplan` as the correct executable commands.
+
 ## [1.3.0] - 2025-01-15
 
 ### Added
