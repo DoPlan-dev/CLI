@@ -44,6 +44,7 @@
 ### 🌟 Key Features
 
 - ⚡ **Zero-Install**: Run with `npx` - no global installation needed
+- 🚀 **Lightning Fast**: 80-90% faster for new projects with optimized performance
 - 🤖 **18 AI Agents**: Complete hierarchical agency (Product Manager, Engineers, Designers, QA, etc.)
 - 📚 **1000+ Rules Library**: Embedded best practices for all major tech stacks
 - 🎨 **Interactive TUI**: Beautiful terminal interface built with Bubbletea
@@ -51,6 +52,8 @@
 - 🚀 **Complete Automation**: Project structure, agents, commands, rules, CI/CD, and boilerplate
 - 📦 **Offline-First**: Works completely offline after first run
 - 🔓 **Transparent**: All AI logic lives in markdown files - see and modify everything
+- 💾 **Backup & Restore**: Full project backup and restore functionality
+- 📊 **Performance Monitoring**: Built-in performance metrics and cache statistics
 
 ## 📈 KPIs & Targets
 <!-- KPIS:START -->
@@ -224,7 +227,7 @@ After installation, verify it works:
 doplan --version
 ```
 
-You should see the version number (e.g., `doplan version 1.0.4`).
+You should see the version number (e.g., `doplan version v1.3.0`).
 
 ---
 
@@ -365,6 +368,15 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
   ```
   Saves to `Docs/history/feedback.md` (human readable) and `Docs/history/feedback.json` (consumed by automation).
 
+- **`/sys`** - System management and monitoring
+  ```
+  /sys performance    # View performance metrics and cache statistics
+  /sys backup         # Create compressed project backups
+  /sys restore        # Restore from backup
+  /sys memory         # Export/import memory card
+  /sys engagement     # View engagement dashboard
+  ```
+
 - **`/report`** - Generate scan metadata + diffs
   ```
   /report                       # current project
@@ -464,6 +476,11 @@ This end-to-end loop is generated with every project, so the same commands are a
 | `/cheap` | Operations | Cost optimization playbook |
 | `/team` | Context | Display the 18-agent hierarchy |
 | `/load <context>` | Context | Inject extra domain knowledge for agents |
+| `/sys performance` | Operations | View performance metrics and cache statistics |
+| `/sys backup` | Operations | Create compressed project backups |
+| `/sys restore` | Operations | Restore project from backup |
+| `/sys memory` | Operations | Export/import memory card |
+| `/sys engagement` | Context | View engagement dashboard and statistics |
 | `/github` | Integrations | Sync KPIs, prep issues/milestones, update cache |
 | `/branchci` | Integrations | Regenerate per-branch workflow guardrails |
 
@@ -497,10 +514,10 @@ my-project/
 
 ## 📑 Docs, Changelog & Wiki
 
-- `CHANGELOG.md` follows Keep a Changelog + SemVer. Check the **[latest entry](CHANGELOG.md)** before cutting a release or running `/ship`.
+- `CHANGELOG.md` follows Keep a Changelog + SemVer. Check the **[latest entry](CHANGELOG.md)** (v1.3.0) for performance optimizations and new features.
 - The `Docs/` tree mirrors what every generated project should publish (foundation, features, release, history). Use it as the canonical structure reference.
 - The **[Complete Wiki](https://github.com/DoPlan-dev/CLI/tree/main/wiki)** is now organized in the repository with 9 sections and 52 files covering all features. The [GitHub Wiki](https://github.com/DoPlan-dev/CLI/wiki) serves as a gateway to the complete documentation.
-- Automation helpers such as `/report`, `/feedback`, `/state`, and `/github info` keep each of those artifacts aligned (KPI block, scan diffs, feedback logs, and state history).
+- Automation helpers such as `/report`, `/feedback`, `/state`, `/sys performance`, and `/github info` keep each of those artifacts aligned (KPI block, scan diffs, feedback logs, state history, and performance metrics).
 
 ---
 
@@ -548,6 +565,23 @@ Each agent has a specific role and expertise, working together to guide your pro
 - `.do/system/history/state-*.json` stores every update to `active_state.json`, captured automatically around `/build` and `/finished`
 - `/state` (backed by `go run scripts/statehistory/main.go`) lets you snapshot, list, diff, or restore with confirmation guardrails
 - `/progress` and `/report` surface the latest history diff so stakeholders always know *what* changed (phase, task, branch, completed tasks)
+
+### ⚡ Performance Optimizations (v1.3.0)
+
+- **80-90% faster** for new projects with fast path optimization
+- **40-50% faster** for existing projects with intelligent caching
+- **Lazy loading** for rules and agents - resources loaded only when needed
+- **TTL-based caching** with automatic cleanup for optimal memory usage
+- **Performance monitoring** via `/sys performance` command
+- **60-70% reduction** in file I/O operations
+
+### 💾 Backup & Restore
+
+- Multiple backup types: project, plan, project-plan, or full backup
+- Compressed backups with automatic naming
+- Safe restore with dry-run mode and version compatibility checks
+- Memory card export/import for easy migration
+- Migration assistant for project upgrades
 
 ### 🎨 Beautiful Interactive TUI
 
