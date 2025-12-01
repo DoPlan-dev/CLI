@@ -2,8 +2,7 @@
 
 <h1>DoPlan CLI</h1>
 
-
-**Zero-install AI Project Director** - Bootstrap production-ready projects with a complete hierarchical AI agency system in seconds.
+**Zero-install AI Project Director** – Bootstrap production-ready projects with a complete hierarchical AI agency system in seconds.
 
 [![Version](https://img.shields.io/npm/v/@doplan-dev/cli?style=for-the-badge&color=blue)](https://www.npmjs.com/package/@doplan-dev/cli)
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
@@ -20,7 +19,7 @@
 </div>
 
 
-# 🚀 DoPlan CLI
+## 🚀 Overview
 
 ---
 
@@ -83,28 +82,18 @@ npx @doplan-dev/cli
 
 This will automatically download the correct binary for your platform and run it.
 
-### Platform-Specific Installation
+### Platform-Specific Installation (Optional)
 
 <details>
 <summary><b>🍎 macOS</b></summary>
 
-#### Option 1: Using Homebrew (Recommended)
-
-```bash
-# Add tap (if needed)
-brew tap doplan-dev/cli
-
-# Install
-brew install doplan
-```
-
-#### Option 2: Using npx (No Installation)
+#### Option 1: Using npx (No Installation – Recommended)
 
 ```bash
 npx @doplan-dev/cli
 ```
 
-#### Option 3: Direct Binary Download
+#### Option 2: Direct Binary Download
 
 1. Visit [GitHub Releases](https://github.com/DoPlan-dev/CLI/releases/latest)
 2. Download `doplan-darwin-amd64` (Intel) or `doplan-darwin-arm64` (Apple Silicon)
@@ -114,7 +103,7 @@ npx @doplan-dev/cli
    mv doplan-darwin-amd64 /usr/local/bin/doplan
    ```
 
-#### Option 4: Build from Source
+#### Option 3: Build from Source
 
 ```bash
 git clone https://github.com/DoPlan-dev/CLI.git
@@ -128,26 +117,19 @@ sudo mv doplan /usr/local/bin/
 <details>
 <summary><b>🪟 Windows</b></summary>
 
-#### Option 1: Using Scoop (Recommended)
-
-```bash
-scoop bucket add doplan https://github.com/DoPlan-dev/scoop-bucket.git
-scoop install doplan
-```
-
-#### Option 2: Using npx (No Installation)
+#### Option 1: Using npx (No Installation – Recommended)
 
 ```bash
 npx @doplan-dev/cli
 ```
 
-#### Option 3: Direct Binary Download
+#### Option 2: Direct Binary Download
 
 1. Visit [GitHub Releases](https://github.com/DoPlan-dev/CLI/releases/latest)
 2. Download `doplan-windows-amd64.exe`
 3. Rename to `doplan.exe` and add to your PATH
 
-#### Option 4: Build from Source
+#### Option 3: Build from Source
 
 ```powershell
 git clone https://github.com/DoPlan-dev/CLI.git
@@ -161,7 +143,7 @@ go build -o doplan.exe ./cmd/doplan
 <details>
 <summary><b>🐧 Linux</b></summary>
 
-#### Option 1: Using npx (No Installation - Recommended)
+#### Option 1: Using npx (No Installation – Recommended)
 
 ```bash
 npx @doplan-dev/cli
@@ -187,30 +169,6 @@ git clone https://github.com/DoPlan-dev/CLI.git
 cd CLI
 go build -o doplan ./cmd/doplan
 sudo mv doplan /usr/local/bin/
-```
-
-#### Option 4: Using Package Managers
-
-**Debian/Ubuntu:**
-```bash
-# Download .deb package from releases (when available)
-wget https://github.com/DoPlan-dev/CLI/releases/latest/download/doplan_amd64.deb
-sudo dpkg -i doplan_amd64.deb
-```
-
-**Arch Linux:**
-```bash
-# Using AUR (when available)
-yay -S doplan-cli
-```
-
-</details>
-
-<details>
-<summary><b>🐳 Docker</b></summary>
-
-```bash
-docker run --rm -it -v $(pwd):/workspace doplan/cli
 ```
 
 </details>
@@ -251,13 +209,13 @@ code .  # or your preferred IDE
 
 Once in your IDE, start using DoPlan commands:
 
-```
-/hey       → Welcome, tutorial, and command introductions
-/do        → Capture project idea, conduct meeting, and refine
-/plan      → Generate execution plan + task hierarchy
-/dev       → Start development workflow for a feature
-/done      → Mark current task complete and auto-commit/push
-/sys       → System control panel (engagement, performance, backup, etc.)
+```bash
+/hey       # Welcome, tutorial, and command introductions
+/do        # Capture project idea, conduct meeting, and refine
+/plan      # Generate execution plan + task hierarchy
+/dev       # Start development workflow for a feature
+/done      # Mark current task complete and auto-commit/push
+/sys       # System control panel (engagement, performance, backup, etc.)
 ```
 
 ## 📖 How to Use
@@ -268,14 +226,14 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
 
 #### Project Planning Commands
 
-- **`/hey`** - Welcome, tutorial, and command introductions
-  ```
+- **`/hey`** – Welcome, tutorial, and command introductions
+  ```bash
   /hey
   ```
   Interactive onboarding experience for first-time users or when you need a refresher. Provides tutorial, system overview, and creates reference materials.
 
-- **`/do`** - Capture project idea, conduct meeting, and refine
-  ```
+- **`/do`** – Capture project idea, conduct meeting, and refine
+  ```bash
   /do                    # Full ideation workflow
   /do feature            # Add single feature idea
   /do now                # Fast-track with detailed prompt/PRD
@@ -283,37 +241,25 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
   ```
   Captures your project idea through iterative conversation, conducts discovery meeting, and refines suggestions. Generates IDEA.md, BRAINSTORM.md, and REFINEMENTS.md.
 
-- **`/plan`** - Generate execution plan + tasks
-  ```
+- **`/plan`** – Generate execution plan + tasks
+  ```bash
   /plan
   ```
   Reads IDEA.md and BRAINSTORM.md, then generates TASKS.md with organized phases and feature folders.
 
 #### Development Commands
 
-- **`/dev`** - Start development workflow
-  ```
-  /dev              # Start next task
-  /dev --feature "auth"  # Start specific feature
+- **`/dev`** – Start development workflow
+  ```bash
+  /dev                    # Start next task
+  /dev --feature "auth"   # Start specific feature
   ```
   Finds next available task (or specific task), creates/checks out Git branch, syncs documentation, and starts time tracking.
 
-- **`/done`** - Mark task complete
-  ```
-  /done
-  ```
-  Marks current task as complete, auto-commits with conventional format, pushes to remote, and moves to next task.
-
 #### System Commands
 
-- **`/feedback`** - Log structured product/bug feedback
-  ```
-  /feedback bug "QR download fails" "API returns 500 when Accept header missing" --author QA
-  ```
-  Saves to `Docs/history/feedback.md` (human readable) and `Docs/history/feedback.json` (consumed by automation).
-
-- **`/sys`** - System management and monitoring
-  ```
+- **`/sys`** – System management and monitoring
+  ```bash
   /sys performance    # View performance metrics and cache statistics
   /sys backup         # Create compressed project backups
   /sys restore        # Restore from backup
@@ -321,30 +267,7 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
   /sys engagement     # View engagement dashboard
   ```
 
-- **`/report`** - Generate scan metadata + diffs
-  ```
-  /report                       # current project
-  /report ./test/qr-generator/test-no01
-  ```
-  Runs `go run scripts/scanreport/main.go` to update `SCAN_REPORT_*.json`, create `SCAN_DIFF_<date>.md`, and append both the latest state-history summary and an embedded `/progress` snapshot (phase, completion %, upcoming tasks). Use `--preset exec` or `--preset detailed` for alternate templates (exec view, detailed visuals + dependency audit).
-  Customization:
-  - Create `.do/reports/config.json` to set defaults:
-    ```json
-    {
-      "preset": "exec",
-      "sections": ["executive", "progress", "visuals", "state", "feedback"]
-    }
-    ```
-  - CLI flags override config; custom `sections` let you reorder or omit report blocks.
-
 #### Team & Information Commands
-
-- **`/team`** - Show active agents and hierarchy
-  ```
-  /team
-  ```
-
-- **`/load`** - Inject context into AI agents
   ```
   /load
   ```
@@ -387,7 +310,7 @@ code .
 
 1. **Onboard & Capture** – Start with `/hey` for onboarding (first time), then `/do` to capture your project idea through iterative conversation, which automatically conducts a discovery meeting and refinement phase.
 2. **Plan** – `/plan` reads IDEA.md and BRAINSTORM.md, then generates phased TASKS.md with organized phases and feature folders.
-3. **Develop** – For each task: `/dev` (starts task, creates branch) → code → `/done` (auto commit/push) → repeat.
+3. **Develop** – For each task: `/dev` (starts task, creates branch) → code → repeat.
 4. **Manage & Monitor** – Use `/sys` commands to view engagement dashboard, performance metrics, create backups, manage memory card, and control system settings.
 
 This end-to-end loop is generated with every project, so the same commands are available in Cursor, Claude Code, Windsurf, Antigravity, Cline, and OpenCode without extra setup.
@@ -400,7 +323,6 @@ This end-to-end loop is generated with every project, so the same commands are a
 | `/do` | Strategy | Capture project idea, conduct meeting, refine suggestions → generates IDEA.md, BRAINSTORM.md, REFINEMENTS.md |
 | `/plan` | Delivery | Expand planning docs into phased `TASKS.md` |
 | `/dev [feature]` | Delivery | Start the next (or specific) implementation task |
-| `/done` | Delivery | Mark tasks complete, auto-commit, and push |
 | `/sys` | Operations | System control panel |
 | `/sys engagement` | Context | View engagement dashboard and statistics |
 | `/sys performance` | Operations | View performance metrics and cache statistics |
@@ -444,7 +366,7 @@ my-project/
 - `CHANGELOG.md` follows Keep a Changelog + SemVer. Check the **[latest entry](CHANGELOG.md)** (v1.3.0) for performance optimizations and new features.
 - The `Docs/` tree mirrors what every generated project should publish (foundation, features, release, history). Use it as the canonical structure reference.
 - The **[Complete Wiki](https://github.com/DoPlan-dev/CLI/tree/main/wiki)** is now organized in the repository with 9 sections and 52 files covering all features. The [GitHub Wiki](https://github.com/DoPlan-dev/CLI/wiki) serves as a gateway to the complete documentation.
-- Automation helpers such as `/report`, `/feedback`, `/state`, `/sys performance`, and `/github info` keep each of those artifacts aligned (KPI block, scan diffs, feedback logs, state history, and performance metrics).
+- Automation helpers such as `/state`, `/sys performance`, and `/github info` keep each of those artifacts aligned (KPI block, scan diffs, state history, and performance metrics).
 
 ---
 
@@ -491,7 +413,7 @@ Each agent has a specific role and expertise, working together to guide your pro
 
 - `.do/system/history/state-*.json` stores every update to `active_state.json`, captured automatically around `/build` and `/finished`
 - `/state` (backed by `go run scripts/statehistory/main.go`) lets you snapshot, list, diff, or restore with confirmation guardrails
-- `/progress` and `/report` surface the latest history diff so stakeholders always know *what* changed (phase, task, branch, completed tasks)
+- `/progress` surfaces the latest history diff so stakeholders always know *what* changed (phase, task, branch, completed tasks)
 
 ### ⚡ Performance Optimizations (v1.3.0)
 
