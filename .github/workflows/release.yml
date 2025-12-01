@@ -35,10 +35,31 @@ jobs:
           fetch-depth: 0
           submodules: false
       
+      - name: Clear cache and temp directories
+        run: |
+          rm -rf ~/.cache ~/.go/pkg/mod/cache /tmp/build-cache || true
+          echo "Cache cleared"
+      
+      - name: Verify tar integrity
+        run: |
+          tar --version
+          echo "Tar version check passed"
+      
+      - name: Debug disk space
+        run: |
+          df -h
+          echo "Disk space check completed"
+      
+      - name: Check permissions
+        run: |
+          ls -la ${{ github.workspace }}
+          echo "Permissions check completed"
+      
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.22'
+          cache-dependency-path: go.sum
       
       - name: Extract version
         id: version
@@ -77,18 +98,44 @@ jobs:
       
       - name: Create archive
         run: |
+          set -e
           VERSION=${{ steps.version.outputs.version }}
+          
+          # Debug: Verify binary exists before archiving
+          echo "Checking binary existence..."
           if [ "${{ matrix.goos }}" = "windows" ]; then
-            zip doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.zip doplan.exe
+            if [ ! -f doplan.exe ]; then
+              echo "ERROR: doplan.exe not found!"
+              ls -la
+              exit 1
+            fi
+            echo "Creating zip archive for Windows..."
+            zip -v doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.zip doplan.exe || {
+              echo "ERROR: zip failed with exit code $?"
+              exit 1
+            }
             sha256sum doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.zip > doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.zip.sha256
+            echo "Windows archive created successfully"
           else
-            # Troubleshooting: If tar fails with exit code 2:
-            # 1. Verify tar works: tar --version
-            # 2. Check file paths are valid: ls -la doplan
-            # 3. Ensure no corrupted artifacts
-            # 4. Rebuild with verbose output: tar -czvf ...
-            tar -czf doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz doplan
+            if [ ! -f doplan ]; then
+              echo "ERROR: doplan binary not found!"
+              ls -la
+              exit 1
+            fi
+            echo "Creating tar.gz archive for ${{ matrix.goos }}..."
+            # Use verbose output to see what tar is processing
+            tar -czvf doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz doplan || {
+              echo "ERROR: tar failed with exit code $?"
+              echo "Debug info:"
+              echo "Binary exists: $(test -f doplan && echo 'YES' || echo 'NO')"
+              echo "Binary size: $(ls -lh doplan 2>/dev/null || echo 'N/A')"
+              echo "Working directory: $(pwd)"
+              echo "Files in directory:"
+              ls -la
+              exit 1
+            }
             sha256sum doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz > doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz.sha256
+            echo "Archive created successfully: $(ls -lh doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz)"
           fi
       
       - name: Upload artifacts
@@ -148,6 +195,18 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist
+          continue-on-error: false
+      
+      - name: Verify downloaded artifacts
+        run: |
+          echo "Verifying downloaded artifacts..."
+          if [ ! -d dist ]; then
+            echo "ERROR: dist directory not found!"
+            exit 1
+          fi
+          echo "Artifacts directory contents:"
+          find dist -type f -name "*.tar.gz" -o -name "*.zip" -o -name "*.sha256" | sort
+          echo "Artifact verification completed"
 
       - name: Generate release notes
         id: release_notes
