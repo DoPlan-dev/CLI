@@ -11,6 +11,8 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/task/')
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: false
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -24,6 +26,8 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/feature/')
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: false
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -39,6 +43,8 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/hotfix/')
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: false
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
