@@ -268,15 +268,6 @@ DoPlan uses intuitive slash commands that work directly in your AI-powered IDE:
   ```
 
 #### Team & Information Commands
-  ```
-  /load
-  ```
-
-#### Specialized Commands
-
-- **`/ship`** - Release management
-- **`/safe`** - Security audit
-- **`/cheap`** - Cost optimization
 
 ### Complete Workflow Example
 
