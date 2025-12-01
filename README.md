@@ -260,25 +260,6 @@ Once in your IDE, start using DoPlan commands:
 /sys       → System control panel (engagement, performance, backup, etc.)
 ```
 
-### 4. (Optional) Re-run the beginner access patch
-
-The CLI now auto-applies this patch right after it scaffolds your project, guaranteeing `.do/` plus the organized docs folders (e.g., `docs/overview`, `docs/references`, `docs/tutorials`, `docs/history`) are writable. If you later move the repo into a locked folder (or clone it on a different machine), rerun:
-
-```bash
-npx --yes @doplan-dev/cli goplan access all
-```
-
-You can also target a single path if you already have others set up:
-
-```bash
-npx --yes @doplan-dev/cli goplan access .do/system   # only system files
-npx --yes @doplan-dev/cli goplan access docs         # only docs/
-```
-
-This script simply creates the required folders/files and fixes permissions—perfect for beginners who don't want to touch Go tooling.
-
----
-
 ## 📖 How to Use
 
 ### Core Commands
