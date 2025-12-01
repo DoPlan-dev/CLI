@@ -88,6 +88,34 @@ func TestPlanGenerator_Generate(t *testing.T) {
 	if state["locked"] == nil {
 		t.Error("active_state.json should have 'locked' field")
 	}
+
+	// Verify personalization files exist (Brain, Memory, Rewards, Time tracking, Challenges, Personalization)
+	personalizationFiles := []string{
+		"user_profile.json",
+		"memory_card.json",
+		"brain.json",
+		"rewards.json",
+		"challenges.json",
+		"time_tracking.json",
+	}
+
+	for _, file := range personalizationFiles {
+		filePath := filepath.Join(systemDir, file)
+		if _, err := os.Stat(filePath); os.IsNotExist(err) {
+			t.Errorf("PlanGenerator.Generate() should create %s", file)
+		}
+
+		// Verify each file is valid JSON
+		content, err := os.ReadFile(filePath)
+		if err != nil {
+			t.Fatalf("Failed to read %s: %v", file, err)
+		}
+
+		var jsonData map[string]interface{}
+		if err := json.Unmarshal(content, &jsonData); err != nil {
+			t.Errorf("%s is not valid JSON: %v", file, err)
+		}
+	}
 }
 
 func TestPlanGenerator_Generate_FileContent(t *testing.T) {

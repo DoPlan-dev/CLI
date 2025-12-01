@@ -1,6 +1,6 @@
 # Workflow Commands
 
-Detailed documentation for each workflow command: `/hey`, `/do`, `/plan`, `/dev`, `/done`, and `/status`.
+Detailed documentation for each workflow command: `/hey`, `/do`, `/plan`, and `/dev`.
 
 ---
 
@@ -338,7 +338,7 @@ The `/plan` command reads your IDEA.md and BRAINSTORM.md, then generates a struc
 
 ### Overview
 
-The `/dev` command initiates development for a specific feature or the next available task.
+The `/dev` command initiates development for a specific feature or the next available task. It automatically detects when tasks are complete and handles commits and pushes.
 
 ### When to Use
 
@@ -353,6 +353,7 @@ The `/dev` command initiates development for a specific feature or the next avai
 /dev                    # Start next available task
 /dev --feature "auth"  # Start specific feature by name
 /dev --feature "1.2"   # Start specific task by ID
+/dev <specific request> # Get help with implementation
 ```
 
 ### What It Does
@@ -366,6 +367,8 @@ The `/dev` command initiates development for a specific feature or the next avai
 7. **Updates active state** - Sets active_task and active_branch
 8. **Shows personalized message** - Based on memory card
 9. **Integrates engagement** - Checks achievements/challenges
+10. **Auto-detects completion** - Monitors task progress
+11. **Auto-commits and pushes** - When completion detected
 
 ### Example Output
 
@@ -394,67 +397,33 @@ The `/dev` command initiates development for a specific feature or the next avai
 📝 Next steps:
    • Review feature documentation in .do/plan/
    • Start coding with your IDE
-   • Type /done when task is complete
+   • /dev will automatically detect when task is complete
 ```
 
-### Time Tracking
+### Auto-Completion Detection
 
-Time tracking starts automatically:
-- **Task start time** stored in active_state.json
-- **Command execution** tracked in time-tracker.jsonl
-- **Full task duration** calculated when `/done` is called
-
-### Engagement Integration
-
-- Awards "Code Machine" achievement milestones
-- Tracks development patterns
-- Updates memory card with tech preferences
-- Checks development challenges
-- Personalized encouragement
-
----
-
-## `/done` - Complete Task
-
-### Overview
-
-The `/done` command marks the current active task as complete, with automatic commit, push, and achievement checking.
-
-### When to Use
-
-- Task is finished
-- Ready to commit and push
-- Moving to next task
-
-### What It Does
-
-1. **Verifies active branch** - Warns if on main/master
-2. **Checks dependencies** - Verifies all dependencies complete
-3. **Marks task complete** - Updates TASKS.md (status + checkboxes)
-4. **Updates state** - Adds to completed, clears active_task/branch
-5. **Creates snapshot** - State history snapshot
-6. **Auto-commits** - Conventional commit format
-7. **Auto-pushes** - Pushes to remote branch
-8. **Updates changelog** - If significant changes
-9. **Suggests PR** - If gh CLI available
-10. **Checks achievements** - Awards achievements/challenges
-11. **Displays duration** - Shows task duration
-
-### Example Output
+When `/dev` detects that a task is complete:
 
 ```
-✅ Task 2.1 marked complete!
-   ⏱️  Task duration: 2h 15m
-   ✓ Changes committed
-   ✓ Changes pushed to task/2.1
-
-💡 Suggestion: Create a pull request?
-   Run: gh pr create --title "feat: User Authentication" --body "Completes task 2.1"
-
-💡 Next steps:
-   • Type /dev to start the next task
-   • Type /status to see overall progress
+✅ Task appears complete! Summary:
+   • All requirements met
+   • Code implemented
+   • Tests passing
+   
+   Mark as done? (yes/no)
 ```
+
+**What happens when you confirm**:
+- Marks task complete in TASKS.md
+- Updates active_state.json
+- Creates state snapshot
+- Auto-commits with conventional commit format
+- Auto-pushes to remote branch
+- Updates CHANGELOG.md if significant
+- Suggests PR creation
+- Checks achievements
+- Shows task duration
+- Moves to next task
 
 ### Auto-Commit Format
 
@@ -465,76 +434,24 @@ fix(task-3.2): resolve login bug
 docs(task-1.1): update API documentation
 ```
 
+### Time Tracking
+
+Time tracking starts automatically:
+- **Task start time** stored in active_state.json
+- **Command execution** tracked in time-tracker.jsonl
+- **Full task duration** calculated when completion is detected
+
 ### Engagement Integration
 
+- Awards "Code Machine" achievement milestones
+- Tracks development patterns
+- Updates memory card with tech preferences
+- Checks development challenges
+- Personalized encouragement
 - Awards task completion achievements
 - Checks for challenge completion
 - Updates score
 - Celebrates achievements
-- Updates memory card
-- Tracks completion patterns
-
-### Task Duration
-
-Shows full task duration (from `/dev` start to `/done`):
-- Calculated from `task_started_at` in active_state.json
-- Displayed in readable format (hours/minutes)
-- Tracked in time-tracker.jsonl
-- Available for analytics
-
----
-
-## `/status` - View Progress
-
-### Overview
-
-The `/status` command displays comprehensive project progress and status information.
-
-### When to Use
-
-- Anytime to see progress
-- After completing tasks
-- Before starting new work
-- Checking overall status
-
-### What It Shows
-
-1. **Current phase** - Which phase you're in
-2. **Task statistics** - Completed/total tasks
-3. **Percentage complete** - Overall progress
-4. **Current task** - Active task (if any)
-5. **Next task** - Suggested next task
-6. **State deltas** - What changed since last snapshot
-
-### Example Output
-
-```
-📊 Project Progress
-
-Phase: Foundation
-Tasks: 3/4 completed (75%)
-
-Current task: 1.4 - Set up testing
-Next up: 2.1 - User authentication
-
-State Delta (since last snapshot):
-  • Task 1.3 completed
-  • Phase: Foundation (no change)
-  • Branch: task/1.3 → cleared
-```
-
-### Data Sources
-
-- `.do/plan/TASKS.md` - Task list
-- `.do/system/history/active_state.json` - Current state
-- `.do/system/history/state-*.json` - State history
-
-### Engagement Integration
-
-- Shows achievement progress
-- Displays score milestones
-- Shows relationship level
-- Next achievement hints
 
 ---
 
@@ -544,14 +461,13 @@ State Delta (since last snapshot):
 - Use `/do now` for fast-tracking
 - Use `/do feature` for single features
 - Use `/do i'm lucky` for inspiration
-- Check `/status` regularly
-- Always use `/done` when complete
+- Check `/sys status` regularly for progress
 
 ### Best Practices
 - Complete `/hey` tutorial first time
 - Use iterative conversation in `/do`
 - Review plan before `/dev`
-- Check `/status` before starting work
+- Check `/sys status` before starting work
 - View `/sys engagement` for motivation
 
 ### Power User
@@ -581,25 +497,21 @@ State Delta (since last snapshot):
 # 4. Start development
 /dev
 # → Code your task
+# → /dev automatically detects completion
+# → Auto-commits and pushes
 
-# 5. Complete task
-/done
-# → Auto-commit & push
-# → Achievements checked
-
-# 6. Check progress
-/status
-
-# 7. Continue loop
+# 5. Continue loop
 /dev
-/done
+# → Next task automatically
 # ... repeat ...
 
-# 8. View engagement
+# 6. View engagement
 /sys engagement
+
+# 7. Check status
+/sys status
 ```
 
 ---
 
 **Next**: [System Commands](./03-System-Commands.md)
-

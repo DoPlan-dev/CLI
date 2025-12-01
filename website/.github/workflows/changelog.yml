@@ -1,0 +1,38 @@
+name: Update Changelog
+
+on:
+  push:
+    paths:
+      - 'docs/history/CHANGELOG.md'
+    branches:
+      - main
+
+jobs:
+  update:
+    name: Auto-commit Changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet docs/history/CHANGELOG.md; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git add docs/history/CHANGELOG.md
+          git commit -m "chore: update docs/history/CHANGELOG.md [skip ci]"
+          git push

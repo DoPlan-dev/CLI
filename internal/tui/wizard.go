@@ -277,7 +277,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 
-		case "r":
+		case "ctrl+r":
 			// Retry: go back to previous state
 			if m.state == stateError {
 				m.state = m.previousState
@@ -287,7 +287,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case "b":
+		case "ctrl+b":
 			// Go back: return to welcome screen
 			if m.state == stateError {
 				m.state = stateWelcome
@@ -299,7 +299,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case "esc", "backspace":
+		case "esc":
 			// Back navigation: go to previous state
 			if m.state != stateWelcome && m.state != stateError && m.state != stateGenerating && m.state != stateSuccess {
 				if m.goBack() {
@@ -362,7 +362,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case "up", "k":
+		case "up", "ctrl+k":
 			if m.state == stateIDESelection {
 				if m.selectedIDEIndex > 0 {
 					m.selectedIDEIndex--
@@ -374,7 +374,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case "down", "j":
+		case "down", "ctrl+j":
 			if m.state == stateIDESelection {
 				ideInfo := getIDEInfo()
 				if m.selectedIDEIndex < len(ideInfo)-1 {
@@ -501,23 +501,53 @@ func (m Model) renderProgressIndicator() string {
 	return progressStyle.Render(fmt.Sprintf("Step %d of %d", currentStep, totalSteps))
 }
 
+// extractCleanVersion extracts just the version number from version strings like "v1.3.0-11-g7e8015b-dirty"
+func extractCleanVersion(versionStr string) string {
+	if versionStr == "dev" {
+		return "dev"
+	}
+	
+	// Remove "v" prefix if present
+	if strings.HasPrefix(versionStr, "v") {
+		versionStr = versionStr[1:]
+	}
+	
+	// Extract just the version number (stop at first non-version character like "-")
+	parts := strings.Split(versionStr, "-")
+	versionNum := parts[0]
+	
+	// Format as "v 1.3.0" (with space after v)
+	return fmt.Sprintf("v %s", versionNum)
+}
+
+// getVersionNumber extracts just the version number without "v " prefix
+func getVersionNumber(versionStr string) string {
+	if versionStr == "dev" {
+		return "dev"
+	}
+	
+	// Remove "v" prefix if present
+	if strings.HasPrefix(versionStr, "v") {
+		versionStr = versionStr[1:]
+	}
+	
+	// Extract just the version number (stop at first non-version character like "-")
+	parts := strings.Split(versionStr, "-")
+	return parts[0]
+}
+
 // renderTopLine renders the top line with application name and version
 func renderTopLine() string {
-	appName := "doplan.dev"
 	versionStr := version.GetVersion()
-	if versionStr == "dev" {
-		versionStr = "Release"
-	} else {
-		versionStr = "Release"
-	}
-
+	versionNum := getVersionNumber(versionStr)
+	appNameWithVersion := fmt.Sprintf("DoPlan CLI %s", versionNum)
+	
 	topStyle := lipgloss.NewStyle().
 		Foreground(tertiary).
-		Width(80).
-		Align(lipgloss.Left)
+		Width(80)
 
-	// Format: "doplan.dev                                                                      Release"
-	line := fmt.Sprintf("%-70s %s", appName, versionStr)
+	// Format: "DoPlan CLI 1.3.0"
+	line := appNameWithVersion
 	return topStyle.Render(line)
 }
 
@@ -1034,7 +1064,7 @@ func (m Model) renderSuccess() string {
 	subtitleStyle := lipgloss.NewStyle().
 		Foreground(secondary).
 		Align(lipgloss.Center).
-		MarginBottom(3)
+		MarginBottom(1)
 
 	nextStepStyle := lipgloss.NewStyle().
 		Foreground(secondary).
@@ -1045,23 +1075,20 @@ func (m Model) renderSuccess() string {
 	title := titleStyle.Render("Project created successfully!")
 
 	// Subtitle
-	subtitle := subtitleStyle.Render("Your project is ready to go")
+	boldSubtitleStyle := subtitleStyle.Copy().Bold(true)
+	// Render parts without center alignment to avoid line breaks, then center the whole thing
+	subtitleParts := []string{
+		subtitleStyle.Copy().Align(lipgloss.Left).Render("Ready to meet "),
+		boldSubtitleStyle.Copy().Align(lipgloss.Left).Render("/do /plan /dev"),
+		subtitleStyle.Copy().Align(lipgloss.Left).Render(" workflow?"),
+	}
+	subtitleText := lipgloss.JoinHorizontal(lipgloss.Left, subtitleParts...)
+	subtitle := subtitleStyle.Render(subtitleText)
 
 	// Next steps
-	selectedIDEs := m.getSelectedIDEs()
-	var nextStep1 string
-	if len(selectedIDEs) >= 1 {
-		ideName := selectedIDEs[0]
-		nextStep1 = nextStepStyle.Render(fmt.Sprintf("now open %s inside %s", m.projectName, ideName))
-	} else {
-		nextStep1 = nextStepStyle.Render(fmt.Sprintf("now open %s inside your IDE", m.projectName))
-	}
-	nextStep2 := nextStepStyle.Render("then type /tell followed with your idea")
+	nextStep2 := nextStepStyle.Render("in cursor type /hey to meet your instructor,\n or /do followed with your idea.")
 
-	nextSteps := fmt.Sprintf("%s\n%s",
-		nextStep1,
-		nextStep2,
-	)
+	nextSteps := nextStep2
 
 	// Center the next steps section
 	centeredNextSteps := lipgloss.NewStyle().
@@ -1069,7 +1096,7 @@ func (m Model) renderSuccess() string {
 		Align(lipgloss.Center).
 		Render(nextSteps)
 
-	bodyContent := fmt.Sprintf("%s\n%s\n\n%s",
+	bodyContent := fmt.Sprintf("%s\n%s\n%s",
 		title,
 		subtitle,
 		centeredNextSteps,

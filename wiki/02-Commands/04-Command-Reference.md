@@ -105,53 +105,7 @@ Complete reference for all DoPlan commands with syntax, options, and examples.
 /dev --project ./my-project
 ```
 
-**Output**: Sets up development environment, creates branch
-
----
-
-### `/done`
-
-**Purpose**: Mark task complete
-
-**Syntax**:
-```bash
-/done
-/done --project <path>
-```
-
-**Options**:
-- `--project <path>` - Specify project path
-
-**Examples**:
-```bash
-/done
-/done --project ./my-project
-```
-
-**Output**: Completes task, commits, pushes, shows duration
-
----
-
-### `/status`
-
-**Purpose**: View progress
-
-**Syntax**:
-```bash
-/status
-/status --project <path>
-```
-
-**Options**:
-- `--project <path>` - Specify project path
-
-**Examples**:
-```bash
-/status
-/status --project ./my-project
-```
-
-**Output**: Progress dashboard with statistics
+**Output**: Sets up development environment, creates branch, auto-detects completion
 
 ---
 
@@ -303,9 +257,8 @@ All commands support:
 /hey                    # Onboarding
 /do                     # Capture idea
 /plan                   # Generate plan
-/dev                    # Start development
-/done                   # Complete task
-/status                 # Check progress
+/dev                    # Start development (auto-detects completion)
+/sys status             # Check progress
 /sys engagement         # View achievements
 ```
 
@@ -314,8 +267,7 @@ All commands support:
 ```bash
 /do now --prompt "..."  # Fast-track ideation
 /plan                   # Generate plan
-/dev                    # Start development
-/done                   # Complete task
+/dev                    # Start development (auto-detects completion)
 ```
 
 ### Lucky Mode
@@ -324,8 +276,7 @@ All commands support:
 /do i'm lucky           # Get AI suggestions
 # → Choose idea
 /plan                   # Generate plan
-/dev                    # Start development
-/done                   # Complete task
+/dev                    # Start development (auto-detects completion)
 ```
 
 ---
@@ -367,15 +318,12 @@ When achievements/challenges are earned:
 - `/do` requires: (none - creates files)
 - `/plan` requires: IDEA.md, BRAINSTORM.md
 - `/dev` requires: TASKS.md
-- `/done` requires: active_state.json with active_task
-- `/status` requires: TASKS.md, active_state.json
 
 ### Generated Files
 
 - `/do` creates: IDEA.md, BRAINSTORM.md, REFINEMENTS.md
 - `/plan` creates: TASKS.md, phase structure
-- `/dev` creates: Git branch, updates active_state.json
-- `/done` creates: State snapshot, Git commit, updates TASKS.md
+- `/dev` creates: Git branch, updates active_state.json, auto-commits/pushes on completion
 
 ---
 
@@ -385,9 +333,8 @@ When achievements/challenges are earned:
 1. Always start with `/hey` first time
 2. Use `/do` for complete ideation
 3. Run `/plan` after ideation
-4. Use `/dev` to start tasks
-5. Always use `/done` when complete
-6. Check `/status` regularly
+4. Use `/dev` to start tasks (auto-detects completion)
+5. Check `/sys status` regularly
 
 ### Efficiency
 - Use `/do now` for fast-tracking
@@ -396,9 +343,9 @@ When achievements/challenges are earned:
 - Check `/sys engagement` for motivation
 
 ### Safety
-- Verify branch before `/done`
+- Verify branch before completion
 - Check dependencies before completion
-- Review state with `/status`
+- Review state with `/sys status`
 - Use `/sys control` carefully
 
 ---
@@ -413,7 +360,6 @@ When achievements/challenges are earned:
 ### Missing Files
 - `/plan` fails: Run `/do` first
 - `/dev` fails: Run `/plan` first
-- `/done` fails: Run `/dev` first
 
 ### State Issues
 - Check `.do/system/history/active_state.json`

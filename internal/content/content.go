@@ -8,7 +8,7 @@ import (
 //go:embed agents/*
 var embeddedAgents embed.FS
 
-//go:embed commands/**/*.md commands/**/.gitkeep
+//go:embed commands/**/*.md
 var embeddedCommands embed.FS
 
 //go:embed templates/agents/*.tmpl templates/commands/*.tmpl templates/documents/**/*.md

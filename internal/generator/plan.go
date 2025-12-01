@@ -111,6 +111,11 @@ func (g *PlanGenerator) Generate(request *models.ProjectRequest, projectPath str
 		return fmt.Errorf("failed to generate content structure: %w", err)
 	}
 
+	// Generate Brain, Memory, Rewards, Time tracking, Challenges, and Personalization files
+	if err := generatePersonalizationFiles(systemDir, request); err != nil {
+		return fmt.Errorf("failed to generate personalization files: %w", err)
+	}
+
 	// Move BRAINSTORM.md to core/ (it's a template/process document)
 	// Note: This will be generated in system/ first, then we could move it, but for now keep it in system/
 	// If you want it in core/, we can change generateBRAINSTORM to write to coreDir instead
@@ -2090,6 +2095,152 @@ All content follows current SEO best practices.`,
 func GeneratePlan(request *models.ProjectRequest, projectPath string) error {
 	generator := &PlanGenerator{}
 	return generator.Generate(request, projectPath)
+}
+
+// generatePersonalizationFiles generates Brain, Memory, Rewards, Time tracking, Challenges, and Personalization files
+func generatePersonalizationFiles(systemDir string, request *models.ProjectRequest) error {
+	// Generate user_profile.json (Personalization)
+	userProfile := map[string]interface{}{
+		"user_name":                "",
+		"user_experience_level":    "",
+		"development_support_mode": "",
+		"first_hello_completed":    false,
+		"first_hello_date":         "",
+		"tutorial_completed":       false,
+		"test_drive_completed":     false,
+		"quick_reference_saved":    false,
+		"work_style":               "",
+		"personality":              "",
+		"motivation":               "",
+		"learning_goals":           []string{},
+		"pain_points":             []string{},
+		"tech_stack_preferences":  []string{},
+		"communication_style":     "balanced",
+		"relationship_level":      0,
+		"trust_level":             0,
+	}
+	userProfilePath := filepath.Join(systemDir, "user_profile.json")
+	userProfileJSON, err := json.MarshalIndent(userProfile, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal user_profile.json: %w", err)
+	}
+	if err := utils.WriteFile(userProfilePath, userProfileJSON); err != nil {
+		return fmt.Errorf("failed to write user_profile.json: %w", err)
+	}
+
+	// Generate memory_card.json (Memory)
+	memoryCard := map[string]interface{}{
+		"version":           "1.0",
+		"created_at":        "",
+		"last_updated":      "",
+		"user_profile":      userProfile,
+		"interactions":      []map[string]interface{}{},
+		"achievements":      []map[string]interface{}{},
+		"challenges":        []map[string]interface{}{},
+		"time_records":      []map[string]interface{}{},
+		"preferences":       map[string]interface{}{},
+		"project_context":   map[string]interface{}{},
+		"relationship_data": map[string]interface{}{
+			"level": 0,
+			"trust": 0,
+		},
+	}
+	memoryCardPath := filepath.Join(systemDir, "memory_card.json")
+	memoryCardJSON, err := json.MarshalIndent(memoryCard, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal memory_card.json: %w", err)
+	}
+	if err := utils.WriteFile(memoryCardPath, memoryCardJSON); err != nil {
+		return fmt.Errorf("failed to write memory_card.json: %w", err)
+	}
+
+	// Generate brain.json (Brain System)
+	brain := map[string]interface{}{
+		"version":        "1.0",
+		"enabled":        true,
+		"memory_card":    "memory_card.json",
+		"tone_level":     0,
+		"personalization": map[string]interface{}{
+			"enabled": true,
+			"level":   0,
+		},
+		"behavioral_instructions": []string{},
+		"context": map[string]interface{}{
+			"current_project": request.ProjectName,
+			"current_phase":   "initialization",
+		},
+	}
+	brainPath := filepath.Join(systemDir, "brain.json")
+	brainJSON, err := json.MarshalIndent(brain, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal brain.json: %w", err)
+	}
+	if err := utils.WriteFile(brainPath, brainJSON); err != nil {
+		return fmt.Errorf("failed to write brain.json: %w", err)
+	}
+
+	// Generate rewards.json (Rewards & Achievements)
+	rewards := map[string]interface{}{
+		"version":      "1.0",
+		"total_score":  0,
+		"level":        1,
+		"achievements": []map[string]interface{}{},
+		"rewards":      []map[string]interface{}{},
+		"milestones":   []map[string]interface{}{},
+		"history":      []map[string]interface{}{},
+	}
+	rewardsPath := filepath.Join(systemDir, "rewards.json")
+	rewardsJSON, err := json.MarshalIndent(rewards, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal rewards.json: %w", err)
+	}
+	if err := utils.WriteFile(rewardsPath, rewardsJSON); err != nil {
+		return fmt.Errorf("failed to write rewards.json: %w", err)
+	}
+
+	// Generate challenges.json (Challenges)
+	challenges := map[string]interface{}{
+		"version":     "1.0",
+		"active":      []map[string]interface{}{},
+		"completed":   []map[string]interface{}{},
+		"available":   []map[string]interface{}{},
+		"statistics": map[string]interface{}{
+			"total_completed": 0,
+			"total_attempted": 0,
+			"success_rate":    0.0,
+		},
+	}
+	challengesPath := filepath.Join(systemDir, "challenges.json")
+	challengesJSON, err := json.MarshalIndent(challenges, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal challenges.json: %w", err)
+	}
+	if err := utils.WriteFile(challengesPath, challengesJSON); err != nil {
+		return fmt.Errorf("failed to write challenges.json: %w", err)
+	}
+
+	// Generate time_tracking.json (Time Records)
+	timeTracking := map[string]interface{}{
+		"version":      "1.0",
+		"total_time":   0,
+		"sessions":     []map[string]interface{}{},
+		"daily_logs":   []map[string]interface{}{},
+		"weekly_stats": []map[string]interface{}{},
+		"monthly_stats": []map[string]interface{}{},
+		"by_command":   map[string]interface{}{},
+		"by_phase":     map[string]interface{}{},
+		"by_task":      map[string]interface{}{},
+	}
+	timeTrackingPath := filepath.Join(systemDir, "time_tracking.json")
+	timeTrackingJSON, err := json.MarshalIndent(timeTracking, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal time_tracking.json: %w", err)
+	}
+	if err := utils.WriteFile(timeTrackingPath, timeTrackingJSON); err != nil {
+		return fmt.Errorf("failed to write time_tracking.json: %w", err)
+	}
+
+	return nil
 }
 
 // SyncPlanDocumentation syncs plan documentation to the docs/ directory.

@@ -89,7 +89,15 @@ func Orchestrate(request *models.ProjectRequest) error {
 
 	// Check if project directory already exists
 	if utils.PathExists(projectPath) {
-		return fmt.Errorf("directory '%s' already exists. Please choose a different name or remove the existing directory", request.ProjectName)
+		// Check if it's an existing DoPlan project (has .do directory)
+		doDir := filepath.Join(projectPath, ".do")
+		if utils.PathExists(doDir) {
+			// It's an existing DoPlan project - allow regeneration
+			// The generators will update/overwrite DoPlan-specific files
+		} else {
+			// Not a DoPlan project - reject to avoid overwriting user's existing project
+			return fmt.Errorf("directory '%s' already exists and is not a DoPlan project. Please choose a different name or remove the existing directory", request.ProjectName)
+		}
 	}
 
 	// Check permissions with detailed error messages

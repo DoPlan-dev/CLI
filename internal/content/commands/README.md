@@ -5,18 +5,31 @@ This directory contains markdown definitions for all slash commands in the DoPla
 ## Structure
 
 Commands are organized by category:
-- `core/` - Essential daily workflow commands
-- `tools/` - Utility and helper commands
-- `optimize/` - Optimization commands
+- `onboarding/` - Welcome and project setup commands
+- `developing/` - Development workflow commands
+- `system/` - System control and management commands
+
+## Commands
+
+### Onboarding
+- `hey.md` - Welcome, tutorial, and command introductions
+- `do.md` - Capture project idea, conduct meeting, and refine
+
+### Developing
+- `plan.md` - Generate documents, content, execution plan, scaffold phases, and manage tasks
+- `dev.md` - Start development workflow for a feature
+
+### System
+- `sys.md` - System control panel (engagement, performance, backup, etc.)
 
 ## Markdown Format
 
 Each command markdown file uses YAML frontmatter for metadata, followed by the full action description:
 
 **Frontmatter (YAML)**:
-- `name`: Command name (e.g., "hello", "tell")
-- `category`: Command category (core, tools, optimize)
-- `trigger`: Trigger pattern (e.g., "/hello [<subcommand>]")
+- `name`: Command name (e.g., "hey", "do", "plan", "dev", "sys")
+- `category`: Command category (onboarding, developing, system)
+- `trigger`: Trigger pattern (e.g., "/hey [<subcommand>]")
 - `description`: Brief description
 - `agentInvolvement`: Array of agent names involved
 - `examples`: Array of example usage
@@ -29,5 +42,4 @@ Each command markdown file uses YAML frontmatter for metadata, followed by the f
 
 ## Usage
 
-These markdown files are loaded by the generator and converted to command definitions in the `.cursor/commands/` directory (and other IDE-specific locations).
-
+These markdown files are loaded by the generator and converted to command definitions in the `.do/core/commands/` directory (and other IDE-specific locations).

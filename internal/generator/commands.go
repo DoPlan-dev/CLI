@@ -14,7 +14,7 @@ import (
 // Command represents a slash command in the AI agency system
 type Command struct {
 	// Basic Information
-	Name        string // Command name (e.g., "tell", "build")
+	Name        string // Command name (e.g., "hey", "do", "plan", "dev", "sys")
 	Trigger     string // Trigger pattern (e.g., "/tell or /tell <idea>")
 	Description string // Brief description
 	Action      string // Detailed action description
@@ -40,13 +40,13 @@ type Command struct {
 // GetAllCommands returns all core and squad commands
 func GetAllCommands() []Command {
 	return []Command{
-		// Core Commands - Essential daily workflow
+		// Onboarding Commands
 		{
-			Name:        "hello",
-			Category:    "core",
-			Trigger:     "/hello [<subcommand>]",
+			Name:        "hey",
+			Category:    "onboarding",
+			Trigger:     "/hey [<subcommand>]",
 			Description: "Welcome, tutorial, and command introductions",
-			Action: `When user types /hello or /hello <subcommand>:
+			Action: `When user types /hey or /hey <subcommand>:
 
 1. **If no subcommand provided** (or subcommand is "goplan"):
    - **Check if first time**: Read .do/system/user_profile.json. If it exists and "first_hello_completed" is true, show a welcome back message instead. Otherwise, proceed with first-time tutorial.
@@ -115,16 +115,15 @@ func GetAllCommands() []Command {
 6. **First-Time Tutorial Walkthrough**:
    - Say: "Now, let's do a quick walkthrough together. This is just for learning - we won't create anything real yet. Ready? Let's go! 🚀"
    - Explain each command in order:
-     * /tell - Capture project idea
-     * /meeting - Discovery meeting with adaptive speed options
-     * /write - Generate PRD, Architecture, Design System (show example output preview)
-     * /content - Generate SEO-ready content
-     * /plan - Create execution plan and task list
-     * /build - Start coding with step-by-step guidance
+     * /do - Capture project idea, conduct meeting, and refine
+     * /plan - Generate documents and create execution plan
+     * /dev - Start coding with step-by-step guidance
+     * /done - Mark task complete and auto-commit/push
+     * /sys - System control panel (engagement, performance, backup, etc.)
    - Ask: "Does this workflow make sense, [Name]? Would you like to try a 'test drive' of one command to see how it works? This is just practice - we won't save anything. (yes/no)"
 
 7. **Interactive Test Drive** (if user says yes):
-   - Offer to test drive: /tell, /meeting, /write, /content
+   - Offer to test drive: /do, /plan
    - Guide user through interactive practice of selected command(s)
    - Explain what would happen in real mode vs. practice mode
    - Ask if they want to try another command or finish
@@ -156,9 +155,9 @@ func GetAllCommands() []Command {
       📁 docs/references/COMMAND_EXAMPLES.md - Example outputs and usage
       📁 docs/tutorials/TUTORIAL_NOTES.md - Tutorial summary
       
-      Ready to start? Type /tell to capture your project idea!"
+      Ready to start? Type /do to capture your project idea!"
 
-2. **Subcommand: meeting** (or /hello meeting):
+2. **Subcommand: meeting** (or /hey meeting):
    - **Storytelling Approach**: Start with a scenario:
      "Imagine you're about to build your dream project. You have the idea, but you're not sure where to start. That's where /meeting comes in - it's like having a smart product manager interview you to understand exactly what you want to build."
    
@@ -190,7 +189,7 @@ func GetAllCommands() []Command {
    
    - **Call to Action**: "Ready to discover your project? Type /meeting and let's start the journey! 🎯"
 
-3. **Subcommand: plan** (or /hello plan):
+3. **Subcommand: plan** (or /hey plan):
    - **Visual Tour Approach**: "Let me take you on a tour of how DoPlan organizes your project. Think of it like building a house - you need a solid foundation, then walls, then the roof. That's exactly how we structure your project!"
    
    - **Folder Structure Walkthrough** (with ASCII art):
@@ -234,7 +233,7 @@ func GetAllCommands() []Command {
    
    - **Call to Action**: "Ready to see your project organized? Type /plan and watch the magic happen! ✨"
 
-4. **Subcommand: build** (or /hello build):
+4. **Subcommand: build** (or /hey build):
    - **Journey Metaphor**: "Think of /build as your development journey. Every task is a destination, and we'll guide you there step by step. Let me show you how smooth this journey can be!"
    
    - **Step-by-Step Adventure**:
@@ -300,7 +299,7 @@ func GetAllCommands() []Command {
    
    - **Call to Action**: "Ready to start building? Type /build and let's turn your plan into code! 🚀"
 
-5. **Subcommand: github** (or /hello github):
+5. **Subcommand: github** (or /hey github):
    - **Storytelling Approach**: "Let me tell you a story. Once upon a time, developers spent hours managing Git branches, writing commit messages, and setting up CI/CD. Then DoPlan came along and automated it all! 🎉"
    
    - **The Problem We Solve**:
@@ -420,86 +419,46 @@ func GetAllCommands() []Command {
 				"docs/tutorials/TUTORIAL_NOTES.md",
 			},
 			Examples: []string{
-				"/hello → Full tutorial (same as /hello goplan)",
-				"/hello goplan → Full tutorial",
-				"/hello meeting → Introduce /meeting command",
-				"/hello plan → Introduce plan structure",
-				"/hello build → Introduce build process",
-				"/hello github → Introduce GitHub workflow",
+				"/hey → Full tutorial (same as /hey goplan)",
+				"/hey goplan → Full tutorial",
+				"/hey meeting → Introduce /do command",
+				"/hey plan → Introduce plan structure",
+				"/hey build → Introduce /dev process",
+				"/hey github → Introduce GitHub workflow",
 			},
 		},
 		{
-			Name:        "access",
-			Category:    "tools",
-			Trigger:     "/access [<scope>]",
-			Description: "Beginner-friendly patch to fix .do/ and docs/ permissions",
-			Action: `When user types /access or /access <scope>:
+			Name:        "do",
+			Category:    "onboarding",
+			Trigger:     "/do [<subcommand>]",
+			Description: "Capture project idea, conduct meeting, and refine",
+			Action: `When user types /do or /do <subcommand>:
 
-1. **Explain Purpose**:
-   - "This patch makes sure DoPlan can write reference docs and state files. It only creates missing folders/files and fixes permissions."
+**Phase 1: Ideation (if no IDEA.md exists or subcommand is "feature" or "now" or "i'm lucky")**
 
-2. **Run Helper**:
-   - Execute npx --yes @doplan-dev/cli goplan access <scope> (defaults to all).
-   - Scope options:
-     * all - patch .do/system, .do/plan, and docs/
-     * .do/system or system
-     * .do/plan or plan
-     * docs
+1. **If no subcommand provided and IDEA.md doesn't exist**:
+   - **Capture the idea**: Prompt user for their project idea
+   - **Save to IDEA.md**: Write the idea to .do/system/IDEA.md
+   - **Activate Project Orchestrator**: The Project Orchestrator analyzes the idea and activates appropriate agents
+   - **Auto-proceed to meeting**: Automatically continue to Phase 2 (Meeting)
 
-3. **Report Results**:
-   - Show which folders/files were created or updated.
-   - If script exits non-zero, surface stderr and prompt the user to re-run with DEBUG=1 for verbose output.
+2. **Subcommand: feature** (or /do feature):
+   - Capture a single feature idea
+   - Append to existing IDEA.md or create new one
+   - Response: "Feature idea captured! Continue with /do to conduct the meeting."
 
-4. **Next Steps**:
-   - Encourage the user to run /hello again once the patch succeeds.
-   - Mention that the patch is safe to re-run at any time.`,
-			AgentInvolvement: []string{
-				"Project Orchestrator",
-				"Documentation Lead",
-			},
-			FilesModified: []string{
-				".do/system/**",
-				".do/plan/**",
-				"docs/**",
-			},
-			Examples: []string{
-				"/access",
-				"/access docs",
-				"/access .do/system",
-			},
-			Notes: "Perfect for beginners who see the permission warning during /hello. It never overwrites existing content—only creates missing folders/files and ensures they're writable.",
-		},
-		{
-			Name:        "tell",
-			Category:    "core",
-			Trigger:     "/tell or /tell <idea>",
-			Description: "Capture project idea",
-			Action: `When user types /tell or /tell <idea>:
+3. **Subcommand: now** (or /do now):
+   - Fast-track mode: Ask for detailed prompt/PRD directly
+   - Skip full meeting, generate documents immediately
+   - Response: "Fast-track complete! Documents generated."
 
-1. **Capture the idea**: If idea is provided inline, save it. Otherwise, prompt user for their project idea.
-2. **Save to IDEA.md**: Write the idea to .do/system/IDEA.md
-3. **Activate Project Orchestrator**: The Project Orchestrator analyzes the idea and activates appropriate agents.
-4. **Response**: "Idea captured! Your project idea has been saved. Type /meeting to start the discovery meeting with the team."`,
-			AgentInvolvement: []string{
-				"Project Orchestrator",
-				"Product Manager",
-			},
-			FilesRead: []string{},
-			FilesModified: []string{
-				".do/system/IDEA.md",
-				".do/system/history/active_state.json",
-			},
-			Examples: []string{
-				"/tell",
-				"/tell Build a todo app",
-			},
-		},
-		{
-			Name:        "meeting",
-			Category:    "core",
-			Trigger:     "/meeting",
-			Description: "Adaptive discovery meeting with speed options",
-			Action: `When user types /meeting:
+4. **Subcommand: i'm lucky** (or /do i'm lucky):
+   - Get AI-suggested project ideas based on current trends
+   - User selects from suggestions
+   - Save selected idea to IDEA.md
+   - Auto-proceed to meeting
+
+**Phase 2: Meeting (automatic after ideation, or if subcommand is "meeting")**
 
 0. **Initialize Meeting Session**:
    - Record meeting start time: Get current timestamp and store in meeting session (e.g., "2025-01-15 14:30:00")
@@ -724,7 +683,15 @@ func GetAllCommands() []Command {
 
 16. **Update State**: Set .do/system/history/active_state.json phase to "brainstorm". Also save user experience level and meeting session data for future reference. Save meeting_session.json with complete timing data.
 
-17. **Response**: "✅ Meeting complete! Summary saved to BRAINSTORM.md. Content structure created in .do/system/content/. Type /write to generate PRD, Architecture, and Design System. Type /content to start generating content."`,
+17. **Response**: "✅ Meeting complete! Summary saved to BRAINSTORM.md. Content structure created in .do/system/content/. Type /plan to generate PRD, Architecture, Design System, and execution plan."
+
+**Phase 3: Refining (optional, if subcommand is "refine")**
+
+1. **Review BRAINSTORM.md**: Load the meeting summary
+2. **Suggest Refinements**: AI analyzes and suggests improvements
+3. **User Reviews**: Present suggestions for user approval
+4. **Update Documents**: Apply approved refinements to IDEA.md and BRAINSTORM.md
+5. **Response**: "Refinements applied! Your project plan has been updated."`,
 			AgentInvolvement: []string{
 				"Product Manager",
 				"Engineering Lead",
@@ -747,15 +714,22 @@ func GetAllCommands() []Command {
 			},
 			Requirements: "- Phase templates should exist in .do/core/brainstorm/\n- Interview should be conversational, one question at a time\n- Questions should be dynamically generated based on project type, not pre-made\n- Project type detection should support: website/agency/personal, SaaS/startup, mobile app, web app, desktop app, CLI, library/package, patch/update, and other types\n- User experience level assessment is mandatory and affects available speed options\n- Speed options must be filtered based on experience level:\n  * Beginner/Non-Developer: Only Quick Start and Standard (recommend Quick Start)\n  * Intermediate: Quick Start, Standard, Comprehensive (recommend Standard)\n  * Advanced: All 4 options (recommend based on project type)\n- Question complexity should adapt to user experience level (simple for beginners, technical for advanced)\n- Content creation questions should adapt to project type\n- Summary must be displayed in formatted confirmation UI before saving\n- User must explicitly confirm before any files are written\n- Use CONFIRMATION_TEMPLATE.md format for displaying summary\n- Use TEMPLATE_BRAINSTORM.md format for final saved document\n- Adapt phases and questions based on selected speed, project type, and experience level\n- Always check GitHub repository and workflow status\n- Content folder structure (.do/system/content/) is created automatically\n- All content should be SEO-ready with keyword optimization\n- Save user experience level in active_state.json for future reference",
 			Examples: []string{
-				"/meeting",
+				"/do → Full ideation workflow",
+				"/do feature → Add single feature idea",
+				"/do now → Fast-track with detailed prompt/PRD",
+				"/do i'm lucky → Get AI-suggested ideas",
+				"/do meeting → Conduct discovery meeting",
+				"/do refine → Refine project plan",
 			},
 		},
 		{
-			Name:        "write",
-			Category:    "core",
-			Trigger:     "/write [<subcommand>] [<args>]",
-			Description: "Generate documents & content, or edit existing documents",
-			Action: `When user types /write or /write <subcommand>:
+			Name:        "plan",
+			Category:    "developing",
+			Trigger:     "/plan [<subcommand>] [<args>]",
+			Description: "Generate documents, content, execution plan, scaffold phases, and manage tasks",
+			Action: `When user types /plan or /plan <subcommand>:
+
+**Document Generation (write functionality)**
 
 1. **If no subcommand provided**: 
    - Check if PRD.md, ARCHITECTURE.md, DESIGN_SYSTEM.md exist
@@ -764,10 +738,11 @@ func GetAllCommands() []Command {
      - "What would you like to generate or edit?"
      - "1. Planning Documents (PRD, Architecture, Design System)"
      - "2. Content (app pages, legal, blog, social, marketing, email, docs, SEO)"
-     - "3. Edit Document (change existing document)"
+     - "3. Execution Plan & Tasks"
+     - "4. Edit Document (change existing document)"
      - Wait for user selection
 
-2. **Subcommand: plan** (or user selects option 1):
+2. **Subcommand: docs** (or user selects option 1):
    - Show planning document options:
      - "1. PRD only"
      - "2. ARCHITECTURE only"
@@ -781,71 +756,31 @@ func GetAllCommands() []Command {
      - App pages, Legal pages, Blog posts, Social media, Marketing, Email templates, Documentation, SEO content
    - Generate selected content type(s)
 
-4. **Subcommand: change <document> <change>** (or user selects option 3):
+4. **Subcommand: change <document> <change>** (or user selects option 4):
    - Parse document name and change description
    - Load the specified document from .do/system/
    - Apply changes to the document
    - Save updated document back to file
    - Response: "Document updated! Changes saved to [document].md"
-   - Alternative: /write edit <document> <change> (alias for change)
+   - Alternative: /plan edit <document> <change> (alias for change)
 
-5. **Other subcommands**:
-   - /write prd → Regenerate PRD only
-   - /write architecture → Regenerate ARCHITECTURE only
-   - /write design → Regenerate DESIGN_SYSTEM only
-   - /write app-pages → Generate app pages content
-   - /write legal → Generate legal pages
-   - /write blog → Generate blog posts
-   - /write social → Generate social media content
-   - /write marketing → Generate marketing content
-   - /write email → Generate email templates
-   - /write docs → Generate documentation pages
-   - /write seo → Generate SEO content
-   - /write all → Generate everything
+5. **Document subcommands**:
+   - /plan prd → Regenerate PRD only
+   - /plan architecture → Regenerate ARCHITECTURE only
+   - /plan design → Regenerate DESIGN_SYSTEM only
+   - /plan app-pages → Generate app pages content
+   - /plan legal → Generate legal pages
+   - /plan blog → Generate blog posts
+   - /plan social → Generate social media content
+   - /plan marketing → Generate marketing content
+   - /plan email → Generate email templates
+   - /plan docs → Generate documentation pages
+   - /plan seo → Generate SEO content
+   - /plan all → Generate everything
 
-6. **Response**: "Documents/content generated! Review files in .do/system/ or .do/system/content/."`,
-			AgentInvolvement: []string{
-				"Product Manager",
-				"Engineering Lead",
-				"System Architect",
-				"Design & UX Manager",
-				"UI/UX Designer",
-				"Content Strategist",
-				"SEO Specialist",
-				"Documentation Writer",
-				"Project Orchestrator",
-			},
-			FilesRead: []string{
-				".do/system/IDEA.md",
-				".do/system/BRAINSTORM.md",
-				".do/system/*.md",
-			},
-			FilesModified: []string{
-				".do/system/PRD.md",
-				".do/system/ARCHITECTURE.md",
-				".do/system/DESIGN_SYSTEM.md",
-				".do/system/*.md",
-				".do/system/content/**",
-				".do/system/history/active_state.json",
-			},
-			Examples: []string{
-				"/write → Generate all planning docs (first time) or show menu",
-				"/write plan → Show planning document options",
-				"/write content → Show content type options",
-				"/write change prd Add dark mode → Edit PRD",
-				"/write edit architecture Use PostgreSQL → Edit ARCHITECTURE",
-				"/write prd → Regenerate PRD only",
-				"/write legal → Generate legal pages",
-			},
-		},
-		{
-			Name:        "plan",
-			Category:    "core",
-			Trigger:     "/plan [<subcommand>] [<args>]",
-			Description: "Generate execution plan, scaffold phases, and manage tasks",
-			Action: `When user types /plan or /plan <subcommand>:
+**Execution Plan Generation (plan functionality)**
 
-1. **If no subcommand provided** (or subcommand is "everything"):
+6. **Subcommand: everything** (or user selects option 3):
    - **Check Documents**: Verify PRD.md, ARCHITECTURE.md, DESIGN_SYSTEM.md exist in .do/system/
    - **Check Approval Status**: Read .do/system/history/active_state.json for "approved" status
    - **If Not Approved**:
@@ -856,7 +791,7 @@ func GetAllCommands() []Command {
        - DESIGN_SYSTEM.md: [exists/doesn't exist]
      * Ask: "Do you want to proceed with generating the execution plan anyway? (yes/no)"
      * If yes → Proceed to next step
-     * If no → "Please review and approve documents first. Type /write to regenerate if needed."
+     * If no → "Please review and approve documents first. Type /plan docs to regenerate if needed."
    - **If Approved or User Confirmed**:
      * Synthesize Execution Tasks: Read .do/system/PRD.md, ARCHITECTURE.md, and DESIGN_SYSTEM.md to generate .do/plan/TASKS.md
      * Parse TASKS.md: Use the generated tasks to determine phases and features
@@ -865,18 +800,18 @@ func GetAllCommands() []Command {
      * Create Contracts Directory: Add _contracts/ folder in each phase for shared schemas
      * Update State: Update .do/system/history/active_state.json to reference the new hierarchy and set phase to "tasks"
      * Mark plan as generated in active_state.json
-   - **Response**: "Execution plan generated! TASKS.md and phase folders created in .do/plan/. Type /build to start implementing."
+   - **Response**: "Execution plan generated! TASKS.md and phase folders created in .do/plan/. Type /dev to start implementing."
 
-2. **Subcommand: phases** (or /plan phases):
+7. **Subcommand: phases** (or /plan phases):
    - Plan project phase by phase:
      * Read .do/system/PRD.md, ARCHITECTURE.md, and DESIGN_SYSTEM.md
      * Generate phase structure but don't create all tasks at once
      * Create phase folders (01-Foundation, 02-Core, etc.) without feature folders yet
      * Set up phase-by-phase planning mode in active_state.json
      * After user finishes a feature with /build, system will ask: "Ready to plan the next phase? Type /plan next to continue."
-   - **Response**: "Phase-by-phase planning mode activated! Phase folders created. Complete features with /build, then type /plan next to plan the next phase."
+   - **Response**: "Phase-by-phase planning mode activated! Phase folders created. Complete features with /dev, then type /plan next to plan the next phase."
 
-3. **Subcommand: next** (or /plan next):
+8. **Subcommand: next** (or /plan next):
    - Planning next phase:
      * Read active_state.json to determine current phase
      * Find the next unplanned phase
@@ -884,9 +819,9 @@ func GetAllCommands() []Command {
      * Generate tasks for the next phase only
      * Create feature folders for this phase with templates
      * Update active_state.json with current phase
-     * **Response**: "Next phase planned! Phase [X] tasks and feature folders created. Type /build to start implementing."
+     * **Response**: "Next phase planned! Phase [X] tasks and feature folders created. Type /dev to start implementing."
 
-4. **Subcommand: phase {no} tasks** (or /plan phase <number> tasks):
+9. **Subcommand: phase {no} tasks** (or /plan phase <number> tasks):
    - Create tasks.md for a specific phase:
      * Parse phase number from command (e.g., /plan phase 1 tasks)
      * Read .do/system/PRD.md, ARCHITECTURE.md, and DESIGN_SYSTEM.md
@@ -895,7 +830,7 @@ func GetAllCommands() []Command {
      * Include all feature tasks for this phase
      * **Response**: "Phase [X] tasks created! tasks.md saved in .do/plan/[Phase-Folder]/tasks.md"
 
-5. **Subcommand: phases tasks** (or /plan phases tasks):
+10. **Subcommand: phases tasks** (or /plan phases tasks):
    - Create tasks.md for all phases:
      * Read .do/system/PRD.md, ARCHITECTURE.md, and DESIGN_SYSTEM.md
      * For each phase folder in .do/plan/:
@@ -904,7 +839,7 @@ func GetAllCommands() []Command {
        - Include all feature tasks for that phase
      * **Response**: "All phase tasks created! tasks.md files saved in each phase folder."
 
-6. **Subcommand: all tasks** (or /plan all tasks):
+11. **Subcommand: all tasks** (or /plan all tasks):
    - **This is the ONLY way to create the main TASKS.md file**:
      * Read .do/system/PRD.md, ARCHITECTURE.md, and DESIGN_SYSTEM.md
      * Generate ALL tasks for the entire project
@@ -932,7 +867,9 @@ func GetAllCommands() []Command {
 			},
 			Requirements: "- Task generation templates live in `.do/core`\n- If documents are not approved, user must confirm before proceeding\n- /plan all tasks is the only way to create the main .do/plan/TASKS.md file",
 			Examples: []string{
-				"/plan → Generate execution plan and tasks (same as /plan everything)",
+				"/plan → Generate all planning docs (first time) or show menu",
+				"/plan docs → Generate PRD, Architecture, Design System",
+				"/plan content → Generate content",
 				"/plan everything → Generate full execution plan",
 				"/plan phases → Plan project phase by phase",
 				"/plan next → Planning next phase",
@@ -942,11 +879,11 @@ func GetAllCommands() []Command {
 			},
 		},
 		{
-			Name:        "build",
-			Category:    "core",
-			Trigger:     "/build [<task_id>]",
-			Description: "Start coding next task",
-			Action:      "When user types /build or /build <task_id>:\n\n1. **Determine Task**:\n   - If task_id provided, load that task\n   - Otherwise, find next uncompleted task from TASKS.md\n2. **Bootstrap Boilerplate (first run only)**:\n   - If the project is still plan-only (no package.json / src/), prompt the user to scaffold code with their preferred stack tool (e.g., `npx create-next-app`, `go mod init`, etc.)\n   - DoPlan no longer ships the legacy `scripts/boilerplate` helper, so projects must bring or generate their own starter code\n   - Skip once code already exists for this project/stack\n3. **Check Git Status**:\n   - Verify working tree is clean (no uncommitted changes)\n   - If dirty, warn user and block until clean\n4. **Create/Checkout Task Branch**:\n   - Create or checkout branch `task/[ID]` manually (e.g., `git checkout -b task/5.2`)\n   - Store branch name in `active_branch` field of `.do/system/history/active_state.json`\n5. **Load Task Context**: Read task details, dependencies, and related code\n6. **Activate Relevant Agents**: Activate agents needed for the task (Frontend Lead, Backend Lead, etc.)\n7. **Start Implementation**: Begin coding the task with full context\n8. **Update State**: Set `active_task` and `active_branch` in `.do/system/history/active_state.json`\n9. **Snapshot State**: Immediately log the new state with `go run scripts/statehistory/main.go snapshot --reason \"build [ID]\" --label build`\n10. **After Task Implementation** (when agent detects completion):\n   - Agent analyzes code changes, tests, requirements\n   - Agent checks if task criteria are met\n   - If complete:\n     - Agent asks: \"Task [ID] appears complete. Summary:\n       ✅ All requirements met\n       ✅ Code implemented\n       ✅ Tests passing (if applicable)\n       \n       Mark as done? (yes/no)\"\n     - If user says yes:\n       - Mark task complete in TASKS.md\n       - Update active_state.json\n       - Auto-commit and push\n       - Response: \"Task marked complete! Changes committed and pushed.\"\n     - If user says no:\n       - Continue working on task\n11. **Response**: \"Building task [ID]: [Description] on branch [branch_name]. Focus on this task only.\"",
+			Name:        "dev",
+			Category:    "developing",
+			Trigger:     "/dev [<task_id>]",
+			Description: "Start development workflow for a feature",
+			Action:      "When user types /dev or /dev <task_id>:\n\n1. **Determine Task**:\n   - If task_id provided, load that task\n   - Otherwise, find next uncompleted task from TASKS.md\n\n2. **Bootstrap Boilerplate (first run only)**:\n   - If the project is still plan-only (no package.json / src/), prompt the user to scaffold code with their preferred stack tool (e.g., `npx create-next-app`, `go mod init`, etc.)\n   - DoPlan no longer ships the legacy `scripts/boilerplate` helper, so projects must bring or generate their own starter code\n   - Skip once code already exists for this project/stack\n\n3. **Check Git Status**:\n   - Verify working tree is clean (no uncommitted changes)\n   - If dirty, warn user and block until clean\n\n4. **Create/Checkout Task Branch**:\n   - Create or checkout branch `task/[ID]` manually (e.g., `git checkout -b task/5.2`)\n   - Store branch name in `active_branch` field of `.do/system/history/active_state.json`\n\n5. **Load Task Context**: Read task details, dependencies, and related code\n\n6. **Activate Relevant Agents**: Activate agents needed for the task (Frontend Lead, Backend Lead, etc.)\n\n7. **Start Implementation**: Begin coding the task with full context\n\n8. **Update State**: Set `active_task` and `active_branch` in `.do/system/history/active_state.json`\n\n9. **Snapshot State**: Immediately log the new state with `go run scripts/statehistory/main.go snapshot --reason \"dev [ID]\" --label dev`\n\n10. **Automatic Completion Detection** (System continuously monitors):\n   - Agent continuously analyzes code changes, tests, requirements\n   - Agent checks if task criteria are met\n   - **When System Detects Completion** (automatic, no user prompt needed):\n     - **Verify Active Branch**: Check that we're on a task branch (from `active_branch` in `.do/system/history/active_state.json`)\n     - **Check Dependencies**: Run `go run scripts/taskcomplete/main.go --task [ID] --project . --check` to verify all dependencies are complete\n       - If dependencies are missing, **block completion** and list missing dependencies\n     - **Mark Task Complete**: Run `go run scripts/taskcomplete/main.go --task [ID] --project .` to mark task complete in TASKS.md\n       - Updates task status to \"✅ Complete\" and marks all checklist items as [x]\n     - **Update State**: \n       - Add task ID to completed array in `.do/system/history/active_state.json`\n       - Clear `active_task` and `active_branch` (set to null)\n     - **Snapshot State**: Run `go run scripts/statehistory/main.go snapshot --reason \"dev [ID] complete\" --label dev` to record completion\n     - **Auto-Commit**: Automatically commit changes with conventional commit format (e.g., `feat(task-5.2): complete [description]`)\n     - **Auto-Push**: Run `go run scripts/branch/main.go --action push --project .` to push the task branch to origin\n     - **Update Changelog**: If significant, add entry to CHANGELOG.md\n     - **Optional PR Suggestion**: If `gh` CLI is available, suggest creating a PR\n     - **Response**: \"✅ Task [ID] complete! Changes committed and pushed to [branch_name]. Ready for next task. Type /dev to continue.\"\n   - **If Not Complete**: Continue working on task, agent provides guidance\n\n11. **Response**: \"Building task [ID]: [Description] on branch [branch_name]. Focus on this task only. System will automatically detect when complete.\"",
 			AgentInvolvement: []string{
 				"Engineering Lead",
 				"Relevant Team Leads",
@@ -958,275 +895,96 @@ func GetAllCommands() []Command {
 				".do/system/history/active_state.json",
 			},
 			FilesModified: []string{
-				".do/system/history/active_state.json (active_task and active_branch updated)",
+				".do/system/history/active_state.json (active_task and active_branch updated, then cleared on completion)",
 				".do/system/history/state-*.json (automatic snapshot for audit/rollback)",
-				".do/plan/TASKS.md (task marked complete if auto-detected)",
-				"Git: New branch created/checked out (task/[ID])",
+				".do/plan/TASKS.md (task marked complete when system detects completion)",
+				"CHANGELOG.md (if significant changes on completion)",
+				"Git: New branch created/checked out (task/[ID]), then auto-commit and push on completion",
 				"src/** (code files created/modified)",
 			},
 			Examples: []string{
-				"/build → Start next uncompleted task",
-				"/build 1.2 → Start specific task 1.2",
-				"/build 3 → Start task 3",
+				"/dev → Start next task",
+				"/dev --feature \"auth\" → Start specific feature",
+				"/dev 1.2 → Start specific task 1.2",
 			},
-			GitHubAutomation: `After task completion, the system will:
+			GitHubAutomation: `After automatic completion detection, the system will:
 - Auto-commit changes with conventional commit format
 - Auto-push to current branch (feature/bugfix/hotfix)
-   - Update docs/history/CHANGELOG.md if significant changes
+- Update docs/history/CHANGELOG.md if significant changes
 - Follow branching strategy from @library/01-core-workflow/github-workflow-automation.md`,
 		},
 		{
-			Name:        "status",
-			Category:    "core",
-			Trigger:     "/status [<subcommand>]",
-			Description: "Show project progress and generate reports",
-			Action:      "When user types /status or /status <subcommand>:\n\n1. **If no subcommand provided** (default: show progress):\n   - Read TASKS.md: Load all tasks\n   - Read active_state.json: Get completed tasks and current phase\n   - Run Progress Tool: Execute `go run scripts/progress/main.go --root <project>`\n     This parses `.do/plan/TASKS.md`, `.do/system/history/active_state.json`, and `.do/system/history/` to compute stats and state deltas.\n   - Calculate Progress:\n     * Total tasks\n     * Completed tasks\n     * In progress tasks\n     * Percentage complete\n   - Display Progress: Show formatted progress report:\n     * Phase: [current phase]\n     * Tasks: X/Y completed (Z%)\n     * Current task: [active task]\n     * Next up: [next task]\n     * State Delta: summarize what changed between the last two snapshots (phase/task/branch/completed)\n   - Response: Display progress summary with the state delta footer\n\n2. **Subcommand: report** (or /status report):\n   - Select Project:\n     * Default: current workspace (.)\n     * Optional: `/status report test/qr-generator/test-no01`\n   - Generate Metadata:\n     * Runs `go run scripts/scanreport/main.go --project <path>`\n     * Parses `.do/reports/SCAN_REPORT_*.md`\n     * Creates/updates matching JSON files with structured metadata (scan date, project, executive summary, findings, next actions, summary hash)\n   - Compute Diff:\n     * When >=2 reports exist, compares the newest vs previous\n     * Builds `SCAN_DIFF_<date>.md` highlighting added/removed bullets in Executive Summary, Findings & Risks, Recommended Next Actions, **and** the latest `.do/history` state changes (phase/task/branch/completed deltas)\n     * Appends preset-specific sections: progress snapshot (from `scripts/progress`), ASCII visuals, and a dependency audit when manifests are detected\n   - Output:\n     * Terminal summary showing metadata count + diff file path\n     * Diff markdown stored alongside the reports for sharing\n\n3. **Subcommand: full** (or /status full):\n   - Show both progress and report in one comprehensive view",
+			Name:        "sys",
+			Category:    "system",
+			Trigger:     "/sys [<subcommand>]",
+			Description: "System control panel (engagement, performance, backup, etc.)",
+			Action:      "When user types /sys or /sys <subcommand>:\n\n1. **If no subcommand provided**: Show menu:\n   - \"System Control Panel:\"\n   - \"1. status - Show project progress and generate reports\"\n   - \"2. engagement - View engagement dashboard\"\n   - \"3. performance - View performance metrics\"\n   - \"4. optimize - Project optimization hub\"\n   - \"5. backup - Create project backups\"\n   - \"6. restore - Restore from backup\"\n   - \"7. memory - Export/import memory card\"\n   - \"8. state - Manage project state history\"\n   - \"9. feedback - Log feedback\"\n   - \"10. github - GitHub operations\"\n   - \"11. security - Security review and audit\"\n   - \"12. permissions - Design RBAC system\"\n   - \"13. access - Fix permissions\"\n   - Wait for user selection\n\n2. **Subcommand: status** (or /sys status):\n   - Show project progress and generate reports\n   - Default: Show current progress (tasks completed, percentage, current task, next task, state delta)\n   - Subcommands:\n     * /sys status report → Generate scan report metadata and diffs\n     * /sys status full → Show both progress and report in one comprehensive view\n   - Response: \"Progress displayed!\" or \"Report generated!\"\n\n3. **Subcommand: engagement** (or /sys engagement):\n   - View engagement dashboard and statistics\n   - Show achievements, challenges, score tracking\n   - Response: \"Engagement dashboard displayed!\"\n\n4. **Subcommand: performance** (or /sys performance):\n   - View performance metrics and cache statistics\n   - Show command execution metrics, cache hit rates\n   - Response: \"Performance metrics displayed!\"\n\n5. **Subcommand: optimize** (or /sys optimize):\n   - Project optimization hub\n   - If no subcommand: Show menu:\n     * \"1. Design - UI/UX improvements\"\n     * \"2. Finance - Cost optimization\"\n     * \"3. Performance - Performance optimization\"\n     * \"4. All - Run all optimizations\"\n   - Subcommands:\n     * /sys optimize design → UI/UX improvements\n     * /sys optimize finance → Cost optimization\n     * /sys optimize performance → Performance optimization\n     * /sys optimize all → Run all optimizations\n   - Response: \"Optimization complete! Review recommendations in [report].md\"\n\n6. **Subcommand: backup** (or /sys backup):\n   - Create compressed project backups\n   - Multiple backup types: project, plan, project-plan, full\n   - Response: \"Backup created!\"\n\n7. **Subcommand: restore** (or /sys restore):\n   - Restore project from backup\n   - Dry-run, safety backups, version compatibility checks\n   - Response: \"Project restored from backup!\"\n\n8. **Subcommand: memory** (or /sys memory):\n   - Export/import memory card\n   - Manage personalization data\n   - Response: \"Memory card exported/imported!\"\n\n9. **Subcommand: state** (or /sys state):\n   - Manage project state history\n   - Wraps `go run scripts/statehistory/main.go` for safe state management\n   - Subcommands:\n     * /sys state snapshot [--reason \"text\"] [--label \"label\"] → Save current state snapshot\n     * /sys state list [--limit N] [--json] → List recent state snapshots\n     * /sys state diff [--json] → Compare snapshots (default: latest vs previous)\n     * /sys state restore --file <id> --yes → Restore state from snapshot\n   - Response: \"State operation completed!\"\n\n10. **Subcommand: feedback** (or /sys feedback):\n   - Log feedback (bug, feature, question, note)\n   - Usage: /sys feedback <type> \"Title\" \"Details\" [--github <url>] [--author <name>]\n   - Types: bug | feature | question | note (defaults to note)\n   - Logs to `docs/history/feedback.md` and `docs/history/feedback.json`\n   - Response: \"Feedback logged (type=[type]) → docs/history/feedback.md\"\n\n11. **Subcommand: github** (or /sys github):\n   - GitHub operations\n   - Subcommands:\n     * /sys github info → Sync README with project KPIs, update repository metadata\n     * /sys github issue \"Title\" \"Body\" → Generate gh issue create command\n     * /sys github milestone \"Name\" [due-date] → Generate gh api command for milestone\n     * /sys github ci [regenerate] → Generate CI/CD workflows for branch prefixes\n     * /sys github release → Release management (planning, versioning, release notes)\n   - Response: \"GitHub operation completed!\"\n\n12. **Subcommand: security** (or /sys security):\n   - Security review and audit\n   - If no subcommand: Show menu (review, audit, both)\n   - Subcommands:\n     * /sys security review → Security review, vulnerability assessment, generate report\n     * /sys security audit → Comprehensive security audit, vulnerability scanning, compliance check\n     * /sys security both → Run both review and audit\n   - Response: \"Security review/audit complete! Review findings in SECURITY.md\"\n\n13. **Subcommand: permissions** (or /sys permissions):\n   - Design RBAC system (role-based access control)\n   - Security Lead and Backend Lead design role-based access control\n   - Define roles and permissions\n   - Generate documentation\n   - Response: \"RBAC system designed! Review role definitions in RBAC.md\"\n\n14. **Subcommand: access** (or /sys access):\n   - Fix permissions for .do/ and docs/ directories\n   - Execute `npx --yes @doplan-dev/cli goplan access <scope>` (defaults to all)\n   - Scope options: all, .do/system, .do/plan, docs\n   - Creates missing folders/files and fixes permissions\n   - Response: \"Permissions fixed! You can now run /hey again.\"",
 			AgentInvolvement: []string{
 				"Project Orchestrator",
+				"Product Manager",
 				"QA Engineer",
 				"Documentation Lead",
+				"Release & Growth Manager",
+				"Release Captain",
+				"DevOps Engineer",
+				"Security Lead",
+				"Backend Lead",
+				"Design & UX Manager",
+				"UI/UX Designer",
+				"Performance Engineer",
 			},
 			FilesRead: []string{
 				".do/plan/TASKS.md",
 				".do/system/history/active_state.json",
 				".do/system/history/state-*.json",
-				"<project>/.do/reports/SCAN_REPORT_*.md",
-			},
-			FilesModified: []string{
-				"<project>/.do/reports/SCAN_REPORT_*.json",
-				"<project>/.do/reports/SCAN_DIFF_<date>.md",
-			},
-			Options:      "- `--preset standard` *(default)* – complete report\n- `--preset exec` – condensed executive view + visuals\n- `--preset detailed` – expanded sections with dependency audit\n- `.do/reports/config.json` (optional) can set preset and sections",
-			Requirements: "- Go 1.21+\n- Reports must follow `SCAN_REPORT_YYYY-MM-DD.md` naming",
-			Examples: []string{
-				"/status → Show current progress",
-				"/status report → Generate scan report metadata and diffs",
-				"/status full → Show progress and report together",
-			},
-		},
-		{
-			Name:        "feedback",
-			Category:    "tools",
-			Trigger:     "/feedback <type> \"Title\" \"Details\" [--github <url>] [--author <name>]",
-			Description: "Log feedback (bug, feature, question, note)",
-			Action:      "When you run `/feedback ...`:\n\n1. **Parse arguments**\n   - `type`: bug | feature | question | note (defaults to `note`)\n   - `title`: short summary (required)\n   - `details`: multiline description (optional)\n   - `--author`: person filing feedback (defaults to `anonymous`)\n   - `--github`: optional issue URL if mirrored upstream\n2. **Log entry** via `go run scripts/feedback/main.go ...`\n   - Appends markdown to `docs/history/feedback.md`\n   - Updates JSON log `docs/history/feedback.json` for automation\n3. **Surface in workflow**\n   - `/report` command ingests latest feedback when generating scan metadata/diffs\n   - Future scans can summarize outstanding feedback items\n4. **Response**\n   - \"Feedback logged (type=bug) → docs/history/feedback.md\"",
-			AgentInvolvement: []string{
-				"Product Manager",
-				"QA Engineer",
-				"Documentation Lead",
-			},
-			FilesRead: []string{
-				"docs/history/feedback.md (created if missing)",
-				"docs/history/feedback.json",
-			},
-			FilesModified: []string{
+				".do/reports/SCAN_REPORT_*.md",
 				"docs/history/feedback.md",
 				"docs/history/feedback.json",
-			},
-			Examples: []string{
-				"/feedback bug \"QR download fails\" \"API returns 500 when Accept header missing\"",
-				"/feedback feature \"Add dark mode\" \"Marketing wants dark hero section\" --author PM",
-				"/feedback question \"Rate limit\" \"What are the prod limits?\" --github https://github.com/org/repo/issues/123",
-			},
-			Notes: "- Requires Go 1.21+. Command shells run: `go run scripts/feedback/main.go --type <type> --title \"...\" --details \"...\" --author \"...\" --github <url>`\n- Works in any generated project (paths relative to project root).\n- Add new feedback types by passing a custom string (stored as lowercase).",
-		},
-		{
-			Name:        "state",
-			Category:    "tools",
-			Trigger:     "/state <subcommand>",
-			Description: "Manage project state history",
-			Action:      "The `/state` helper wraps `go run scripts/statehistory/main.go` so you can manage `.do/active_state.json` history safely.\n\n### snapshot\n1. Writes the current `.do/active_state.json` into `.do/history/state-<timestamp>.json`\n2. Accepts optional flags:\n   - `--reason` → stored in the snapshot metadata\n   - `--label` → appended to the file name (e.g., build, finished)\n3. Output: `Snapshot saved: .do/history/state-20251124T120000Z-build.json`\n\n### list\n1. Lists recent entries (default: last 10)\n2. `--json` emits machine-readable summaries for scripts/CI\n\n### diff\n1. Compares two snapshots (default: latest vs previous)\n2. Shows Markdown summary (phase/task/branch/completed deltas) or JSON if `--json`\n3. Used by `/progress` and `/report` to surface state deltas\n\n### restore\n1. Requires `--file <id>` and `--yes` confirmation for guardrails\n2. Restores `.do/active_state.json` from the selected snapshot\n3. Optionally captures a new snapshot (`--snapshot=false` to skip) so rollbacks themselves are logged\n4. Respond with confirmation + reminder to rerun `/progress`",
-			AgentInvolvement: []string{
-				"Project Orchestrator",
-				"QA Engineer",
-			},
-			FilesRead: []string{
-				"`.do/active_state.json`",
-				"`.do/history/state-*.json`",
-			},
-			FilesModified: []string{
-				"`.do/history/state-*.json` (new entries)",
-				"`.do/active_state.json` (when restoring)",
-			},
-			Examples: []string{
-				"/state snapshot --reason \"after /build 5.8\"",
-				"/state list --limit 5",
-				"/state diff --json",
-				"/state restore --file state-20251124T120000Z.json --yes",
-			},
-			Notes: "- State history is now required before/after `/build` and `/finished`\n- Restores should be rare; always snapshot first so you can undo mistakes",
-		},
-		{
-			Name:        "github",
-			Category:    "tools",
-			Trigger:     "/github <subcommand>",
-			Description: "GitHub operations: metadata, CI, releases, issues, PRs",
-			Action:      "When user types /github <subcommand>:\n\n### `/github info`\nRuns:\n```\ngo run scripts/githubmeta/main.go --project . --sync-readme\n```\n- Detects primary remote + default branch\n- Extracts success metrics from `.do/system/PRD.md`\n- Updates the README KPI block between `<!-- KPIS:START -->` / `<!-- KPIS:END -->`\n- Persists metadata to `docs/history/github-meta.json` for offline use\n\n### `/github issue \"Title\" \"Body\"`\nOutputs a ready-to-run `gh issue create` command with the detected repo slug, e.g.:\n```\ngo run scripts/githubmeta/main.go --project . --issue-title \"Fix cache\" --issue-body \"Details here\"\n```\nCopy/paste the printed `gh issue create` command (or pipe it) to open the issue.\n\n### `/github milestone \"Name\" [due-date]`\nPrints a `gh api` command to create a milestone:\n```\ngo run scripts/githubmeta/main.go --project . --milestone-title \"MVP\" --milestone-due 2025-01-15T00:00:00Z\n```\n\n### `/github ci [regenerate]`\nGenerates CI workflow for branch prefixes:\n1. Reads `docs/history/branch-matrix.json` to understand what jobs/required checks each branch prefix needs (e.g., `task/`, `feature/`, `hotfix/`).\n2. Runs the generator:\n   ```bash\n   go run scripts/branchci/main.go --matrix docs/history/branch-matrix.json --out .github/workflows\n   ```\n3. Emits `.github/workflows/task-branches.yml`, a workflow that:\n   - Triggers on pushes to `task/*` (and can be expanded for other prefixes)\n   - Spins up jobs per branch prefix (lint/test/build/etc.)\n   - Adds a summary job so reviewers know which checks are required per branch\n4. Output: \"Workflow generated: .github/workflows/task-branches.yml\"\n\n### `/github release`\nRelease management:\n1. **Release Planning**: Release Captain plans the release\n2. **Version Management**: Manage version numbers and semantic versioning\n3. **Release Notes**: Generate release notes\n4. **Deployment Planning**: Plan deployment strategy\n5. **Response**: \"Release planned! Review release notes and deployment plan.\"",
-			AgentInvolvement: []string{
-				"Release & Growth Manager",
-				"Release Captain",
-				"DevOps Engineer",
-			},
-			FilesRead: []string{
-				"`.git/` metadata",
-				"`.do/system/PRD.md`",
+				".git/",
+				".do/system/PRD.md",
 				"docs/history/branch-matrix.json",
-				".do/plan/TASKS.md",
 				"docs/history/CHANGELOG.md",
-			},
-			FilesModified: []string{
-				"`docs/history/github-meta.json`",
-				"`README.md` KPI section when `--sync-readme` is used",
-				".github/workflows/task-branches.yml",
-				"docs/history/CHANGELOG.md",
-				".do/system/RELEASE.md",
-			},
-			Customize:     "Edit `docs/history/branch-matrix.json` to add or tweak prefixes, jobs, and required checks. Re-run `/github ci` after editing to regenerate the workflow.",
-			Notes:         "- Generated workflow expects Go 1.21 and the standard lint/test/build jobs. Adapt `scripts/branchci/main.go` if your stack differs.\n- Use `/github ci` whenever you add a new branch naming convention or need different CI steps per branch type.",
-			OfflineSafety: "- If git remote detection fails, the script logs a warning and keeps the last cached metadata (`docs/history/github-meta.json`). You can still update KPIs from PRD without network access.",
-			Examples: []string{
-				"/github info",
-				"/github issue \"Fix cache\" \"Cache misses spike\"",
-				"/github ci → Generate CI workflow",
-				"/github release → Release management",
-			},
-		},
-		{
-			Name:        "security",
-			Category:    "tools",
-			Trigger:     "/security [<subcommand>]",
-			Description: "Security review and audit",
-			Action: `When user types /security or /security <subcommand>:
-
-1. **If no subcommand provided**: Show menu:
-   - "Select security operation:"
-   - "1. Review - Security review"
-   - "2. Audit - Security audit"
-   - "3. Both - Review and audit"
-   - Wait for user selection
-
-2. **Subcommand: review** (or user selects option 1):
-   - Security Review: Security Lead conducts security review
-   - Vulnerability Assessment: Identify and document security vulnerabilities
-   - Generate Report: Create security review report
-   - Response: "Security review complete! Review security findings in SECURITY.md"
-
-3. **Subcommand: audit** (or user selects option 2):
-   - Security Audit: Security Lead conducts comprehensive security audit
-   - Vulnerability Scanning: Scan for security vulnerabilities
-   - Compliance Check: Verify compliance with security standards
-   - Generate Audit Report: Create security audit report
-   - Response: "Security audit complete! Review audit findings in SECURITY_AUDIT.md"
-
-4. **Subcommand: both** (or user selects option 3):
-   - Run both review and audit in sequence
-   - Generate comprehensive security report
-   - Response: "Security review and audit complete! Review findings in SECURITY.md and SECURITY_AUDIT.md"`,
-			AgentInvolvement: []string{
-				"Security Lead",
-			},
-			FilesRead: []string{
 				"src/**",
 				".do/system/ARCHITECTURE.md",
+				".do/system/DESIGN_SYSTEM.md",
 				".do/system/SECURITY.md",
 			},
 			FilesModified: []string{
+				".do/reports/SCAN_REPORT_*.json",
+				".do/reports/SCAN_DIFF_<date>.md",
+				".do/history/state-*.json",
+				".do/active_state.json",
+				"docs/history/feedback.md",
+				"docs/history/feedback.json",
+				"docs/history/github-meta.json",
+				"README.md",
+				".github/workflows/task-branches.yml",
+				".do/system/RELEASE.md",
 				".do/system/SECURITY.md",
 				".do/system/SECURITY_AUDIT.md",
-			},
-			Examples: []string{
-				"/security → Show security menu",
-				"/security review → Security review",
-				"/security audit → Security audit",
-				"/security both → Review and audit",
-			},
-		},
-		{
-			Name:        "permissions",
-			Category:    "tools",
-			Trigger:     "/permissions",
-			Description: "Design RBAC system (role-based access control)",
-			Action: `When user types /permissions:
-
-1. **Design RBAC**: Security Lead and Backend Lead design role-based access control
-2. **Define Roles**: Create role definitions and permissions
-3. **Generate Documentation**: Document RBAC system
-4. **Response**: "RBAC system designed! Review role definitions in RBAC.md"`,
-			AgentInvolvement: []string{
-				"Security Lead",
-				"Backend Lead",
-			},
-			FilesRead: []string{
-				".do/system/PRD.md",
-				".do/system/ARCHITECTURE.md",
-			},
-			FilesModified: []string{
 				".do/system/RBAC.md",
-			},
-			Examples: []string{
-				"/permissions",
-			},
-		},
-		{
-			Name:        "optimize",
-			Category:    "optimize",
-			Trigger:     "/optimize [<subcommand>]",
-			Description: "Project optimization hub",
-			Action: `When user types /optimize or /optimize <subcommand>:
-
-1. **If no subcommand provided**: Show menu:
-   - "Select optimization type:"
-   - "1. Design - UI/UX improvements"
-   - "2. Finance - Cost optimization"
-   - "3. Performance - Performance optimization"
-   - "4. All - Run all optimizations"
-   - Wait for user selection
-
-2. **Subcommand: design** (or user selects option 1):
-   - UI/UX Review: Design Manager and UI/UX Designer review interface
-   - Improvement Suggestions: Provide UI/UX improvement recommendations
-   - Update Design System: Update DESIGN_SYSTEM.md with improvements
-   - Response: "UI/UX improvements suggested! Review design updates in DESIGN_SYSTEM.md"
-
-3. **Subcommand: finance** (or user selects option 2):
-   - Cost Analysis: Analyze current infrastructure and service costs
-   - Optimization Recommendations: Provide cost optimization suggestions
-   - Generate Cost Plan: Create cost optimization plan
-   - Response: "Cost analysis complete! Review optimization recommendations in COST_OPTIMIZATION.md"
-
-4. **Subcommand: performance** (or user selects option 3):
-   - Performance Analysis: Performance Engineer analyzes application performance
-   - Identify Bottlenecks: Detect performance bottlenecks and issues
-   - Optimization Suggestions: Provide performance optimization recommendations
-   - Generate Performance Report: Create performance optimization report
-   - Response: "Performance analysis complete! Review optimization recommendations in PERFORMANCE_OPTIMIZATION.md"
-
-5. **Subcommand: all** (or user selects option 4):
-   - Run all three optimizations in sequence (design, finance, performance)
-   - Generate comprehensive optimization report
-   - Response: "All optimizations complete! Review reports in DESIGN_SYSTEM.md, COST_OPTIMIZATION.md, and PERFORMANCE_OPTIMIZATION.md"`,
-			AgentInvolvement: []string{
-				"Design & UX Manager",
-				"UI/UX Designer",
-				"DevOps Engineer",
-				"Performance Engineer",
-			},
-			FilesRead: []string{
-				".do/system/DESIGN_SYSTEM.md",
-				".do/system/ARCHITECTURE.md",
-				"src/**",
-			},
-			FilesModified: []string{
 				".do/system/DESIGN_SYSTEM.md",
 				".do/system/COST_OPTIMIZATION.md",
 				".do/system/PERFORMANCE_OPTIMIZATION.md",
+				".do/system/**",
+				".do/plan/**",
+				"docs/**",
 			},
 			Examples: []string{
-				"/optimize → Show optimization menu",
-				"/optimize design → UI/UX improvements",
-				"/optimize finance → Cost optimization",
-				"/optimize performance → Performance optimization",
-				"/optimize all → Run all optimizations",
+				"/sys → Show system control panel",
+				"/sys status → Show project progress and generate reports",
+				"/sys performance → View performance metrics",
+				"/sys backup → Create project backup",
+				"/sys restore → Restore from backup",
+				"/sys memory → Export/import memory card",
+				"/sys engagement → View engagement dashboard",
+				"/sys optimize → Project optimization hub",
+				"/sys state → Manage project state history",
+				"/sys feedback → Log feedback",
+				"/sys github → GitHub operations",
+				"/sys security → Security review and audit",
+				"/sys permissions → Design RBAC system",
+				"/sys access → Fix permissions",
 			},
 		},
 	}
@@ -1247,13 +1005,10 @@ func GetCommandByName(name string) *Command {
 func GetCoreCommands() []Command {
 	allCommands := GetAllCommands()
 	coreNames := map[string]bool{
-		"hello":   true,
-		"tell":    true,
-		"meeting": true,
-		"write":   true,
-		"plan":    true,
-		"build":   true,
-		"status":  true,
+		"hey":  true,
+		"do":   true,
+		"plan": true,
+		"dev":  true,
 	}
 	var coreCommands []Command
 	for _, cmd := range allCommands {
@@ -1264,17 +1019,14 @@ func GetCoreCommands() []Command {
 	return coreCommands
 }
 
-// GetSquadCommands returns only the tools and optimize commands
+// GetSquadCommands returns only the system commands
 func GetSquadCommands() []Command {
 	allCommands := GetAllCommands()
 	coreNames := map[string]bool{
-		"hello":   true,
-		"tell":    true,
-		"meeting": true,
-		"write":   true,
-		"plan":    true,
-		"build":   true,
-		"status":  true,
+		"hey":  true,
+		"do":   true,
+		"plan": true,
+		"dev":  true,
 	}
 	var squadCommands []Command
 	for _, cmd := range allCommands {
@@ -1371,6 +1123,34 @@ func (g *CommandsGenerator) Generate(request *models.ProjectRequest, projectPath
 		return fmt.Errorf("failed to create central commands directory: %w", err)
 	}
 
+	// Clean up old category folders that are no longer used
+	// Old categories: "core", "optimize", "tools"
+	// New categories: "onboarding", "developing", "system"
+	oldCategories := []string{"core", "optimize", "tools"}
+	entries, err := os.ReadDir(centralCommandsDir)
+	if err == nil {
+		for _, entry := range entries {
+			if entry.IsDir() {
+				folderName := entry.Name()
+				// Check if this is an old category that should be removed
+				for _, oldCat := range oldCategories {
+					if folderName == oldCat {
+						oldPath := filepath.Join(centralCommandsDir, folderName)
+						// Force remove old category folder
+						if err := os.RemoveAll(oldPath); err != nil {
+							// Continue even if removal fails - will be overwritten anyway
+							_ = err
+						}
+						break
+					}
+				}
+			}
+		}
+	} else {
+		// If directory doesn't exist yet, that's fine - will be created
+		_ = err
+	}
+
 	// Get all commands
 	commands := GetAllCommands()
 
@@ -1432,6 +1212,27 @@ func (g *CommandsGenerator) Generate(request *models.ProjectRequest, projectPath
 		// Ensure IDE commands directory exists
 		if err := utils.CreateDirectory(ideCommandsDir); err != nil {
 			return fmt.Errorf("failed to create commands directory for %s: %w", ide, err)
+		}
+
+		// Clean up old category folders in IDE location before creating symlinks
+		ideEntries, err := os.ReadDir(ideCommandsDir)
+		if err == nil {
+			for _, entry := range ideEntries {
+				if entry.IsDir() {
+					folderName := entry.Name()
+					// Check if this is an old category that should be removed
+					for _, oldCat := range oldCategories {
+						if folderName == oldCat {
+							oldPath := filepath.Join(ideCommandsDir, folderName)
+							if err := os.RemoveAll(oldPath); err != nil {
+								// Log but don't fail - continue with generation
+								_ = err // Suppress unused variable warning
+							}
+							break
+						}
+					}
+				}
+			}
 		}
 
 		// Create symlinks for each command category folder

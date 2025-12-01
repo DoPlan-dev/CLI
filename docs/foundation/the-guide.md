@@ -8,133 +8,61 @@ This guide provides comprehensive documentation on using DoPlan CLI commands and
 
 1. [DoPlan Commands Reference](#doplan-commands-reference)
 2. [Complete Workflow](#complete-workflow)
-3. [QR Code Generator Project Prompt](#qr-code-generator-project-prompt)
-4. [Command Usage Examples](#command-usage-examples)
-5. [Best Practices](#best-practices)
-6. [Troubleshooting](#troubleshooting)
+3. [Command Usage Examples](#command-usage-examples)
+4. [Best Practices](#best-practices)
+5. [Troubleshooting](#troubleshooting)
 
 ---
 
 ## 🎯 DoPlan Commands Reference
 
-### Planning Phase Commands
+### Core Commands
 
-#### `/tell` - Capture Your Project Idea
+#### `/hey` - Welcome & Tutorial
 
-**Purpose:** Captures your project idea and stores it in `.plan/00_System/IDEA.md`
+**Purpose:** Interactive welcome experience and tutorial for new users
 
 **Usage:**
 ```
-/tell <your detailed project description>
+/hey
 ```
 
 **What it does:**
-- Creates or updates `IDEA.md` with your project description
-- Provides context for all AI agents
-- Sets the foundation for planning documents
-
-**Example:**
-```
-/tell I want to build a task management app with React and Node.js
-```
+- Provides first-time welcome and tutorial
+- Introduces the DoPlan system
+- Explains the agent hierarchy
+- Guides you through the workflow
+- Sets up your development support mode
 
 ---
 
-#### `/improve` - Brainstorm with AI Team
+#### `/do` - Capture Idea & Discovery Meeting
 
-**Purpose:** Activates Product Manager, Engineering Lead, and Design Manager for brainstorming
+**Purpose:** Captures your project idea and conducts a discovery meeting with the AI team
 
 **Usage:**
 ```
-/improve
-```
-
-**Or with specific focus:**
-```
-/improve Focus on API design patterns and error handling strategies
+/do
 ```
 
 **What it does:**
-- Refines the feature set
-- Suggests technical approaches
-- Identifies potential challenges
-- Recommends best practices
-- Proposes alternative solutions
-- Estimates complexity
+- Captures your project idea
+- Conducts adaptive discovery meeting
+- Generates BRAINSTORM.md with refined ideas
+- Adapts questions based on your experience level
+- Supports multiple meeting speeds (Quick, Standard, Comprehensive, Deep Dive)
 
-**Output:** Results saved to `.plan/00_System/BRAINSTORM.md`
-
----
-
-#### `/write` - Generate Planning Documents
-
-**Purpose:** Generates comprehensive planning documents from your idea
-
-**Usage:**
-```
-/write
-```
-
-**What it generates:**
-- **PRD** (Product Requirements Document) - `.plan/00_System/PRD.md`
-  - User stories, acceptance criteria, feature specifications
-- **Architecture** - `.plan/00_System/ARCHITECTURE.md`
-  - System design, database schema, API structure, tech stack decisions
-- **Design System** - `.plan/00_System/DESIGN_SYSTEM.md`
-  - UI/UX guidelines, component library, color scheme, typography
+**Meeting Speeds:**
+- 🚀 **Quick Start** (5-10 min) - Simple projects or when in a hurry
+- ⚡ **Standard** (15-20 min) - Balanced depth for most projects
+- 📋 **Comprehensive** (30-45 min) - Detailed planning for complex projects
+- 🔍 **Deep Dive** (60+ min) - Complete exploration for enterprise solutions
 
 ---
 
-#### `/change` - Edit Planning Documents
+#### `/plan` - Generate Planning Documents & Tasks
 
-**Purpose:** Update specific planning documents without regenerating everything
-
-**Usage:**
-```
-/change prd <your update>
-/change architecture <your update>
-/change design_system <your update>
-```
-
-**Examples:**
-```
-/change prd Add requirement for API rate limiting: 100 requests per hour per IP address
-```
-
-```
-/change architecture Use PostgreSQL instead of SQLite for better scalability, add connection pooling configuration
-```
-
-```
-/change design_system Use Tailwind CSS for styling, color scheme: blue primary (#3B82F6), dark mode support
-```
-
----
-
-#### `/good` - Approve & Lock the Plan
-
-**Purpose:** Locks the current plan and enables task generation
-
-**Usage:**
-```
-/good
-```
-
-**What it does:**
-- Locks the current plan (PRD, Architecture, Design System)
-- Enables task generation
-- Updates `.plan/active_state.json` to mark planning as complete
-- Prepares the project for implementation phase
-
-**Note:** After `/good`, you can still use `/change` commands, but the plan is considered "approved" for task generation.
-
----
-
-### Implementation Phase Commands
-
-#### `/plan` - Generate Implementation Tasks
-
-**Purpose:** Creates detailed, actionable implementation tasks from the approved plan
+**Purpose:** Generates comprehensive planning documents and implementation tasks
 
 **Usage:**
 ```
@@ -142,37 +70,20 @@ This guide provides comprehensive documentation on using DoPlan CLI commands and
 ```
 
 **What it generates:**
-Creates `.plan/TASKS.md` with tasks broken down by:
+- **PRD** (Product Requirements Document) - `.do/00_System/PRD.md`
+  - User stories, acceptance criteria, feature specifications
+- **Architecture** - `.do/00_System/ARCHITECTURE.md`
+  - System design, database schema, API structure, tech stack decisions
+- **Design System** - `.do/00_System/DESIGN_SYSTEM.md`
+  - UI/UX guidelines, component library, color scheme, typography
+- **TASKS.md** - Detailed implementation tasks broken down by phases
 
-- **Setup & Configuration**
-  - Project initialization
-  - Dependencies installation
-  - TypeScript configuration
-  - Environment setup
+**Task Organization:**
+- **Phase 1: Foundation** - Core infrastructure
+- **Phase 2: Core Features** - Main functionality
+- **Phase 3: Enhancement** - Polish and optimization
 
-- **Core API Development**
-  - Express server setup
-  - Service layer implementation
-  - API routes and controllers
-  - Database setup and models
-
-- **Frontend Development**
-  - HTML/CSS/JS interface
-  - Form handling
-  - Data display
-  - User interactions
-
-- **Testing**
-  - Unit tests
-  - Integration tests
-  - API endpoint tests
-
-- **Deployment**
-  - Build configuration
-  - Deployment scripts
-  - Environment variables
-
-**Each task includes:**
+Each task includes:
 - Clear description
 - Acceptance criteria
 - Estimated complexity
@@ -181,15 +92,15 @@ Creates `.plan/TASKS.md` with tasks broken down by:
 
 ---
 
-#### `/build` - Start Coding
+#### `/dev` - Start Development
 
 **Purpose:** Begins implementation of tasks with AI agent guidance
 
 **Usage:**
 ```
-/build                    # Start first/next task
-/build <task-number>      # Start specific task
-/build <specific request> # Get help with implementation
+/dev                    # Start first/next task
+/dev <task-number>      # Start specific task
+/dev <specific request> # Get help with implementation
 ```
 
 **What it does:**
@@ -199,400 +110,150 @@ Creates `.plan/TASKS.md` with tasks broken down by:
 - Reviews your code
 - Suggests best practices
 - Helps debug issues
+- Automatically detects task completion
+- Creates Git branches automatically
+- Manages project state
 
 **Examples:**
 ```
-/build
+/dev
 ```
 
 ```
-/build 3
+/dev 3
 ```
 
 ```
-/build I need help setting up the Express server with TypeScript. Show me the complete server.ts file structure
+/dev I need help setting up the Express server with TypeScript. Show me the complete server.ts file structure
 ```
 
 ```
-/build Generate the QR service using the qrcode library with support for PNG and SVG formats
+/dev Generate the QR service using the qrcode library with support for PNG and SVG formats
 ```
 
 ```
-/build Review the qrController.ts file for best practices and error handling
+/dev Review the qrController.ts file for best practices and error handling
 ```
+
+**Auto-Completion Detection:**
+- When `/dev` detects a task is complete, it will:
+  - Show a summary of what was accomplished
+  - Ask if you want to mark it as done
+  - Auto-commit and push changes
+  - Move to the next task
 
 ---
 
-#### `/progress` - Check Progress
+#### `/sys` - System Management
 
-**Purpose:** Shows current project progress and task status
-
-**Usage:**
-```
-/progress
-```
-
-**What it shows:**
-- ✅ Completed tasks (with completion dates)
-- 🔄 In-progress tasks (currently working on)
-- ⏳ Remaining tasks (not started)
-- 📊 Overall completion percentage
-- 📈 Progress visualization
-
----
-
-#### `/done` - Mark Task Complete
-
-**Purpose:** Marks a task as complete and updates project state
+**Purpose:** System control panel for project management and operations
 
 **Usage:**
 ```
-/done           # Mark current task complete
-/done <number>  # Mark specific task complete
+/sys                    # Show system status
+/sys status             # Detailed project status
+/sys performance        # Performance metrics
+/sys backup             # Backup project
+/sys restore            # Restore from backup
+/sys memory             # Memory card management
+/sys state              # State management
+/sys feedback           # Feedback system
+/sys github             # GitHub integration
+/sys security           # Security settings
+/sys permissions         # File permissions
+/sys access             # Access control
 ```
 
 **What it does:**
-- Marks task as complete in `.plan/TASKS.md`
-- Updates `.plan/active_state.json`
-- Moves to the next task automatically
-- Records completion timestamp
-
-**Workflow:**
-```
-/done
-/build
-```
-
-This workflow: finish → build next, keeps you moving forward efficiently.
-
----
-
-### Team & Context Commands
-
-#### `/team` - Show Active Agents
-
-**Purpose:** Displays which AI agents are currently active and their roles
-
-**Usage:**
-```
-/team
-```
-
-**Shows:**
-- List of all 18 AI agents
-- Their current status (active/inactive)
-- Their roles and responsibilities
-- Hierarchy structure
-
----
-
-#### `/load` - Inject Context
-
-**Purpose:** Provides additional context to AI agents when they need more information
-
-**Usage:**
-```
-/load <context information>
-```
-
-**Examples:**
-```
-/load Add context: We're using Vercel for deployment, need to configure environment variables for production
-```
-
-```
-/load Context: We're building a QR Code Generator API. Current task is implementing the QR generation service. We're using Node.js, Express, TypeScript, and the qrcode npm package.
-```
-
----
-
-### Operations & Reporting Commands
-
-#### `/state` - Snapshot, Diff, and Restore Project State
-
-**Purpose:** Maintain `.plan/active_state.json` history so audits stay trustworthy.
-
-**Usage:**
-```
-/state snapshot --reason "before build 2.1"
-/state list --limit 5
-/state diff --json
-/state restore --file state-20251124T120000Z.json --yes
-```
-
-**What it does:**
-- Wraps `go run scripts/statehistory/main.go`
-- Writes timestamped snapshots into `.plan/history/`
-- Produces human-readable or JSON diffs between any two states
-- Restores state with guardrails (confirmation + optional auto-snapshot)
-
-> Snapshot before `/build` and after `/done` so `/progress` and `/report` can highlight exact deltas.
-
----
-
-#### `/report` - Generate Executive Scan Reports
-
-**Purpose:** Turn project state + feedback into SCAN reports and diffs.
-
-**Usage:**
-```
-/report
-/report ./test/qr-generator/test-no01 --preset detailed
-```
-
-**What it does:**
-1. Runs `go run scripts/scanreport/main.go` for the selected project.
-2. Updates `.plan/reports/SCAN_REPORT_<date>.md` plus matching JSON metadata.
-3. Builds `SCAN_DIFF_<date>.md` (latest vs previous) including `/progress` snapshot and `.plan/history` deltas.
-4. Supports presets: `standard` (default), `exec`, `detailed`, or a custom `.plan/reports/config.json`.
-
----
-
-#### `/feedback` - Log Product, Bug, or UX Signals
-
-**Purpose:** Maintain a canonical feedback ledger that surfaces in reports.
-
-**Usage:**
-```
-/feedback bug "QR download fails" "API returns 500 when Accept header missing" --author QA
-/feedback feature "Add dark mode" "Marketing wants a themed hero" --github https://github.com/org/repo/issues/123
-```
-
-**What it does:**
-- Parses type/title/details/author/github flags.
-- Runs `go run scripts/feedback/main.go`.
-- Appends to `Docs/history/feedback.md` and updates `Docs/history/feedback.json`.
-- Feeds `/report` so stakeholders see the latest insights.
-
----
-
-#### `/branchci` - Regenerate Branch-Aware Workflows
-
-**Purpose:** Keep `.github/workflows/task-branches.yml` aligned with your branch policy.
-
-**Usage:**
-```
-/branchci
-/branchci regenerate
-```
-
-**What it does:**
-1. Reads `Docs/history/branch-matrix.json` for branch prefixes + required jobs.
-2. Runs `go run scripts/branchci/main.go --matrix Docs/history/branch-matrix.json --out .github/workflows`.
-3. Emits verified workflows so every prefix (task/, feature/, hotfix/, etc.) gets the right CI gates.
-
----
-
-#### `/github` - Sync KPIs, Issues, and Milestones
-
-**Purpose:** Keep GitHub metadata, README KPIs, and Docs/history caches consistent.
-
-**Usage:**
-```
-/github info
-/github issue "Fix cache invalidation" "Details here"
-/github milestone "v1 GA" 2025-01-15
-```
-
-**What it does:**
-- `info`: runs `go run scripts/githubmeta/main.go --project . --sync-readme` to refresh the KPI block between `<!-- KPIS:START -->`/`END` and caches results in `Docs/history/github-meta.json`.
-- `issue` / `milestone`: prints fully formed `gh` CLI commands with repo slug, title/body, and dates so you can paste + run.
-
----
-
-### Quality & Release Commands
-
-#### `/ship` - Prepare for Release
-
-**Purpose:** Prepares the project for release
-
-**Usage:**
-```
-/ship
-```
-
-**What it does:**
-- Generates changelog
-- Updates version numbers
-- Creates release notes
-- Prepares deployment checklist
-- Reviews release readiness
-
----
-
-#### `/safe` - Security Audit
-
-**Purpose:** Runs comprehensive security audit
-
-**Usage:**
-```
-/safe
-```
-
-**What it checks:**
-- Dependency vulnerabilities
-- Code security issues
-- API security best practices
-- Authentication/authorization review
-- Data encryption
-- Input validation
-
----
-
-#### `/cheap` - Cost Optimization
-
-**Purpose:** Reviews and optimizes project costs
-
-**Usage:**
-```
-/cheap
-```
-
-**What it analyzes:**
-- Hosting costs analysis
-- Database optimization opportunities
-- API rate limiting strategies
-- Resource usage optimization
-- Cost-effective alternatives
+- **Status**: Shows current project state, progress, and metrics
+- **Performance**: Displays performance metrics and cache statistics
+- **Backup**: Creates full project backup
+- **Restore**: Restores project from backup
+- **Memory**: Manages memory card (personalization data)
+- **State**: Manages project state snapshots
+- **Feedback**: Logs feedback and suggestions
+- **GitHub**: Syncs KPIs, creates issues, manages milestones
+- **Security**: Security audit and settings
+- **Permissions**: Manages file permissions
+- **Access**: Controls access to project files
 
 ---
 
 ## 🔄 Complete Workflow
 
-### Phase 1: Planning (15-20 minutes)
+### Phase 1: Onboarding (First Time Only)
 
 ```
-1. /tell <your idea>           → Capture project idea
-2. /improve                     → Brainstorm with AI team
-3. /write                       → Generate PRD, Architecture, Design System
-4. /change prd <update>         → Refine requirements (optional)
-5. /change architecture <update> → Adjust technical design (optional)
-6. /good                        → Approve plan and lock it
+1. /hey                  → Welcome and tutorial
 ```
 
-### Phase 2: Implementation (2-6 hours)
+### Phase 2: Planning (15-30 minutes)
 
 ```
-7. /plan                         → Generate implementation tasks
-8. /state snapshot --reason "pre-build" → Capture baseline before coding
-9. /build                        → Start next task (or /build <task-number>)
-10. /progress                    → Check completion status (optional but recommended)
-11. /done                    → Mark task complete (auto-commit + push)
-12. /state snapshot --reason "post-finish" → Record completion delta
-13. Repeat steps 9-12            → Continue through remaining tasks
+2. /do                   → Capture idea and discovery meeting
+3. /plan                 → Generate planning documents and tasks
 ```
 
-### Phase 3: Quality & Release (1-2 hours)
+### Phase 3: Development (Iterative)
 
 ```
-14. /report                      → Generate SCAN report + diff for stakeholders
-15. /feedback <type> ...         → Log stakeholder input captured during reviews
-16. /safe                        → Security audit
-17. /cheap                       → Cost optimization review
-18. /ship                        → Prepare for release
+4. /dev                  → Start coding (auto-detects completion)
+5. Repeat /dev            → Continue through remaining tasks
 ```
 
-### Helper Commands (use anytime)
+### Phase 4: System Management (As Needed)
 
 ```
-/team                             → See active AI agents
-/load <context>                   → Inject context into agents
-/github info                      → Sync KPI block + metadata cache
-/branchci                         → Keep branch-aware CI in sync
-```
-
----
-
-## 🎯 QR Code Generator Project Prompt
-
-### Complete `/tell` Prompt for QR Code Generator API
-
-Copy and paste this complete prompt when using `/tell` to create your QR Code Generator project:
-
-```
-/tell I want to build a QR Code Generator API micro SaaS. Here are the requirements:
-
-**Core Features:**
-- REST API endpoint that accepts text or URLs via POST request
-- Generate QR codes in PNG and SVG formats
-- Support customizable size (default 200x200 pixels)
-- Support error correction levels (L, M, Q, H)
-- Return base64 encoded image or direct file download
-- Simple analytics tracking (generation count, timestamp)
-
-**Technical Stack:**
-- Backend: Node.js with Express framework
-- Language: TypeScript for type safety
-- Database: SQLite for MVP (easy to upgrade to PostgreSQL later)
-- QR Library: qrcode npm package
-- Image Processing: sharp for image manipulation if needed
-
-**API Endpoints:**
-1. POST /api/qr - Generate QR code
-   - Request body: { text: string, size?: number, format?: 'png'|'svg', errorCorrection?: 'L'|'M'|'Q'|'H' }
-   - Response: { qrCode: string (base64), format: string, size: number } or file download
-
-2. GET /api/analytics - Get usage statistics
-   - Response: { totalGenerations: number, recentActivity: array }
-
-**Frontend:**
-- Simple HTML/CSS/JavaScript interface
-- Form to input text/URL
-- Preview generated QR code
-- Download button for PNG/SVG
-- Display analytics
-
-**MVP Scope:**
-- Focus on core QR generation first
-- Basic analytics (count only)
-- Simple web interface
-- No authentication required for MVP
-
-**Future Enhancements (v2.0+):**
-- Custom colors and styling
-- Logo embedding in center
-- Batch generation
-- API keys for rate limiting
-- Advanced analytics dashboard
-- Custom domains
+6. /sys status           → Check project status
+7. /sys performance      → View performance metrics
+8. /sys backup           → Backup project
 ```
 
 ---
 
 ## 💡 Command Usage Examples
 
-### Example 1: Debugging Help
+### Example 1: Starting a New Project
 
 ```
-/build I'm getting an error: "Cannot find module 'qrcode'". Help me fix the import and ensure the package is installed correctly.
+/hey                     # First-time tutorial
+/do                      # Capture your idea and conduct meeting
+/plan                    # Generate all planning documents
+/dev                     # Start coding first task
 ```
 
-### Example 2: Adding Features
+### Example 2: Getting Implementation Help
 
 ```
-/build Add rate limiting to the /api/qr endpoint: max 100 requests per hour per IP address. Use express-rate-limit package.
+/dev I'm getting an error: "Cannot find module 'qrcode'". Help me fix the import and ensure the package is installed correctly.
 ```
 
-### Example 3: Code Review
+### Example 3: Adding Features
 
 ```
-/build Review my qrController.ts file. Check for:
+/dev Add rate limiting to the /api/qr endpoint: max 100 requests per hour per IP address. Use express-rate-limit package.
+```
+
+### Example 4: Code Review
+
+```
+/dev Review my qrController.ts file. Check for:
 - Error handling best practices
 - Input validation completeness
 - Response format consistency
 - Security considerations
 ```
 
-### Example 4: Refactoring
+### Example 5: Refactoring
 
 ```
-/build Refactor the analytics service to use async/await instead of callbacks. Ensure database operations are properly handled.
+/dev Refactor the analytics service to use async/await instead of callbacks. Ensure database operations are properly handled.
 ```
 
-### Example 5: Testing
+### Example 6: Testing
 
 ```
-/build Create comprehensive tests for the QR generation service:
+/dev Create comprehensive tests for the QR generation service:
 - Test PNG generation
 - Test SVG generation
 - Test different error correction levels
@@ -600,73 +261,46 @@ Copy and paste this complete prompt when using `/tell` to create your QR Code Ge
 - Test error handling
 ```
 
-### Example 6: Deployment
+### Example 7: Deployment
 
 ```
-/build Help me prepare for deployment to Vercel:
+/dev Help me prepare for deployment to Vercel:
 - Create vercel.json configuration
 - Set up environment variables
 - Configure build settings
 - Add deployment scripts
 ```
 
-### Example 7: Focused Brainstorming
+### Example 8: System Management
 
 ```
-/improve Focus on API design patterns, error handling strategies, and database schema for analytics tracking
-```
-
-### Example 8: Architecture Changes
-
-```
-/change architecture We decided to use PostgreSQL instead of SQLite. Update the database schema and connection setup. Add migration scripts.
+/sys status              # Check current project state
+/sys performance         # View performance metrics
+/sys backup              # Create backup
+/sys github info         # Sync GitHub KPIs
 ```
 
 ---
 
 ## 🎓 Best Practices
 
-### 1. Start Simple
-Focus on MVP first. Use:
-```
-/build Start with the simplest QR generation endpoint first
-```
+### 1. Start with `/hey`
+For new users, always start with `/hey` to get the tutorial and understand the system.
 
-### 2. Iterate Frequently
-Use `/change` commands to refine as you go:
-```
-/change architecture Add Redis caching for frequently generated QR codes
-```
+### 2. Use `/do` for Discovery
+Use `/do` to capture your idea and let the AI team conduct a thorough discovery meeting. Choose the meeting speed that matches your project complexity.
 
-### 3. Test Early
-Write tests alongside code:
-```
-/build After creating qrService.ts, immediately create test file with basic tests
-```
+### 3. Plan Before Coding
+Always run `/plan` after `/do` to generate comprehensive planning documents and task breakdowns.
 
-### 4. Leverage AI Agents
-Use `/team` to see which agents can help:
-```
-/team
-```
+### 4. Iterate with `/dev`
+Use `/dev` to start coding. The system will automatically detect when tasks are complete and guide you to the next one.
 
-Provide context when needed:
-```
-/load Context: We're building a QR Code Generator API. Current task is implementing the QR generation service. We're using Node.js, Express, TypeScript, and the qrcode npm package. The service needs to support PNG and SVG formats with customizable size and error correction levels.
-```
+### 5. Monitor with `/sys`
+Regularly check `/sys status` to track progress and `/sys performance` to monitor system health.
 
-### 5. Document Progress
-Keep notes in `STANDUP.md`:
-- Update daily with progress
-- Note blockers
-- Track decisions
-
-### 6. Regular Progress Checks
-```
-/progress
-```
-
-Check progress regularly to stay on track.
+### 6. Backup Regularly
+Use `/sys backup` before major changes to ensure you can restore if needed.
 
 ---
 
@@ -674,65 +308,51 @@ Check progress regularly to stay on track.
 
 ### Agent Not Responding or Giving Generic Answers?
 
+Make sure you've run `/do` first to provide context about your project. The discovery meeting sets up all the necessary context for the AI agents.
+
+### Stuck on a Task?
+
+Use `/dev` with a specific request:
 ```
-/load Context: We're building a QR Code Generator API. Current task is implementing the QR generation service. We're using Node.js, Express, TypeScript, and the qrcode npm package. The service needs to support PNG and SVG formats with customizable size and error correction levels.
+/dev I'm stuck on task 3.2. The authentication service isn't working. Help me debug the issue.
 ```
 
-### Stuck on a Task? Need Alternative Approaches?
+### Need to Check Project State?
 
 ```
-/improve I'm having trouble with the QR code generation. The qrcode library is returning a buffer but I need base64. Suggest 3 different approaches to convert the buffer to base64 string.
-```
-
-### Need to Pivot or Change Direction?
-
-```
-/change architecture We decided to use PostgreSQL instead of SQLite. Update the database schema and connection setup. Add migration scripts.
+/sys status              # See current state and progress
 ```
 
 ### Version or State Issues?
 
 ```
-/load Check .plan/active_state.json and verify the current project state. What tasks are marked as complete?
+/sys state               # Manage state snapshots
+/sys restore             # Restore from backup if needed
 ```
 
 ### Code Not Working? Need Debugging Help?
 
 ```
-/build Debug this issue: The QR code endpoint returns 500 error. The error message is "TypeError: Cannot read property 'toString' of undefined". Review the qrService.ts file and fix the issue.
-```
-
-### Need to Understand Existing Code?
-
-```
-/load Explain how the current analytics service works. Show me the database schema and how data flows from API endpoint to database storage.
+/dev Debug this issue: The QR code endpoint returns 500 error. The error message is "TypeError: Cannot read property 'toString' of undefined". Review the qrService.ts file and fix the issue.
 ```
 
 ---
 
 ## 📋 Quick Reference Card
 
-### Planning Commands
-- `/tell <idea>` - Capture project idea
-- `/improve` - Brainstorm
-- `/write` - Generate planning docs
-- `/change <doc> <update>` - Edit documents
-- `/good` - Approve plan
+### Core Commands
+- `/hey` - Welcome and tutorial
+- `/do` - Capture idea and discovery meeting
+- `/plan` - Generate planning documents and tasks
+- `/dev` - Start development (auto-detects completion)
+- `/sys` - System management
 
-### Implementation Commands
-- `/plan` - Generate tasks
-- `/build` - Start coding
-- `/progress` - Check status
-- `/done` - Mark complete
-
-### Helper Commands
-- `/team` - Show agents
-- `/load <context>` - Add context
-
-### Quality Commands
-- `/safe` - Security audit
-- `/cheap` - Cost optimization
-- `/ship` - Prepare release
+### Common `/sys` Subcommands
+- `/sys status` - Project status
+- `/sys performance` - Performance metrics
+- `/sys backup` - Backup project
+- `/sys restore` - Restore from backup
+- `/sys github info` - Sync GitHub KPIs
 
 ---
 
@@ -750,16 +370,16 @@ Check progress regularly to stay on track.
    ```
 
 3. **Start Workflow:**
-   - Use `/tell` with the QR Code Generator prompt above
-   - Follow the complete workflow
-   - Build your MVP!
+   - Type `/hey` for first-time tutorial
+   - Type `/do` to capture your idea
+   - Type `/plan` to generate planning documents
+   - Type `/dev` to start coding
 
 ---
 
 ## 📚 Additional Resources
 
-- **Project Structure:** See `test/qr-generator/test-no01/` for a complete example
-- **Full Guide:** See `docs/APP_IDEAS.md` for detailed step-by-step instructions
+- **Project Structure:** See generated project structure for examples
 - **Agent Definitions:** Check `.cursor/agents/` for all 18 agent personas
 - **Command Definitions:** See `.cursor/commands/` for command details
 - **Rules Library:** Explore `.cursor/rules/library/` for tech stack rules
@@ -769,4 +389,3 @@ Check progress regularly to stay on track.
 **Happy Building! 🎉**
 
 *Generated by DoPlan CLI - Your AI Project Director*
-

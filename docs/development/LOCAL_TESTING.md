@@ -436,11 +436,11 @@ COMMAND_COUNT=$(ls .cursor/commands/*.md 2>/dev/null | wc -l)
 echo "Found $COMMAND_COUNT commands (expected 19)"
 
 # Verify key commands exist
-test -f .cursor/commands/tell.md && echo "✅ /tell command"
-test -f .cursor/commands/write.md && echo "✅ /write command"
-test -f .cursor/commands/build.md && echo "✅ /build command"
-test -f .cursor/commands/improve.md && echo "✅ /improve command"
+test -f .cursor/commands/hey.md && echo "✅ /hey command"
+test -f .cursor/commands/do.md && echo "✅ /do command"
 test -f .cursor/commands/plan.md && echo "✅ /plan command"
+test -f .cursor/commands/dev.md && echo "✅ /dev command"
+test -f .cursor/commands/sys.md && echo "✅ /sys command"
 ```
 
 ### 15. Test Rules Library Extraction

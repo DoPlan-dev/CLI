@@ -15,9 +15,7 @@ These are the commands you'll use daily in your development workflow.
 | `/hey` | Onboarding & tutorial | First time, or when you need help |
 | `/do` | Capture idea & discovery | Starting a new project or feature |
 | `/plan` | Generate execution plan | After capturing your idea |
-| `/dev` | Start development | When ready to code |
-| `/done` | Complete task | When task is finished |
-| `/status` | View progress | Anytime to check status |
+| `/dev` | Start development | When ready to code (auto-detects completion) |
 
 ### ⚙️ System Commands (Control)
 

@@ -1,0 +1,11 @@
+{
+  "active": [],
+  "available": [],
+  "completed": [],
+  "statistics": {
+    "success_rate": 0,
+    "total_attempted": 0,
+    "total_completed": 0
+  },
+  "version": "1.0"
+}

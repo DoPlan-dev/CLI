@@ -7,7 +7,7 @@ You are an elite Go engineer in November 2025. Your task is to build **DoPlan CL
 **DoPlan CLI** is a single-binary Go application (< 15MB) that generates complete project structures with:
 - 18+ hierarchical AI agents (Project Orchestrator, Product Manager, Engineers, Designers, QA, etc.)
 - 1000+ embedded rules library covering all major tech stacks
-- Real-English slash commands (`/tell`, `/write`, `/build`, etc.)
+- Real-English slash commands (`/hey`, `/do`, `/plan`, `/dev`, `/sys`)
 - Automated GitHub workflows (CI/CD, releases, changelog)
 - Support for 6 AI-powered IDEs (Cursor, Claude Code, Antigravity, Windsurf, Cline, OpenCode)
 - Beautiful interactive TUI built with Bubbletea
@@ -31,7 +31,7 @@ When run, DoPlan must:
 6. Generate GitHub Actions workflows in `.github/workflows/`
 7. Generate boilerplate code in `src/` based on project type
 8. Generate IDE-specific configuration files
-9. Print: "Open with: code ./project-name" and "Then type /tell to begin"
+9. Print: "Open with: code ./project-name" and "Then type /hey to begin"
 
 ## 🏗️ Project Structure to Generate
 
@@ -87,7 +87,7 @@ my-project/
 
 ### Generate Source Code
 
-Projects start plan-first. When you're ready to build, scaffold the stack with your preferred tool (for example `npx create-next-app`, `pnpm create`, `go mod init`, etc.). The legacy `scripts/boilerplate` helper has been removed, so `/build` expects you to bring or generate the starter code manually.
+Projects start plan-first. When you're ready to build, scaffold the stack with your preferred tool (for example `npx create-next-app`, `pnpm create`, `go mod init`, etc.). The legacy `scripts/boilerplate` helper has been removed, so `/dev` expects you to bring or generate the starter code manually.
 
 ## 🤖 AI Agent System
 
@@ -162,67 +162,55 @@ Each agent file (`.cursor/agents/{name}.md`) contains:
 
 ## 📝 Command System
 
-### Core Commands (11 commands)
+### Core Commands (5 commands)
 
-1. **`/tell`** - Capture project idea
-   - Saves to `.plan/00_System/IDEA.md`
-   - Activates Project Orchestrator
+1. **`/hey`** - Welcome & Tutorial
+   - First-time welcome and tutorial experience
+   - Introduces the DoPlan system
+   - Explains the agent hierarchy
+   - Guides through the workflow
 
-2. **`/improve`** - Team brainstorm session
-   - All Level 1 managers brainstorm
-   - Updates `.plan/00_System/BRAINSTORM.md`
+2. **`/do`** - Capture Idea & Discovery Meeting
+   - Captures project idea
+   - Conducts adaptive discovery meeting
+   - Generates BRAINSTORM.md with refined ideas
+   - Adapts questions based on experience level
+   - Supports multiple meeting speeds
 
-3. **`/team`** - Show active agents and hierarchy
-   - Lists all agents with their roles
-
-4. **`/write`** - Generate PRD + ARCHITECTURE + DESIGN_SYSTEM
+3. **`/plan`** - Generate Planning Documents & Tasks
+   - Generates PRD, ARCHITECTURE, DESIGN_SYSTEM
    - Product Manager → PRD.md
    - Engineering Lead → ARCHITECTURE.md
    - Design Manager → DESIGN_SYSTEM.md
-
-5. **`/change`** - Edit any document
-   - Example: `/change prd Add dark mode`
-   - Updates specified document
-
-6. **`/good`** - Approve & lock plan
-   - Sets `locked: true` in active_state.json
-   - Prepares for task generation
-
-7. **`/plan`** - Generate execution plan + TASKS.md
-   - Synthesizes implementation tasks from the approved plan
+   - Synthesizes implementation tasks from the plan
+   - Creates TASKS.md with detailed tasks
    - Scaffolds phase + feature folders for execution
 
-8. **`/load`** - Inject context into AI agents
-   - Loads rules or files into agent context
-   - Example: `/load @library/04-frameworks/frontend/nextjs.md`
-
-9. **`/build`** - Start coding next task
-   - `/build` - Next uncompleted task
-   - `/build 3` - Specific task
+4. **`/dev`** - Start Development
+   - `/dev` - Next uncompleted task
+   - `/dev <task-number>` - Specific task
+   - `/dev <specific request>` - Get help with implementation
    - Activates Engineering Lead + relevant team leads
    - Updates active_state.json
+   - Automatically detects task completion
+   - Auto-commits with conventional commit format
+   - Auto-pushes to current branch
+   - Updates CHANGELOG.md if significant
+   - Triggers CI workflow
 
-10. **`/progress`** - Show current progress
-    - Reads TASKS.md and active_state.json
-    - Shows completion percentage, current task
-
-11. **`/finished`** - Mark current task done
-    - Marks task complete in TASKS.md
-    - Updates active_state.json
-    - **Auto-commits** with conventional commit format
-    - **Auto-pushes** to current branch
-    - Updates CHANGELOG.md if significant
-    - Triggers CI workflow
-
-### Squad-Specific Commands
-- `/secure` - Security review (Security Lead)
-- `/roles` - Design RBAC system
-- `/money` - Billing & payment setup
-- `/pretty` - UI/UX improvements
-- `/seo` - SEO optimization
-- `/ship` - Release management (Release Captain)
-- `/safe` - Security audit
-- `/cheap` - Cost optimization
+5. **`/sys`** - System Management
+   - `/sys` - Show system status
+   - `/sys status` - Detailed project status
+   - `/sys performance` - Performance metrics
+   - `/sys backup` - Backup project
+   - `/sys restore` - Restore from backup
+   - `/sys memory` - Memory card management
+   - `/sys state` - State management
+   - `/sys feedback` - Feedback system
+   - `/sys github` - GitHub integration
+   - `/sys security` - Security settings
+   - `/sys permissions` - File permissions
+   - `/sys access` - Access control
 
 ### Command File Format
 Each command file (`.cursor/commands/{name}.md`) contains:
@@ -400,7 +388,7 @@ require (
 ### GitHub Workflow Automation
 - CI runs on every push to any branch
 - Commits use conventional commit format
-- Auto-commit and push on `/finished`
+- Auto-commit and push on `/dev` when task completion is detected
 - Release automation on version tags
 - Changelog auto-updates
 

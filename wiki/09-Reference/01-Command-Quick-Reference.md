@@ -101,48 +101,6 @@ All DoPlan commands in one place. Quick lookup for syntax, options, and examples
 
 ---
 
-### `/done`
-
-**Purpose**: Mark task complete
-
-**Syntax**:
-```bash
-/done
-/done --project <path>
-```
-
-**Options**:
-- `--project <path>` - Specify project path
-
-**Examples**:
-```bash
-/done
-/done --project ./my-project
-```
-
----
-
-### `/status`
-
-**Purpose**: View progress
-
-**Syntax**:
-```bash
-/status
-/status --project <path>
-```
-
-**Options**:
-- `--project <path>` - Specify project path
-
-**Examples**:
-```bash
-/status
-/status --project ./my-project
-```
-
----
-
 ## ⚙️ System Commands
 
 ### `/sys`
@@ -263,9 +221,8 @@ All DoPlan commands in one place. Quick lookup for syntax, options, and examples
 /hey
 /do
 /plan
-/dev
-/done
-/status
+/dev                    # Auto-detects completion
+/sys status
 /sys engagement
 ```
 
@@ -274,16 +231,14 @@ All DoPlan commands in one place. Quick lookup for syntax, options, and examples
 ```bash
 /do now --prompt "..."
 /plan
-/dev
-/done
+/dev                    # Auto-detects completion
 ```
 
 ### Feature Addition
 
 ```bash
 /do feature
-/dev --feature "feature-name"
-/done
+/dev --feature "feature-name"  # Auto-detects completion
 ```
 
 ---
@@ -291,9 +246,9 @@ All DoPlan commands in one place. Quick lookup for syntax, options, and examples
 ## 💡 Command Tips
 
 - **Use `--project`** - Specify project path
-- **Check `/status`** - Regular progress checks
+- **Check `/sys status`** - Regular progress checks
 - **View `/sys engagement`** - Stay motivated
-- **Always use `/done`** - When tasks complete
+- **`/dev` auto-detects completion** - No need to manually mark tasks done
 - **Use fast-track** - When you have detailed prompt
 
 ---

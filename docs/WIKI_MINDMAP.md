@@ -17,9 +17,13 @@ Core Commands (Workflow)
 │   ├── /do now
 │   └── /do i'm lucky
 ├── /plan         → Generate execution plan
-├── /dev          → Start development workflow
-├── /done         → Mark task complete (auto-commit/push)
-└── /status       → View progress
+├── /dev          → Start development workflow (auto-detects completion)
+└── /sys          → System control panel
+    ├── /sys status → View progress
+    ├── /sys engagement → Engagement dashboard
+    ├── /sys role → Role management
+    ├── /sys security → Security settings
+    └── /sys control → System control
 
 System Commands (Control)
 └── /sys          → System control panel
@@ -140,7 +144,7 @@ Time Tracker (.do/system/time-tracker.jsonl)
 ├── Automatic Tracking
 │   ├── Command Execution
 │   ├── Phase Duration
-│   ├── Task Duration (from /dev to /done)
+│   ├── Task Duration (from /dev start to completion detection)
 │   └── Session Duration
 │
 ├── Metadata
@@ -171,7 +175,7 @@ State System
 └── State History (.do/system/history/state-*.json)
     ├── Automatic Snapshots
     ├── Before/After /dev
-    ├── Before/After /done
+    ├── On task completion (auto-detected)
     ├── Diff Capability
     └── Rollback Support
 ```
@@ -247,8 +251,9 @@ Project Root
 - Personalized messages
 - Memory card updates
 
-### Phase 5: COMPLETION (/done)
-- Task completion verification
+### Phase 5: COMPLETION (Auto-Detected by /dev)
+- Task completion detection
+- Completion verification
 - Dependency checking
 - TASKS.md update
 - State update
@@ -260,7 +265,7 @@ Project Root
 - Achievement/challenge checking
 - Duration display
 
-### Phase 6: MONITORING (/status)
+### Phase 6: MONITORING (/sys status)
 - Progress tracking
 - State deltas
 - Task statistics
@@ -378,15 +383,15 @@ New User
   ├── Task Selection
   ├── Branch Creation
   ├── Development
-  └── /done (Completion)
+  └── Auto-Completion Detection
       ├── Auto-Commit
       ├── Auto-Push
       ├── Achievements
       └── Next Task
   ↓
-Repeat /dev → /done
+Repeat /dev (auto-detects completion)
   ↓
-/status (Progress)
+/sys status (Progress)
   └── Dashboard View
   ↓
 /sys engagement (Engagement)

@@ -88,8 +88,8 @@ func TestCommandsGenerator_Generate_FileContent(t *testing.T) {
 	// Verify file content for a specific command
 	// Commands are in category folders, check central location
 	centralCommandsDir := filepath.Join(tmpDir, ".do", "core", "commands")
-	// "tell" command is in "core" category
-	tellPath := filepath.Join(centralCommandsDir, "core", "tell.md")
+	// "do" command is in "onboarding" category
+	tellPath := filepath.Join(centralCommandsDir, "onboarding", "do.md")
 
 	// If not found in core, try other categories
 	if _, err := os.Stat(tellPath); os.IsNotExist(err) {

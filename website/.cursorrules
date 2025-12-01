@@ -1,0 +1,208 @@
+# DoPlan Project Configuration
+
+## Overview
+This project uses DoPlan's hierarchical AI agency structure with Cursor's advanced AI capabilities.
+
+## Cursor Features
+- **Agent Mode**: Use Ctrl+I to delegate complex tasks to the AI agent
+- **Tab Autocomplete**: Multi-line code completions with context awareness
+- **Inline Edit**: Select code and press Ctrl+K to describe changes
+- **Ask Mode**: Use Ctrl+L for complex questions requiring multiple steps or deep codebase understanding
+- **Codebase Understanding**: Cursor's retrieval model understands your entire codebase structure and relationships
+
+## @Docs Feature
+Add documentation sources that Cursor can reference automatically:
+
+1. **Add documentation sources**:
+   - Go to Settings → Features → Docs
+   - Add directories like docs/, .do/, or specific markdown files
+   - The AI will reference these when generating code
+
+2. **Using @Docs in chat**:
+   - Type @Docs to see available documentation sources
+   - Use @filename or @folder to reference specific files
+   - Cursor will automatically pull relevant context from your docs
+
+3. **Documentation structure**:
+   - Place project documentation in docs/ directory
+   - Planning documents in .do/ directory
+   - Rules and guidelines in .cursor/rules/ directory
+
+4. **Keeping docs up to date**:
+   - Ask Cursor: "Are any docs outdated based on recent changes?"
+   - Use "Generate Cursor Rules" to create rules from code or conversations
+   - Cursor can help identify and update stale documentation
+
+## @Web Feature
+Use @Web to enable web search in Cursor:
+- Search the web for documentation, examples, and solutions
+- Access up-to-date information from the internet
+- Combine web results with your codebase context
+- Useful for finding best practices and troubleshooting
+
+## Model Context Protocol (MCP)
+Cursor supports MCP for extended functionality:
+
+1. **MCP for Documentation**:
+   - Connect to internal documentation systems
+   - Access project management tools
+   - Integrate with knowledge bases
+   - Pull context from external sources
+
+2. **MCP Configuration**:
+   - Create mcp.json in .cursor/ directory
+   - Configure MCP servers and tools
+   - CLI automatically detects and respects mcp.json
+   - Same MCP servers work in both IDE and CLI
+
+3. **Using MCP**:
+   - Access tools and resources from MCP servers
+   - Extend Cursor's capabilities with custom integrations
+   - Connect to internal systems and APIs
+
+## Agent Hierarchy
+This project uses a hierarchical AI agency structure. All agents are defined in .do/core/agents/ (symlinked to .cursor/agents/)
+
+Reference agents in chat using @agent-name (e.g., @frontend_lead, @backend_lead)
+
+## Commands
+All commands are defined in .do/core/commands/ (symlinked to .cursor/commands/). Type any command (e.g., /do, /plan) to activate it.
+
+Available commands:
+- /hey - Welcome, tutorial, and command introductions
+- /do - Capture project idea, conduct meeting, and refine
+- /plan - Generate documents & execution plan (subcommands: docs, content, everything, phases, next, etc.)
+- /dev - Start coding with automatic completion detection
+- /sys - System control panel (subcommands: status, optimize, performance, backup, restore, memory, state, feedback, github, security, permissions, access)
+
+## Rules System
+
+### Rules as Long-Term Memory
+Rules serve as Cursor's long-term memory for your project:
+- Capture project-specific patterns and conventions
+- Remember architectural decisions and design choices
+- Store domain knowledge and business logic
+- Persist across conversations and sessions
+
+### Rules Library
+Stack-specific rules are organized in .cursor/rules/ directory. Each category folder (e.g., 01-core-workflow, 03-languages) is symlinked from .do/core/library/. These rules guide the AI's behavior for:
+- Language-specific conventions (Go, JavaScript, TypeScript, Python)
+- Framework best practices (React, Next.js, Express)
+- Testing standards (Jest, Vitest, Go testing)
+- Code quality and security guidelines
+
+### Generate Cursor Rules
+Create rules automatically from:
+- **Code**: Extract patterns from existing codebase
+- **Conversations**: Generate rules from chat discussions
+- **Documentation**: Convert docs into actionable rules
+- Use "Generate Cursor Rules" feature to create rules quickly
+
+### Domain-Specific Rules (.mdc files)
+Create custom rules files in .cursor/rules/ directory with .mdc extension:
+
+```markdown
+---
+description: Clear description of what the rule enforces
+globs: path/to/files/*.ext, other/path/**/*
+alwaysApply: true
+---
+
+Rule content here...
+```
+
+
+
+Example rule structure:
+- **Frontmatter**: YAML metadata (description, globs, alwaysApply)
+- **Content**: Markdown with clear guidelines
+- **File references**: Use `[filename](mdc:path/to/file)` syntax
+- **Code examples**: Include both DO and DON'T patterns
+
+### Using Rules
+- Rules in .cursorrules apply to the entire project
+- Rules in .cursor/rules/*.mdc can target specific file patterns via globs
+- Use alwaysApply: true for rules that should always be active
+- Reference rules in chat: @rules or @library/path/to/rule.mdc
+
+## Planning Process
+For complex features and large changes, use Cursor's planning capabilities:
+
+1. **Break down the task**: Ask Cursor to create a plan before implementing
+   - "Create a plan to add user authentication"
+   - "Plan the migration from REST to GraphQL"
+
+2. **Review the plan**: Cursor will break down complex tasks into manageable steps
+   - Review each step before execution
+   - Modify the plan as needed
+
+3. **Execute incrementally**: Implement one step at a time
+   - Use Agent Mode (Ctrl+I) for each step
+   - Review changes between steps
+
+4. **Use Ask Mode for planning questions**: 
+   - "What files will be affected by this change?"
+   - "How should I structure this feature?"
+
+## Documentation Maintenance
+Keep your documentation up to date and AI-friendly:
+
+1. **Keep docs current**: Update documentation as code changes
+   - Cursor can help identify outdated docs
+   - Ask: "Are any docs outdated based on recent changes?"
+
+2. **LLM-optimized format**: Structure docs for both humans and AI:
+   - Include concrete file references
+   - Use clear section headings
+   - Provide examples with file paths
+
+3. **Use @Docs feature**: Add frequently referenced docs to @Docs
+   - Architecture documentation
+   - API specifications
+   - Development workflows
+
+4. **Timestamp tracking**: Include last-update timestamps in docs
+   - Helps identify stale documentation
+   - Format: <!-- Generated: YYYY-MM-DD HH:MM:SS UTC -->
+
+## Large Codebases
+For complex projects:
+1. **Use Ask Mode (Ctrl+L)**: For questions requiring deep codebase understanding
+2. **Leverage Rules**: Create comprehensive rules in .cursor/rules/ directory
+3. **Documentation**: Add key docs to @Docs for automatic context
+4. **Planning**: Use /plan command to break down complex tasks
+5. **Agent Mode**: Use Ctrl+I for multi-file changes and complex refactoring
+
+## Project State
+Current project state is tracked in .do/active_state.json
+
+## Workflow
+1. **Welcome** (New Users): Type /hey for first-time tutorial and setup
+2. **Add Documentation Sources**: Configure @Docs with your docs/, .do/, and README.md
+3. **Reference Context**: Use @docs or @filename when asking questions
+4. **Capture Ideas**: Type /do to capture your idea and conduct meeting
+5. **Plan**: Type /plan to generate documents and execution plan
+6. **Code**: Type /dev to start coding with Agent Mode (Ctrl+I) and automatic completion detection
+7. **System**: Type /sys status to check progress and generate reports
+
+For complex questions, use Ask Mode (Ctrl+L) instead of Composer (Ctrl+I).
+
+## Context Management
+- **@filename**: Reference specific files in chat
+- **@folder**: Include entire directories
+- **@agent-name**: Activate specific agent personalities
+- **@docs**: Reference documentation sources
+- **@rules**: Reference specific rule files
+- **Ask Mode (Ctrl+L)**: Better for complex, multi-step questions
+- **Agent Mode (Ctrl+I)**: Better for multi-file changes and refactoring
+
+Cursor automatically understands your codebase structure and relationships through its retrieval model.
+
+## Best Practices
+- Keep .cursorrules focused on project-wide guidelines
+- Create domain-specific rules in .cursor/rules/*.mdc files
+- Add comprehensive documentation to @Docs
+- Use Ask Mode for understanding, Agent Mode for implementing
+- Reference rules and docs explicitly when asking complex questions
+
+For full command list and detailed documentation, see README.md

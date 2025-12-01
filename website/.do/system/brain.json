@@ -1,0 +1,15 @@
+{
+  "behavioral_instructions": [],
+  "context": {
+    "current_phase": "initialization",
+    "current_project": "test"
+  },
+  "enabled": true,
+  "memory_card": "memory_card.json",
+  "personalization": {
+    "enabled": true,
+    "level": 0
+  },
+  "tone_level": 0,
+  "version": "1.0"
+}

@@ -234,16 +234,16 @@ Generate structured execution plan from your idea documents.
 
 ---
 
-## Phase 4: Development (`/dev` → `/done`)
+## Phase 4: Development (`/dev` - Auto-Detection)
 
 ### Purpose
 
-Build your project task by task with automatic tracking and Git automation.
+Build your project task by task with automatic tracking, completion detection, and Git automation.
 
 ### Duration
 
 - **Per task**: Minutes to hours (varies)
-- **Task overhead**: ~1 minute (start + complete)
+- **Task overhead**: Minimal (auto-detection)
 
 ### The Development Loop
 
@@ -252,7 +252,7 @@ Build your project task by task with automatic tracking and Git automation.
   ↓
 [Code]  → Develop feature
   ↓
-/done   → Complete task
+/dev    → Auto-detects completion (auto-commit/push)
   ↓
 /dev    → Next task
   ↓
@@ -295,7 +295,7 @@ Build your project task by task with automatic tracking and Git automation.
 📝 Next steps:
    • Review feature documentation in .do/plan/
    • Start coding with your IDE
-   • Type /done when task is complete
+   • /dev will automatically detect when task is complete
 ```
 
 **Time tracking starts**: `task_started_at` stored in active_state.json
@@ -310,23 +310,39 @@ Build your project task by task with automatic tracking and Git automation.
 
 **Time**: Varies (minutes to hours)
 
-### Completing a Task (`/done`)
+### Auto-Completion Detection
+
+When `/dev` detects that a task is complete:
 
 **What happens**:
-1. Verifies active branch
-2. Checks dependencies
-3. Marks task complete in TASKS.md
-4. Updates state (adds to completed, clears active)
-5. Creates state snapshot
-6. **Auto-commits** (conventional format)
-7. **Auto-pushes** to remote
-8. Updates changelog (if significant)
-9. Suggests PR creation
-10. Checks achievements/challenges
-11. Displays task duration
+1. Monitors task progress
+2. Checks if requirements are met
+3. Verifies code implementation
+4. Confirms tests passing
+5. Shows completion summary
+6. Asks for confirmation
+7. Verifies active branch
+8. Checks dependencies
+9. Marks task complete in TASKS.md
+10. Updates state (adds to completed, clears active)
+11. Creates state snapshot
+12. **Auto-commits** (conventional format)
+13. **Auto-pushes** to remote
+14. Updates changelog (if significant)
+15. Suggests PR creation
+16. Checks achievements/challenges
+17. Displays task duration
 
 **Example output**:
 ```
+✅ Task 2.1 appears complete! Summary:
+   • All requirements met
+   • Code implemented
+   • Tests passing
+   
+   Mark as done? (yes/no)
+
+[After confirmation]
 ✅ Task 2.1 marked complete!
    ⏱️  Task duration: 2h 15m
    ✓ Changes committed
@@ -337,7 +353,7 @@ Build your project task by task with automatic tracking and Git automation.
 
 💡 Next steps:
    • Type /dev to start the next task
-   • Type /status to see overall progress
+   • Type /sys status to see overall progress
 ```
 
 **Time tracking ends**: Duration calculated and displayed
@@ -352,7 +368,7 @@ Build your project task by task with automatic tracking and Git automation.
 
 ---
 
-## Phase 5: Progress Tracking (`/status`)
+## Phase 5: Progress Tracking (`/sys status`)
 
 ### Purpose
 
@@ -478,13 +494,13 @@ View your achievements, challenges, and engagement metrics.
 
 ### Development → Completion
 
-**Trigger**: Run `/done` after `/dev`
+**Trigger**: `/dev` auto-detects completion
 **State change**: Task completed, state updated
 **What happens**: Task marked complete, committed, pushed, achievements checked
 
 ### Development Loop
 
-**Trigger**: Run `/dev` again after `/done`
+**Trigger**: Run `/dev` again after completion
 **State change**: Next task started
 **What happens**: New task, new branch, time tracking continues
 
@@ -512,12 +528,12 @@ View your achievements, challenges, and engagement metrics.
 
 ### Development
 - Review feature docs before coding
-- Use `/done` when complete
-- Check progress regularly
+- `/dev` auto-detects completion
+- Check progress regularly with `/sys status`
 - View engagement for motivation
 
 ### Progress Tracking
-- Check `/status` regularly
+- Check `/sys status` regularly
 - Monitor completion percentage
 - Track state changes
 - Plan next steps

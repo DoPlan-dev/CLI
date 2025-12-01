@@ -216,34 +216,40 @@ Now let's start building! DoPlan will find the next available task:
 📝 Next steps:
    • Review feature documentation in .do/plan/
    • Start coding with your IDE
-   • Type /done when task is complete
+   • /dev will automatically detect when task is complete
 ```
 
 **Now you can code!** Open your IDE and start building.
 
 ---
 
-## ✅ Step 8: Complete Your Task
+## ✅ Step 8: Task Completion (Auto-Detected)
 
-When you're done with the task:
-
-```bash
-/done
-```
+When `/dev` detects that your task is complete:
 
 **What happens**:
 1. Verifies you're on a task branch
 2. Checks dependencies
-3. Marks task complete in TASKS.md
-4. Updates state (adds to completed, clears active task)
-5. Creates state snapshot
-6. **Auto-commits** with conventional format
-7. **Auto-pushes** to remote
-8. Checks for achievements/challenges
-9. Displays duration
+3. Shows completion summary
+4. Asks for confirmation
+5. Marks task complete in TASKS.md
+6. Updates state (adds to completed, clears active task)
+7. Creates state snapshot
+8. **Auto-commits** with conventional format
+9. **Auto-pushes** to remote
+10. Checks for achievements/challenges
+11. Displays duration
 
 **You'll see**:
 ```
+✅ Task 1.1 appears complete! Summary:
+   • All requirements met
+   • Code implemented
+   • Tests passing
+   
+   Mark as done? (yes/no)
+
+[After confirmation]
 ✅ Task 1.1 marked complete!
    ⏱️  Task duration: 15m
    ✓ Changes committed
@@ -254,7 +260,7 @@ When you're done with the task:
 
 💡 Next steps:
    • Type /dev to start the next task
-   • Type /status to see overall progress
+   • Type /sys status to see overall progress
 ```
 
 **Achievements?** If you earned any, you'll see:
@@ -273,7 +279,7 @@ When you're done with the task:
 See how you're doing:
 
 ```bash
-/status
+/sys status
 ```
 
 **You'll see**:

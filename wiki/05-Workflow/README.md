@@ -20,17 +20,13 @@ The DoPlan workflow is simple, powerful, and engaging. This section covers the c
   ↓
 /plan   → Generate Execution Plan
   ↓
-/dev    → Start Development
+/dev    → Start Development (auto-detects completion)
   ↓
-/done   → Complete Task
-  ↓
-/dev    → Next Task
-  ↓
-/done   → Complete Task
+/dev    → Next Task (auto-detects completion)
   ↓
 ...repeat...
   ↓
-/status → Check Progress
+/sys status → Check Progress
 ```
 
 ---
@@ -40,8 +36,8 @@ The DoPlan workflow is simple, powerful, and engaging. This section covers the c
 1. **Onboarding** - `/hey` for tutorial
 2. **Ideation** - `/do` to capture idea
 3. **Planning** - `/plan` to generate plan
-4. **Development** - `/dev` → code → `/done`
-5. **Progress** - `/status` to check progress
+4. **Development** - `/dev` → code (auto-detects completion)
+5. **Progress** - `/sys status` to check progress
 
 ---
 

@@ -128,22 +128,14 @@ This project uses a hierarchical AI agency structure. All agents are defined in 
 Reference agents in chat using @agent-name (e.g., @frontend_lead, @backend_lead)
 
 ## Commands
-All commands are defined in .do/core/commands/ (symlinked to .cursor/commands/). Type any command (e.g., /tell, /write) to activate it.
+All commands are defined in .do/core/commands/ (symlinked to .cursor/commands/). Type any command (e.g., /do, /plan) to activate it.
 
 Available commands:
-- /hello - Welcome, tutorial, and command introductions (subcommands: goplan, meeting, plan, build, github)
-- /tell - Capture your idea
-- /meeting - Adaptive discovery meeting with progress tracking and timing
-- /write - Generate documents & content (subcommands: plan, content, change, prd, architecture, design, etc.)
-- /plan - Generate execution plan (subcommands: everything, phases, next, phase {no} tasks, phases tasks, all tasks)
-- /build - Start coding with auto-completion detection
-- /status - Show progress and reports (subcommands: report, full)
-- /github - GitHub operations (subcommands: info, issue, milestone, ci, release)
-- /state - State management (subcommands: snapshot, list, diff, restore)
-- /feedback - Log feedback
-- /security - Security review/audit (subcommands: review, audit, both)
-- /permissions - Design RBAC system
-- /optimize - Project optimization (subcommands: design, finance, performance)
+- /hey - Welcome, tutorial, and command introductions
+- /do - Capture project idea, conduct meeting, and refine
+- /plan - Generate documents & execution plan (subcommands: docs, content, everything, phases, next, etc.)
+- /dev - Start coding with automatic completion detection
+- /sys - System control panel (subcommands: status, optimize, performance, backup, restore, memory, state, feedback, github, security, permissions, access)
 
 ## Rules System
 
@@ -244,14 +236,13 @@ For complex projects:
 Current project state is tracked in .do/active_state.json
 
 ## Workflow
-1. **Welcome** (New Users): Type /hello for first-time tutorial and setup
+1. **Welcome** (New Users): Type /hey for first-time tutorial and setup
 2. **Add Documentation Sources**: Configure @Docs with your docs/, .do/, and README.md
 3. **Reference Context**: Use @docs or @filename when asking questions
-4. **Capture Ideas**: Type /tell to capture your idea
-5. **Meeting**: Type /meeting to start discovery meeting with progress tracking
-6. **Plan**: Type /plan to generate the execution plan (or use subcommands for phase-by-phase planning)
-7. **Code**: Type /build to start coding with Agent Mode (Ctrl+I) and auto-completion detection
-8. **Status**: Type /status to check progress and generate reports
+4. **Capture Ideas**: Type /do to capture your idea and conduct meeting
+5. **Plan**: Type /plan to generate documents and execution plan
+6. **Code**: Type /dev to start coding with Agent Mode (Ctrl+I) and automatic completion detection
+7. **System**: Type /sys status to check progress and generate reports
 
 For complex questions, use Ask Mode (Ctrl+L) instead of Composer (Ctrl+I).
 
@@ -495,12 +486,12 @@ Recommended: **Agent Decides** - allows agents to work autonomously while checki
 
 ## Usage Workflow
 
-1. **Capture Ideas**: Use /tell to describe what you want to build
+1. **Capture Ideas**: Use /do to describe what you want to build
 2. **Plan**: Agents create a task plan and implementation strategy
 3. **Review**: Review the agent's plan (if Review Policy requires it)
 4. **Execute**: Agents implement the plan, making code changes
 5. **Validate**: Agents run tests and validate their work
-6. **Status**: Use /status to check progress and generate reports
+6. **Status**: Use /sys status to check progress and generate reports
 
 ## Agent-Driven Development
 Agents can:

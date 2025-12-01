@@ -13,9 +13,9 @@ The DoPlan workflow takes you from idea to production in a simple, engaging, and
    ↓
 3. Planning (/plan)
    ↓
-4. Development Loop (/dev → /done)
+4. Development Loop (/dev - auto-detects completion)
    ↓
-5. Progress Tracking (/status)
+5. Progress Tracking (/sys status)
    ↓
 6. Engagement (/sys engagement)
 ```
@@ -152,11 +152,11 @@ Generate structured execution plan from your idea documents.
 
 ---
 
-## Phase 4: Development Loop (`/dev` → `/done`)
+## Phase 4: Development Loop (`/dev` - Auto-Detection)
 
 ### Purpose
 
-Build your project task by task with automatic tracking and Git automation.
+Build your project task by task with automatic tracking, completion detection, and Git automation.
 
 ### The Loop
 
@@ -165,13 +165,9 @@ Build your project task by task with automatic tracking and Git automation.
   ↓
 [Code]  → Develop feature
   ↓
-/done   → Complete task (auto-commit/push)
+/dev    → Auto-detects completion (auto-commit/push)
   ↓
-/dev    → Next task
-  ↓
-[Code]  → Develop feature
-  ↓
-/done   → Complete task
+/dev    → Next task (auto-detects completion)
   ↓
 ...repeat...
 ```
@@ -200,14 +196,17 @@ Build your project task by task with automatic tracking and Git automation.
    - Test your code
    - Use your IDE
 
-### Completing a Task (`/done`)
+### Auto-Completion Detection
 
-1. **Run `/done`**
-   ```bash
-   /done
-   ```
+When `/dev` detects that a task is complete:
 
-2. **What Happens**
+1. **Detection**
+   - Monitors task progress
+   - Checks if requirements are met
+   - Verifies code implementation
+   - Confirms tests passing
+
+2. **What Happens When Complete**
    - Verifies active branch
    - Checks dependencies
    - Marks task complete in TASKS.md
@@ -217,9 +216,18 @@ Build your project task by task with automatic tracking and Git automation.
    - **Auto-pushes** to remote
    - Checks achievements/challenges
    - Displays task duration
+   - Moves to next task
 
 3. **Output**
    ```
+   ✅ Task 2.1 appears complete! Summary:
+      • All requirements met
+      • Code implemented
+      • Tests passing
+   
+      Mark as done? (yes/no)
+   
+   [After confirmation]
    ✅ Task 2.1 marked complete!
       ⏱️  Task duration: 2h 15m
       ✓ Changes committed
@@ -227,14 +235,14 @@ Build your project task by task with automatic tracking and Git automation.
    
    💡 Next steps:
       • Type /dev to start the next task
-      • Type /status to see overall progress
+      • Type /sys status to see overall progress
    ```
 
 ### Time Per Task: Varies (minutes to hours)
 
 ---
 
-## Phase 5: Progress Tracking (`/status`)
+## Phase 5: Progress Tracking (`/sys status`)
 
 ### Purpose
 
@@ -242,9 +250,9 @@ Monitor your progress and see where you are in the project.
 
 ### Steps
 
-1. **Run `/status`**
+1. **Run `/sys status`**
    ```bash
-   /status
+   /sys status
    ```
 
 2. **What You See**
@@ -328,14 +336,14 @@ View your achievements, challenges, and engagement metrics.
 /dev
 # → Task 1.1 started
 # → Code feature
-/done
+# → /dev auto-detects completion
 # → Task 1.1 complete (2h 15m)
 # → Auto-committed and pushed
 
 /dev
 # → Task 1.2 started
 # → Code feature
-/done
+# → /dev auto-detects completion
 # → Task 1.2 complete (1h 30m)
 
 # ... continue ...
@@ -345,7 +353,7 @@ View your achievements, challenges, and engagement metrics.
 
 ```bash
 # Check progress
-/status
+/sys status
 # → See completion percentage
 
 # View engagement
@@ -366,8 +374,8 @@ View your achievements, challenges, and engagement metrics.
 ### Development Per Task
 - **Task start**: 10-30 seconds
 - **Development**: Varies (minutes to hours)
-- **Task completion**: 10-30 seconds
-- **Total overhead**: ~1 minute per task
+- **Auto-completion detection**: Automatic
+- **Total overhead**: Minimal
 
 ### Regular Checks
 - **Status**: Instant
@@ -404,8 +412,8 @@ View your achievements, challenges, and engagement metrics.
 ### Efficiency
 - Use `/do now` for fast-tracking
 - Use `/do feature` for single features
-- Check `/status` regularly
-- Always use `/done` when complete
+- Check `/sys status` regularly
+- `/dev` auto-detects completion
 
 ### Best Practices
 - Complete `/hey` tutorial first time

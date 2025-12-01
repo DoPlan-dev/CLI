@@ -1,48 +1,30 @@
-# `/done` Command - Implemented ✅
+# Task Completion - Auto-Detection by `/dev` ✅
 
 ## Status
-**Command fully implemented and ready for use.**
+**Task completion is now automatically detected by the `/dev` command.**
 
-The `/done` command specification is located at `internal/content/commands/core/done.md` and is fully implemented.
+The functionality previously planned for `/done` has been integrated into `/dev` with automatic completion detection.
 
-## Location
-- **Specification**: `internal/content/commands/core/done.md`
-- **Category**: Core workflow command
-- **Status**: Specification complete, implementation pending
+## Current Implementation
 
-## Planned Functionality
+Task completion is handled automatically by `/dev`:
 
-The `/done` command:
-
-1. **Verify Active Branch** - Check we're on a task branch
-2. **Check Dependencies** - Verify all dependencies are complete
-3. **Mark Task Complete** - Update TASKS.md with completion status
-4. **Update State** - Update active_state.json
-5. **Snapshot State** - Create state history snapshot
-6. **Auto-Commit** - Commit with conventional commit format
-7. **Auto-Push** - Push to remote branch
-8. **Update Changelog** - Add entry if significant
+1. **Auto-Detection** - `/dev` monitors task progress
+2. **Completion Verification** - Checks if requirements are met
+3. **Mark Task Complete** - Updates TASKS.md with completion status
+4. **Update State** - Updates active_state.json
+5. **Snapshot State** - Creates state history snapshot
+6. **Auto-Commit** - Commits with conventional commit format
+7. **Auto-Push** - Pushes to remote branch
+8. **Update Changelog** - Adds entry if significant
 9. **Suggest PR** - Optional PR creation suggestion
-
-## Implementation Notes
-
-When implementing, consider:
-
-- Integration with engagement system (achievements for task completion)
-- Integration with time tracking
-- Integration with brain/memory card
-- Error handling for Git operations
-- Dependency checking logic
-- State management
-- Changelog generation
 
 ## Related Commands
 
-- `/dev` - Start development (complementary)
+- `/dev` - Start development (includes auto-completion detection)
 - `/plan` - Generate plan (creates tasks)
-- `/status` - Show progress (shows completed tasks)
+- `/sys status` - Show progress (shows completed tasks)
 
-## Priority
+## Note
 
-This command is **HIGH PRIORITY** for the workflow but is currently on hold. It should be implemented in the next sprint.
-
+This file documents the transition from a separate `/done` command to integrated auto-detection in `/dev`.

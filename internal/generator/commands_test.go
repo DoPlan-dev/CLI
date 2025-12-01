@@ -8,34 +8,25 @@ import (
 func TestGetAllCommands(t *testing.T) {
 	commands := GetAllCommands()
 
-	// Should have 14 commands (7 core + 6 tools + 1 optimize)
-	expectedCount := 14
+	// Should have 5 commands (2 onboarding + 2 developing + 1 system)
+	expectedCount := 5
 	if len(commands) != expectedCount {
 		t.Errorf("GetAllCommands() returned %d commands, want %d", len(commands), expectedCount)
 	}
 
 	// Check for required fields
-	coreCommandNames := []string{
-		"hello",
-		"tell",
-		"meeting",
-		"write",
+	onboardingCommandNames := []string{
+		"hey",
+		"do",
+	}
+
+	developingCommandNames := []string{
 		"plan",
-		"build",
-		"status",
+		"dev",
 	}
 
-	toolsCommandNames := []string{
-		"feedback",
-		"state",
-		"github",
-		"security",
-		"permissions",
-		"access",
-	}
-
-	optimizeCommandNames := []string{
-		"optimize",
+	systemCommandNames := []string{
+		"sys",
 	}
 
 	foundCommands := make(map[string]bool)
@@ -57,24 +48,24 @@ func TestGetAllCommands(t *testing.T) {
 		}
 	}
 
-	// Check all core commands are present
-	for _, name := range coreCommandNames {
+	// Check all onboarding commands are present
+	for _, name := range onboardingCommandNames {
 		if !foundCommands[name] {
-			t.Errorf("Required core command %s not found", name)
+			t.Errorf("Required onboarding command %s not found", name)
 		}
 	}
 
-	// Check all tools commands are present
-	for _, name := range toolsCommandNames {
+	// Check all developing commands are present
+	for _, name := range developingCommandNames {
 		if !foundCommands[name] {
-			t.Errorf("Required tools command %s not found", name)
+			t.Errorf("Required developing command %s not found", name)
 		}
 	}
 
-	// Check all optimize commands are present
-	for _, name := range optimizeCommandNames {
+	// Check all system commands are present
+	for _, name := range systemCommandNames {
 		if !foundCommands[name] {
-			t.Errorf("Required optimize command %s not found", name)
+			t.Errorf("Required system command %s not found", name)
 		}
 	}
 }
@@ -85,10 +76,11 @@ func TestGetCommandByName(t *testing.T) {
 		wantName string
 		wantNil  bool
 	}{
-		{"tell", "tell", false},
-		{"build", "build", false},
-		{"github", "github", false},
-		{"optimize", "optimize", false},
+		{"hey", "hey", false},
+		{"do", "do", false},
+		{"plan", "plan", false},
+		{"dev", "dev", false},
+		{"sys", "sys", false},
 		{"nonexistent", "", true},
 		{"", "", true},
 	}
@@ -114,22 +106,26 @@ func TestGetCommandByName(t *testing.T) {
 func TestGetCoreCommands(t *testing.T) {
 	coreCommands := GetCoreCommands()
 
-	// Should have exactly 7 core commands
-	if len(coreCommands) != 7 {
-		t.Errorf("GetCoreCommands() returned %d commands, want 7", len(coreCommands))
+	// Should have exactly 4 core commands (onboarding + developing)
+	if len(coreCommands) != 4 {
+		t.Errorf("GetCoreCommands() returned %d commands, want 4", len(coreCommands))
 	}
 
-	// Verify all are core commands
+	// Verify all are core commands (onboarding or developing)
 	coreNames := []string{
-		"hello", "tell", "meeting", "write", "plan", "build", "status",
+		"hey", "do", "plan", "dev",
 	}
 
 	foundNames := make(map[string]bool)
 	for _, cmd := range coreCommands {
 		foundNames[cmd.Name] = true
-		// Verify category is "core"
-		if cmd.Category != "core" {
-			t.Errorf("Core command %s has category %s, want 'core'", cmd.Name, cmd.Category)
+		// Verify category is correct (onboarding or developing)
+		validCategories := map[string]bool{
+			"onboarding": true,
+			"developing": true,
+		}
+		if !validCategories[cmd.Category] {
+			t.Errorf("Command %s has invalid category %s, want 'onboarding' or 'developing'", cmd.Name, cmd.Category)
 		}
 	}
 
@@ -143,38 +139,28 @@ func TestGetCoreCommands(t *testing.T) {
 func TestGetSquadCommands(t *testing.T) {
 	squadCommands := GetSquadCommands()
 
-	// Should have exactly 7 squad commands (6 tools + 1 optimize)
-	if len(squadCommands) != 7 {
-		t.Errorf("GetSquadCommands() returned %d commands, want 7", len(squadCommands))
+	// Should have exactly 1 squad command (system)
+	if len(squadCommands) != 1 {
+		t.Errorf("GetSquadCommands() returned %d commands, want 1", len(squadCommands))
 	}
 
-	// Verify all are tools or optimize commands
-	toolsNames := []string{
-		"feedback", "state", "github", "security", "permissions", "access",
-	}
-
-	optimizeNames := []string{
-		"optimize",
+	// Verify all are system commands
+	systemNames := []string{
+		"sys",
 	}
 
 	foundNames := make(map[string]bool)
 	for _, cmd := range squadCommands {
 		foundNames[cmd.Name] = true
-		// Verify category is "tools" or "optimize"
-		if cmd.Category != "tools" && cmd.Category != "optimize" {
-			t.Errorf("Squad command %s has category %s, want 'tools' or 'optimize'", cmd.Name, cmd.Category)
+		// Verify category is "system"
+		if cmd.Category != "system" {
+			t.Errorf("Squad command %s has category %s, want 'system'", cmd.Name, cmd.Category)
 		}
 	}
 
-	for _, name := range toolsNames {
+	for _, name := range systemNames {
 		if !foundNames[name] {
-			t.Errorf("Tools command %s not found", name)
-		}
-	}
-
-	for _, name := range optimizeNames {
-		if !foundNames[name] {
-			t.Errorf("Optimize command %s not found", name)
+			t.Errorf("System command %s not found", name)
 		}
 	}
 }
@@ -253,7 +239,7 @@ func TestCommandFiles(t *testing.T) {
 
 func TestCommandGitHubAutomation(t *testing.T) {
 	// Commands that should have GitHub automation
-	commandsWithGitHub := []string{"build"}
+	commandsWithGitHub := []string{"dev"}
 
 	for _, cmdName := range commandsWithGitHub {
 		var cmd *Command
