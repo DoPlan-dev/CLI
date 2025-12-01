@@ -89,33 +89,33 @@ func TestCommandsGenerator_Generate_FileContent(t *testing.T) {
 	// Commands are in category folders, check central location
 	centralCommandsDir := filepath.Join(tmpDir, ".do", "core", "commands")
 	// "do" command is in "onboarding" category
-	tellPath := filepath.Join(centralCommandsDir, "onboarding", "do.md")
+	doPath := filepath.Join(centralCommandsDir, "onboarding", "do.md")
 
-	// If not found in core, try other categories
-	if _, err := os.Stat(tellPath); os.IsNotExist(err) {
+	// If not found, try other categories
+	if _, err := os.Stat(doPath); os.IsNotExist(err) {
 		// Search all categories
 		entries, _ := os.ReadDir(centralCommandsDir)
 		for _, entry := range entries {
 			if entry.IsDir() {
-				candidatePath := filepath.Join(centralCommandsDir, entry.Name(), "tell.md")
+				candidatePath := filepath.Join(centralCommandsDir, entry.Name(), "do.md")
 				if _, err := os.Stat(candidatePath); err == nil {
-					tellPath = candidatePath
+					doPath = candidatePath
 					break
 				}
 			}
 		}
 	}
 
-	content, err := os.ReadFile(tellPath)
+	content, err := os.ReadFile(doPath)
 	if err != nil {
-		t.Fatalf("Failed to read tell.md: %v", err)
+		t.Fatalf("Failed to read do.md: %v", err)
 	}
 
 	contentStr := string(content)
 
 	// Check for required sections
-	if !strings.Contains(contentStr, "# /tell") {
-		t.Error("tell.md should contain command title")
+	if !strings.Contains(contentStr, "/do") && !strings.Contains(contentStr, "# do") {
+		t.Error("do.md should contain command title or trigger")
 	}
 	if !strings.Contains(contentStr, "## Trigger") {
 		t.Error("tell.md should contain Trigger section")

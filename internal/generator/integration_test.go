@@ -85,9 +85,9 @@ func verifyCommandsGenerated(t *testing.T, projectPath string) {
 
 	// Check for some expected command files (now in category folders)
 	expectedCommands := map[string]string{
-		"tell.md":  "core",
-		"build.md": "core",
-		"write.md": "core",
+		"dev.md":  "developing",
+		"plan.md": "developing",
+		"do.md":   "onboarding",
 	}
 
 	for cmdFile, category := range expectedCommands {

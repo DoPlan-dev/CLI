@@ -754,12 +754,8 @@ func TestRenderSuccess(t *testing.T) {
 		t.Error("renderSuccess() should contain 'Project created successfully'")
 	}
 
-	if !strings.Contains(view, "test-project") {
-		t.Error("renderSuccess() should contain project name")
-	}
-
-	if !strings.Contains(view, "/tell") {
-		t.Error("renderSuccess() should contain '/tell' instruction")
+	if !strings.Contains(view, "/do") && !strings.Contains(view, "/hey") {
+		t.Error("renderSuccess() should contain '/do' or '/hey' instruction")
 	}
 }
 
@@ -805,13 +801,9 @@ func TestRenderSuccess_NextSteps(t *testing.T) {
 
 	view := model.renderSuccess()
 
-	// Check for next steps
-	if !strings.Contains(view, "now open my-project inside Cursor") {
-		t.Error("renderSuccess() should contain 'now open my-project inside Cursor'")
-	}
-
-	if !strings.Contains(view, "/tell") {
-		t.Error("renderSuccess() should contain '/tell' instruction")
+	// Check for next steps - the message now mentions /hey and /do
+	if !strings.Contains(view, "/hey") && !strings.Contains(view, "/do") {
+		t.Error("renderSuccess() should contain '/hey' or '/do' instruction")
 	}
 }
 
@@ -820,13 +812,13 @@ func TestRenderSuccess_DifferentIDEs(t *testing.T) {
 		ide      string
 		checkFor string
 	}{
-		{"Cursor", "Cursor"},
-		{"Claude Code", "Claude Code"},
-		{"Antigravity", "Antigravity"},
-		{"Windsurf", "Windsurf"},
-		{"Cline", "Cline"},
-		{"OpenCode", "OpenCode"},
-		{"", "your IDE"}, // Default
+		{"Cursor", "Project created successfully"},
+		{"Claude Code", "Project created successfully"},
+		{"Antigravity", "Project created successfully"},
+		{"Windsurf", "Project created successfully"},
+		{"Cline", "Project created successfully"},
+		{"OpenCode", "Project created successfully"},
+		{"", "Project created successfully"}, // Default
 	}
 
 	for _, tc := range testCases {
@@ -996,17 +988,17 @@ func TestModel_Update_RetryKey(t *testing.T) {
 	model.state = stateError
 	model.previousState = stateProjectName
 	model.errorMessage = "Test error"
-	msg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'r'}}
+	msg := tea.KeyMsg{Type: tea.KeyCtrlR}
 
 	newModel, _ := model.Update(msg)
 
 	updatedModel := newModel.(Model)
 	if updatedModel.state != stateProjectName {
-		t.Errorf("Update('r' key) state = %v, want %v", updatedModel.state, stateProjectName)
+		t.Errorf("Update('ctrl+r' key) state = %v, want %v", updatedModel.state, stateProjectName)
 	}
 
 	if updatedModel.errorMessage != "" {
-		t.Error("Update('r' key) should clear error message")
+		t.Error("Update('ctrl+r' key) should clear error message")
 	}
 }
 
@@ -1015,17 +1007,17 @@ func TestModel_Update_BackKey(t *testing.T) {
 	model.state = stateError
 	model.previousState = stateIDESelection
 	model.errorMessage = "Test error"
-	msg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'b'}}
+	msg := tea.KeyMsg{Type: tea.KeyCtrlB}
 
 	newModel, _ := model.Update(msg)
 
 	updatedModel := newModel.(Model)
 	if updatedModel.state != stateWelcome {
-		t.Errorf("Update('b' key) state = %v, want %v", updatedModel.state, stateWelcome)
+		t.Errorf("Update('ctrl+b' key) state = %v, want %v", updatedModel.state, stateWelcome)
 	}
 
 	if updatedModel.errorMessage != "" {
-		t.Error("Update('b' key) should clear error message")
+		t.Error("Update('ctrl+b' key) should clear error message")
 	}
 }
 

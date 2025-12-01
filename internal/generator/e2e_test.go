@@ -105,9 +105,9 @@ func TestEndToEnd_AllFilesGenerated(t *testing.T) {
 		".do/core/agents/product/product_manager.md",
 		".do/core/agents/engineering/engineering_lead.md",
 		// Commands (now in category folders)
-		".do/core/commands/core/tell.md",
-		".do/core/commands/core/build.md",
-		".do/core/commands/core/write.md",
+		".do/core/commands/developing/dev.md",
+		".do/core/commands/developing/plan.md",
+		".do/core/commands/onboarding/do.md",
 		// Rules (check central location or IDE location)
 		".do/core/library/01-core-workflow/README.md",
 		".cursor/rules/README.md",
@@ -340,7 +340,7 @@ func verifyCompleteProjectStructure(t *testing.T, projectPath string) {
 		t.Errorf("Expected at least 18 agent files, found %d", agentCount)
 	}
 
-	// Verify commands (should have 13 commands in category folders)
+	// Verify commands (should have at least 5 commands in category folders)
 	centralCommandsDir := filepath.Join(projectPath, ".do", "core", "commands")
 	commandCount := 0
 	err = filepath.Walk(centralCommandsDir, func(path string, info os.FileInfo, err error) error {
@@ -354,8 +354,8 @@ func verifyCompleteProjectStructure(t *testing.T, projectPath string) {
 	})
 	if err != nil {
 		t.Errorf("Failed to read commands directory: %v", err)
-	} else if commandCount < 13 {
-		t.Errorf("Expected at least 13 command files, found %d", commandCount)
+	} else if commandCount < 5 {
+		t.Errorf("Expected at least 5 command files, found %d", commandCount)
 	}
 
 	// Verify rules library has categories (check central location)

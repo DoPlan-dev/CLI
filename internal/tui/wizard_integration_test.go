@@ -108,7 +108,7 @@ func TestWizardIntegration_ErrorRecovery(t *testing.T) {
 	}
 
 	// Test retry
-	msg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'r'}}
+	msg := tea.KeyMsg{Type: tea.KeyCtrlR}
 	newModel, _ := model.Update(msg)
 	model = newModel.(Model)
 
@@ -118,7 +118,7 @@ func TestWizardIntegration_ErrorRecovery(t *testing.T) {
 
 	// Test back to welcome
 	model.setError("Test error", "Test suggestion")
-	msg = tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'b'}}
+	msg = tea.KeyMsg{Type: tea.KeyCtrlB}
 	newModel, _ = model.Update(msg)
 	model = newModel.(Model)
 

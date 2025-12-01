@@ -18,15 +18,15 @@ func TestLoadCommandsFromFiles(t *testing.T) {
 
 	found := false
 	for _, cmd := range commands {
-		if strings.EqualFold(cmd.Name, "build") {
+		if strings.EqualFold(cmd.Name, "dev") {
 			found = true
-			if !strings.Contains(cmd.Action, "/build") && cmd.Trigger == "" {
-				t.Errorf("expected build command to include trigger/action")
+			if !strings.Contains(cmd.Action, "/dev") && cmd.Trigger == "" {
+				t.Errorf("expected dev command to include trigger/action")
 			}
 		}
 	}
 	if !found {
-		t.Error("expected to find build command in embedded commands")
+		t.Error("expected to find dev command in embedded commands")
 	}
 }
 
@@ -64,20 +64,20 @@ func TestExtractCommands(t *testing.T) {
 		t.Fatalf("ExtractCommands() error = %v", err)
 	}
 
-	coreDir := filepath.Join(tmpDir, "core")
-	if _, err := os.Stat(coreDir); os.IsNotExist(err) {
-		t.Fatalf("expected core directory after extraction")
+	developingDir := filepath.Join(tmpDir, "developing")
+	if _, err := os.Stat(developingDir); os.IsNotExist(err) {
+		t.Fatalf("expected developing directory after extraction")
 	}
 
-	buildCmd := filepath.Join(coreDir, "build.md")
-	if _, err := os.Stat(buildCmd); os.IsNotExist(err) {
-		t.Fatalf("expected build command markdown after extraction")
+	devCmd := filepath.Join(developingDir, "dev.md")
+	if _, err := os.Stat(devCmd); os.IsNotExist(err) {
+		t.Fatalf("expected dev command markdown after extraction")
 	}
-	data, err := os.ReadFile(buildCmd)
+	data, err := os.ReadFile(devCmd)
 	if err != nil {
 		t.Fatalf("failed to read extracted command: %v", err)
 	}
-	if !strings.Contains(string(data), "/build") {
-		t.Errorf("expected build command content to mention /build")
+	if !strings.Contains(string(data), "/dev") {
+		t.Errorf("expected dev command content to mention /dev")
 	}
 }

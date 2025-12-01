@@ -2113,11 +2113,11 @@ func generatePersonalizationFiles(systemDir string, request *models.ProjectReque
 		"personality":              "",
 		"motivation":               "",
 		"learning_goals":           []string{},
-		"pain_points":             []string{},
-		"tech_stack_preferences":  []string{},
-		"communication_style":     "balanced",
-		"relationship_level":      0,
-		"trust_level":             0,
+		"pain_points":              []string{},
+		"tech_stack_preferences":   []string{},
+		"communication_style":      "balanced",
+		"relationship_level":       0,
+		"trust_level":              0,
 	}
 	userProfilePath := filepath.Join(systemDir, "user_profile.json")
 	userProfileJSON, err := json.MarshalIndent(userProfile, "", "  ")
@@ -2130,16 +2130,16 @@ func generatePersonalizationFiles(systemDir string, request *models.ProjectReque
 
 	// Generate memory_card.json (Memory)
 	memoryCard := map[string]interface{}{
-		"version":           "1.0",
-		"created_at":        "",
-		"last_updated":      "",
-		"user_profile":      userProfile,
-		"interactions":      []map[string]interface{}{},
-		"achievements":      []map[string]interface{}{},
-		"challenges":        []map[string]interface{}{},
-		"time_records":      []map[string]interface{}{},
-		"preferences":       map[string]interface{}{},
-		"project_context":   map[string]interface{}{},
+		"version":         "1.0",
+		"created_at":      "",
+		"last_updated":    "",
+		"user_profile":    userProfile,
+		"interactions":    []map[string]interface{}{},
+		"achievements":    []map[string]interface{}{},
+		"challenges":      []map[string]interface{}{},
+		"time_records":    []map[string]interface{}{},
+		"preferences":     map[string]interface{}{},
+		"project_context": map[string]interface{}{},
 		"relationship_data": map[string]interface{}{
 			"level": 0,
 			"trust": 0,
@@ -2156,10 +2156,10 @@ func generatePersonalizationFiles(systemDir string, request *models.ProjectReque
 
 	// Generate brain.json (Brain System)
 	brain := map[string]interface{}{
-		"version":        "1.0",
-		"enabled":        true,
-		"memory_card":    "memory_card.json",
-		"tone_level":     0,
+		"version":     "1.0",
+		"enabled":     true,
+		"memory_card": "memory_card.json",
+		"tone_level":  0,
 		"personalization": map[string]interface{}{
 			"enabled": true,
 			"level":   0,
@@ -2200,10 +2200,10 @@ func generatePersonalizationFiles(systemDir string, request *models.ProjectReque
 
 	// Generate challenges.json (Challenges)
 	challenges := map[string]interface{}{
-		"version":     "1.0",
-		"active":      []map[string]interface{}{},
-		"completed":   []map[string]interface{}{},
-		"available":   []map[string]interface{}{},
+		"version":   "1.0",
+		"active":    []map[string]interface{}{},
+		"completed": []map[string]interface{}{},
+		"available": []map[string]interface{}{},
 		"statistics": map[string]interface{}{
 			"total_completed": 0,
 			"total_attempted": 0,
@@ -2221,15 +2221,15 @@ func generatePersonalizationFiles(systemDir string, request *models.ProjectReque
 
 	// Generate time_tracking.json (Time Records)
 	timeTracking := map[string]interface{}{
-		"version":      "1.0",
-		"total_time":   0,
-		"sessions":     []map[string]interface{}{},
-		"daily_logs":   []map[string]interface{}{},
-		"weekly_stats": []map[string]interface{}{},
+		"version":       "1.0",
+		"total_time":    0,
+		"sessions":      []map[string]interface{}{},
+		"daily_logs":    []map[string]interface{}{},
+		"weekly_stats":  []map[string]interface{}{},
 		"monthly_stats": []map[string]interface{}{},
-		"by_command":   map[string]interface{}{},
-		"by_phase":     map[string]interface{}{},
-		"by_task":      map[string]interface{}{},
+		"by_command":    map[string]interface{}{},
+		"by_phase":      map[string]interface{}{},
+		"by_task":       map[string]interface{}{},
 	}
 	timeTrackingPath := filepath.Join(systemDir, "time_tracking.json")
 	timeTrackingJSON, err := json.MarshalIndent(timeTracking, "", "  ")

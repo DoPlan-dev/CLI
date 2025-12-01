@@ -299,7 +299,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case "esc":
+		case "esc", "backspace":
 			// Back navigation: go to previous state
 			if m.state != stateWelcome && m.state != stateError && m.state != stateGenerating && m.state != stateSuccess {
 				if m.goBack() {
@@ -506,16 +506,16 @@ func extractCleanVersion(versionStr string) string {
 	if versionStr == "dev" {
 		return "dev"
 	}
-	
+
 	// Remove "v" prefix if present
 	if strings.HasPrefix(versionStr, "v") {
 		versionStr = versionStr[1:]
 	}
-	
+
 	// Extract just the version number (stop at first non-version character like "-")
 	parts := strings.Split(versionStr, "-")
 	versionNum := parts[0]
-	
+
 	// Format as "v 1.3.0" (with space after v)
 	return fmt.Sprintf("v %s", versionNum)
 }
@@ -525,12 +525,12 @@ func getVersionNumber(versionStr string) string {
 	if versionStr == "dev" {
 		return "dev"
 	}
-	
+
 	// Remove "v" prefix if present
 	if strings.HasPrefix(versionStr, "v") {
 		versionStr = versionStr[1:]
 	}
-	
+
 	// Extract just the version number (stop at first non-version character like "-")
 	parts := strings.Split(versionStr, "-")
 	return parts[0]
@@ -541,7 +541,7 @@ func renderTopLine() string {
 	versionStr := version.GetVersion()
 	versionNum := getVersionNumber(versionStr)
 	appNameWithVersion := fmt.Sprintf("DoPlan CLI %s", versionNum)
-	
+
 	topStyle := lipgloss.NewStyle().
 		Foreground(tertiary).
 		Width(80)

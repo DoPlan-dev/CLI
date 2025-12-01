@@ -493,28 +493,354 @@ func TestLatestDiff_InsufficientSnapshots(t *testing.T) {
 	}
 }
 
-func TestSanitizeLabel(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    string
-		expected string
-	}{
-		{"simple", "mylabel", "mylabel"},
-		{"with spaces", "my label", "my-label"},
-		{"with special chars", "my@label#123", "mylabel123"},
-		{"empty", "", ""},
-		{"whitespace", "   ", ""},
-		{"mixed case", "MyLabel", "mylabel"},
-		{"with underscores", "my_label", "my_label"},
+func TestStateDiff_HasChanges(t *testing.T) {
+	// Test with no changes
+	diff := StateDiff{
+		Phase:        FieldChange{From: "phase1", To: "phase1", Changed: false},
+		ActiveTask:   FieldChange{From: "1.1", To: "1.1", Changed: false},
+		ActiveBranch: FieldChange{From: "branch1", To: "branch1", Changed: false},
+	}
+	if diff.HasChanges() {
+		t.Error("HasChanges() should return false when no fields changed")
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := sanitizeLabel(tt.input)
-			if result != tt.expected {
-				t.Errorf("sanitizeLabel(%q) = %q, want %q", tt.input, result, tt.expected)
-			}
-		})
+	// Test with phase change
+	diff.Phase.Changed = true
+	if !diff.HasChanges() {
+		t.Error("HasChanges() should return true when phase changed")
+	}
+
+	// Reset and test with task change
+	diff.Phase.Changed = false
+	diff.ActiveTask.Changed = true
+	if !diff.HasChanges() {
+		t.Error("HasChanges() should return true when active task changed")
+	}
+
+	// Reset and test with branch change
+	diff.ActiveTask.Changed = false
+	diff.ActiveBranch.Changed = true
+	if !diff.HasChanges() {
+		t.Error("HasChanges() should return true when active branch changed")
+	}
+
+	// Reset and test with completed added
+	diff.ActiveBranch.Changed = false
+	diff.CompletedAdded = []string{"1.1"}
+	if !diff.HasChanges() {
+		t.Error("HasChanges() should return true when completed tasks added")
+	}
+
+	// Reset and test with completed removed
+	diff.CompletedAdded = nil
+	diff.CompletedRemoved = []string{"1.1"}
+	if !diff.HasChanges() {
+		t.Error("HasChanges() should return true when completed tasks removed")
+	}
+}
+
+func TestFormatDiff_NoChanges(t *testing.T) {
+	diff := StateDiff{
+		From: SnapshotSummary{ID: "1", CapturedAt: time.Now()},
+		To:   SnapshotSummary{ID: "2", CapturedAt: time.Now()},
+		Phase: FieldChange{
+			From:    "phase1",
+			To:      "phase1",
+			Changed: false,
+		},
+		ActiveTask: FieldChange{
+			From:    "1.1",
+			To:      "1.1",
+			Changed: false,
+		},
+		ActiveBranch: FieldChange{
+			From:    "branch1",
+			To:      "branch1",
+			Changed: false,
+		},
+	}
+
+	formatted := FormatDiff(diff)
+	if !strings.Contains(formatted, "No state changes") {
+		t.Error("FormatDiff() should indicate no changes when HasChanges() is false")
+	}
+}
+
+func TestFormatDiff_WithReasons(t *testing.T) {
+	diff := StateDiff{
+		From: SnapshotSummary{
+			ID:         "1",
+			CapturedAt: time.Now(),
+			Reason:     "reason1",
+		},
+		To: SnapshotSummary{
+			ID:         "2",
+			CapturedAt: time.Now(),
+			Reason:     "reason2",
+		},
+		Phase: FieldChange{
+			From:    "phase1",
+			To:      "phase2",
+			Changed: true,
+		},
+	}
+
+	formatted := FormatDiff(diff)
+	if !strings.Contains(formatted, "Reasons:") {
+		t.Error("FormatDiff() should include reasons section when present")
+	}
+	if !strings.Contains(formatted, "reason1") || !strings.Contains(formatted, "reason2") {
+		t.Error("FormatDiff() should include both reasons")
+	}
+}
+
+func TestFormatDiff_AllFieldsChanged(t *testing.T) {
+	diff := StateDiff{
+		From: SnapshotSummary{ID: "1", CapturedAt: time.Now()},
+		To:   SnapshotSummary{ID: "2", CapturedAt: time.Now()},
+		Phase: FieldChange{
+			From:    "phase1",
+			To:      "phase2",
+			Changed: true,
+		},
+		ActiveTask: FieldChange{
+			From:    "1.1",
+			To:      "2.1",
+			Changed: true,
+		},
+		ActiveBranch: FieldChange{
+			From:    "branch1",
+			To:      "branch2",
+			Changed: true,
+		},
+		CompletedAdded:   []string{"1.1", "1.2"},
+		CompletedRemoved: []string{"2.1"},
+	}
+
+	formatted := FormatDiff(diff)
+	if !strings.Contains(formatted, "Phase changed") {
+		t.Error("FormatDiff() should include phase change")
+	}
+	if !strings.Contains(formatted, "Active task") {
+		t.Error("FormatDiff() should include active task change")
+	}
+	if !strings.Contains(formatted, "Active branch") {
+		t.Error("FormatDiff() should include active branch change")
+	}
+	if !strings.Contains(formatted, "Newly completed") {
+		t.Error("FormatDiff() should include completed added")
+	}
+	if !strings.Contains(formatted, "removed from completed") {
+		t.Error("FormatDiff() should include completed removed")
+	}
+}
+
+func TestFormatDiff_EmptyFields(t *testing.T) {
+	diff := StateDiff{
+		From: SnapshotSummary{ID: "1", CapturedAt: time.Now()},
+		To:   SnapshotSummary{ID: "2", CapturedAt: time.Now()},
+		Phase: FieldChange{
+			From:    "",
+			To:      "phase2",
+			Changed: true,
+		},
+		ActiveTask: FieldChange{
+			From:    "",
+			To:      "1.1",
+			Changed: true,
+		},
+	}
+
+	formatted := FormatDiff(diff)
+	if !strings.Contains(formatted, "(none)") {
+		t.Error("FormatDiff() should show (none) for empty fields")
+	}
+}
+
+func TestLoadSnapshot_InvalidFile(t *testing.T) {
+	tmpDir := t.TempDir()
+	historyDir := filepath.Join(tmpDir, "history")
+	os.MkdirAll(historyDir, 0755)
+
+	// Test with non-existent file
+	_, err := LoadSnapshot(historyDir, "nonexistent")
+	if err == nil {
+		t.Error("LoadSnapshot should return error for non-existent snapshot")
+	}
+
+	// Test with invalid JSON
+	invalidFile := filepath.Join(historyDir, "state-invalid.json")
+	os.WriteFile(invalidFile, []byte("invalid json"), 0644)
+	_, err = LoadSnapshot(historyDir, "invalid")
+	if err == nil {
+		t.Error("LoadSnapshot should return error for invalid JSON")
+	}
+
+	// Test with missing required fields
+	invalidJSON := `{"id": "test"}`
+	os.WriteFile(invalidFile, []byte(invalidJSON), 0644)
+	_, err = LoadSnapshot(historyDir, "invalid")
+	if err == nil {
+		t.Error("LoadSnapshot should return error for incomplete snapshot")
+	}
+}
+
+func TestLoadSnapshot_InvalidTimestamp(t *testing.T) {
+	tmpDir := t.TempDir()
+	historyDir := filepath.Join(tmpDir, "history")
+	os.MkdirAll(historyDir, 0755)
+
+	// Create snapshot with invalid timestamp (should use fallback)
+	invalidTimestamp := `{
+		"id": "test",
+		"captured_at": "invalid-timestamp",
+		"reason": "test",
+		"hash": "abc123",
+		"state": {"phase": "test"}
+	}`
+	invalidFile := filepath.Join(historyDir, "state-test.json")
+	os.WriteFile(invalidFile, []byte(invalidTimestamp), 0644)
+
+	snapshot, err := LoadSnapshot(historyDir, "test")
+	if err != nil {
+		t.Fatalf("LoadSnapshot should handle invalid timestamp gracefully: %v", err)
+	}
+	if snapshot == nil {
+		t.Fatal("LoadSnapshot should return snapshot even with invalid timestamp")
+	}
+	// Should use fallback time (Unix epoch)
+	if !snapshot.CapturedAt.Equal(time.Unix(0, 0).UTC()) {
+		t.Error("LoadSnapshot should use fallback time for invalid timestamp")
+	}
+}
+
+func TestComputeDiff_CompletedTasks(t *testing.T) {
+	snapshot1 := &Snapshot{
+		ID:         "1",
+		CapturedAt: time.Now(),
+		State: ActiveState{
+			Completed: []string{"1.1", "1.2"},
+		},
+	}
+
+	snapshot2 := &Snapshot{
+		ID:         "2",
+		CapturedAt: time.Now(),
+		State: ActiveState{
+			Completed: []string{"1.1", "1.3", "2.1"},
+		},
+	}
+
+	diff := ComputeDiff(snapshot2, snapshot1)
+
+	// Should have added 1.3 and 2.1
+	if len(diff.CompletedAdded) != 2 {
+		t.Errorf("CompletedAdded length = %d, want 2", len(diff.CompletedAdded))
+	}
+	// Should have removed 1.2
+	if len(diff.CompletedRemoved) != 1 {
+		t.Errorf("CompletedRemoved length = %d, want 1", len(diff.CompletedRemoved))
+	}
+
+	// Verify specific items
+	has13 := false
+	has21 := false
+	for _, item := range diff.CompletedAdded {
+		if item == "1.3" {
+			has13 = true
+		}
+		if item == "2.1" {
+			has21 = true
+		}
+	}
+	if !has13 || !has21 {
+		t.Error("CompletedAdded should contain 1.3 and 2.1")
+	}
+
+	if diff.CompletedRemoved[0] != "1.2" {
+		t.Errorf("CompletedRemoved[0] = %q, want %q", diff.CompletedRemoved[0], "1.2")
+	}
+}
+
+func TestComputeDiff_EmptyCompleted(t *testing.T) {
+	snapshot1 := &Snapshot{
+		ID:         "1",
+		CapturedAt: time.Now(),
+		State: ActiveState{
+			Completed: []string{},
+		},
+	}
+
+	snapshot2 := &Snapshot{
+		ID:         "2",
+		CapturedAt: time.Now(),
+		State: ActiveState{
+			Completed: []string{"1.1"},
+		},
+	}
+
+	diff := ComputeDiff(snapshot2, snapshot1)
+
+	if len(diff.CompletedAdded) != 1 {
+		t.Errorf("CompletedAdded length = %d, want 1", len(diff.CompletedAdded))
+	}
+	if len(diff.CompletedRemoved) != 0 {
+		t.Errorf("CompletedRemoved length = %d, want 0", len(diff.CompletedRemoved))
+	}
+}
+
+func TestRestoreSnapshot_ErrorCases(t *testing.T) {
+	tmpDir := t.TempDir()
+	planDir := filepath.Join(tmpDir, ".do")
+	os.MkdirAll(planDir, 0755)
+	historyDir := filepath.Join(planDir, "history")
+
+	// Create a snapshot
+	state := ActiveState{Phase: "test"}
+	stateData, _ := json.Marshal(state)
+	statePath := filepath.Join(planDir, "active_state.json")
+	os.WriteFile(statePath, stateData, 0644)
+
+	snapshot, err := SaveSnapshot(statePath, historyDir, "test", "")
+	if err != nil {
+		t.Fatalf("SaveSnapshot failed: %v", err)
+	}
+
+	// Test restoring to read-only directory (if possible)
+	// This is platform-dependent, so we'll just test normal restore
+	err = RestoreSnapshot(statePath, snapshot)
+	if err != nil {
+		t.Fatalf("RestoreSnapshot failed: %v", err)
+	}
+
+	// Verify the state was restored
+	restoredData, err := os.ReadFile(statePath)
+	if err != nil {
+		t.Fatalf("Failed to read restored state: %v", err)
+	}
+
+	var restoredState ActiveState
+	if err := json.Unmarshal(restoredData, &restoredState); err != nil {
+		t.Fatalf("Failed to parse restored state: %v", err)
+	}
+
+	if restoredState.Phase != "test" {
+		t.Errorf("Restored state Phase = %q, want %q", restoredState.Phase, "test")
+	}
+}
+
+func TestRestoreSnapshot_InvalidJSON(t *testing.T) {
+	tmpDir := t.TempDir()
+	statePath := filepath.Join(tmpDir, "active_state.json")
+
+	// Create snapshot with invalid Raw JSON
+	snapshot := &Snapshot{
+		Raw: json.RawMessage("invalid json"),
+	}
+
+	err := RestoreSnapshot(statePath, snapshot)
+	if err == nil {
+		t.Error("RestoreSnapshot should return error for invalid JSON")
 	}
 }
 
