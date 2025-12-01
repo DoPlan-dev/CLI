@@ -171,8 +171,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check npm token
+        id: check_npm_token
+        run: |
+          if [ -n "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "has_token=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_token=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Verify npm authentication
-        if: secrets.NPM_TOKEN != ''
+        if: steps.check_npm_token.outputs.has_token == 'true'
         run: |
           npm whoami
         env:
@@ -180,7 +189,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm
-        if: secrets.NPM_TOKEN != ''
+        if: steps.check_npm_token.outputs.has_token == 'true'
         run: |
           npm publish --access public
         env:
