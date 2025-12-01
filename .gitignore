@@ -62,3 +62,4 @@ go.work.sum
 # Documentation - keep organized in Docs/
 # Only README.md and CHANGELOG.md should be in root
 # All other documentation should be in Docs/ directory with proper subdirectories
+.do/backup/
