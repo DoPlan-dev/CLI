@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.4] - 2025-11-29
+
+### Added
+- **Comprehensive Test Coverage**: Major improvements to test coverage across the codebase
+  - `internal/content`: Achieved 100% coverage with tests for all filesystem operations
+  - `internal/rules`: Improved to 92.6% coverage with comprehensive cache tests
+  - `internal/generator`: Improved to 81.2% coverage with agents cache tests
+  - `internal/statehistory`: Improved to 87.5% coverage with edge case tests
+  - Core packages coverage improved from 85.6% to 89.6%
+
+### Fixed
+- **Test Suite**: Fixed failing tests after command structure reorganization
+  - Updated tests to use new command categories (developing, onboarding, system)
+  - Fixed error recovery tests to use correct key combinations (ctrl+r, ctrl+b)
+  - Updated success message tests for new command references (/do, /hey)
+  - Added Backspace navigation support in wizard
+
+### Changed
+- **Command Structure**: Renamed test folder to website for better organization
+
 ## [1.3.3] - 2025-11-30
 
 ### Removed
