@@ -116,6 +116,11 @@ jobs:
         with:
           node-version: '22'
           check-latest: true
+          registry-url: 'https://registry.npmjs.org/'
+          always-auth: true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Extract version
         id: get_version
@@ -166,16 +171,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup npm
+      - name: Verify npm authentication
+        if: ${{ secrets.NPM_TOKEN != '' }}
         run: |
-          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-          npm whoami || echo "NPM_TOKEN not set, skipping npm publish"
+          npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm
-        if: env.NPM_TOKEN != ''
+        if: ${{ secrets.NPM_TOKEN != '' }}
         run: |
           npm publish --access public
         env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Commit version bump
