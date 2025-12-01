@@ -7,23 +7,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.3.3] - 2025-11-30
+## [1.3.4] - 2025-12-01
 
-### Removed
-- **goplan command**: Removed `goplan` command and wrapper script. Now only `npx @doplan-dev/cli` is supported, which runs the `doplan` command directly.
+### Added
+- **🧠 Brain & Memory System**: Complete intelligence system that personalizes every interaction
+  - Reads memory card to understand user preferences, experience level, and relationship history
+  - Enhances agent prompts with user context for personalized responses
+  - Adjusts tone of voice based on relationship level and user preferences
+  - Provides contextual greetings and personalized suggestions
+  - Tracks interactions and learns from user behavior patterns
+  - Memory card persists across projects at `~/.doplan/memory_card.json`
+- **🏆 Engagement System**: Comprehensive gamification and relationship building
+  - **200+ Achievements**: Categorized achievements (score, project, command, learning, productivity, relationship, milestone)
+    - Points range from 5-1000 per achievement
+    - Rarity levels: common, uncommon, rare, epic, legendary
+  - **30+ Challenges**: High-scoring challenges across 8 categories
+    - Integration, database, deployment, testing, workflow, release, performance, security challenges
+    - Points range from 300-2000 per challenge
+    - First-time task completion rewards
+  - **Score System**: Central hub aggregating all points from achievements and challenges
+    - Triggers score milestone achievements
+    - Cascades to multiple achievement unlocks
+  - **Reward System**: Strategic dopamine timing for maximum engagement
+    - Variable interval reinforcement scheduling
+    - Creates anticipation and maximizes dopamine release
+    - Delays rewards based on time since last reward and user activity patterns
+- **📊 Progress Bar**: Visual progress tracking throughout the application
+  - Real-time progress bars in TUI wizard during project generation
+  - Progress calculation and rendering for multi-step processes
+  - Visual feedback for task completion and milestone tracking
+- **⚡ Command Workflows & Subcommands**: Enhanced command structure with workflow support
+  - **/hello** command with subcommands: `meeting`, `plan`, `build`, `github`
+    - Interactive tutorials for each workflow component
+    - Step-by-step guidance for new users
+  - **/write** command with subcommands: `plan`, `content`, `change <document> <change>`
+  - **/plan** command with subcommands: `phases`, `everything`
+  - Workflow commands support multiple execution modes and options
+- **⏱️ Time Recording**: Time tracking and recording system
+  - Tracks time spent on tasks and commands
+  - Records timing information for performance analysis
+  - Time-based achievement triggers
+- **🎯 Personalization**: Deep personalization across all interactions
+  - User profile system with experience level tracking (beginner, intermediate, advanced)
+  - Development support mode selection (guided vs independent)
+  - Personalized tips and suggestions based on user experience
+  - Adaptive command explanations based on skill level
+  - Relationship building with agents over time
 
-## [1.3.2] - 2025-11-30
+### Changed
+- **Test Coverage**: Improved code coverage to 89.6% (up from 80.6%)
+- **Project Structure**: Renamed `test` folder to `website` for better organization
+- **Documentation**: Updated README.md to replace ASCII art with 'DoPlan CLI' heading
+- **Documentation Organization**: Moved `DOPLAN_WEBSITE_PROJECT_PROMPT.md` to `docs/` directory
+- **Command Structure**: Enhanced command system with subcommand support for better workflow organization
+- **User Experience**: All interactions now personalized through Brain & Memory system
 
 ### Fixed
-- **npx compatibility**: Added wrapper script (`bin/cli.js`) to support `npx @doplan-dev/cli` with multiple commands. Changed `bin` field to string format for proper npx behavior. Now supports:
-  - `npx @doplan-dev/cli` → runs doplan (default)
-  - `npx @doplan-dev/cli doplan` → runs doplan
-  - `npx @doplan-dev/cli goplan` → runs goplan
+- **GitHub Actions Workflows**: Disabled submodule initialization in all workflows to prevent build failures
+  - Fixed submodule initialization in release workflow
+  - Removed invalid submodule entries for backup directories
+  - Prevents "Cannot open: File exists" errors during cache restoration
+- **Go Version Compatibility**: Updated workflows to use Go 1.23 to match `go.mod` requirements
+  - Resolves toolchain download conflicts during build process
 
-## [1.3.1] - 2025-11-30
-
-### Fixed
-- **npm bin configuration**: Fixed incorrect `"@doplan-dev/cli"` bin entry that would create a `cli` command instead of the intended behavior. Removed the incorrect entry and kept `doplan` and `goplan` as the correct executable commands.
+### Performance
+- **Test Coverage**: Increased from 80.6% to 89.6% across all packages
+- **Memory Card Caching**: Optimized memory card reads with intelligent caching
+- **Brain System**: Efficient prompt enhancement with minimal overhead
 
 ## [1.3.0] - 2025-01-15
 
