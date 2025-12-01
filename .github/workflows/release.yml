@@ -82,6 +82,11 @@ jobs:
             zip doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.zip doplan.exe
             sha256sum doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.zip > doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.zip.sha256
           else
+            # Troubleshooting: If tar fails with exit code 2:
+            # 1. Verify tar works: tar --version
+            # 2. Check file paths are valid: ls -la doplan
+            # 3. Ensure no corrupted artifacts
+            # 4. Rebuild with verbose output: tar -czvf ...
             tar -czf doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz doplan
             sha256sum doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz > doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz.sha256
           fi
