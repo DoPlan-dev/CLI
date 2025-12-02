@@ -1,0 +1,306 @@
+
+> starter@0.0.0 lint
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0
+
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/AnimatedBackground.tsx
+  13:11  error  'Particle' is defined but never used         @typescript-eslint/no-unused-vars
+  94:19  error  'angleY' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/CommandsPage.tsx
+    3:33  error  'Command' is defined but never used       @typescript-eslint/no-unused-vars
+   77:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/CookieConsent.tsx
+  13:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/CookieConsent.tsx:13:13
+  11 |         const consent = localStorage.getItem('cookieConsent');
+  12 |         if (consent) {
+> 13 |             setHasConsented(true);
+     |             ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  14 |             return;
+  15 |         }
+  16 |  react-hooks/set-state-in-effect
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx
+   94:46  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  116:10  error  'dimensions' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  139:32  error  '_' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  139:35  error  'i' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  140:22  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx:140:22
+  138 |   const circuitPaths = useMemo(() => {
+  139 |     return [...Array(20)].map((_, i) => {
+> 140 |       const startX = Math.random() * 100;
+      |                      ^^^^^^^^^^^^^ Cannot call impure function
+  141 |       const startY = Math.random() * 100;
+  142 |       const segments = Math.floor(Math.random() * 3) + 2;
+  143 |                                            react-hooks/purity
+  141:22  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx:141:22
+  139 |     return [...Array(20)].map((_, i) => {
+  140 |       const startX = Math.random() * 100;
+> 141 |       const startY = Math.random() * 100;
+      |                      ^^^^^^^^^^^^^ Cannot call impure function
+  142 |       const segments = Math.floor(Math.random() * 3) + 2;
+  143 |
+  144 |       let d = `M${startX}%,${startY}%`;                                           react-hooks/purity
+  142:35  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx:142:35
+  140 |       const startX = Math.random() * 100;
+  141 |       const startY = Math.random() * 100;
+> 142 |       const segments = Math.floor(Math.random() * 3) + 2;
+      |                                   ^^^^^^^^^^^^^ Cannot call impure function
+  143 |
+  144 |       let d = `M${startX}%,${startY}%`;
+  145 |       let currentX = startX;                                           react-hooks/purity
+  149:30  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx:149:30
+  147 |
+  148 |       for (let j = 0; j < segments; j++) {
+> 149 |         const isHorizontal = Math.random() > 0.5;
+      |                              ^^^^^^^^^^^^^ Cannot call impure function
+  150 |         const length = (Math.random() * 20 + 10) * (Math.random() > 0.5 ? 1 : -1);
+  151 |
+  152 |         if (isHorizontal) {                                                       react-hooks/purity
+  150:25  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx:150:25
+  148 |       for (let j = 0; j < segments; j++) {
+  149 |         const isHorizontal = Math.random() > 0.5;
+> 150 |         const length = (Math.random() * 20 + 10) * (Math.random() > 0.5 ? 1 : -1);
+      |                         ^^^^^^^^^^^^^ Cannot call impure function
+  151 |
+  152 |         if (isHorizontal) {
+  153 |           currentX += length;                              react-hooks/purity
+  150:53  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx:150:53
+  148 |       for (let j = 0; j < segments; j++) {
+  149 |         const isHorizontal = Math.random() > 0.5;
+> 150 |         const length = (Math.random() * 20 + 10) * (Math.random() > 0.5 ? 1 : -1);
+      |                                                     ^^^^^^^^^^^^^ Cannot call impure function
+  151 |
+  152 |         if (isHorizontal) {
+  153 |           currentX += length;  react-hooks/purity
+  163:19  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx:163:19
+  161 |       return {
+  162 |         d,
+> 163 |         duration: Math.random() * 5 + 3,
+      |                   ^^^^^^^^^^^^^ Cannot call impure function
+  164 |         delay: Math.random() * 5,
+  165 |         repeatDelay: Math.random() * 3
+  166 |       };                                                                                                                         react-hooks/purity
+  164:16  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx:164:16
+  162 |         d,
+  163 |         duration: Math.random() * 5 + 3,
+> 164 |         delay: Math.random() * 5,
+      |                ^^^^^^^^^^^^^ Cannot call impure function
+  165 |         repeatDelay: Math.random() * 3
+  166 |       };
+  167 |     });                                                                                                                                   react-hooks/purity
+  165:22  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Features.tsx:165:22
+  163 |         duration: Math.random() * 5 + 3,
+  164 |         delay: Math.random() * 5,
+> 165 |         repeatDelay: Math.random() * 3
+      |                      ^^^^^^^^^^^^^ Cannot call impure function
+  166 |       };
+  167 |     });
+  168 |   }, []);                                                                                                                              react-hooks/purity
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/Workflow.tsx
+  47:7  error  'itemVariants' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/docs/DocsLayout.tsx
+    3:39  error  'Search' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+  117:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/docs/DocsLayout.tsx:117:9
+  115 |     // Close sidebar on route change (mobile)
+  116 |     useEffect(() => {
+> 117 |         setIsSidebarOpen(false);
+      |         ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  118 |     }, [location.pathname]);
+  119 |
+  120 |     const currentPath = location.pathname.replace('/docs/', '');  react-hooks/set-state-in-effect
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/docs/DocsPage.tsx
+  22:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/docs/DocsPage.tsx:22:13
+  20 |
+  21 |         if (path in modules) {
+> 22 |             setContent(modules[path]);
+     |             ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  23 |             setError(false);
+  24 |         } else {
+  25 |             console.error(`Markdown file not found: ${path}`);  react-hooks/set-state-in-effect
+  52:32  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  53:32  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  54:32  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  55:31  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  56:32  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  57:32  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  58:32  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  59:31  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  60:34  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  60:81  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  79:40  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  82:35  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  87:35  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  88:32  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  89:32  error  'node' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/badge.tsx
+  36:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/button.tsx
+  57:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/calendar.tsx
+  61:25  error  'props' is defined but never used  @typescript-eslint/no-unused-vars
+  62:26  error  'props' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/command.tsx
+  24:11  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/form.tsx
+  168:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/input.tsx
+  5:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/navigation-menu.tsx
+  119:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/textarea.tsx
+  5:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/toggle.tsx
+  43:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/components/ui/use-toast.ts
+  19:7  error  'actionTypes' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/hooks/useTheme.tsx
+  54:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/accordion.stories.tsx
+  19:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/badge.stories.tsx
+  13:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  23:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/button.stories.tsx
+  15:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  54:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/calendar.stories.tsx
+   33:18  error  Unexpected any. Specify a different type                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+   66:29  error  React Hook "useState" is called in function "render" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use"  react-hooks/rules-of-hooks
+  114:29  error  React Hook "useState" is called in function "render" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use"  react-hooks/rules-of-hooks
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/carousel.stories.tsx
+  19:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/checkbox.stories.tsx
+  13:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/collapsible.stories.tsx
+  20:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  52:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/drawer.stories.tsx
+  22:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/input.stories.tsx
+  15:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/menubar.stories.tsx
+  120:3  error  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/pagination.stories.tsx
+  20:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/resizable.stories.tsx
+  16:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/sheet.stories.tsx
+  20:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  86:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/tabs.stories.tsx
+  21:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Dorgham/Documents/Work/Devleopment/DoPlan/Go-Agents/doplan/GoPlan-CLI/website/src/stories/textarea.stories.tsx
+  15:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 87 problems (81 errors, 6 warnings)
+
+(node:69765) ESLintRCWarning: You are using an eslintrc configuration file, which is deprecated and support will be removed in v10.0.0. Please migrate to an eslint.config.js file. See https://eslint.org/docs/latest/use/configure/migration-guide for details. An eslintrc configuration file is used because you have the ESLINT_USE_FLAT_CONFIG environment variable set to false. If you want to use an eslint.config.js file, remove the environment variable. If you want to find the location of the eslintrc configuration file, use the --debug flag.
+(Use `node --trace-warnings ...` to show where the warning was created)
