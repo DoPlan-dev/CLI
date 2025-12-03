@@ -4,7 +4,7 @@ import DocsLayout from './DocsLayout';
 import SEO from '../SEO';
 
 // Import all markdown files eagerly to ensure they are bundled
-const modules = import.meta.glob('/docs/wiki/**/*.md', { as: 'raw', eager: true });
+const modules = import.meta.glob('/docs/wiki/**/*.md', { query: '?raw', import: 'default', eager: true });
 
 export default function DocsPage() {
     const { section, page } = useParams();
