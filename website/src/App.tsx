@@ -9,7 +9,7 @@ const FeaturesPage = lazy(() => import("./components/FeaturesPage"));
 const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./components/TermsOfService"));
 const CommandsPage = lazy(() => import("./components/CommandsPage"));
-const DocsPage = lazy(() => import("./components/docs/DocsPage"));
+const DocsPage = lazy(() => import("@/components/docs/DocsPage"));
 
 function App() {
   return (
