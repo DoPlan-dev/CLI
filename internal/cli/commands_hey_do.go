@@ -351,9 +351,6 @@ Usage:
 			// Display phase completion with time
 			fmt.Fprintf(cmd.OutOrStdout(), "\n✅ Refining phase completed in %.1f seconds\n\n", refiningDuration)
 
-			// Display completion progress
-			DisplayPhaseProgress(cmd.OutOrStdout(), "Project Initiation", 3, 3)
-
 			// Final engagement processing for complete workflow
 			completeContext := map[string]interface{}{
 				"command":              "/do",

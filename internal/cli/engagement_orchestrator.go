@@ -148,6 +148,12 @@ func (eo *EngagementOrchestrator) ProcessCommandWithEngagement(
 		// 4. Check for pain point resolution
 		if eo.memoryCard != nil && len(eo.memoryCard.PainPoints) > 0 {
 			eo.detectPainPointResolution(context)
+			// Save memory card after pain point resolution (may have modified ResolvedPainPoints)
+			if eo.memoryCard != nil {
+				if err := SaveMemoryCard(eo.memoryCard); err != nil {
+					fmt.Fprintf(out, "⚠️  Warning: Failed to save memory card after pain point resolution: %v\n", err)
+				}
+			}
 		}
 	}
 
@@ -417,9 +423,9 @@ func (eo *EngagementOrchestrator) detectPainPointResolution(context map[string]i
 		if featureName, ok := context["feature_name"].(string); ok && featureName != "" {
 			for _, struggledFeature := range eo.memoryCard.StruggledFeatures {
 				if struggledFeature == featureName {
-							// User successfully completed a feature they struggled with
-							// Treat as resolved pain point for that feature
-							eo.memoryCard.ResolvePainPoint(struggledFeature)
+					// User successfully completed a feature they struggled with
+					// Treat as resolved pain point for that feature
+					eo.memoryCard.ResolvePainPoint(struggledFeature)
 					break
 				}
 			}

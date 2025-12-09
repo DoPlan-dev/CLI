@@ -501,10 +501,12 @@ func (m *MemoryCard) calculateCurrentStreak() int {
 		if found {
 			streak++
 		} else {
-			// If we're checking today (i=0) and it's not found, streak is 0
+			// If we're checking today (i=0) and it's not found, assume today counts
+			// (user is currently using DoPlan, so today should be counted)
 			// Otherwise, break the streak
 			if i == 0 {
-				return 0
+				streak++
+				continue
 			}
 			break
 		}
