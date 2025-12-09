@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Meetings - test</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet">
+	<style>
+		body { background: #f9fafb; color: #1f2937; }
+		.card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 0.75rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+		.card:hover { border-color: #206bc4; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: all 0.2s; }
+		.date-badge { width: 64px; height: 64px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+		.date-badge:hover { background: rgba(32, 107, 196, 0.05); border-color: rgba(32, 107, 196, 0.2); transition: all 0.2s; }
+	</style>
+</head>
+<body>
+	<header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm" style="position: sticky; top: 0; z-index: 50; background: white; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">
+      <div class="container-xl">
+        <div class="d-flex align-items-center justify-content-between" style="height: 64px;">
+          <div class="d-flex align-items-center gap-4">
+            <a href="index.html" class="d-flex align-items-center gap-2 text-decoration-none" style="opacity: 1; transition: opacity 0.2s;">
+              <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em; color: #206bc4;">DoPlan.dev</span>
+            </a>
+            <nav class="d-none d-md-flex align-items-center gap-1">
+
+              <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-dashboard"></i>
+                 Dashboard
+              </a>
+              <a href="plan.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-list-check"></i>
+                 Plan
+              </a>
+              <a href="meetings.html" class="px-3 py-2 rounded-md text-sm font-medium text-[#206bc4] bg-[#206bc4]/10 font-semibold transition-all flex items-center gap-2">
+                 <i class="ti ti-calendar"></i>
+                 Meetings
+              </a>
+              <a href="achievements.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-trophy"></i>
+                 Achievements
+              </a>
+              <a href="settings.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-settings"></i>
+                 Settings
+              </a>
+            </nav>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <nav class="d-none d-md-flex align-items-center gap-2">
+              <a href="https://doplan.dev/docs" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-book" style="color: #206bc4;"></i>
+                Docs
+              </a>
+              <a href="https://github.com/doplan/cli" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-brand-github" style="color: #206bc4;"></i>
+                GitHub
+              </a>
+            </nav>
+            <button class="btn btn-link d-md-none p-2 text-gray-500" id="mobileMenuToggle">
+              <i class="ti ti-menu-2" style="font-size: 1.5rem;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="d-md-none border-top border-gray-200 bg-white" id="mobileMenu" style="display: none;">
+        <div class="px-2 pt-2 pb-3">
+          <a href="index.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Dashboard</a>
+          <a href="plan.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Plan</a>
+          <a href="meetings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Meetings</a>
+          <a href="achievements.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Achievements</a>
+          <a href="settings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Settings</a>
+        </div>
+      </div>
+    </header>
+    <script>
+      document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+        const menu = document.getElementById('mobileMenu');
+        if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      });
+    </script>
+	<div class="page-body" style="padding: 2rem 0;">
+		<div class="container-xl">
+			<div class="space-y-6 mb-4">
+				<div class="d-flex justify-content-between align-items-center mb-4">
+					<h2 style="font-size: 1.875rem; font-weight: 700; color: #1f2937;">Meetings</h2>
+					<button class="btn btn-primary px-4" style="font-weight: 700; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">+ Schedule Meeting</button>
+				</div>
+				<div class="row g-4">
+					<div class="col-12 col-lg-8">
+						<h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Upcoming</h3>
+						<div id="upcomingMeetings" class="space-y-4 mb-4"></div>
+					</div>
+					<div class="col-12 col-lg-4 space-y-4 mb-4">
+						<div class="card p-4">
+							<h3 style="font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Quick Calendar</h3>
+							<div class="d-grid" style="grid-template-columns: repeat(7, 1fr); gap: 0.5rem; text-align: center; font-size: 0.875rem; margin-bottom: 0.5rem;">
+								<span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #9ca3af;">S</span>
+								<span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #9ca3af;">M</span>
+								<span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #9ca3af;">T</span>
+								<span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #9ca3af;">W</span>
+								<span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #9ca3af;">T</span>
+								<span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #9ca3af;">F</span>
+								<span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #9ca3af;">S</span>
+							</div>
+							<div class="d-grid" style="grid-template-columns: repeat(7, 1fr); gap: 0.5rem; text-align: center; font-size: 0.875rem; font-weight: 500;">
+								<span style="color: #9ca3af; padding: 0.25rem;">29</span>
+								<span style="color: #9ca3af; padding: 0.25rem;">30</span>
+								<span style="color: #374151; padding: 0.25rem; border-radius: 0.25rem; cursor: pointer;">1</span>
+								<span style="color: #374151; padding: 0.25rem; border-radius: 0.25rem; cursor: pointer;">2</span>
+								<span style="background: #206bc4; color: white; padding: 0.25rem; border-radius: 0.25rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">3</span>
+								<span style="color: #374151; padding: 0.25rem; border-radius: 0.25rem; cursor: pointer;">4</span>
+								<span style="color: #374151; padding: 0.25rem; border-radius: 0.25rem; cursor: pointer;">5</span>
+							</div>
+						</div>
+						<div class="card p-4 position-relative overflow-hidden">
+							<div class="position-absolute" style="top: 0; right: 0; padding: 1rem; opacity: 0.1;">
+								<i class="ti ti-info-circle" style="font-size: 6rem; color: #206bc4;"></i>
+							</div>
+							<h3 style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; position: relative; z-index: 10;">Meeting Stats</h3>
+							<div class="d-flex align-items-center justify-content-between mb-2 position-relative" style="z-index: 10;">
+								<span style="color: #6b7280; font-size: 0.875rem;">Hours this week</span>
+								<span style="color: #206bc4; font-weight: 700; font-size: 1.25rem;">12.5h</span>
+							</div>
+							<div class="progress mb-3 position-relative" style="z-index: 10;">
+								<div class="progress-bar" style="background: #a855f7; width: 60%;"></div>
+							</div>
+							<p style="font-size: 0.75rem; color: #6b7280; position: relative; z-index: 10;">You spend 20% less time in meetings compared to last week.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
+	<script>
+		function formatDateMonth(iso) {
+			return new Date(iso).toLocaleString('default', { month: 'short' });
+		}
+		function formatDateDay(iso) {
+			return new Date(iso).getDate().toString();
+		}
+		
+		async function loadMeetings() {
+			try {
+				const response = await fetch('../.do/system/meeting_session.json');
+				if (!response.ok) throw new Error('No meeting data');
+				const meeting = await response.json();
+				
+				const startTime = meeting.start_time || '';
+				const speed = meeting.speed || 'standard';
+				const projectType = meeting.project_type || '';
+				
+				if (startTime) {
+					const meetingDate = new Date(startTime);
+					const isUpcoming = meetingDate > new Date();
+					
+					if (isUpcoming) {
+						document.getElementById('upcomingMeetings').innerHTML = 
+							'<div class="card p-4 d-flex align-items-center">' +
+							'<div class="date-badge me-4 flex-shrink-0">' +
+							'<span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #6b7280;">' + formatDateMonth(startTime) + '</span>' +
+							'<span style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">' + formatDateDay(startTime) + '</span>' +
+							'</div>' +
+							'<div class="flex-grow-1">' +
+							'<div class="d-flex justify-content-between align-items-start mb-2">' +
+							'<h4 style="font-size: 1.125rem; font-weight: 600; color: #1f2937;">Discovery Meeting</h4>' +
+							'<span style="font-size: 0.875rem; font-family: monospace; color: #6b7280; background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">' + meetingDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + '</span>' +
+							'</div>' +
+							'<div style="font-size: 0.875rem; color: #6b7280;">' +
+							'<span class="badge" style="background: #206bc4; color: white; margin-right: 0.5rem;">' + speed + '</span>' +
+							'<span>' + projectType + '</span>' +
+							'</div>' +
+							'</div>' +
+							'</div>';
+					}
+				}
+			} catch (e) {
+				document.getElementById('upcomingMeetings').innerHTML = '<p class="text-muted">No meeting data available yet. Run /do meeting to start a discovery session.</p>';
+			}
+		}
+		loadMeetings();
+	</script>
+</body>
+</html>

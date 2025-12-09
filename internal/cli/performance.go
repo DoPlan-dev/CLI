@@ -72,12 +72,29 @@ func shouldUseFastPath(projectPath string) bool {
 }
 
 // getOrCreateEngagementOrchestrator gets or creates engagement orchestrator
-// Returns nil for new projects (fast path)
+// Always initializes engagement system to ensure achievements work from the start
 func getOrCreateEngagementOrchestrator(projectPath string) (*EngagementOrchestrator, error) {
-	if shouldUseFastPath(projectPath) {
-		return nil, nil // Fast path: skip engagement system
+	// Always initialize engagement system - it will create memory card if needed
+	orchestrator, err := NewEngagementOrchestrator()
+	if err != nil {
+		// If memory card doesn't exist, create a new one and try again
+		if _, loadErr := LoadMemoryCard(); loadErr != nil {
+			// Create new memory card for new projects
+			mc := &MemoryCard{
+				FirstMet:          time.Now(),
+				ProjectsCount:     0,
+				CommandUsage:      make(map[string]int),
+				Score:             0,
+				Achievements:      []Achievement{},
+				RelationshipLevel: 0,
+				TrustLevel:        0,
+				EngagementScore:   0.0,
+			}
+			if saveErr := SaveMemoryCard(mc); saveErr == nil {
+				// Retry initialization after creating memory card
+				orchestrator, err = NewEngagementOrchestrator()
+			}
+		}
 	}
-
-	// For existing projects, initialize engagement system
-	return NewEngagementOrchestrator()
+	return orchestrator, err
 }

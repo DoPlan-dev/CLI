@@ -49,6 +49,7 @@ func TestFullProjectGeneration(t *testing.T) {
 	verifyGitHubWorkflowsGenerated(t, projectPath)
 	verifyDocumentationGenerated(t, projectPath)
 	verifyIDEConfigsGenerated(t, projectPath)
+	verifyDashboardGenerated(t, projectPath)
 }
 
 func verifyAgentsGenerated(t *testing.T, projectPath string) {
@@ -273,5 +274,40 @@ func verifyIDEConfigsGenerated(t *testing.T, projectPath string) {
 	cursorrulesPath := filepath.Join(projectPath, ".cursorrules")
 	if _, err := os.Stat(cursorrulesPath); os.IsNotExist(err) {
 		t.Error("IDE generator should create .cursorrules for Cursor")
+	}
+}
+
+func verifyDashboardGenerated(t *testing.T, projectPath string) {
+	dashboardDir := filepath.Join(projectPath, "dashboard")
+	if _, err := os.Stat(dashboardDir); os.IsNotExist(err) {
+		t.Error("Dashboard directory should be created")
+		return
+	}
+
+	// Check for all HTML pages
+	expectedPages := []string{
+		"index.html",
+		"plan.html",
+		"meetings.html",
+		"achievements.html",
+		"settings.html",
+	}
+
+	for _, page := range expectedPages {
+		pagePath := filepath.Join(dashboardDir, page)
+		if _, err := os.Stat(pagePath); os.IsNotExist(err) {
+			t.Errorf("Dashboard page %s should be generated", page)
+		}
+	}
+
+	// Check for data directory and project.json
+	dataDir := filepath.Join(dashboardDir, "data")
+	if _, err := os.Stat(dataDir); os.IsNotExist(err) {
+		t.Error("Dashboard data directory should be created")
+	}
+
+	projectDataPath := filepath.Join(dataDir, "project.json")
+	if _, err := os.Stat(projectDataPath); os.IsNotExist(err) {
+		t.Error("Dashboard project.json should be generated")
 	}
 }

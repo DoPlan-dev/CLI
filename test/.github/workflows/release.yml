@@ -1,0 +1,124 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build Binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: darwin
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+      
+      - name: Build
+        run: |
+          set -e
+          BINARY_NAME=doplan
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY_NAME=doplan.exe
+          fi
+          MODULE_PATH=$(go list -m)
+          VERSION_SYMBOL="${MODULE_PATH}/internal/version.Version"
+          echo "Module path: $MODULE_PATH"
+          echo "Injecting version via: $VERSION_SYMBOL"
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X ${VERSION_SYMBOL}=${{ steps.version.outputs.version }}" -o $BINARY_NAME ./cmd/doplan
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+      
+      - name: Create archive
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            zip doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.zip doplan.exe
+          else
+            tar -czf doplan-$VERSION-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz doplan
+          fi
+      
+      - name: Generate checksum
+        run: |
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            sha256sum doplan-${{ steps.version.outputs.version }}-${{ matrix.goos }}-${{ matrix.goarch }}.zip > doplan-${{ steps.version.outputs.version }}-${{ matrix.goos }}-${{ matrix.goarch }}.zip.sha256
+          else
+            sha256sum doplan-${{ steps.version.outputs.version }}-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz > doplan-${{ steps.version.outputs.version }}-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz.sha256
+          fi
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: doplan-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: |
+            doplan-*-${{ matrix.goos }}-${{ matrix.goarch }}.*
+            doplan*
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+      
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          if [ -f docs/history/CHANGELOG.md ]; then
+            # Extract release notes from docs/history/CHANGELOG.md
+            awk '/^## \[v'"${{ steps.version.outputs.version }}"'\]/,/^## \[/' docs/history/CHANGELOG.md | head -n -1 > release_notes.txt || echo "Release v${{ steps.version.outputs.version }}" > release_notes.txt
+          else
+            echo "Release v${{ steps.version.outputs.version }}" > release_notes.txt
+          fi
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release v${{ steps.version.outputs.version }}
+          body_path: release_notes.txt
+          files: dist/**/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

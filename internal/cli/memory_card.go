@@ -37,9 +37,10 @@ type MemoryCard struct {
 	// Learning & Preferences
 	PreferredTechStack []string `json:"preferred_tech_stack,omitempty"`
 	ProjectTypes       []string `json:"project_types,omitempty"`
-	Interests          []string `json:"interests,omitempty"`      // Topics user is interested in
-	LearningGoals      []string `json:"learning_goals,omitempty"` // What user wants to learn
-	PainPoints         []string `json:"pain_points,omitempty"`    // Common challenges user faces
+	Interests          []string `json:"interests,omitempty"`            // Topics user is interested in
+	LearningGoals      []string `json:"learning_goals,omitempty"`       // What user wants to learn
+	PainPoints         []string `json:"pain_points,omitempty"`          // Common challenges user faces
+	ResolvedPainPoints []string `json:"resolved_pain_points,omitempty"` // Pain points that have been resolved
 
 	// Relationship Data
 	ConversationHistory []ConversationEntry    `json:"conversation_history,omitempty"` // Structured conversation history
@@ -72,6 +73,12 @@ type MemoryCard struct {
 	LastCommandTime    time.Time `json:"last_command_time,omitempty"`    // When last command was run
 	SessionCount       int       `json:"session_count,omitempty"`        // Total number of sessions
 	AverageSessionTime float64   `json:"average_session_time,omitempty"` // Average session duration in minutes
+
+	// Streak Tracking
+	LastUsageDate time.Time `json:"last_usage_date,omitempty"` // Last date user used DoPlan (date only, no time)
+	CurrentStreak int       `json:"current_streak,omitempty"`  // Current consecutive days streak
+	LongestStreak int       `json:"longest_streak,omitempty"`  // Longest streak ever achieved
+	UsageDates    []string  `json:"usage_dates,omitempty"`     // Dates when user used DoPlan (YYYY-MM-DD format)
 }
 
 // ConversationEntry represents a structured conversation interaction
@@ -194,6 +201,12 @@ func LoadMemoryCard() (*MemoryCard, error) {
 	if card.ChallengeAttempts == nil {
 		card.ChallengeAttempts = make(map[string]int)
 	}
+	if card.ResolvedPainPoints == nil {
+		card.ResolvedPainPoints = []string{}
+	}
+	if card.UsageDates == nil {
+		card.UsageDates = []string{}
+	}
 
 	return &card, nil
 }
@@ -214,6 +227,9 @@ func SaveMemoryCard(card *MemoryCard) error {
 
 	// Update interaction tracking
 	card.LastInteraction = time.Now()
+
+	// Update streak tracking
+	card.UpdateStreak()
 
 	// Only increment project count if this is a new project
 	// (This should be called explicitly when starting a new project, not on every save)
@@ -411,7 +427,133 @@ func (m *MemoryCard) RecordSession(durationMinutes float64) {
 		m.AverageSessionTime = (m.AverageSessionTime*float64(m.SessionCount-1) + durationMinutes) / float64(m.SessionCount)
 	}
 	m.LastInteraction = time.Now()
+	m.UpdateStreak()
 	m.UpdateRelationshipMetrics()
+}
+
+// UpdateStreak updates the user's usage streak
+func (m *MemoryCard) UpdateStreak() {
+	if m.UsageDates == nil {
+		m.UsageDates = []string{}
+	}
+
+	now := time.Now()
+	today := now.Format("2006-01-02")
+
+	// Check if we already recorded today
+	alreadyRecorded := false
+	for _, date := range m.UsageDates {
+		if date == today {
+			alreadyRecorded = true
+			break
+		}
+	}
+
+	// If not recorded today, add it
+	if !alreadyRecorded {
+		m.UsageDates = append(m.UsageDates, today)
+		// Keep only last 60 days to avoid unbounded growth
+		if len(m.UsageDates) > 60 {
+			m.UsageDates = m.UsageDates[len(m.UsageDates)-60:]
+		}
+	}
+
+	// Calculate current streak
+	m.CurrentStreak = m.calculateCurrentStreak()
+
+	// Update longest streak if current is longer
+	if m.CurrentStreak > m.LongestStreak {
+		m.LongestStreak = m.CurrentStreak
+	}
+
+	// Update last usage date
+	m.LastUsageDate = now
+}
+
+// calculateCurrentStreak calculates the current consecutive day streak
+func (m *MemoryCard) calculateCurrentStreak() int {
+	if len(m.UsageDates) == 0 {
+		return 0
+	}
+
+	// Sort dates (they should already be in order, but ensure it)
+	dates := make([]string, len(m.UsageDates))
+	copy(dates, m.UsageDates)
+
+	// Get today's date
+	today := time.Now()
+
+	// Count backwards from today
+	streak := 0
+	for i := 0; i < 60; i++ { // Check up to 60 days back
+		checkDate := today.AddDate(0, 0, -i)
+		dateStr := checkDate.Format("2006-01-02")
+
+		// Check if this date exists in usage dates
+		found := false
+		for _, d := range dates {
+			if d == dateStr {
+				found = true
+				break
+			}
+		}
+
+		if found {
+			streak++
+		} else {
+			// If we're checking today (i=0) and it's not found, streak is 0
+			// Otherwise, break the streak
+			if i == 0 {
+				return 0
+			}
+			break
+		}
+	}
+
+	return streak
+}
+
+// ResolvePainPoint marks a pain point as resolved
+func (m *MemoryCard) ResolvePainPoint(painPoint string) {
+	if m.ResolvedPainPoints == nil {
+		m.ResolvedPainPoints = []string{}
+	}
+
+	// Check if already resolved
+	for _, resolved := range m.ResolvedPainPoints {
+		if resolved == painPoint {
+			return // Already resolved
+		}
+	}
+
+	// Add to resolved list
+	m.ResolvedPainPoints = append(m.ResolvedPainPoints, painPoint)
+
+	// Remove from active pain points if present
+	if m.PainPoints != nil {
+		newPainPoints := []string{}
+		for _, pp := range m.PainPoints {
+			if pp != painPoint {
+				newPainPoints = append(newPainPoints, pp)
+			}
+		}
+		m.PainPoints = newPainPoints
+	}
+}
+
+// HasResolvedPainPoint checks if a pain point has been resolved
+func (m *MemoryCard) HasResolvedPainPoint(painPoint string) bool {
+	if m.ResolvedPainPoints == nil {
+		return false
+	}
+
+	for _, resolved := range m.ResolvedPainPoints {
+		if resolved == painPoint {
+			return true
+		}
+	}
+
+	return false
 }
 
 // GetGreeting returns a personalized greeting based on memory card

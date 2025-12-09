@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Achievements - test</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+	<style>
+		body { background: #f9fafb; color: #1f2937; }
+		.card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 0.75rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); transition: all 0.3s; }
+		.card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+		.achievement-locked { opacity: 0.6; filter: grayscale(100%); }
+		.achievement-unlocked { border-color: rgba(32, 107, 196, 0.2); }
+		.level-circle { width: 128px; height: 128px; position: relative; }
+	</style>
+</head>
+<body>
+	<header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm" style="position: sticky; top: 0; z-index: 50; background: white; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">
+      <div class="container-xl">
+        <div class="d-flex align-items-center justify-content-between" style="height: 64px;">
+          <div class="d-flex align-items-center gap-4">
+            <a href="index.html" class="d-flex align-items-center gap-2 text-decoration-none" style="opacity: 1; transition: opacity 0.2s;">
+              <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em; color: #206bc4;">DoPlan.dev</span>
+            </a>
+            <nav class="d-none d-md-flex align-items-center gap-1">
+
+              <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-dashboard"></i>
+                 Dashboard
+              </a>
+              <a href="plan.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-list-check"></i>
+                 Plan
+              </a>
+              <a href="meetings.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-calendar"></i>
+                 Meetings
+              </a>
+              <a href="achievements.html" class="px-3 py-2 rounded-md text-sm font-medium text-[#206bc4] bg-[#206bc4]/10 font-semibold transition-all flex items-center gap-2">
+                 <i class="ti ti-trophy"></i>
+                 Achievements
+              </a>
+              <a href="settings.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-settings"></i>
+                 Settings
+              </a>
+            </nav>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <nav class="d-none d-md-flex align-items-center gap-2">
+              <a href="https://doplan.dev/docs" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-book" style="color: #206bc4;"></i>
+                Docs
+              </a>
+              <a href="https://github.com/doplan/cli" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-brand-github" style="color: #206bc4;"></i>
+                GitHub
+              </a>
+            </nav>
+            <button class="btn btn-link d-md-none p-2 text-gray-500" id="mobileMenuToggle">
+              <i class="ti ti-menu-2" style="font-size: 1.5rem;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="d-md-none border-top border-gray-200 bg-white" id="mobileMenu" style="display: none;">
+        <div class="px-2 pt-2 pb-3">
+          <a href="index.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Dashboard</a>
+          <a href="plan.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Plan</a>
+          <a href="meetings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Meetings</a>
+          <a href="achievements.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Achievements</a>
+          <a href="settings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Settings</a>
+        </div>
+      </div>
+    </header>
+    <script>
+      document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+        const menu = document.getElementById('mobileMenu');
+        if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      });
+    </script>
+	<div class="page-body" style="padding: 2rem 0;">
+		<div class="container-xl">
+			<div class="space-y-8 mb-4">
+				<!-- Hero Section -->
+				<div class="card p-8 position-relative overflow-hidden d-flex flex-column flex-md-row align-items-center mb-4" style="border-radius: 1rem;">
+					<div class="position-absolute" style="right: 0; top: 0; height: 100%; width: 33%; background: linear-gradient(to left, rgba(239, 246, 255, 1), transparent); pointer-events: none;"></div>
+					<div class="position-relative d-flex flex-column flex-md-row align-items-center w-100" style="z-index: 10;">
+						<div class="level-circle mb-4 mb-md-0 me-md-4" style="flex-shrink: 0;">
+							<svg class="w-100 h-100" style="transform: rotate(-90deg);">
+								<circle cx="64" cy="64" r="58" stroke="#f1f5f9" stroke-width="8" fill="none" />
+								<circle cx="64" cy="64" r="58" stroke="#206bc4" stroke-width="8" fill="none" stroke-dasharray="364" stroke-dashoffset="90" stroke-linecap="round" id="levelCircle" />
+							</svg>
+							<div class="position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+								<span style="font-size: 1.875rem; font-weight: 700; color: #1f2937;" id="levelDisplay">Lvl 1</span>
+								<span style="display: block; font-size: 0.75rem; color: #6b7280;" id="xpDisplay">XP 0/100</span>
+							</div>
+						</div>
+						<div class="text-center text-md-start flex-grow-1">
+							<h2 style="font-size: 1.875rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Achievement Master</h2>
+							<p style="color: #6b7280; max-width: 32rem; margin-bottom: 1rem;" id="achievementMessage">Keep using DoPlan to unlock achievements!</p>
+							<div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+								<span class="badge px-3 py-1" style="background: #fef3c7; color: #d97706; border: 1px solid #fde68a; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">
+									🔥 <span id="streakBadge">0</span> Day Streak
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Achievements Grid -->
+				<div>
+					<div class="d-flex align-items-center justify-content-between mb-4">
+						<h3 style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">Badges & Milestones</h3>
+						<div class="d-flex gap-2">
+							<button class="btn btn-sm px-3 py-1" style="font-size: 0.875rem; border-radius: 9999px; background: rgba(32, 107, 196, 0.1); color: #206bc4; font-weight: 500; border: none;">All</button>
+							<button class="btn btn-sm px-3 py-1" style="font-size: 0.875rem; border-radius: 9999px; color: #6b7280; border: none; background: transparent;">Locked</button>
+							<button class="btn btn-sm px-3 py-1" style="font-size: 0.875rem; border-radius: 9999px; color: #6b7280; border: none; background: transparent;">Unlocked</button>
+						</div>
+					</div>
+					<div class="row g-4" id="achievementsGrid">
+						<p class="text-muted">Loading achievements...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
+	<script>
+		async function loadAchievements() {
+			try {
+				let response = await fetch('../.do/system/memory_card.json');
+				if (!response.ok) response = await fetch('../../.doplan/memory_card.json');
+				if (!response.ok) throw new Error('No memory card');
+				
+				const memoryCard = await response.json();
+				const score = memoryCard.score || 0;
+				const achievements = memoryCard.achievements || [];
+				const streak = memoryCard.streak || 0;
+				
+				const level = Math.floor(score / 100) + 1;
+				const xpInLevel = score % 100;
+				const xpNeeded = 100;
+				const progress = (xpInLevel / xpNeeded) * 100;
+				const circumference = 2 * Math.PI * 58;
+				const offset = circumference - (progress / 100) * circumference;
+				
+				document.getElementById('levelDisplay').textContent = 'Lvl ' + level;
+				document.getElementById('xpDisplay').textContent = 'XP ' + score + '/1000';
+				document.getElementById('streakBadge').textContent = streak;
+				document.getElementById('levelCircle').style.strokeDashoffset = offset;
+				
+				const achievementList = [
+					{id: 'first_steps', name: 'First Steps', description: 'Complete your first project', xp: 50, rarity: 'common', icon: '🎉'},
+					{id: 'getting_started', name: 'Getting Started', description: 'Reach 100 points', xp: 10, rarity: 'common', icon: '🎯'},
+					{id: 'on_the_rise', name: 'On the Rise', description: 'Reach 250 points', xp: 25, rarity: 'common', icon: '📈'},
+				];
+				
+				let html = '';
+				achievementList.forEach(ach => {
+					const unlocked = achievements.includes(ach.id);
+					const borderClass = unlocked ? 'border-blue-200' : 'border-gray-200';
+					const opacityClass = unlocked ? '' : 'achievement-locked';
+					const bgClass = unlocked ? 'bg-blue-50' : 'bg-gray-100';
+					const textClass = unlocked ? 'text-[#206bc4]' : '';
+					
+					html += '<div class="col-12 col-md-6 col-lg-3">' +
+						'<div class="card p-4 d-flex flex-column align-items-center text-center ' + opacityClass + '" style="border-color: ' + (unlocked ? 'rgba(32, 107, 196, 0.2)' : '#e5e7eb') + ';" onclick="' + (unlocked ? 'confetti({particleCount: 50, spread: 70});' : '') + '">' +
+						'<div style="width: 64px; height: 64px; border-radius: 9999px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; transition: all 0.5s; background: ' + (unlocked ? 'rgba(32, 107, 196, 0.05)' : '#f3f4f6') + '; color: ' + (unlocked ? '#206bc4' : '#6b7280') + '; transform: ' + (unlocked ? 'scale(1.1)' : 'scale(1)') + ';">' + ach.icon + '</div>' +
+						'<h4 style="color: #1f2937; font-weight: 700; margin-bottom: 0.25rem;">' + ach.name + '</h4>' +
+						'<p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1rem; min-height: 2.5rem;">' + ach.description + '</p>' +
+						'<div class="w-100 bg-gray-100" style="height: 8px; border-radius: 9999px; overflow: hidden; margin-top: auto;">' +
+						'<div class="bg-[#206bc4]" style="height: 100%; transition: width 1s; width: ' + (unlocked ? '100' : '0') + '%; border-radius: 9999px;"></div>' +
+						'</div>' +
+						'<span style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.5rem; display: block;">' + (unlocked ? '100' : '0') + '% Complete</span>' +
+						'</div>' +
+						'</div>';
+				});
+				document.getElementById('achievementsGrid').innerHTML = html;
+			} catch (e) {
+				document.getElementById('achievementsGrid').innerHTML = '<p class="text-muted">No achievement data available yet.</p>';
+			}
+		}
+		loadAchievements();
+	</script>
+</body>
+</html>

@@ -49,7 +49,7 @@ func getScoreMilestoneAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      10,
 			Rarity:      "common",
-			Icon:        "🎯",
+			Icon:        GetCarbonIcon("score_100", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if score, ok := context["score"].(int); ok {
 					return score >= 100 && score < 250
@@ -65,7 +65,7 @@ func getScoreMilestoneAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      25,
 			Rarity:      "common",
-			Icon:        "📈",
+			Icon:        GetCarbonIcon("score_250", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if score, ok := context["score"].(int); ok {
 					return score >= 250 && score < 500
@@ -81,7 +81,7 @@ func getScoreMilestoneAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      50,
 			Rarity:      "uncommon",
-			Icon:        "⭐",
+			Icon:        GetCarbonIcon("score_500", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if score, ok := context["score"].(int); ok {
 					return score >= 500 && score < 1000
@@ -97,7 +97,7 @@ func getScoreMilestoneAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      100,
 			Rarity:      "rare",
-			Icon:        "🏆",
+			Icon:        GetCarbonIcon("score_1000", "trophy", "rare"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if score, ok := context["score"].(int); ok {
 					return score >= 1000 && score < 2500
@@ -113,7 +113,7 @@ func getScoreMilestoneAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      250,
 			Rarity:      "rare",
-			Icon:        "💎",
+			Icon:        GetCarbonIcon("score_2500", "trophy", "rare"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if score, ok := context["score"].(int); ok {
 					return score >= 2500 && score < 5000
@@ -129,7 +129,7 @@ func getScoreMilestoneAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      500,
 			Rarity:      "epic",
-			Icon:        "👑",
+			Icon:        GetCarbonIcon("score_5000", "trophy", "epic"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if score, ok := context["score"].(int); ok {
 					return score >= 5000 && score < 10000
@@ -145,7 +145,7 @@ func getScoreMilestoneAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      1000,
 			Rarity:      "epic",
-			Icon:        "🌟",
+			Icon:        GetCarbonIcon("score_10000", "trophy", "epic"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if score, ok := context["score"].(int); ok {
 					return score >= 10000 && score < 25000
@@ -161,7 +161,7 @@ func getScoreMilestoneAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      2500,
 			Rarity:      "legendary",
-			Icon:        "🚀",
+			Icon:        GetCarbonIcon("score_25000", "trophy", "legendary"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if score, ok := context["score"].(int); ok {
 					return score >= 25000 && score < 50000
@@ -177,7 +177,7 @@ func getScoreMilestoneAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      5000,
 			Rarity:      "legendary",
-			Icon:        "⚡",
+			Icon:        GetCarbonIcon("score_50000", "trophy", "legendary"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if score, ok := context["score"].(int); ok {
 					return score >= 50000
@@ -199,7 +199,7 @@ func getProjectAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      50,
 			Rarity:      "common",
-			Icon:        "🎉",
+			Icon:        GetCarbonIcon("first_project", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.ProjectsCount == 1
 			},
@@ -212,7 +212,7 @@ func getProjectAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      75,
 			Rarity:      "uncommon",
-			Icon:        "🎊",
+			Icon:        GetCarbonIcon("second_mvp", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if phase, ok := context["phase"].(string); ok && phase == "completed" {
 					return mc.ProjectsCount == 2
@@ -228,7 +228,7 @@ func getProjectAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      200,
 			Rarity:      "rare",
-			Icon:        "🏗️",
+			Icon:        GetCarbonIcon("five_projects", "trophy", "rare"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.ProjectsCount == 5
 			},
@@ -241,7 +241,7 @@ func getProjectAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      500,
 			Rarity:      "epic",
-			Icon:        "🎖️",
+			Icon:        GetCarbonIcon("ten_projects", "trophy", "epic"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.ProjectsCount == 10
 			},
@@ -254,7 +254,7 @@ func getProjectAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      1500,
 			Rarity:      "legendary",
-			Icon:        "👑",
+			Icon:        GetCarbonIcon("twenty_five_projects", "trophy", "legendary"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.ProjectsCount == 25
 			},
@@ -267,7 +267,7 @@ func getProjectAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      5000,
 			Rarity:      "legendary",
-			Icon:        "⚡",
+			Icon:        GetCarbonIcon("fifty_projects", "trophy", "legendary"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.ProjectsCount == 50
 			},
@@ -280,7 +280,7 @@ func getProjectAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      100,
 			Rarity:      "uncommon",
-			Icon:        "🎨",
+			Icon:        GetCarbonIcon("project_types_5", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return len(mc.ProjectTypes) >= 5
 			},
@@ -293,7 +293,7 @@ func getProjectAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      300,
 			Rarity:      "rare",
-			Icon:        "🌟",
+			Icon:        GetCarbonIcon("project_types_10", "trophy", "rare"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return len(mc.ProjectTypes) >= 10
 			},
@@ -313,7 +313,7 @@ func getCommandUsageAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      25,
 			Rarity:      "common",
-			Icon:        "👋",
+			Icon:        GetCarbonIcon("command_hey_10", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.CommandUsage["/hey"] == 10
 			},
@@ -326,7 +326,7 @@ func getCommandUsageAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      75,
 			Rarity:      "uncommon",
-			Icon:        "🚀",
+			Icon:        GetCarbonIcon("command_do_50", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.CommandUsage["/do"] == 50
 			},
@@ -339,7 +339,7 @@ func getCommandUsageAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      50,
 			Rarity:      "common",
-			Icon:        "📋",
+			Icon:        GetCarbonIcon("command_plan_25", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.CommandUsage["/plan"] == 25
 			},
@@ -352,7 +352,7 @@ func getCommandUsageAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      200,
 			Rarity:      "rare",
-			Icon:        "💻",
+			Icon:        GetCarbonIcon("command_dev_100", "achievement", "rare"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.CommandUsage["/dev"] == 100
 			},
@@ -365,7 +365,7 @@ func getCommandUsageAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      100,
 			Rarity:      "uncommon",
-			Icon:        "🎯",
+			Icon:        GetCarbonIcon("all_commands", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				coreCommands := []string{"/hey", "/do", "/plan", "/dev"}
 				for _, cmd := range coreCommands {
@@ -391,7 +391,7 @@ func getLearningAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      25,
 			Rarity:      "common",
-			Icon:        "📚",
+			Icon:        GetCarbonIcon("learning_goal_1", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return len(mc.LearningGoals) == 1
 			},
@@ -404,7 +404,7 @@ func getLearningAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      75,
 			Rarity:      "uncommon",
-			Icon:        "🎓",
+			Icon:        GetCarbonIcon("learning_goal_5", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return len(mc.LearningGoals) == 5
 			},
@@ -417,7 +417,7 @@ func getLearningAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      50,
 			Rarity:      "common",
-			Icon:        "🔧",
+			Icon:        GetCarbonIcon("tech_stack_3", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return len(mc.PreferredTechStack) >= 3
 			},
@@ -430,7 +430,7 @@ func getLearningAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      300,
 			Rarity:      "rare",
-			Icon:        "⚙️",
+			Icon:        GetCarbonIcon("tech_stack_10", "achievement", "rare"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return len(mc.PreferredTechStack) >= 10
 			},
@@ -450,7 +450,7 @@ func getProductivityAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      50,
 			Rarity:      "common",
-			Icon:        "⏱️",
+			Icon:        GetCarbonIcon("session_10", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.SessionCount == 10
 			},
@@ -463,7 +463,7 @@ func getProductivityAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      150,
 			Rarity:      "uncommon",
-			Icon:        "🔥",
+			Icon:        GetCarbonIcon("session_50", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.SessionCount == 50
 			},
@@ -476,7 +476,7 @@ func getProductivityAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      400,
 			Rarity:      "rare",
-			Icon:        "💯",
+			Icon:        GetCarbonIcon("session_100", "achievement", "rare"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.SessionCount == 100
 			},
@@ -489,7 +489,7 @@ func getProductivityAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      2000,
 			Rarity:      "epic",
-			Icon:        "⚡",
+			Icon:        GetCarbonIcon("session_500", "trophy", "epic"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.SessionCount == 500
 			},
@@ -509,10 +509,9 @@ func getStreakAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      30,
 			Rarity:      "common",
-			Icon:        "🔥",
+			Icon:        GetCarbonIcon("streak_3", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
-				// Check if used 3 days in a row (simplified check)
-				return false // Would need streak tracking
+				return mc.CurrentStreak >= 3 && mc.CurrentStreak < 7
 			},
 		},
 		{
@@ -523,9 +522,9 @@ func getStreakAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      100,
 			Rarity:      "uncommon",
-			Icon:        "💪",
+			Icon:        GetCarbonIcon("streak_7", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
-				return false // Would need streak tracking
+				return mc.CurrentStreak >= 7 && mc.CurrentStreak < 30
 			},
 		},
 		{
@@ -536,9 +535,9 @@ func getStreakAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      500,
 			Rarity:      "epic",
-			Icon:        "👑",
+			Icon:        GetCarbonIcon("streak_30", "trophy", "epic"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
-				return false // Would need streak tracking
+				return mc.CurrentStreak >= 30
 			},
 		},
 		// Add more streak achievements...
@@ -556,7 +555,7 @@ func getRelationshipAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      50,
 			Rarity:      "common",
-			Icon:        "🤝",
+			Icon:        GetCarbonIcon("relationship_40", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.RelationshipLevel >= 40 && mc.RelationshipLevel < 70
 			},
@@ -569,7 +568,7 @@ func getRelationshipAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      200,
 			Rarity:      "rare",
-			Icon:        "💎",
+			Icon:        GetCarbonIcon("relationship_70", "trophy", "rare"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.RelationshipLevel >= 70 && mc.RelationshipLevel < 100
 			},
@@ -582,7 +581,7 @@ func getRelationshipAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      1000,
 			Rarity:      "legendary",
-			Icon:        "❤️",
+			Icon:        GetCarbonIcon("relationship_100", "trophy", "legendary"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.RelationshipLevel >= 100
 			},
@@ -595,7 +594,7 @@ func getRelationshipAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      300,
 			Rarity:      "epic",
-			Icon:        "🤝",
+			Icon:        GetCarbonIcon("trust_10", "trophy", "epic"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return mc.TrustLevel >= 10
 			},
@@ -608,7 +607,7 @@ func getRelationshipAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      75,
 			Rarity:      "uncommon",
-			Icon:        "📸",
+			Icon:        GetCarbonIcon("memorable_moments_10", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return len(mc.MemorableMoments) >= 10
 			},
@@ -621,7 +620,7 @@ func getRelationshipAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      500,
 			Rarity:      "epic",
-			Icon:        "📖",
+			Icon:        GetCarbonIcon("memorable_moments_50", "trophy", "epic"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				return len(mc.MemorableMoments) >= 50
 			},
@@ -641,7 +640,7 @@ func getMilestoneAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      50,
 			Rarity:      "common",
-			Icon:        "🎖️",
+			Icon:        GetCarbonIcon("achievement_10", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if count, ok := context["achievements"].(int); ok {
 					return count == 10
@@ -657,7 +656,7 @@ func getMilestoneAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      150,
 			Rarity:      "uncommon",
-			Icon:        "🏅",
+			Icon:        GetCarbonIcon("achievement_25", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if count, ok := context["achievements"].(int); ok {
 					return count == 25
@@ -673,7 +672,7 @@ func getMilestoneAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      400,
 			Rarity:      "rare",
-			Icon:        "🏆",
+			Icon:        GetCarbonIcon("achievement_50", "trophy", "rare"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if count, ok := context["achievements"].(int); ok {
 					return count == 50
@@ -689,7 +688,7 @@ func getMilestoneAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      1000,
 			Rarity:      "legendary",
-			Icon:        "👑",
+			Icon:        GetCarbonIcon("achievement_100", "trophy", "legendary"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				if count, ok := context["achievements"].(int); ok {
 					return count == 100
@@ -712,7 +711,7 @@ func getSpecialAchievements() []AchievementDefinition {
 			Type:        "trophy",
 			Points:      500,
 			Rarity:      "epic",
-			Icon:        "🎂",
+			Icon:        GetCarbonIcon("first_met_anniversary", "trophy", "epic"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				daysSinceFirst := time.Since(mc.FirstMet).Hours() / 24
 				return daysSinceFirst >= 365 && daysSinceFirst < 730
@@ -726,7 +725,7 @@ func getSpecialAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      25,
 			Rarity:      "common",
-			Icon:        "🦉",
+			Icon:        GetCarbonIcon("night_owl", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				hour := time.Now().Hour()
 				return hour >= 0 && hour < 6
@@ -740,7 +739,7 @@ func getSpecialAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      25,
 			Rarity:      "common",
-			Icon:        "🐦",
+			Icon:        GetCarbonIcon("early_bird", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				hour := time.Now().Hour()
 				return hour >= 4 && hour < 6
@@ -754,10 +753,10 @@ func getSpecialAchievements() []AchievementDefinition {
 			Type:        "achievement",
 			Points:      100,
 			Rarity:      "uncommon",
-			Icon:        "💪",
+			Icon:        GetCarbonIcon("overcome_pain_point", "achievement", "uncommon"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
-				// Would need to track when pain points are resolved
-				return false
+				// Check if any pain points have been resolved
+				return len(mc.ResolvedPainPoints) > 0
 			},
 		},
 		// Add many more special achievements...

@@ -1,0 +1,5 @@
+{
+  "name": "DoPlan Dashboard",
+  "description": "A modern project management dashboard with a dark theme, utilizing Angular Signals and Tailwind CSS.",
+  "requestFramePermissions": []
+}

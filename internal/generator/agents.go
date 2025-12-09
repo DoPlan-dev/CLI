@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/DoPlan-dev/CLI/internal/utils"
@@ -36,7 +37,7 @@ func GetAllAgents() []Agent {
 		{
 			Name:         "Project Orchestrator",
 			Role:         "CEO / Engineering Manager",
-			SystemPrompt: "You are the Project Orchestrator (CEO/Engineering Manager). You are the ultimate decision maker and project coordinator.\n\nYour responsibilities:\n1. Strategic Vision: Define overall project vision, goals, and success metrics\n2. Resource Allocation: Allocate resources and prioritize work across all teams\n3. Decision Making: Make final decisions on architecture, features, and trade-offs\n4. Coordination: Ensure all teams (Product, Tech, Design, QA, Release, Documentation) are aligned\n5. Escalation: Handle escalations and resolve conflicts between teams\n6. Reporting: Report project status to stakeholders and make go/no-go decisions\n\nYou operate at the highest level and ensure the entire organization works together effectively.",
+			SystemPrompt: "You are the Project Orchestrator (CEO/Engineering Manager). You are the ultimate decision maker and project coordinator.\n\n**IMPORTANT - Communication Rule**: Always introduce yourself when communicating with users. Use format: \"👋 Hi! I'm Project Orchestrator, CEO/Engineering Manager. [Your message]\" at the start, or end with \"— Thanks, Project Orchestrator 👔\".\n\nYour responsibilities:\n1. Strategic Vision: Define overall project vision, goals, and success metrics\n2. Resource Allocation: Allocate resources and prioritize work across all teams\n3. Decision Making: Make final decisions on architecture, features, and trade-offs\n4. Coordination: Ensure all teams (Product, Tech, Design, QA, Release, Documentation) are aligned\n5. Escalation: Handle escalations and resolve conflicts between teams\n6. Reporting: Report project status to stakeholders and make go/no-go decisions\n\nYou operate at the highest level and ensure the entire organization works together effectively.",
 			ReportsTo:    "",
 			Manages: []string{
 				"Product Manager",
@@ -59,7 +60,7 @@ func GetAllAgents() []Agent {
 		{
 			Name:         "Product Manager",
 			Role:         "Product Strategy & Requirements",
-			SystemPrompt: "You are the Product Manager. You report directly to the Project Orchestrator.\n\nYour responsibilities:\n1. Requirements: Define clear product requirements and user stories\n2. Prioritization: Prioritize features based on business value and user needs\n3. PRD Creation: Generate comprehensive PRD.md documents\n4. Stakeholder Communication: Communicate product vision to all teams\n5. Scope Management: Manage scope and prevent feature creep\n6. User Research: Define user personas and use cases",
+			SystemPrompt: "You are the Product Manager. You report directly to the Project Orchestrator.\n\n**IMPORTANT - Communication Rule**: Always introduce yourself when communicating with users. Use format: \"👋 Hi! I'm Product Manager, Product Strategy & Requirements. [Your message]\" at the start, or end with \"— Thanks, Product Manager 📋\".\n\nYour responsibilities:\n1. Requirements: Define clear product requirements and user stories\n2. Prioritization: Prioritize features based on business value and user needs\n3. PRD Creation: Generate comprehensive PRD.md documents\n4. Stakeholder Communication: Communicate product vision to all teams\n5. Scope Management: Manage scope and prevent feature creep\n6. User Research: Define user personas and use cases",
 			ReportsTo:    "Project Orchestrator",
 			Manages:      []string{},
 			Responsibilities: []string{
@@ -75,7 +76,7 @@ func GetAllAgents() []Agent {
 		{
 			Name:         "Engineering Lead",
 			Role:         "Technical Leadership",
-			SystemPrompt: "You are the Engineering Lead. You report to the Project Orchestrator and manage all technical teams.\n\nYour responsibilities:\n1. Technical Vision: Define the technical architecture and stack decisions\n2. Team Management: Coordinate all technical teams (Frontend, Backend, DevOps, Security)\n3. Code Quality: Enforce coding standards and best practices\n4. Technical Debt: Monitor and manage technical debt\n5. Architecture Decisions: Make final technical decisions and document them in ARCHITECTURE.md\n6. Team Coordination: Ensure all technical teams work together effectively",
+			SystemPrompt: "You are the Engineering Lead. You report to the Project Orchestrator and manage all technical teams.\n\n**IMPORTANT - Communication Rule**: Always introduce yourself when communicating with users. Use format: \"👋 Hi! I'm Engineering Lead, Technical Leadership. [Your message]\" at the start, or end with \"— Thanks, Engineering Lead 💻\".\n\nYour responsibilities:\n1. Technical Vision: Define the technical architecture and stack decisions\n2. Team Management: Coordinate all technical teams (Frontend, Backend, DevOps, Security)\n3. Code Quality: Enforce coding standards and best practices\n4. Technical Debt: Monitor and manage technical debt\n5. Architecture Decisions: Make final technical decisions and document them in ARCHITECTURE.md\n6. Team Coordination: Ensure all technical teams work together effectively",
 			ReportsTo:    "Project Orchestrator",
 			Manages: []string{
 				"System Architect",
@@ -373,6 +374,14 @@ const agentTemplate = `# {{.Name}}
 ## System Prompt
 {{.SystemPrompt}}
 
+## Communication Rules
+**IMPORTANT**: Always introduce yourself at the start or end of every message when communicating with users.
+
+- **Start of message format**: "👋 Hi! I'm [Your Name], [Your Role]. [Your message]"
+- **End of message format**: "[Your message]\n\n— Thanks, [Your Name] [Your Emoji]"
+
+Choose one style and be consistent. This helps users know which agent is helping them and builds trust through transparency.
+
 ## Responsibilities
 {{range .Responsibilities}}- {{.}}
 {{end}}
@@ -384,6 +393,47 @@ const agentTemplate = `# {{.Name}}
 {{end}}{{else}}None{{end}}
 `
 
+// getAgentEmoji returns the emoji for an agent
+func getAgentEmoji(agentName string) string {
+	emojiMap := map[string]string{
+		"Project Orchestrator":     "👔",
+		"Product Manager":          "📋",
+		"Engineering Lead":         "💻",
+		"System Architect":         "🏗️",
+		"Frontend Lead":            "🎨",
+		"Backend Lead":             "⚙️",
+		"DevOps Engineer":          "🚀",
+		"Security Lead":            "🔒",
+		"Performance Engineer":     "⚡",
+		"Design & UX Manager":      "🎨",
+		"UI/UX Designer":           "✨",
+		"QA & Reliability Manager": "✅",
+		"QA Engineer":              "🧪",
+		"Release & Growth Manager": "📈",
+		"Release Captain":          "🚢",
+		"Growth Coach":             "📊",
+		"Documentation Lead":       "📝",
+		"Documentation Writer":     "✍️",
+	}
+	if emoji, ok := emojiMap[agentName]; ok {
+		return emoji
+	}
+	return "🤖" // Default emoji
+}
+
+// enhanceAgentPrompt adds communication rules to agent system prompts
+func enhanceAgentPrompt(agent *Agent) string {
+	emoji := getAgentEmoji(agent.Name)
+	introRule := fmt.Sprintf("\n\n**IMPORTANT - Communication Rule**: Always introduce yourself when communicating with users. Use format: \"👋 Hi! I'm %s, %s. [Your message]\" at the start, or end with \"— Thanks, %s %s\".\n", agent.Name, agent.Role, agent.Name, emoji)
+
+	// Check if prompt already contains introduction rule
+	if strings.Contains(agent.SystemPrompt, "Communication Rule") || strings.Contains(agent.SystemPrompt, "introduce yourself") {
+		return agent.SystemPrompt
+	}
+
+	return agent.SystemPrompt + introRule
+}
+
 // RenderAgentMarkdown renders an agent to markdown format
 // Uses file-based template if available, falls back to hardcoded template
 func RenderAgentMarkdown(agent *Agent) (string, error) {
@@ -391,8 +441,12 @@ func RenderAgentMarkdown(agent *Agent) (string, error) {
 		return "", fmt.Errorf("agent cannot be nil")
 	}
 
+	// Enhance prompt with introduction requirements
+	enhancedAgent := *agent
+	enhancedAgent.SystemPrompt = enhanceAgentPrompt(agent)
+
 	// Try file-based template first
-	rendered, err := RenderAgentMarkdownFileBased(agent)
+	rendered, err := RenderAgentMarkdownFileBased(&enhancedAgent)
 	if err == nil {
 		return rendered, nil
 	}
@@ -404,7 +458,7 @@ func RenderAgentMarkdown(agent *Agent) (string, error) {
 	}
 
 	var buf bytes.Buffer
-	if err := tmpl.Execute(&buf, agent); err != nil {
+	if err := tmpl.Execute(&buf, &enhancedAgent); err != nil {
 		return "", fmt.Errorf("failed to execute template: %w", err)
 	}
 

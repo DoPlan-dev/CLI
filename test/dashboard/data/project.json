@@ -1,0 +1,71 @@
+{
+  "name": "test",
+  "type": "Fullstack",
+  "version": "1.0.0",
+  "status": "Draft",
+  "phase": "tasks",
+  "created": "2025-12-09",
+  "last_updated": "2025-01-27",
+  "ide": "Cursor",
+  "plan_generated": true,
+  "plan_generated_date": "2025-01-27",
+  "github": {
+    "repo": "",
+    "branches": 0,
+    "current_branch": "main"
+  },
+  "tech_stack": [],
+  "stats": {
+    "lines_of_code": 0,
+    "total_size": "-"
+  },
+  "documents": {
+    "PRD": {
+      "status": "draft",
+      "last_updated": "2025-01-27"
+    },
+    "ARCHITECTURE": {
+      "status": "draft",
+      "last_updated": "2025-01-27"
+    },
+    "DESIGN_SYSTEM": {
+      "status": "draft",
+      "last_updated": "2025-01-27"
+    }
+  },
+  "phases": {
+    "01-Foundation": {
+      "status": "pending",
+      "features_count": 4,
+      "tasks_count": 13,
+      "completed_tasks": 0
+    },
+    "02-Core": {
+      "status": "pending",
+      "features_count": 3,
+      "tasks_count": 10,
+      "completed_tasks": 0
+    },
+    "03-Enhancement": {
+      "status": "pending",
+      "features_count": 3,
+      "tasks_count": 9,
+      "completed_tasks": 0
+    },
+    "04-Launch-Preparation": {
+      "status": "pending",
+      "features_count": 4,
+      "tasks_count": 13,
+      "completed_tasks": 0
+    }
+  },
+  "progress": {
+    "completed_tasks": 0,
+    "total_tasks": 45,
+    "completion_percentage": 0,
+    "total_phases": 4,
+    "total_features": 14,
+    "completed_phases": 0,
+    "completed_features": 0
+  }
+}

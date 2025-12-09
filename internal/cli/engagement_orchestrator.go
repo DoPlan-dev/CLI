@@ -5,6 +5,8 @@ import (
 	"io"
 	"strings"
 	"time"
+
+	"github.com/DoPlan-dev/CLI/internal/generator"
 )
 
 // EngagementOrchestrator coordinates all engagement systems
@@ -63,6 +65,11 @@ func (eo *EngagementOrchestrator) ProcessCommandWithEngagement(
 	context map[string]interface{},
 	out io.Writer,
 ) error {
+	// 0. Update streak tracking (must happen before achievement checks)
+	if eo.memoryCard != nil {
+		eo.memoryCard.UpdateStreak()
+	}
+
 	// 1. Check for pending rewards first (dopamine timing)
 	if eo.dopamineTiming != nil {
 		rewards, err := eo.dopamineTiming.CheckAndReleaseRewards(out)
@@ -96,7 +103,29 @@ func (eo *EngagementOrchestrator) ProcessCommandWithEngagement(
 		if err != nil {
 			fmt.Fprintf(out, "⚠️  Warning: Achievement check failed: %v\n", err)
 		} else if len(earned) > 0 {
-			// Schedule achievements for dopamine timing
+			// Convert to notification format for IDE display
+			notifications := make([]generator.AchievementNotification, len(earned))
+			for i, ach := range earned {
+				notifications[i] = generator.AchievementNotification{
+					ID:          ach.ID,
+					Title:       ach.Title,
+					Description: ach.Description,
+					Points:      ach.Points,
+					Rarity:      ach.Rarity,
+					Icon:        ach.Icon,
+				}
+			}
+
+			// Display achievements with IDE-formatted notifications
+			ideNotification := generator.FormatMultipleAchievements(notifications)
+			if ideNotification != "" {
+				fmt.Fprint(out, ideNotification)
+			}
+
+			// Also display traditional celebration
+			CelebrateAchievements(earned, out)
+
+			// Also schedule for dopamine timing (for delayed rewards if needed)
 			for _, achievement := range earned {
 				eo.dopamineTiming.ScheduleReward(
 					"achievement",
@@ -109,6 +138,14 @@ func (eo *EngagementOrchestrator) ProcessCommandWithEngagement(
 					achievement.Project,
 				)
 			}
+
+			// Refresh systems after achievements awarded
+			eo.refreshSystems()
+		}
+
+		// 4. Check for pain point resolution
+		if eo.memoryCard != nil && len(eo.memoryCard.PainPoints) > 0 {
+			eo.detectPainPointResolution(context)
 		}
 	}
 
@@ -295,6 +332,10 @@ func (eo *EngagementOrchestrator) DisplayEngagementDashboard(out io.Writer) {
 	fmt.Fprintf(out, "  🎯 Challenges: %d\n", len(eo.memoryCard.CompletedChallenges))
 	fmt.Fprintln(out, "")
 
+	// Note: Feature and phase time tracking available via /sys performance or time-tracker.jsonl
+	fmt.Fprintln(out, "  💡 Tip: Check .do/system/time-tracker.jsonl for detailed time analytics")
+	fmt.Fprintln(out, "")
+
 	// Relationship
 	fmt.Fprintf(out, "  🤝 Relationship Level: %d/100", eo.memoryCard.RelationshipLevel)
 	if eo.memoryCard.RelationshipLevel >= 70 {
@@ -358,4 +399,32 @@ func (eo *EngagementOrchestrator) getNextScoreMilestone() int {
 		}
 	}
 	return 0 // No more milestones
+}
+
+// detectPainPointResolution detects when a user has overcome a pain point
+func (eo *EngagementOrchestrator) detectPainPointResolution(context map[string]interface{}) {
+	if eo.memoryCard == nil {
+		return
+	}
+
+	// Check if user successfully completed a task/feature they struggled with
+	if success, ok := context["success"].(bool); ok && success {
+		// If a feature was completed successfully and it was in struggled features, mark as resolved
+		if featureName, ok := context["feature_name"].(string); ok && featureName != "" {
+			for _, struggledFeature := range eo.memoryCard.StruggledFeatures {
+				if struggledFeature == featureName {
+					// User successfully completed a feature they struggled with
+					// This could indicate they overcame a pain point related to that feature
+					// For now, we'll mark it as a potential resolution
+					// In a more sophisticated system, we'd track specific pain points per feature
+					break
+				}
+			}
+		}
+
+		// Check if user explicitly indicated they resolved a pain point
+		if resolved, ok := context["pain_point_resolved"].(string); ok && resolved != "" {
+			eo.memoryCard.ResolvePainPoint(resolved)
+		}
+	}
 }

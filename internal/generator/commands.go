@@ -671,8 +671,9 @@ func GetAllCommands() []Command {
      Phase ended   : [end_time]
      
      * Calculate progress: (completed_phases / total_phases) * 100
-     * Generate progress bar: Use █ for completed, ░ for remaining (20 characters total)
-     * Display timing information
+     * Generate progress bar: Use RenderProgressBar() function or format: [█████████████████] [percentage]% (30 characters total)
+     * Display timing information including phase duration
+     * Use DisplayPhaseProgress() function for consistent formatting
      * Wait for user confirmation before moving to next phase
    
    - **General phase behavior:**
@@ -713,10 +714,14 @@ func GetAllCommands() []Command {
    Format:
    Phase [Last Phase Number] - [Phase Name]
    
-   Progress: [█████████████████] 100%
+   Progress: [██████████████████████████████] 100%
    
    Phase Started : [start_time]
    Phase ended   : [end_time]
+   Phase Duration: [duration]
+   
+   * Use DisplayPhaseProgress() function for consistent formatting
+   * Show all phase durations and total meeting time
    
    Meeting Started: [meeting_start_time]
    Meeting Ended: [meeting_end_time]

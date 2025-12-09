@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Settings - test</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet">
+	<style>
+		body { background: #f9fafb; color: #1f2937; }
+		.card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 0.75rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+		.tab-button { padding: 0.75rem 1.5rem; color: #6b7280; border: none; background: transparent; border-bottom: 2px solid transparent; transition: color 0.2s; }
+		.tab-button.active { color: #206bc4; border-bottom-color: #206bc4; font-weight: 500; }
+		.tab-button:hover { color: #1f2937; }
+		.toggle-switch { width: 44px; height: 24px; background: #e5e7eb; border-radius: 9999px; position: relative; cursor: pointer; transition: background 0.2s; }
+		.toggle-switch.active { background: #206bc4; }
+		.toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 9999px; transition: transform 0.2s; }
+		.toggle-switch.active::after { transform: translateX(20px); }
+	</style>
+</head>
+<body>
+	<header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm" style="position: sticky; top: 0; z-index: 50; background: white; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">
+      <div class="container-xl">
+        <div class="d-flex align-items-center justify-content-between" style="height: 64px;">
+          <div class="d-flex align-items-center gap-4">
+            <a href="index.html" class="d-flex align-items-center gap-2 text-decoration-none" style="opacity: 1; transition: opacity 0.2s;">
+              <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em; color: #206bc4;">DoPlan<span style="color: #000;">.dev</span></span>
+            </a>
+            <nav class="d-none d-md-flex align-items-center gap-1">
+
+              <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                 <i class="ti ti-dashboard" style="color: #206bc4;"></i>
+                 Dashboard
+              </a>
+              <a href="plan.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                 <i class="ti ti-list-check" style="color: #206bc4;"></i>
+                 Plan
+              </a>
+              <a href="meetings.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                 <i class="ti ti-calendar" style="color: #206bc4;"></i>
+                 Meetings
+              </a>
+              <a href="achievements.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                 <i class="ti ti-trophy" style="color: #206bc4;"></i>
+                 Achievements
+              </a>
+              <a href="settings.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111; background: rgba(32,107,196,0.1);">
+                 <i class="ti ti-settings" style="color: #206bc4;"></i>
+                 Settings
+              </a>
+            </nav>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <nav class="d-none d-md-flex align-items-center gap-2">
+              <a href="https://doplan.dev/docs" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-book" style="color: #206bc4;"></i>
+                Docs
+              </a>
+              <a href="https://github.com/doplan/cli" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-brand-github" style="color: #206bc4;"></i>
+                GitHub
+              </a>
+            </nav>
+            <button class="btn btn-link d-md-none p-2 text-gray-500" id="mobileMenuToggle">
+              <i class="ti ti-menu-2" style="font-size: 1.5rem;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="d-md-none border-top border-gray-200 bg-white" id="mobileMenu" style="display: none;">
+        <div class="px-2 pt-2 pb-3">
+          <a href="index.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Dashboard</a>
+          <a href="plan.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Plan</a>
+          <a href="meetings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Meetings</a>
+          <a href="achievements.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Achievements</a>
+          <a href="settings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Settings</a>
+        </div>
+      </div>
+    </header>
+    <script>
+      document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+        const menu = document.getElementById('mobileMenu');
+        if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      });
+    </script>
+	<div class="page-body" style="padding: 2rem 0;">
+		<div class="container-xl" style="max-width: 896px;">
+			<h2 style="font-size: 1.875rem; font-weight: 700; color: #1f2937; margin-bottom: 2rem;">Settings</h2>
+			<div class="d-flex border-bottom border-gray-200 mb-4 overflow-x-auto">
+				<button class="tab-button active" data-tab="general">General</button>
+				<button class="tab-button" data-tab="agents">Agents</button>
+				<button class="tab-button" data-tab="notifications">Notifications</button>
+				<button class="tab-button" data-tab="integrations">Integrations</button>
+			</div>
+			<div class="space-y-8 mb-4">
+				<section class="card p-4 mb-4">
+					<h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Profile Information</h3>
+					<div class="d-flex flex-column flex-md-row align-items-start">
+						<div style="width: 80px; height: 80px; border-radius: 9999px; border: 1px solid #e5e7eb; margin-right: 1.5rem; margin-bottom: 1rem; margin-bottom-md: 0; background: #f3f4f6; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #206bc4; font-weight: 700;">t</div>
+						<div class="flex-grow-1" style="max-width: 448px;">
+							<div class="row g-3 mb-3">
+								<div class="col-md-6">
+									<label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; font-weight: 500;">Project Name</label>
+									<input type="text" value="test" class="form-control" readonly style="border-radius: 0.25rem; border: 1px solid #d1d5db;">
+								</div>
+								<div class="col-md-6">
+									<label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; font-weight: 500;">Project Type</label>
+									<input type="text" value="test" class="form-control" readonly style="border-radius: 0.25rem; border: 1px solid #d1d5db;">
+								</div>
+							</div>
+							<div class="mb-3">
+								<label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; font-weight: 500;">IDE</label>
+								<input type="text" value="Cursor" class="form-control" readonly style="border-radius: 0.25rem; border: 1px solid #d1d5db;">
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="card p-4 mb-4">
+					<h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">AI Agents</h3>
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Agent</th>
+									<th>Role</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody id="agentsList">
+								<tr><td colspan="3" class="text-muted">Loading agents...</td></tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+				<section class="card p-4" style="border-color: #fecaca; background: #fef2f2;">
+					<h3 style="color: #dc2626; font-weight: 600; margin-bottom: 0.5rem;">Danger Zone</h3>
+					<p style="font-size: 0.875rem; color: #4b5563; margin-bottom: 1rem;">Once you delete a project, there is no going back. Please be certain.</p>
+					<button class="btn" style="background: white; color: #dc2626; border: 1px solid #fecaca; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500; padding: 0.5rem 1rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">Delete Project</button>
+				</section>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
+	<script>
+		document.querySelectorAll('.tab-button').forEach(btn => {
+			btn.addEventListener('click', function() {
+				document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+				this.classList.add('active');
+			});
+		});
+		
+		async function loadAgents() {
+			try {
+				// Agent files are in subdirectories: .do/core/agents/{category}/{agent}.md
+				const agentPaths = [
+					'leadership/project_orchestrator.md',
+					'product/product_manager.md',
+					'engineering/engineering_lead.md',
+					'engineering/system_architect.md',
+					'engineering/frontend_lead.md',
+					'engineering/backend_lead.md',
+					'engineering/devops_engineer.md',
+					'engineering/security_lead.md',
+					'engineering/performance_engineer.md',
+					'design/design_manager.md',
+					'design/ui_ux_designer.md',
+					'documentation/documentation_lead.md',
+					'documentation/documentation_writer.md',
+					'quality/qa_manager.md',
+					'quality/qa_engineer.md',
+					'release/release_manager.md',
+					'release/release_captain.md',
+					'release/growth_coach.md'
+				];
+				
+				let html = '';
+				let loadedCount = 0;
+				
+				for (const path of agentPaths) {
+					try {
+						// Try multiple possible paths (prioritize data/agents for easier access)
+						const paths = [
+							'data/agents/' + path,
+							'../.do/core/agents/' + path,
+							'../.cursor/agents/' + path.split('/')[0] + '/' + path.split('/')[1]
+						];
+						
+						let loaded = false;
+						for (const fetchPath of paths) {
+							try {
+								const response = await fetch(fetchPath);
+								if (response.ok) {
+									const content = await response.text();
+									// Extract name from first heading (# Title)
+									const nameMatch = content.match(/^#\s+(.+?)(?:\n|$)/m);
+									// Extract role from "## Role" section
+									const roleMatch = content.match(/^##\s+Role\s*\n(.+?)(?:\n|$)/m) || content.match(/Role[:\s]+(.+?)(?:\n|$)/i);
+									
+									const fileName = path.split('/').pop().replace('.md', '').replace(/_/g, ' ');
+									const name = nameMatch ? nameMatch[1].trim() : fileName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+									const role = roleMatch ? roleMatch[1].trim() : 'Agent';
+									
+									html += '<tr><td>' + name + '</td><td>' + role + '</td><td><span class="badge bg-success">Active</span></td></tr>';
+									loadedCount++;
+									loaded = true;
+									break;
+								}
+							} catch (e) {
+								// Try next path
+								continue;
+							}
+						}
+					} catch (e) {
+						// Skip this agent
+						continue;
+					}
+				}
+				
+				if (loadedCount === 0) {
+					console.warn('No agents loaded. Tried paths:', agentPaths);
+					document.getElementById('agentsList').innerHTML = '<tr><td colspan="3" class="text-muted">No agents data available yet. Make sure agent files exist in dashboard/data/agents/</td></tr>';
+				} else {
+					console.log('Loaded', loadedCount, 'agents successfully');
+					document.getElementById('agentsList').innerHTML = html;
+				}
+			} catch (e) {
+				console.error('Error loading agents:', e);
+				document.getElementById('agentsList').innerHTML = '<tr><td colspan="3" class="text-muted">Error loading agents. Check console for details.</td></tr>';
+			}
+		}
+		loadAgents();
+	</script>
+</body>
+</html>

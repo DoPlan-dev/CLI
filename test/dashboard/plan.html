@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Plan - test</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+	<style>
+		body { background: #f9fafb; color: #1f2937; }
+		.card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 0.75rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+		.kanban-column { background: rgba(243, 244, 246, 0.8); border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem; min-width: 0; overflow: hidden; }
+		.task-card { background: white; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer; transition: height 0.2s; width: 100% !important; max-width: 100% !important; box-sizing: border-box; overflow: hidden; }
+		.task-card:hover { box-shadow: 0 2px 4px -1px rgba(0,0,0,0.1); border-color: rgba(32, 107, 196, 0.5); }
+		.task-card.active { border-left: 4px solid #206bc4; }
+		.task-card .task-header { width: 100% !important; max-width: 100% !important; box-sizing: border-box; min-width: 0; }
+		.task-card .task-header h4 { word-wrap: break-word; overflow-wrap: break-word; max-width: 100% !important; margin: 0; }
+		.task-card .task-header .badge { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: fit-content; }
+		.task-card .task-content { display: none; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #f3f4f6; width: 100% !important; max-width: 100% !important; box-sizing: border-box; word-wrap: break-word; overflow-wrap: break-word; overflow: hidden; }
+		.task-card.expanded .task-content { display: block; }
+		.task-card .task-content p { word-wrap: break-word; overflow-wrap: break-word; max-width: 100% !important; margin: 0; }
+		.task-card .expand-icon { color: #9ca3af; font-size: 0.875rem; transition: transform 0.2s; }
+		.task-card.expanded .expand-icon { transform: rotate(180deg); }
+		.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+		.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+		.custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+	</style>
+</head>
+<body>
+	<header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm" style="position: sticky; top: 0; z-index: 50; background: white; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">
+      <div class="container-xl">
+        <div class="d-flex align-items-center justify-content-between" style="height: 64px;">
+          <div class="d-flex align-items-center gap-4">
+            <a href="index.html" class="d-flex align-items-center gap-2 text-decoration-none" style="opacity: 1; transition: opacity 0.2s;">
+              <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em; color: #206bc4;">DoPlan.dev</span>
+            </a>
+            <nav class="d-none d-md-flex align-items-center gap-1">
+
+              <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-dashboard"></i>
+                 Dashboard
+              </a>
+              <a href="plan.html" class="px-3 py-2 rounded-md text-sm font-medium text-[#206bc4] bg-[#206bc4]/10 font-semibold transition-all flex items-center gap-2">
+                 <i class="ti ti-list-check"></i>
+                 Plan
+              </a>
+              <a href="meetings.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-calendar"></i>
+                 Meetings
+              </a>
+              <a href="achievements.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-trophy"></i>
+                 Achievements
+              </a>
+              <a href="settings.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-2">
+                 <i class="ti ti-settings"></i>
+                 Settings
+              </a>
+            </nav>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <nav class="d-none d-md-flex align-items-center gap-2">
+              <a href="https://doplan.dev/docs" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-book" style="color: #206bc4;"></i>
+                Docs
+              </a>
+              <a href="https://github.com/doplan/cli" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-brand-github" style="color: #206bc4;"></i>
+                GitHub
+              </a>
+            </nav>
+            <button class="btn btn-link d-md-none p-2 text-gray-500" id="mobileMenuToggle">
+              <i class="ti ti-menu-2" style="font-size: 1.5rem;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="d-md-none border-top border-gray-200 bg-white" id="mobileMenu" style="display: none;">
+        <div class="px-2 pt-2 pb-3">
+          <a href="index.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Dashboard</a>
+          <a href="plan.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Plan</a>
+          <a href="meetings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Meetings</a>
+          <a href="achievements.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Achievements</a>
+          <a href="settings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Settings</a>
+        </div>
+      </div>
+    </header>
+    <script>
+      document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+        const menu = document.getElementById('mobileMenu');
+        if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      });
+    </script>
+	<div class="page-body" style="padding: 2rem 0; height: calc(100vh - 64px); display: flex; flex-direction: column;">
+		<div class="container-xl flex-grow-1 d-flex flex-column">
+			<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+				<div>
+					<h2 style="font-size: 1.875rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Project Plan</h2>
+					<p style="color: #6b7280; font-size: 0.875rem; margin: 0;">Watch tasks and track progress across phases.</p>
+				</div>
+				<div class="d-flex align-items-center gap-3 w-100 w-md-auto">
+					<div class="position-relative flex-grow-1 flex-md-grow-0" style="max-width: 256px;">
+						<input type="text" id="searchInput" placeholder="Search tasks..." class="form-control" style="padding-left: 2.5rem; border-radius: 0.5rem; border: 1px solid #d1d5db; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">
+						<i class="ti ti-search position-absolute" style="left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 1rem;"></i>
+					</div>
+				</div>
+			</div>
+			<div class="flex-grow-1 overflow-x-auto pb-4" style="min-width: 600px;">
+				<div class="d-flex gap-4 h-100" style="min-width: 0; width: 100%;">
+					<div class="flex-fill d-flex flex-column kanban-column" style="min-width: 0; width: calc(50% - 1rem); max-width: calc(50% - 1rem);">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							<h3 class="mb-0 d-flex align-items-center" style="font-weight: 600; color: #374151;">
+								<span style="display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: #6b7280; margin-right: 0.5rem;"></span>
+								To Do
+							</h3>
+							<span class="badge" style="background: white; border: 1px solid #e5e7eb; color: #6b7280; font-size: 0.75rem; padding: 0.125rem 0.5rem; border-radius: 9999px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);" id="todoCount">0</span>
+						</div>
+						<div class="flex-grow-1 overflow-y-auto custom-scrollbar" id="todoTasks" style="max-height: calc(100vh - 300px);">
+							<p class="text-muted text-center p-4">Loading tasks...</p>
+						</div>
+					</div>
+					<div class="flex-fill d-flex flex-column kanban-column" style="min-width: 0; width: calc(50% - 1rem); max-width: calc(50% - 1rem);">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							<h3 class="mb-0 d-flex align-items-center" style="font-weight: 600; color: #16a34a;">
+								<span style="display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: #16a34a; margin-right: 0.5rem;"></span>
+								Done
+							</h3>
+							<span class="badge" style="background: #dcfce7; border: 1px solid #86efac; color: #16a34a; font-size: 0.75rem; padding: 0.125rem 0.5rem; border-radius: 9999px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);" id="doneCount">0</span>
+						</div>
+						<div class="flex-grow-1 overflow-y-auto custom-scrollbar" id="doneTasks" style="max-height: calc(100vh - 300px);">
+							<p class="text-muted text-center p-4">No completed tasks</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
+	<script>
+		async function loadTasks() {
+			try {
+				// Try multiple paths - Python http.server may block .. paths
+				let response;
+				
+				// First try symlinked file in data directory
+				response = await fetch('data/TASKS.md');
+				if (!response.ok) {
+					// Try path relative to dashboard
+					response = await fetch('../.do/plan/TASKS.md');
+				}
+				if (!response.ok) {
+					// Try from project root
+					response = await fetch('.do/plan/TASKS.md');
+				}
+				if (!response.ok) {
+					console.error('Failed to fetch TASKS.md:', response.status, response.statusText);
+					throw new Error('No tasks file');
+				}
+				const tasksText = await response.text();
+				
+				// Parse tasks from TASKS.md format
+				const tasks = { todo: [], inProgress: [], done: [] };
+				let currentPhase = '';
+				let currentFeature = '';
+				let currentFeatureId = '';
+				
+				const lines = tasksText.split('\n');
+				let inTasksSection = false;
+				let taskNumber = 0;
+				let currentTask = null;
+				
+				for (let i = 0; i < lines.length; i++) {
+					const line = lines[i].trim();
+					
+					// Detect Phase
+					if (line.match(/^## Phase \d+:/)) {
+						// Extract phase name (e.g., "Phase 1: Foundation (Weeks 1-4)" -> "Foundation")
+						const phaseMatch = line.match(/^## Phase \d+:\s*(.+?)(?:\s*\(|$)/);
+						if (phaseMatch) {
+							currentPhase = phaseMatch[1].trim();
+						} else {
+							currentPhase = line.replace(/^## Phase \d+:\s*/, '').split('(')[0].trim();
+						}
+						inTasksSection = false;
+					}
+					// Detect Feature
+					else if (line.match(/^### Feature \d+\.\d+:/)) {
+						const featureMatch = line.match(/^### Feature (\d+\.\d+):\s*(.+)/);
+						if (featureMatch) {
+							currentFeatureId = featureMatch[1];
+							currentFeature = featureMatch[2].trim();
+							inTasksSection = false;
+						}
+					}
+					// Detect Tasks section
+					else if (line === '#### Tasks:') {
+						inTasksSection = true;
+						taskNumber = 0;
+					}
+					// Parse individual tasks (numbered list items)
+					else if (inTasksSection && line.match(/^\d+\.\s+\*\*(.+?)\*\*/)) {
+						const taskMatch = line.match(/^\d+\.\s+\*\*(.+?)\*\*/);
+						if (taskMatch) {
+							// Save previous task if exists
+							if (currentTask) {
+								tasks.todo.push(currentTask);
+							}
+							
+							taskNumber++;
+							const taskId = `${currentFeatureId}.${taskNumber}`;
+							const taskTitle = taskMatch[1].trim();
+							
+							currentTask = {
+								id: taskId,
+								title: taskTitle,
+								feature: currentFeature,
+								featureId: currentFeatureId,
+								phase: currentPhase,
+								status: 'pending',
+								description: ''
+							};
+						}
+					}
+					// Collect task description (sub-bullets)
+					else if (inTasksSection && currentTask && line.startsWith('-')) {
+						if (currentTask.description) {
+							currentTask.description += ' ' + line.replace(/^-\s*/, '');
+						} else {
+							currentTask.description = line.replace(/^-\s*/, '');
+						}
+					}
+					// Detect effort/dependencies
+					else if (inTasksSection && currentTask) {
+						if (line.includes('**Effort**:')) {
+							const effortMatch = line.match(/\*\*Effort\*\*:\s*(.+)/);
+							if (effortMatch) currentTask.effort = effortMatch[1].trim();
+						}
+						if (line.includes('**Dependencies**:')) {
+							const depsMatch = line.match(/\*\*Dependencies\*\*:\s*(.+)/);
+							if (depsMatch) currentTask.dependencies = depsMatch[1].trim();
+						}
+					}
+					// End of tasks section
+					else if (inTasksSection && line.match(/^###|^##/)) {
+						if (currentTask) {
+							tasks.todo.push(currentTask);
+							currentTask = null;
+						}
+						inTasksSection = false;
+					}
+				}
+				
+				// Add last task if exists
+				if (currentTask) {
+					tasks.todo.push(currentTask);
+				}
+				
+				// Phase color mapping - Each phase has a unique color
+				const phaseColors = {
+					'Foundation': { bg: '#3B82F6', text: '#FFFFFF', border: '#2563EB', light: '#DBEAFE', name: 'Foundation' },
+					'Core Features': { bg: '#8B5CF6', text: '#FFFFFF', border: '#7C3AED', light: '#EDE9FE', name: 'Core Features' },
+					'Core': { bg: '#8B5CF6', text: '#FFFFFF', border: '#7C3AED', light: '#EDE9FE', name: 'Core' },
+					'Enhancement': { bg: '#10B981', text: '#FFFFFF', border: '#059669', light: '#D1FAE5', name: 'Enhancement' },
+					'Launch Preparation': { bg: '#F59E0B', text: '#FFFFFF', border: '#D97706', light: '#FEF3C7', name: 'Launch Preparation' }
+				};
+				
+				function getPhaseColor(phaseName) {
+					if (!phaseName) return { bg: '#6B7280', text: '#FFFFFF', border: '#4B5563', light: '#F3F4F6' };
+					
+					// Normalize phase name for matching
+					const normalized = phaseName.trim();
+					
+					// Direct match first
+					if (phaseColors[normalized]) return phaseColors[normalized];
+					
+					// Partial match
+					if (normalized.includes('Foundation')) return phaseColors['Foundation'];
+					if (normalized.includes('Core')) return phaseColors['Core'];
+					if (normalized.includes('Enhancement')) return phaseColors['Enhancement'];
+					if (normalized.includes('Launch') || normalized.includes('Preparation')) return phaseColors['Launch Preparation'];
+					
+					// Default gray
+					return { bg: '#6B7280', text: '#FFFFFF', border: '#4B5563', light: '#F3F4F6' };
+				}
+				
+				function renderTask(task, status) {
+					const tagClass = status === 'done' ? 'bg-success' : 'bg-secondary';
+					const cardClass = 'task-card';
+					const titleStyle = status === 'done' ? 'text-decoration: line-through; color: #6b7280;' : 'color: #1f2937;';
+					
+					// Get phase color
+					const phaseColor = getPhaseColor(task.phase);
+					
+					// Phase badge with phase-specific color
+					const phaseBadge = task.phase ? `<span class="badge" style="background-color: ${phaseColor.bg}; color: ${phaseColor.text}; font-size: 0.625rem; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-weight: 500;">${task.phase}</span>` : '';
+					
+					// Time with icon aligned to right
+					const timeDisplay = task.effort ? `<div class="d-flex align-items-center gap-1" style="flex-shrink: 0; margin-left: auto;"><i class="ti ti-clock" style="font-size: 0.625rem; color: #6b7280;"></i><span style="font-size: 0.625rem; color: #6b7280; white-space: nowrap;">${task.effort}</span></div>` : '';
+					
+					// Task card with phase-colored left border
+					const cardBorderStyle = `border-left: 4px solid ${phaseColor.border};`;
+					
+					// Check if task has expandable content
+					const hasContent = task.feature || task.description;
+					const expandIcon = hasContent ? '<i class="ti ti-chevron-down expand-icon" style="flex-shrink: 0; color: #9ca3af; font-size: 0.875rem;"></i>' : '';
+					
+					return '<div class="' + cardClass + ' mb-2" data-task-id="' + task.id + '" data-task-title="' + task.title.toLowerCase() + '" style="' + cardBorderStyle + '">' +
+						'<div class="task-header">' +
+						'<div class="d-flex align-items-center justify-content-between mb-1" style="width: 100%;">' +
+						phaseBadge +
+						timeDisplay +
+						'</div>' +
+						(task.feature ? '<div style="font-size: 0.625rem; color: #6b7280; margin-bottom: 0; font-weight: 400; width: 100%;">' + task.feature + '</div>' : '') +
+						'<div class="d-flex align-items-center justify-content-between gap-2" style="width: 100%;">' +
+						'<h4 style="font-size: 0.75rem; font-weight: 500; margin: 0; flex: 1; min-width: 0; ' + titleStyle + ' overflow-wrap: break-word; word-wrap: break-word;">' + task.title + '</h4>' +
+						expandIcon +
+						'</div>' +
+						'</div>' +
+						'<div class="task-content">' +
+						(task.description ? '<p style="font-size: 0.6875rem; color: #9ca3af; margin-bottom: 0; line-height: 1.4; max-width: 100%; overflow-wrap: break-word; word-wrap: break-word;">' + task.description + '</p>' : '') +
+						'</div>' +
+						'</div>';
+				}
+				
+				// Update counts
+				document.getElementById('todoCount').textContent = tasks.todo.length;
+				document.getElementById('doneCount').textContent = tasks.done.length;
+				
+				// Render tasks
+				document.getElementById('todoTasks').innerHTML = tasks.todo.length > 0 
+					? tasks.todo.map(t => renderTask(t, 'todo')).join('')
+					: '<p class="text-muted text-center p-4">No tasks to do</p>';
+				document.getElementById('doneTasks').innerHTML = tasks.done.length > 0
+					? tasks.done.map(t => renderTask(t, 'done')).join('')
+					: '<p class="text-muted text-center p-4">No completed tasks</p>';
+				
+				// Add click handlers for expand/collapse
+				document.querySelectorAll('.task-card').forEach(card => {
+					card.addEventListener('click', function(e) {
+						// Don't toggle if clicking on badges or icons
+						if (e.target.closest('.badge') || e.target.closest('.expand-icon')) {
+							return;
+						}
+						this.classList.toggle('expanded');
+					});
+				});
+					
+				// Log phase distribution for debugging
+				const phaseDistribution = {};
+				tasks.todo.forEach(task => {
+					const phase = task.phase || 'Unknown';
+					phaseDistribution[phase] = (phaseDistribution[phase] || 0) + 1;
+				});
+				console.log('Loaded tasks:', { todo: tasks.todo.length, done: tasks.done.length });
+				console.log('Phase distribution:', phaseDistribution);
+			} catch (e) {
+				console.error('Error loading tasks:', e);
+				document.getElementById('todoTasks').innerHTML = '<p class="text-muted text-center p-4">Error loading tasks. Make sure TASKS.md exists in .do/plan/</p>';
+			}
+		}
+		
+		// Search functionality
+		document.getElementById('searchInput')?.addEventListener('input', function(e) {
+			const searchTerm = e.target.value.toLowerCase();
+			const allTaskCards = document.querySelectorAll('.task-card');
+			
+			allTaskCards.forEach(card => {
+				const taskTitle = card.getAttribute('data-task-title') || '';
+				if (taskTitle.includes(searchTerm) || searchTerm === '') {
+					card.style.display = '';
+				} else {
+					card.style.display = 'none';
+				}
+			});
+		});
+		
+		loadTasks();
+	</script>
+</body>
+</html>

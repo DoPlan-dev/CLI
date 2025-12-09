@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Dashboard - test</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet">
+	<style>
+		:root {
+			--tblr-primary: #206bc4;
+			--tblr-info: #206bc4;
+		}
+		body { background: #f9fafb; color: #1f2937; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+		.card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 0.75rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+		.card:hover { border-color: rgba(32, 107, 196, 0.5); transition: border-color 0.2s; }
+		.card-header { background: #ffffff; border-bottom: 1px solid #e5e7eb; color: #1f2937; }
+		.progress { background: #f3f4f6; height: 6px; border-radius: 9999px; }
+		.progress-bar { background: #206bc4; border-radius: 9999px; }
+		.text-primary { color: #206bc4 !important; }
+		.bg-primary { background-color: #206bc4 !important; }
+		.btn-primary { background-color: #206bc4; border-color: #206bc4; }
+		.btn-primary:hover { background-color: #1a5c98; border-color: #1a5c98; }
+		.badge { background-color: #206bc4; color: white; }
+		.space-y-8 > * + * { margin-top: 2rem !important; }
+		.space-y-6 > * + * { margin-top: 1.5rem !important; }
+		.space-y-4 > * + * { margin-top: 1rem !important; }
+	</style>
+</head>
+<body>
+	<header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm" style="position: sticky; top: 0; z-index: 50; background: white; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">
+      <div class="container-xl">
+        <div class="d-flex align-items-center justify-content-between" style="height: 64px;">
+          <div class="d-flex align-items-center gap-4">
+            <a href="index.html" class="d-flex align-items-center gap-2 text-decoration-none" style="opacity: 1; transition: opacity 0.2s;">
+              <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em; color: #206bc4;">DoPlan<span style="color: #000;">.dev</span></span>
+            </a>
+            <nav class="d-none d-md-flex align-items-center gap-1">
+
+              <a href="index.html" class="px-3 py-2 rounded-md text-sm font-semibold transition-all flex items-center gap-2" style="color: #111; background: rgba(32,107,196,0.1);">
+                 <i class="ti ti-dashboard" style="color: #206bc4;"></i>
+                 Dashboard
+              </a>
+              <a href="plan.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                 <i class="ti ti-list-check" style="color: #206bc4;"></i>
+                 Plan
+              </a>
+              <a href="meetings.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                 <i class="ti ti-calendar" style="color: #206bc4;"></i>
+                 Meetings
+              </a>
+              <a href="achievements.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                 <i class="ti ti-trophy" style="color: #206bc4;"></i>
+                 Achievements
+              </a>
+              <a href="settings.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                 <i class="ti ti-settings" style="color: #206bc4;"></i>
+                 Settings
+              </a>
+            </nav>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <nav class="d-none d-md-flex align-items-center gap-2">
+              <a href="https://doplan.dev/docs" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-book" style="color: #206bc4;"></i>
+                Docs
+              </a>
+              <a href="https://github.com/doplan/cli" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2" style="color: #111;">
+                <i class="ti ti-brand-github" style="color: #206bc4;"></i>
+                GitHub
+              </a>
+            </nav>
+            <button class="btn btn-link d-md-none p-2 text-gray-500" id="mobileMenuToggle">
+              <i class="ti ti-menu-2" style="font-size: 1.5rem;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="d-md-none border-top border-gray-200 bg-white" id="mobileMenu" style="display: none;">
+        <div class="px-2 pt-2 pb-3">
+          <a href="index.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Dashboard</a>
+          <a href="plan.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Plan</a>
+          <a href="meetings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Meetings</a>
+          <a href="achievements.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Achievements</a>
+          <a href="settings.html" class="d-block px-3 py-2 rounded-md text-base font-medium text-gray-600" style="text-decoration: none;">Settings</a>
+        </div>
+      </div>
+    </header>
+    <script>
+      document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+        const menu = document.getElementById('mobileMenu');
+        if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      });
+    </script>
+	<div class="page-body" style="padding: 2rem 0;">
+		<div class="container-xl">
+			<div class="space-y-8 mb-4">
+				<!-- Welcome Hero and Project Info -->
+				<div class="row g-4 mb-4">
+					<div class="col-12 col-lg-7">
+						<div class="card position-relative overflow-hidden d-flex flex-column flex-md-row align-items-center justify-content-between h-100" style="border-radius: 0.75rem; padding: 3rem 2rem;">
+							<div class="position-relative mb-4 mb-md-0 me-md-4" style="z-index: 10; max-width: 42rem; flex: 1;">
+								<h2 class="mb-3" style="font-size: 1.875rem; font-weight: 700; color: #1f2937; line-height: 1.2;">Welcome back!</h2>
+								<p class="mb-4" style="color: #6b7280; font-size: 1rem; line-height: 1.6;">You have completed <span id="completedTasksCount" style="color: #206bc4; font-weight: 700;">0 tasks</span> in <span id="projectNameWelcome">test</span>. Keep up the great work!</p>
+								
+								<!-- Next Recommendation -->
+								<div class="mb-4 p-3" style="background: #f0f9ff; border-left: 4px solid #206bc4; border-radius: 0.5rem;">
+									<div class="d-flex align-items-start gap-2">
+										<i class="ti ti-bulb" style="color: #206bc4; font-size: 1.25rem; margin-top: 0.125rem; flex-shrink: 0;"></i>
+										<div style="flex: 1;">
+											<div style="color: #1f2937; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem;">Next Recommendation:</div>
+											<div id="nextRecommendation" style="color: #374151; font-size: 0.875rem; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; background: white; padding: 0.5rem 0.75rem; border-radius: 0.25rem; border: 1px solid #e5e7eb; display: inline-block; margin-top: 0.25rem;">
+												Loading...
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<div class="d-flex flex-wrap gap-3">
+									<a href="plan.html" class="btn btn-primary px-5 py-2" style="font-weight: 700; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">Go to Plan</a>
+								</div>
+							</div>
+							<div class="position-relative d-none d-md-block" style="z-index: 10; flex-shrink: 0; width: 384px; height: 288px;">
+								<img src="images/chatbot.png" alt="AI Assistant" class="w-100 h-100" style="object-fit: contain; max-width: 100%; max-height: 100%;">
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-lg-5">
+						<div class="card h-100" style="border-radius: 0.75rem; padding: 2rem;">
+							<h3 class="mb-4" style="font-size: 1.5rem; font-weight: 700; color: #1f2937;" id="projectNameCard">Project Name</h3>
+							
+							<!-- Project Type -->
+							<div class="mb-3">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">Type:</span>
+								<span class="badge ms-2" style="background: #e0e7ff; color: #4f46e5; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 0.25rem;" id="projectType">-</span>
+							</div>
+							
+							<!-- GitHub Repo -->
+							<div class="mb-3">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">GitHub Repo:</span>
+								<a href="#" id="githubRepo" target="_blank" style="color: #206bc4; text-decoration: none; font-size: 0.875rem; margin-left: 0.5rem;">-</a>
+							</div>
+							
+							<!-- GitHub Branches -->
+							<div class="mb-3">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">GitHub Branches:</span>
+								<span style="color: #1f2937; font-size: 0.875rem; font-weight: 600; margin-left: 0.5rem;" id="githubBranches">0</span>
+							</div>
+							
+							<!-- Current Branch -->
+							<div class="mb-3">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">Current Branch:</span>
+								<span class="badge ms-2" style="background: #f3f4f6; color: #374151; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-family: monospace;" id="githubCurrentBranch">-</span>
+							</div>
+							
+							<hr style="margin: 1.5rem 0; border-color: #e5e7eb;">
+							
+							<!-- Tech Stack -->
+							<div class="mb-3">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500; display: block; margin-bottom: 0.5rem;">Tech Stack:</span>
+								<div id="techStack" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+									<span style="color: #9ca3af; font-size: 0.75rem;">No tech stack specified</span>
+								</div>
+							</div>
+							
+							<hr style="margin: 1.5rem 0; border-color: #e5e7eb;">
+							
+							<!-- Lines of Code -->
+							<div class="mb-3">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">Lines of Code:</span>
+								<span style="color: #1f2937; font-size: 0.875rem; font-weight: 600; margin-left: 0.5rem;" id="linesOfCode">-</span>
+							</div>
+							
+							<!-- Total Size -->
+							<div class="mb-0">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">Total Size:</span>
+								<span style="color: #1f2937; font-size: 0.875rem; font-weight: 600; margin-left: 0.5rem;" id="totalSize">-</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Stats Grid -->
+				<div class="row g-4">
+					<div class="col-12 col-sm-6 col-lg-3">
+						<div class="card p-4">
+							<div class="d-flex align-items-center justify-content-between mb-3">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">Sprint Progress</span>
+							</div>
+							<div class="h2 mb-2" style="font-size: 1.875rem; font-weight: 700; color: #1f2937;" id="progressPercentage">0%</div>
+							<div class="progress">
+								<div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-lg-3">
+						<div class="card p-4">
+							<div class="d-flex align-items-center justify-content-between mb-3">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">Pending Tasks</span>
+							</div>
+							<div class="h2 mb-1" style="font-size: 1.875rem; font-weight: 700; color: #1f2937;" id="pendingTasks">-</div>
+							<div style="font-size: 0.75rem; color: #6b7280;">
+								<span style="display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: #eab308; margin-right: 0.25rem;"></span>
+								Needs attention
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-lg-3">
+						<div class="card p-4">
+							<div class="d-flex align-items-center justify-content-between mb-3">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">Current Phase</span>
+							</div>
+							<div class="h2 mb-1" style="font-size: 1.875rem; font-weight: 700; color: #1f2937;" id="currentPhase">-</div>
+							<div style="font-size: 0.75rem; color: #6b7280;" id="phaseStatus">Getting Started</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-lg-3">
+						<div class="card p-4">
+							<div class="d-flex align-items-center justify-content-between mb-2">
+								<span style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">Tasks Completed</span>
+							</div>
+							<div class="h2 mb-1" style="font-size: 1.875rem; font-weight: 700; color: #1f2937;" id="tasksCompleted">-</div>
+							<div style="font-size: 0.75rem; color: #6b7280;">of <span id="totalTasks">-</span> total</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
+	<script>
+		async function loadProgress() {
+			// Check if running from file:// protocol (CORS issue)
+			if (window.location.protocol === 'file:') {
+				console.warn('Running from file:// protocol. Please use a local server (e.g., python -m http.server)');
+				// Try to load with absolute path
+				const filePath = window.location.pathname.replace(/\/[^/]*$/, '/data/project.json');
+				console.log('Trying file path:', filePath);
+			}
+			
+			try {
+				// Load project data from project.json
+				const projectResponse = await fetch('data/project.json');
+				if (projectResponse.ok) {
+					const project = await projectResponse.json();
+					console.log('Project data loaded:', project);
+					
+					// Update phase information
+					const phase = project.phase || 'idea';
+					const phaseDisplay = phase.charAt(0).toUpperCase() + phase.slice(1);
+					const phaseElement = document.getElementById('currentPhase');
+					if (phaseElement) {
+						phaseElement.textContent = phaseDisplay;
+					}
+					
+					// Determine phase status
+					let phaseStatus = 'Getting Started';
+					if (project.plan_generated) {
+						phaseStatus = 'Plan Generated';
+					} else if (phase === 'tasks') {
+						phaseStatus = 'Ready to Build';
+					} else if (phase === 'planning') {
+						phaseStatus = 'Planning';
+					}
+					const phaseStatusElement = document.getElementById('phaseStatus');
+					if (phaseStatusElement) {
+						phaseStatusElement.textContent = phaseStatus;
+					}
+					
+					// Update progress from project.json
+					const progress = project.progress || {};
+					const completed = progress.completed_tasks || 0;
+					const total = progress.total_tasks || 0;
+					// Calculate completion percentage if not set
+					const completionPercentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+					const pending = total > 0 ? total - completed : 0;
+					
+					console.log('Progress:', { completed, total, completionPercentage, pending });
+					
+					// Update all progress elements
+					const totalTasksEl = document.getElementById('totalTasks');
+					if (totalTasksEl) totalTasksEl.textContent = total || '-';
+					
+					const tasksCompletedEl = document.getElementById('tasksCompleted');
+					if (tasksCompletedEl) tasksCompletedEl.textContent = completed || 0;
+					
+					const pendingTasksEl = document.getElementById('pendingTasks');
+					if (pendingTasksEl) pendingTasksEl.textContent = pending || '-';
+					
+					const progressPercentageEl = document.getElementById('progressPercentage');
+					if (progressPercentageEl) progressPercentageEl.textContent = completionPercentage + '%';
+					
+					const progressBarEl = document.getElementById('progressBar');
+					if (progressBarEl) progressBarEl.style.width = completionPercentage + '%';
+					
+					const completedTasksCountEl = document.getElementById('completedTasksCount');
+					if (completedTasksCountEl) {
+						completedTasksCountEl.textContent = completed + ' tasks';
+					}
+					
+					// Update project name in welcome message
+					const projectName = project.name || 'your project';
+					const projectNameWelcomeEl = document.getElementById('projectNameWelcome');
+					if (projectNameWelcomeEl) {
+						projectNameWelcomeEl.textContent = projectName;
+					}
+					const welcomeText = document.querySelector('p.mb-4[style*="color: #6b7280"]');
+					if (welcomeText) {
+						const taskText = completed === 1 ? 'task' : 'tasks';
+						welcomeText.innerHTML = `You have completed <span id="completedTasksCount" style="color: #206bc4; font-weight: 700;">${completed} ${taskText}</span> in <span id="projectNameWelcome">${projectName}</span>. Keep up the great work!`;
+					} else {
+						// Fallback: try to find by ID or text content
+						const allParagraphs = document.querySelectorAll('p');
+						for (const p of allParagraphs) {
+							if (p.textContent && p.textContent.includes('You have completed')) {
+								const taskText = completed === 1 ? 'task' : 'tasks';
+								p.innerHTML = `You have completed <span id="completedTasksCount" style="color: #206bc4; font-weight: 700;">${completed} ${taskText}</span> in <span id="projectNameWelcome">${projectName}</span>. Keep up the great work!`;
+								break;
+							}
+						}
+					}
+					
+					// Update next recommendation
+					const nextRecommendationEl = document.getElementById('nextRecommendation');
+					if (nextRecommendationEl) {
+						let recommendation = '';
+						const phase = project.phase || 'idea';
+						
+						if (phase === 'idea' || !project.plan_generated) {
+							if (!project.plan_generated) {
+								recommendation = '/plan';
+							} else {
+								recommendation = '/build';
+							}
+						} else if (phase === 'planning') {
+							recommendation = '/plan';
+						} else if (phase === 'tasks') {
+							if (completed === 0) {
+								recommendation = '/build';
+							} else if (completed < total && completed > 0) {
+								recommendation = '/build';
+							} else if (completed === total && total > 0) {
+								recommendation = '/status report';
+							} else {
+								recommendation = '/build';
+							}
+						} else {
+							recommendation = '/build';
+						}
+						
+						nextRecommendationEl.textContent = recommendation;
+					}
+					
+					// Update project info card
+					const projectNameCardEl = document.getElementById('projectNameCard');
+					if (projectNameCardEl) {
+						projectNameCardEl.textContent = projectName;
+					}
+					
+					// Project type
+					const projectTypeEl = document.getElementById('projectType');
+					if (projectTypeEl) {
+						const projectType = project.type || 'Not specified';
+						projectTypeEl.textContent = projectType;
+					}
+					
+					// GitHub repo
+					const githubRepoEl = document.getElementById('githubRepo');
+					if (githubRepoEl) {
+						if (project.github && project.github.repo && project.github.repo.trim() !== '') {
+							githubRepoEl.textContent = project.github.repo;
+							githubRepoEl.href = `https://github.com/${project.github.repo}`;
+							githubRepoEl.style.color = '#206bc4';
+							githubRepoEl.style.pointerEvents = 'auto';
+						} else {
+							githubRepoEl.textContent = 'Not available';
+							githubRepoEl.href = '#';
+							githubRepoEl.style.color = '#9ca3af';
+							githubRepoEl.style.pointerEvents = 'none';
+							githubRepoEl.style.cursor = 'default';
+						}
+					}
+					
+					// GitHub branches
+					const githubBranchesEl = document.getElementById('githubBranches');
+					if (githubBranchesEl) {
+						if (project.github && project.github.branches !== undefined && project.github.branches !== null) {
+							githubBranchesEl.textContent = project.github.branches;
+						} else {
+							githubBranchesEl.textContent = 'Not available';
+							githubBranchesEl.style.color = '#9ca3af';
+						}
+					}
+					
+					// Current branch
+					const githubCurrentBranchEl = document.getElementById('githubCurrentBranch');
+					if (githubCurrentBranchEl) {
+						if (project.github && project.github.current_branch && project.github.current_branch.trim() !== '') {
+							githubCurrentBranchEl.textContent = project.github.current_branch;
+						} else {
+							githubCurrentBranchEl.textContent = 'Not available';
+							githubCurrentBranchEl.style.background = '#f3f4f6';
+							githubCurrentBranchEl.style.color = '#9ca3af';
+						}
+					}
+					
+					// Tech stack
+					const techStackEl = document.getElementById('techStack');
+					if (techStackEl && project.tech_stack && project.tech_stack.length > 0) {
+						techStackEl.innerHTML = '';
+						project.tech_stack.forEach(tech => {
+							const techBadge = document.createElement('span');
+							techBadge.className = 'badge';
+							techBadge.style.cssText = 'background: #f3f4f6; color: #374151; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 0.25rem; display: inline-flex; align-items: center; gap: 0.25rem;';
+							
+							// Add icon if available
+							const iconMap = {
+								'javascript': 'ti-brand-javascript',
+								'typescript': 'ti-brand-typescript',
+								'python': 'ti-brand-python',
+								'go': 'ti-brand-golang',
+								'react': 'ti-brand-react',
+								'vue': 'ti-brand-vue',
+								'node': 'ti-brand-nodejs',
+								'html': 'ti-brand-html5',
+								'css': 'ti-brand-css3',
+								'git': 'ti-brand-git',
+								'github': 'ti-brand-github'
+							};
+							
+							const techLower = tech.toLowerCase();
+							let iconClass = '';
+							for (const [key, icon] of Object.entries(iconMap)) {
+								if (techLower.includes(key)) {
+									iconClass = icon;
+									break;
+								}
+							}
+							
+							if (iconClass) {
+								const icon = document.createElement('i');
+								icon.className = `ti ${iconClass}`;
+								techBadge.appendChild(icon);
+							}
+							
+							const text = document.createTextNode(tech);
+							techBadge.appendChild(text);
+							techStackEl.appendChild(techBadge);
+						});
+					} else if (techStackEl) {
+						techStackEl.innerHTML = '<span style="color: #9ca3af; font-size: 0.75rem;">No tech stack specified</span>';
+					}
+					
+					// Lines of code
+					const linesOfCodeEl = document.getElementById('linesOfCode');
+					if (linesOfCodeEl) {
+						if (project.stats && project.stats.lines_of_code && project.stats.lines_of_code > 0) {
+							const loc = project.stats.lines_of_code;
+							linesOfCodeEl.textContent = loc.toLocaleString();
+							linesOfCodeEl.style.color = '#1f2937';
+						} else {
+							linesOfCodeEl.textContent = 'Not available';
+							linesOfCodeEl.style.color = '#9ca3af';
+						}
+					}
+					
+					// Total size
+					const totalSizeEl = document.getElementById('totalSize');
+					if (totalSizeEl) {
+						if (project.stats && project.stats.total_size && project.stats.total_size !== '-' && project.stats.total_size.trim() !== '') {
+							totalSizeEl.textContent = project.stats.total_size;
+							totalSizeEl.style.color = '#1f2937';
+						} else {
+							totalSizeEl.textContent = 'Not available';
+							totalSizeEl.style.color = '#9ca3af';
+						}
+					}
+					
+					return; // Successfully loaded from project.json
+				} else {
+					console.error('Failed to load project.json:', projectResponse.status, projectResponse.statusText);
+				}
+			} catch (e) {
+				console.error('Error loading project.json:', e);
+			}
+			
+			// Fallback to old method if project.json is not available
+			try {
+				const response = await fetch('../.do/system/history/active_state.json');
+				if (!response.ok) throw new Error('No progress data');
+				const state = await response.json();
+				
+				const phase = state.phase || 'idea';
+				const activeTask = state.active_task || null;
+				
+				document.getElementById('currentPhase').textContent = phase.charAt(0).toUpperCase() + phase.slice(1);
+				document.getElementById('phaseStatus').textContent = activeTask ? 'In Progress' : 'Planning';
+				
+				// Update next recommendation for fallback
+				const nextRecommendationEl = document.getElementById('nextRecommendation');
+				if (nextRecommendationEl) {
+					if (phase === 'idea') {
+						nextRecommendationEl.textContent = '/plan';
+					} else if (phase === 'planning') {
+						nextRecommendationEl.textContent = '/plan';
+					} else {
+						nextRecommendationEl.textContent = '/build';
+					}
+				}
+				
+				try {
+					const tasksResponse = await fetch('../.do/plan/TASKS.md');
+					if (tasksResponse.ok) {
+						const tasksText = await tasksResponse.text();
+						const taskMatches = tasksText.match(/### \d+\.\d+/g) || [];
+						const completedMatches = tasksText.match(/Status.*✅ Complete/g) || [];
+						
+						const total = taskMatches.length;
+						const completed = completedMatches.length;
+						const pending = total - completed;
+						const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+						
+						document.getElementById('totalTasks').textContent = total;
+						document.getElementById('tasksCompleted').textContent = completed;
+						document.getElementById('pendingTasks').textContent = pending;
+						document.getElementById('progressPercentage').textContent = progress + '%';
+						document.getElementById('progressBar').style.width = progress + '%';
+						document.getElementById('completedTasksCount').textContent = completed + ' tasks';
+						
+						// Update recommendation based on task progress
+						if (nextRecommendationEl) {
+							if (completed === 0 && total > 0) {
+								nextRecommendationEl.textContent = '/build';
+							} else if (completed < total && completed > 0) {
+								nextRecommendationEl.textContent = '/build';
+							} else if (completed === total && total > 0) {
+								nextRecommendationEl.textContent = '/status report';
+							}
+						}
+					}
+				} catch (e) {
+					// No tasks yet
+				}
+			} catch (e) {
+				document.getElementById('currentPhase').textContent = 'Idea';
+				document.getElementById('phaseStatus').textContent = 'Getting Started';
+				
+				// Default recommendation
+				const nextRecommendationEl = document.getElementById('nextRecommendation');
+				if (nextRecommendationEl) {
+					nextRecommendationEl.textContent = '/plan';
+				}
+			}
+		}
+		loadProgress();
+	</script>
+</body>
+</html>
