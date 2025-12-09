@@ -241,6 +241,8 @@ Usage:
 			// ============================================
 			// PHASE 2: MEETING
 			// ============================================
+			DisplayPhaseProgress(cmd.OutOrStdout(), "Discovery Meeting", 2, 3)
+
 			meetingMetadata := map[string]string{
 				"meeting_type": "discovery",
 			}

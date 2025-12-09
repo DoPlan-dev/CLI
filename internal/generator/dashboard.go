@@ -791,7 +791,7 @@ func generateDashboardSettings(dashboardDir string, request *models.ProjectReque
 								</div>
 								<div class="col-md-6">
 									<label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; font-weight: 500;">Project Type</label>
-									<input type="text" value="` + request.ProjectName + `" class="form-control" readonly style="border-radius: 0.25rem; border: 1px solid #d1d5db;">
+									<input type="text" value="` + request.ProjectType + `" class="form-control" readonly style="border-radius: 0.25rem; border: 1px solid #d1d5db;">
 								</div>
 							</div>
 							<div class="mb-3">
