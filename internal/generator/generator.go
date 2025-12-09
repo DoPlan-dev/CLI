@@ -52,6 +52,7 @@ func defaultGenerationSteps() []GenerationStep {
 		{Generator: &GitHubGenerator{}, Name: "GitHub Workflows"},
 		{Generator: &IDEGenerator{}, Name: "IDE Configs"},
 		{Generator: &DocsGenerator{}, Name: "Documentation"},
+		{Generator: &DashboardGenerator{}, Name: "Dashboard"},
 	}
 }
 

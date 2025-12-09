@@ -110,6 +110,9 @@ It creates:
 				return stopErr
 			}
 
+			// Silently update dashboard data
+			_ = UpdateDashboardData(absPath)
+
 			return nil
 		},
 	}
@@ -170,7 +173,7 @@ Usage:
 				feature = "general"
 			}
 
-			// Start tracking
+			// Start tracking (will be updated with task_id after dev workflow starts)
 			meta := map[string]string{"feature": feature}
 			if memoryCard != nil {
 				meta["work_style"] = memoryCard.WorkStyle
@@ -218,6 +221,14 @@ Usage:
 				return fmt.Errorf("development workflow failed: %w", err)
 			}
 
+			// Update tracker metadata with task_id if available
+			if devResult.TaskID != "" {
+				tracker.UpdateMetadata("task_id", devResult.TaskID)
+			}
+			if devResult.FeatureName != "" {
+				tracker.UpdateMetadata("feature", devResult.FeatureName)
+			}
+
 			// ============================================
 			// COMPREHENSIVE ENGAGEMENT PROCESSING
 			// ============================================
@@ -231,6 +242,16 @@ Usage:
 				context["branch_created"] = devResult.BranchCreated
 				context["docs_synced"] = devResult.DocsSynced
 				context["development_duration"] = duration
+
+				// Add feature and phase time tracking to context
+				if devResult.FeatureName != "" {
+					if featureTime, err := timetracker.GetFeatureTime(absPath, devResult.FeatureName); err == nil {
+						context["feature_total_time"] = featureTime.Seconds()
+					}
+				}
+				if phaseTime, err := timetracker.GetPhaseTime(absPath, "development"); err == nil {
+					context["phase_total_time"] = phaseTime.Seconds()
+				}
 
 				// Detect development patterns for achievements
 				if memoryCard != nil {
@@ -274,6 +295,22 @@ Usage:
 			if stopErr := tracker.Stop(true, nil); stopErr != nil {
 				return stopErr
 			}
+
+			// Display feature time if available
+			if devResult.FeatureName != "" {
+				if featureTime, err := timetracker.GetFeatureTime(absPath, devResult.FeatureName); err == nil && featureTime > 0 {
+					hours := int(featureTime.Hours())
+					minutes := int(featureTime.Minutes()) % 60
+					if hours > 0 {
+						fmt.Fprintf(cmd.OutOrStdout(), "\n⏱️  Total time on '%s': %dh %dm\n", devResult.FeatureName, hours, minutes)
+					} else {
+						fmt.Fprintf(cmd.OutOrStdout(), "\n⏱️  Total time on '%s': %dm\n", devResult.FeatureName, minutes)
+					}
+				}
+			}
+
+			// Silently update dashboard data
+			_ = UpdateDashboardData(absPath)
 
 			return nil
 		},

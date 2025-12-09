@@ -176,6 +176,8 @@ Usage:
 			// ============================================
 			// PHASE 1: IDEATION
 			// ============================================
+			DisplayPhaseProgress(cmd.OutOrStdout(), "Ideation", 1, 3)
+
 			ideationMetadata := map[string]string{}
 			if idea != "" {
 				ideationMetadata["idea_provided"] = "true"
@@ -230,6 +232,12 @@ Usage:
 				return stopErr
 			}
 
+			// Display phase completion with time
+			fmt.Fprintf(cmd.OutOrStdout(), "\n✅ Ideation phase completed in %.1f seconds\n\n", ideationDuration)
+
+			// Silently update dashboard data
+			_ = UpdateDashboardData(absPath)
+
 			// ============================================
 			// PHASE 2: MEETING
 			// ============================================
@@ -283,9 +291,17 @@ Usage:
 				return stopErr
 			}
 
+			// Display phase completion with time
+			fmt.Fprintf(cmd.OutOrStdout(), "\n✅ Discovery meeting completed in %.1f seconds\n\n", meetingDuration)
+
+			// Silently update dashboard data
+			_ = UpdateDashboardData(absPath)
+
 			// ============================================
 			// PHASE 3: REFINING
 			// ============================================
+			DisplayPhaseProgress(cmd.OutOrStdout(), "Refining & Suggestions", 3, 3)
+
 			refiningMetadata := map[string]string{
 				"refining_type": "enhancement_and_suggestions",
 			}
@@ -330,6 +346,12 @@ Usage:
 				return stopErr
 			}
 
+			// Display phase completion with time
+			fmt.Fprintf(cmd.OutOrStdout(), "\n✅ Refining phase completed in %.1f seconds\n\n", refiningDuration)
+
+			// Display completion progress
+			DisplayPhaseProgress(cmd.OutOrStdout(), "Project Initiation", 3, 3)
+
 			// Final engagement processing for complete workflow
 			completeContext := map[string]interface{}{
 				"command":              "/do",
@@ -354,6 +376,9 @@ Usage:
 			fmt.Fprintln(cmd.OutOrStdout(), "   • Review IDEA.md and BRAINSTORM.md")
 			fmt.Fprintln(cmd.OutOrStdout(), "   • Check REFINEMENTS.md for suggestions")
 			fmt.Fprintln(cmd.OutOrStdout(), "   • Type /plan to generate your execution plan")
+
+			// Silently update dashboard data
+			_ = UpdateDashboardData(absPath)
 
 			return nil
 		},
@@ -431,6 +456,10 @@ func newDoFeatureCommand() *cobra.Command {
 			}
 
 			fmt.Fprintf(cmd.OutOrStdout(), "✅ Feature idea added: %s\n", featureIdea)
+
+			// Silently update dashboard data
+			_ = UpdateDashboardData(absPath)
+
 			return nil
 		},
 	}
@@ -509,6 +538,9 @@ Usage:
 			fmt.Fprintln(cmd.OutOrStdout(), "")
 			fmt.Fprintln(cmd.OutOrStdout(), "✅ Fast track complete! Ready to plan.")
 			fmt.Fprintln(cmd.OutOrStdout(), "   Type /plan to generate your execution plan")
+
+			// Silently update dashboard data
+			_ = UpdateDashboardData(absPath)
 
 			return nil
 		},
@@ -596,6 +628,9 @@ This is perfect for:
 			fmt.Fprintln(cmd.OutOrStdout(), "")
 			fmt.Fprintf(cmd.OutOrStdout(), "🎉 Great choice! Selected idea: %s\n", selectedIdea)
 			fmt.Fprintln(cmd.OutOrStdout(), "   Type /plan to generate your execution plan")
+
+			// Silently update dashboard data
+			_ = UpdateDashboardData(absPath)
 
 			return nil
 		},

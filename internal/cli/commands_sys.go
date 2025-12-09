@@ -91,6 +91,11 @@ This gives you a complete view of your engagement with DoPlan and your progress.
 				fmt.Fprintf(cmd.ErrOrStderr(), "Warning: Engagement processing failed: %v\n", err)
 			}
 
+			// Silently update dashboard data
+			if projectPath, err := resolveProjectPath("."); err == nil {
+				_ = UpdateDashboardData(projectPath)
+			}
+
 			return nil
 		},
 	}
@@ -367,6 +372,11 @@ func assignRole(out io.Writer, roleName string) error {
 	fmt.Fprintf(out, "✅ Role '%s' assigned successfully!\n", strings.Title(roleName))
 	fmt.Fprintln(out, "")
 	fmt.Fprintf(out, "Your new permissions are now active.\n")
+
+	// Silently update dashboard data
+	if projectPath, err := resolveProjectPath("."); err == nil {
+		_ = UpdateDashboardData(projectPath)
+	}
 
 	return nil
 }
@@ -660,6 +670,9 @@ func controlSystem(cmd *cobra.Command, enable bool) error {
 		fmt.Fprintf(cmd.OutOrStdout(), "   Re-enable with: /sys control system on\n")
 	}
 
+	// Silently update dashboard data
+	_ = UpdateDashboardData(cwd)
+
 	return nil
 }
 
@@ -678,6 +691,9 @@ func controlAgents(out io.Writer, enable bool) error {
 	} else {
 		fmt.Fprintf(out, "🔴 All agents disabled.\n")
 	}
+
+	// Silently update dashboard data
+	_ = UpdateDashboardData(cwd)
 
 	return nil
 }
@@ -698,6 +714,9 @@ func controlRoles(out io.Writer, enable bool) error {
 		fmt.Fprintf(out, "🔴 Role-based access control disabled.\n")
 	}
 
+	// Silently update dashboard data
+	_ = UpdateDashboardData(cwd)
+
 	return nil
 }
 
@@ -716,6 +735,9 @@ func controlAgent(out io.Writer, agentName string, enable bool) error {
 		status = "disabled"
 	}
 	fmt.Fprintf(out, "✅ Agent '%s' %s successfully!\n", agentName, status)
+
+	// Silently update dashboard data
+	_ = UpdateDashboardData(cwd)
 
 	return nil
 }
