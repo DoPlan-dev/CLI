@@ -62,15 +62,13 @@ Format: `state-[timestamp]-[reason].json`
 
 Examples:
 - `state-20250115T100000Z-build.json` - Before /dev
-- `state-20250115T101530Z-done.json` - After /done
-- `state-20250115T120000Z-status.json` - Status check
+- `state-20250115T101530Z-complete.json` - After auto-completion
 
 ### When Created
 
 Snapshots created:
 - **Before `/dev`** - When starting task
-- **After `/done`** - When completing task
-- **On status checks** - Optional
+- **After auto-completion** - When `/dev` finishes a task
 - **Manually** - If needed
 
 ---
@@ -81,7 +79,7 @@ Snapshots created:
 
 State updates when:
 - **Starting task** (`/dev`) - Sets active_task, active_branch, task_started_at
-- **Completing task** (`/done`) - Adds to completed, clears active_task/branch
+- **Completing task** (auto-complete) - Adds to completed, clears active_task/branch
 - **Phase changes** - Updates phase
 - **Manual updates** - If needed
 
@@ -106,17 +104,8 @@ State deltas show what changed between states:
 
 ### Viewing Deltas
 
-```bash
-/status
-```
-
-**Shows**:
-```
-State Delta (since last snapshot):
-  • Task 1.3 completed
-  • Phase: Foundation (no change)
-  • Branch: task/1.3 → cleared
-```
+- Compare consecutive snapshots in `.do/system/history/`
+- Review TASKS.md changes after auto-completion
 
 ### Delta Information
 
@@ -218,8 +207,7 @@ cp .do/system/history/state-20250115T100000Z-build.json \
 
 ### State Review
 
-- Check `/status` regularly
-- Review state deltas
+- Review state deltas between snapshots
 - Understand changes
 - Track progress
 

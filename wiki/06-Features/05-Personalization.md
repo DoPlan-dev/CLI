@@ -98,7 +98,6 @@ DoPlan matches your preferred style:
    
    💡 Next steps:
       • Type /dev to start the next task
-      • Type /status to see overall progress
       • Type /sys engagement to view achievements"
 ```
 
@@ -151,7 +150,7 @@ Here's what happened and how we can fix it..."
 ```
 "Error: Branch not found. This happens when you try to complete a task 
 without starting one. Let me explain: when you run '/dev', DoPlan creates 
-a branch for your task. You need to run '/dev' before '/done'. 
+a branch for your task and will auto-complete it. 
 Would you like to start a task now?"
 ```
 

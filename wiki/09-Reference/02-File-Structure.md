@@ -146,7 +146,7 @@ Template files for:
 
 **Purpose**: Master task list
 **Created**: By `/plan` command
-**Updated**: By `/done` command (task completion)
+**Updated**: When `/dev` auto-completes tasks
 
 ### active_state.json
 

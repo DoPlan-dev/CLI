@@ -45,14 +45,13 @@ Tips and best practices for getting the most out of DoPlan. Optimize your workfl
 
 ---
 
-### 4. Always Use `/done` When Complete
+### 4. Let `/dev` Auto-Complete Tasks
 
-**Why**: Tracks completion, commits changes, checks achievements
+**Why**: Tracks completion, commits changes, checks achievements automatically
 **How**:
-- Run `/done` after every task
-- Don't skip - even for small tasks
-- Let DoPlan handle Git operations
-- Check achievements earned
+- Start tasks with `/dev` and keep coding until the agent finishes
+- Review the auto-commit and push output from `/dev`
+- Check achievements after auto-completion
 
 **Benefit**: Automatic tracking, achievements, Git automation
 
@@ -62,10 +61,9 @@ Tips and best practices for getting the most out of DoPlan. Optimize your workfl
 
 **Why**: Stay aware of progress and plan next steps
 **How**:
-- Run `/status` after completing tasks
-- Check before starting new work
-- Monitor completion percentage
-- Track state changes
+- Watch TASKS.md updates after auto-completion
+- Use `/sys engagement` to see milestones and activity
+- Review state snapshots in `.do/system/history/`
 
 **Benefit**: Better planning, awareness of progress
 
@@ -153,7 +151,7 @@ Tips and best practices for getting the most out of DoPlan. Optimize your workfl
 **Why**: See what changed and when
 **How**:
 - Check `.do/system/history/state-*.json`
-- Review state deltas in `/status`
+- Review state deltas in snapshots
 - Understand project evolution
 
 **Benefit**: Better project understanding
@@ -282,11 +280,11 @@ Tips and best practices for getting the most out of DoPlan. Optimize your workfl
 
 ## 🔒 Safety Best Practices
 
-### 1. Verify Branch Before `/done`
+### 1. Verify Branch Before Auto-Completion
 
 **Why**: Prevents committing to wrong branch
 **How**:
-- DoPlan checks automatically
+- DoPlan checks automatically during `/dev`
 - Warns if on main/master
 - Confirms before proceeding
 
@@ -443,18 +441,18 @@ Tips and best practices for getting the most out of DoPlan. Optimize your workfl
 
 ---
 
-### 3. Forgetting `/done`
+### 3. Interrupting Auto-Completion
 
-**Mistake**: Not running `/done` after tasks
-**Fix**: Always use `/done` when complete
+**Mistake**: Stopping before `/dev` finishes its completion steps
+**Fix**: Let `/dev` finish auto-commit/push and duration reporting
 **Benefit**: Tracking, achievements, Git automation
 
 ---
 
-### 4. Not Checking Progress
+### 4. Not Reviewing Progress
 
-**Mistake**: Not using `/status`
-**Fix**: Check regularly
+**Mistake**: Ignoring updated docs/state after tasks finish
+**Fix**: Skim TASKS.md updates and engagement stats regularly
 **Benefit**: Awareness, better planning
 
 ---
@@ -474,7 +472,7 @@ Tips and best practices for getting the most out of DoPlan. Optimize your workfl
 - Set experience level accurately
 - Use iterative conversation
 - Ask for explanations
-- Check progress regularly
+- Review engagement and task updates regularly
 
 ### For Intermediate
 - Use fast-track when appropriate

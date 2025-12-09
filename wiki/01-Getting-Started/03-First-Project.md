@@ -216,85 +216,30 @@ Now let's start building! DoPlan will find the next available task:
 📝 Next steps:
    • Review feature documentation in .do/plan/
    • Start coding with your IDE
-   • Type /done when task is complete
+   • Keep coding—completion runs automatically when finished
 ```
 
 **Now you can code!** Open your IDE and start building.
 
 ---
 
-## ✅ Step 8: Complete Your Task
+## ✅ Step 8: Completion Happens Automatically
 
-When you're done with the task:
+When the AI agent decides the task is done, `/dev` auto-completes for you:
 
-```bash
-/done
-```
+- Marks the task complete and updates TASKS.md/state
+- Snapshots state history
+- Creates a conventional commit and pushes
+- Checks achievements/challenges and shows duration
+- Suggests next steps (e.g., PR creation)
 
-**What happens**:
-1. Verifies you're on a task branch
-2. Checks dependencies
-3. Marks task complete in TASKS.md
-4. Updates state (adds to completed, clears active task)
-5. Creates state snapshot
-6. **Auto-commits** with conventional format
-7. **Auto-pushes** to remote
-8. Checks for achievements/challenges
-9. Displays duration
-
-**You'll see**:
-```
-✅ Task 1.1 marked complete!
-   ⏱️  Task duration: 15m
-   ✓ Changes committed
-   ✓ Changes pushed to task/1.1
-
-💡 Suggestion: Create a pull request?
-   Run: gh pr create --title "feat: Set up project structure" --body "Completes task 1.1"
-
-💡 Next steps:
-   • Type /dev to start the next task
-   • Type /status to see overall progress
-```
-
-**Achievements?** If you earned any, you'll see:
-```
-🎉  ACHIEVEMENT UNLOCKED!  🎉
-  🚀  First Steps  🚀
-  Complete your first task
-  💰 Points Earned: +50
-  ⭐ Rarity: common
-```
+**Next steps after completion**:
+- Run `/dev` again to start the next task
+- Use `/sys engagement` to review achievements
 
 ---
 
-## 📊 Step 9: Check Your Progress
-
-See how you're doing:
-
-```bash
-/status
-```
-
-**You'll see**:
-```
-📊 Project Progress
-
-Phase: Foundation
-Tasks: 1/4 completed (25%)
-
-Current task: None
-Next up: 1.2 - Configure database
-
-State Delta (since last snapshot):
-  • Task 1.1 completed
-  • Phase: Foundation (no change)
-  • Branch: task/1.1 → cleared
-```
-
----
-
-## 🎮 Step 10: View Your Engagement
+## 🎮 Step 9: View Your Engagement
 
 See your achievements and progress:
 
@@ -329,9 +274,8 @@ Now you can continue developing:
 ```bash
 /dev    # Start next task
 # ... code ...
-/done   # Complete task
-/dev    # Start next task
-# ... repeat ...
+/dev    # Auto-completes when finished
+# ... repeat as you pick up new tasks ...
 ```
 
 Each cycle:
@@ -350,8 +294,7 @@ In this tutorial, you:
 - ✅ Captured your idea iteratively
 - ✅ Generated an execution plan
 - ✅ Started development workflow
-- ✅ Completed a task (with auto-commit/push)
-- ✅ Checked progress
+- ✅ Completed a task automatically (commit/push included)
 - ✅ Viewed engagement dashboard
 
 ---
@@ -370,9 +313,8 @@ Now that you've created your first project:
 ## 💡 Tips
 
 - **Use `/hey`** anytime to review commands and get help
-- **Check `/status`** regularly to see progress
 - **View `/sys engagement`** to see your achievements
-- **Type `/done`** when tasks are complete (don't forget!)
+- **Use `/dev`** to start tasks and let it auto-complete them
 - **Explore achievements** - they make development fun!
 
 ---

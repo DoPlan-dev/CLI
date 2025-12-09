@@ -36,20 +36,15 @@ New user creating their first project with DoPlan.
 /dev
 # → Task 1.1 started
 # → Code feature
-/done
-# → First task complete!
+# → Auto-completes when finished (commit/push/achievements)
 # → Achievement: "First Steps" (50 points)
 
 # 5. Continue
 /dev
-/done
-# ... repeat ...
+/dev
+# ... repeat with auto-completion ...
 
-# 6. Check progress
-/status
-# → See completion percentage
-
-# 7. View engagement
+# 6. View engagement
 /sys engagement
 # → See achievements earned
 ```
@@ -59,8 +54,8 @@ New user creating their first project with DoPlan.
 - Complete onboarding thoroughly
 - Use iterative conversation
 - Review plan before coding
-- Always use `/done`
-- Check progress regularly
+- Let `/dev` auto-complete tasks
+- Watch engagement for progress cues
 
 ### Expected Outcomes
 
@@ -90,26 +85,18 @@ authentication, and CRUD operations for a blog system"
 
 # 3. Rapid development loop
 /dev
-# → Code
-/done
-# → Auto-commit/push
+# → Code (auto-commit/push on completion)
 
 /dev
-# → Code
-/done
+# → Code (auto-commit/push on completion)
 # ... fast iteration ...
-
-# 4. Check progress
-/status
-# → Quick status check
 ```
 
 ### Key Points
 
 - Use `/do now` for fast-tracking
 - Skip meeting/refinement phases
-- Rapid development loop
-- Minimal status checks
+- Rapid development loop with auto-completion
 
 ### Expected Outcomes
 
@@ -151,10 +138,7 @@ Student learning new technologies, wants educational support.
 # → DoPlan provides explanations
 # → Educational guidance
 # → Learning support
-
-/done
-# → Achievement: "Student" (25 points)
-# → Achievement: "Tech Explorer" (50 points)
+# → Auto-completes and awards learning achievements
 
 # 5. Track learning
 /sys engagement
@@ -199,9 +183,7 @@ Adding a new feature to an existing project.
 # 3. Develop feature
 /dev --feature "profile"
 # → Specific feature
-# → Code
-/done
-# → Complete
+# → Code (auto-completes when finished)
 ```
 
 ### Key Points
@@ -232,26 +214,25 @@ Advanced user focusing on completing high-scoring challenges.
 /do
 /plan
 /dev
-/done
-# ... build project ...
+# → Auto-completes tasks while you build the project
 
 # 2. Complete first API
 # → Code API integration
-/done
-# → Challenge: "API Integration Master" (500 points)
-# → Challenge: "Integration Tested" (750 points)
-# → Total: 1,250 points!
+/dev
+# → Auto-completes and checks challenges:
+#   "API Integration Master" (500 points)
+#   "Integration Tested" (750 points)
 
 # 3. Deploy to staging
 # → Deploy project
-/done
-# → Challenge: "First Launch!" (1,000 points)
+/dev
+# → Auto-completes and checks "First Launch!" (1,000 points)
 
 # 4. Achieve test coverage
 # → Write tests
 # → Achieve 80% coverage
-/done
-# → Challenge: "Test Coverage Champion" (700 points)
+/dev
+# → Auto-completes and checks "Test Coverage Champion" (700 points)
 
 # 5. View engagement
 /sys engagement
@@ -289,26 +270,26 @@ User building long-term relationship with DoPlan across multiple projects.
 /hey
 /do
 /plan
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 # → Relationship level: 20
 
 # Project 2
 /do
 /plan
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 # → Relationship level: 40
 # → Achievement: "Building Connection"
 
 # Project 3
 /do
 /plan
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 # → Relationship level: 60
 
 # Project 5
 /do
 /plan
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 # → Relationship level: 75
 # → Achievement: "True Partner"
 # → Achievement: "Serial Builder"
@@ -316,7 +297,7 @@ User building long-term relationship with DoPlan across multiple projects.
 # Project 10
 /do
 /plan
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 # → Relationship level: 100
 # → Achievement: "Best Friends Forever"
 # → Achievement: "Decade Developer"
@@ -362,13 +343,7 @@ Team using DoPlan with shared workflow.
 # Individual development
 /dev
 # → Work on assigned tasks
-/done
-# → Auto-commit/push
-# → PR suggestion
-
-# Team coordination
-/status
-# → Check team progress
+# → Auto-commit/push and PR suggestion handled automatically
 ```
 
 ### Key Points
@@ -412,7 +387,7 @@ User wants AI-suggested project ideas.
 # → Plan for chosen idea
 
 # 4. Develop
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 ```
 
 ### Key Points
@@ -441,25 +416,26 @@ Completing project and making public release.
 
 ```bash
 # 1. Complete development
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 # → All tasks complete
 
 # 2. Final testing
 # → Run tests
 # → Achieve coverage
-/done
-# → Challenge: "Test Coverage Champion" (700 points)
+/dev
+# → Auto-completes and checks "Test Coverage Champion" (700 points)
 
 # 3. Deploy to production
 # → Deploy
-/done
-# → Challenge: "Production Ready" (1,500 points)
+/dev
+# → Auto-completes and checks "Production Ready" (1,500 points)
 
 # 4. Public release
 # → Release publicly
-/done
-# → Challenge: "Public Launch!" (2,000 points)
-# → Challenge: "Version 1.0" (1,500 points)
+/dev
+# → Auto-completes and checks:
+#   "Public Launch!" (2,000 points)
+#   "Version 1.0" (1,500 points)
 # → Total: 3,500 points!
 
 # 5. Celebrate
@@ -495,22 +471,13 @@ Daily development routine with DoPlan.
 
 ```bash
 # Morning
-/status
-# → Check where you left off
-
 /dev
-# → Start task
-# → Code
-
-# Break
-/status
-# → Quick progress check
+# → Start task and code
+# → Auto-completes when finished
 
 # Continue
-# → Code
-/done
-# → Complete task
-# → Achievement check
+# → Pick up next task with /dev as needed
+# → Auto-completes each task
 
 # End of day
 /sys engagement
@@ -521,9 +488,8 @@ Daily development routine with DoPlan.
 
 ### Key Points
 
-- Start with status check
+- Start with `/dev`, let it auto-complete
 - Regular development loop
-- Progress checks
 - End with engagement view
 - Daily consistency
 
@@ -574,7 +540,7 @@ You can combine patterns:
 # → Learning focus
 
 # Regular development
-/dev → /done
+/dev (auto-completes)
 
 # Complete challenges
 # → First API (learning + challenge)
@@ -587,7 +553,7 @@ You can combine patterns:
 # Fast-track multiple projects
 /do now --prompt "..."
 /plan
-/dev → /done
+/dev (auto-completes)
 
 # Build relationship over time
 # → Multiple projects

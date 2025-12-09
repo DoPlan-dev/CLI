@@ -53,7 +53,7 @@ DoPlan supports 6 AI-powered IDEs:
 
 [Code]
 
-/done
+# Auto-completion
 # → Auto-commit: feat(task-2.1): complete user authentication
 # → Auto-push: Pushed to task/2.1
 # → PR suggestion
@@ -65,7 +65,7 @@ DoPlan supports 6 AI-powered IDEs:
 
 ### PR Suggestions
 
-After `/done`:
+After `/dev` auto-completes:
 ```
 💡 Suggestion: Create a pull request?
    Run: gh pr create --title "feat: User Authentication" --body "Completes task 2.1"

@@ -101,48 +101,6 @@ All DoPlan commands in one place. Quick lookup for syntax, options, and examples
 
 ---
 
-### `/done`
-
-**Purpose**: Mark task complete
-
-**Syntax**:
-```bash
-/done
-/done --project <path>
-```
-
-**Options**:
-- `--project <path>` - Specify project path
-
-**Examples**:
-```bash
-/done
-/done --project ./my-project
-```
-
----
-
-### `/status`
-
-**Purpose**: View progress
-
-**Syntax**:
-```bash
-/status
-/status --project <path>
-```
-
-**Options**:
-- `--project <path>` - Specify project path
-
-**Examples**:
-```bash
-/status
-/status --project ./my-project
-```
-
----
-
 ## ⚙️ System Commands
 
 ### `/sys`
@@ -263,9 +221,7 @@ All DoPlan commands in one place. Quick lookup for syntax, options, and examples
 /hey
 /do
 /plan
-/dev
-/done
-/status
+/dev  # auto-completes tasks
 /sys engagement
 ```
 
@@ -274,16 +230,14 @@ All DoPlan commands in one place. Quick lookup for syntax, options, and examples
 ```bash
 /do now --prompt "..."
 /plan
-/dev
-/done
+/dev  # auto-completes tasks
 ```
 
 ### Feature Addition
 
 ```bash
 /do feature
-/dev --feature "feature-name"
-/done
+/dev --feature "feature-name"  # auto-completes
 ```
 
 ---
@@ -291,9 +245,8 @@ All DoPlan commands in one place. Quick lookup for syntax, options, and examples
 ## 💡 Command Tips
 
 - **Use `--project`** - Specify project path
-- **Check `/status`** - Regular progress checks
 - **View `/sys engagement`** - Stay motivated
-- **Always use `/done`** - When tasks complete
+- **Let `/dev` auto-complete tasks** - Commit/push handled for you
 - **Use fast-track** - When you have detailed prompt
 
 ---

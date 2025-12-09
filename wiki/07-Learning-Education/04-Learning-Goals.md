@@ -241,8 +241,8 @@ When you use a new technology:
 # → Educational explanations
 # → Best practices
 
-/done
-# → Achievement: "Tech Explorer" (50 points)
+/dev
+# → Auto-completes and updates "Tech Explorer" (50 points)
 # → Learning goal progress
 ```
 
@@ -259,8 +259,8 @@ When you use a new technology:
 # → Containerization guidance
 # → Best practices
 
-/done
-# → Achievement: "Tech Explorer" (50 points)
+/dev
+# → Auto-completes and updates "Tech Explorer" (50 points)
 # → Learning goal progress
 ```
 

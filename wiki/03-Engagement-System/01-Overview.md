@@ -191,7 +191,7 @@ For multiple rewards:
 
 ### Example: Completing Your First API Integration
 
-1. **You complete the task** with `/done`
+1. **Task auto-completes** when `/dev` finishes
 2. **Challenge detected**: "API Integration Master" (500 points)
 3. **Score increases**: 0 → 500
 4. **Achievement triggered**: "On the Rise" (250 points milestone)

@@ -148,7 +148,7 @@ Multiple rewards earned together are:
 ### Example 1: First Task Completion
 
 **What happens**:
-1. Complete first task with `/done`
+1. Complete first task (auto-completed by `/dev`)
 2. "First Steps" achievement detected (50 points)
 3. Score: 0 → 50
 4. Achievement displayed immediately

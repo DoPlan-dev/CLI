@@ -65,7 +65,7 @@ DoPlan automates the tedious parts so you can focus on building:
 - **Time Tracking** - Track everything automatically
 - **Git Workflow** - Branch creation, PR suggestions, CI/CD setup
 
-**Example**: When you finish a task with `/done`:
+**Example**: When you finish a task with `/dev` (auto-complete):
 1. Task marked complete in TASKS.md
 2. State updated and snapshotted
 3. Changes auto-committed: `feat(task-2.1): complete user authentication`
@@ -121,9 +121,8 @@ DoPlan follows a simple, powerful workflow:
 1. /hey    → Onboarding & Tutorial
 2. /do     → Capture Your Idea
 3. /plan   → Generate Execution Plan
-4. /dev    → Start Development
-5. /done   → Complete Task (Auto-Commit/Push)
-6. /status → Check Progress
+4. /dev    → Start Development (auto-completes with commit/push)
+5. /sys    → System control & dashboards
 ```
 
 **That's it!** Simple, powerful, and engaging.

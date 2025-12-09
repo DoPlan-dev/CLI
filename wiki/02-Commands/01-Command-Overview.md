@@ -15,9 +15,7 @@ These are the commands you'll use daily in your development workflow.
 | `/hey` | Onboarding & tutorial | First time, or when you need help |
 | `/do` | Capture idea & discovery | Starting a new project or feature |
 | `/plan` | Generate execution plan | After capturing your idea |
-| `/dev` | Start development | When ready to code |
-| `/done` | Complete task | When task is finished |
-| `/status` | View progress | Anytime to check status |
+| `/dev` | Start development & auto-complete task | When ready to code |
 
 ### ⚙️ System Commands (Control)
 
@@ -119,9 +117,9 @@ These commands give you control over DoPlan's systems and settings.
 
 ---
 
-### `/dev` - Start Development
+### `/dev` - Start Development & Auto-Complete
 
-**Purpose**: Begin development workflow for a task
+**Purpose**: Begin development workflow for a task and auto-complete it (former `/done` behavior)
 
 **When to use**:
 - Ready to start coding
@@ -135,70 +133,13 @@ These commands give you control over DoPlan's systems and settings.
 - Starts time tracking
 - Updates active state
 - Shows personalized message
+- Auto-completes: commits, pushes, records duration, updates achievements
 - Integrates with engagement system
 
 **Example**:
 ```bash
 /dev              # Start next task
 /dev --feature "auth"  # Start specific feature
-```
-
----
-
-### `/done` - Complete Task
-
-**Purpose**: Mark task complete with auto-commit and push
-
-**When to use**:
-- Task is finished
-- Ready to commit and push
-- Moving to next task
-
-**What it does**:
-- Verifies active branch
-- Checks dependencies
-- Marks task complete in TASKS.md
-- Updates state
-- Creates state snapshot
-- **Auto-commits** (conventional format)
-- **Auto-pushes** to remote
-- Updates changelog
-- Suggests PR creation
-- Checks achievements/challenges
-- Displays task duration
-
-**Example**:
-```bash
-/done
-# → Task marked complete
-# → Auto-committed and pushed
-# → Achievements checked
-```
-
----
-
-### `/status` - View Progress
-
-**Purpose**: Check project progress and status
-
-**When to use**:
-- Anytime to see progress
-- After completing tasks
-- Before starting new work
-
-**What it does**:
-- Reads TASKS.md
-- Reads active_state.json
-- Calculates progress
-- Shows current phase
-- Displays task statistics
-- Shows state deltas
-- Next task suggestion
-
-**Example**:
-```bash
-/status
-# → Shows progress dashboard
 ```
 
 ---
@@ -341,19 +282,13 @@ These commands give you control over DoPlan's systems and settings.
 
 # 4. Start development
 /dev
+# → Auto-completes when finished (commit/push/achievements)
 
-# 5. Complete task
-/done
-
-# 6. Check progress
-/status
-
-# 7. View engagement
+# 5. View engagement
 /sys engagement
-
-# 8. Continue development
+# 6. Continue development
 /dev
-/done
+# → Auto-completes when finished
 # ... repeat ...
 ```
 
@@ -368,7 +303,6 @@ These commands give you control over DoPlan's systems and settings.
 
 # 3. Start development
 /dev
-/done
 # ... repeat ...
 ```
 
@@ -388,7 +322,6 @@ These commands give you control over DoPlan's systems and settings.
 
 # 4. Start development
 /dev
-/done
 ```
 
 ---
@@ -399,12 +332,10 @@ These commands give you control over DoPlan's systems and settings.
 - Use `/do now` when you have a detailed prompt
 - Use `/do feature` for single feature ideas
 - Use `/do i'm lucky` for inspiration
-- Check `/status` regularly
 - View `/sys engagement` to stay motivated
 
 ### Best Practices
-- Always use `/done` when tasks are complete
-- Check `/status` before starting new work
+- Rely on `/dev` auto-completion when tasks are complete
 - View `/sys engagement` to see achievements
 - Use `/hey` if you forget commands
 - Use `/sys` to explore system features

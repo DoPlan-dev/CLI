@@ -52,8 +52,7 @@ state-[timestamp]-[reason].json
 
 **Examples**:
 - `state-20250115T100000Z-build.json` - Before /dev
-- `state-20250115T101530Z-done.json` - After /done
-- `state-20250115T120000Z-status.json` - Status check
+- `state-20250115T101530Z-complete.json` - After auto-completion
 
 ### Timestamp Format
 
@@ -68,7 +67,7 @@ ISO 8601: `YYYYMMDDTHHMMSSZ`
 ### When State Updates
 
 - **Starting task** (`/dev`) - Sets active_task, active_branch, task_started_at
-- **Completing task** (`/done`) - Adds to completed, clears active_task/branch
+- **Completing task** (auto-complete) - Adds to completed, clears active_task/branch
 - **Phase changes** - Updates phase
 - **Manual updates** - If needed
 

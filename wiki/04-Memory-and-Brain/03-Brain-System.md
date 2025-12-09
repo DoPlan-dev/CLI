@@ -178,7 +178,7 @@ Brain matches your communication preferences:
    
    💡 Next steps:
       • Type /dev to start the next task
-      • Type /status to see overall progress"
+      • Type /sys engagement to view achievements"
 ```
 
 **Balanced Style**:
@@ -233,7 +233,7 @@ Every command uses Brain:
 - `/do` - Adaptive conversation
 - `/plan` - Context-aware planning
 - `/dev` - Personalized messages
-- `/done` - Encouragement
+- Auto-completion updates - Encouragement
 
 ### In Agents
 
@@ -267,11 +267,11 @@ Engagement system uses Brain for:
 - Name: "Sarah"
 - Experience: "intermediate"
 - Relationship Level: 75
-- Favorite Commands: ["/dev", "/done"]
+- Favorite Commands: ["/dev"]
 - Current Project: "my-todo-app"
 
 **Brain Processing**: Full personalization
-**Response**: "Hey Sarah! 👋 Great to see you again! I know you love using /dev and /done. Ready to build something amazing on 'my-todo-app'?"
+**Response**: "Hey Sarah! 👋 Great to see you again! I know you love using /dev. Ready to build something amazing on 'my-todo-app'?"
 
 ### Example 3: Learning Focus
 

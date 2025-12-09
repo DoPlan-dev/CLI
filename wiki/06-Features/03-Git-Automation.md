@@ -18,7 +18,7 @@ Git Automation in DoPlan handles:
 
 ### When It Happens
 
-Auto-commit occurs when you run `/done`:
+Auto-commit occurs when `/dev` auto-completes a task:
 1. Task marked complete
 2. Changes staged
 3. Commit created automatically
@@ -70,8 +70,8 @@ Auto-push occurs after auto-commit:
 ### Process
 
 ```bash
-/done
-# → Task complete
+/dev
+# → Task complete (auto)
 # → Auto-commit: feat(task-2.1): complete user authentication
 # → Auto-push: Pushed to task/2.1
 ```
@@ -101,7 +101,7 @@ Examples:
 
 1. **Created** - When `/dev` runs
 2. **Active** - During development
-3. **Committed** - When `/done` runs
+3. **Committed** - When `/dev` auto-completes
 4. **Pushed** - Auto-push to remote
 5. **Merged** - Via PR (manual or suggested)
 
@@ -111,7 +111,7 @@ Examples:
 
 ### When Suggested
 
-PR suggestions appear after `/done`:
+PR suggestions appear after `/dev` auto-completes:
 ```
 💡 Suggestion: Create a pull request?
    Run: gh pr create --title "feat: User Authentication" --body "Completes task 2.1"
@@ -142,11 +142,12 @@ Or use suggested command from DoPlan.
 /dev
 # → Branch created: task/2.1
 # → Checked out
+# → Auto-commit/push when complete
 
 [Code]
 # → Develop feature
 
-/done
+# Auto-completion runs when finished
 # → Auto-commit: feat(task-2.1): complete user authentication
 # → Auto-push: Pushed to task/2.1
 # → PR suggestion
@@ -166,7 +167,7 @@ Follows best practices:
 
 ### Branch Verification
 
-Before `/done`:
+Before auto-completion:
 - Verifies you're on task branch
 - Warns if on main/master
 - Confirms before proceeding
@@ -191,7 +192,7 @@ Before completion:
 
 ### Best Practices
 
-1. **Always use `/done`** - Ensures auto-commit/push
+1. **Let `/dev` finish** - Ensures auto-commit/push
 2. **Review commits** - Check commit messages
 3. **Use PR suggestions** - Create pull requests
 4. **Verify branches** - Check you're on correct branch
@@ -222,7 +223,7 @@ Before completion:
 
 [Code for 2 hours]
 
-/done
+# Auto-completion
 # → Commit: feat(task-2.1): complete user authentication
 # → Push: Pushed to task/2.1
 # → PR suggestion shown
@@ -234,14 +235,14 @@ Before completion:
 /dev
 # → Branch: task/2.1
 [Code]
-/done
-# → Committed and pushed
+/dev
+# → Auto-completed: committed and pushed
 
 /dev
 # → Branch: task/2.2
 [Code]
-/done
-# → Committed and pushed
+/dev
+# → Auto-completed: committed and pushed
 ```
 
 ### Example 3: With PR
@@ -249,8 +250,8 @@ Before completion:
 ```bash
 /dev
 [Code]
-/done
-# → Committed and pushed
+/dev
+# → Auto-completed: committed and pushed
 # → PR suggestion
 
 gh pr create --title "feat: User Authentication" --body "Completes task 2.1"

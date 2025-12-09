@@ -9,7 +9,7 @@ DoPlan automatically tracks time for every command, phase, and task. No manual l
 Time tracking in DoPlan is **completely automatic**. It tracks:
 - Every command execution
 - Each phase (ideation, planning, development)
-- Complete task duration (from `/dev` to `/done`)
+- Complete task duration (from `/dev` start to auto-complete)
 - Session duration
 - Project time
 
@@ -32,7 +32,7 @@ Every command tracks:
 
 Complete task duration tracked:
 - **Task start** - When `/dev` is run
-- **Task end** - When `/done` is run
+- **Task end** - When `/dev` auto-completes
 - **Total duration** - Full task time
 - **Displayed** - Shown after completion
 
@@ -107,7 +107,7 @@ One entry per line in JSON format:
 
 ### Task Duration
 
-**Example**: Task from `/dev` to `/done`
+**Example**: Task from `/dev` start to auto-complete
 
 1. **Task Start** (`/dev`):
    - `task_started_at` stored in active_state.json
@@ -116,7 +116,7 @@ One entry per line in JSON format:
 2. **Development**:
    - You code for 2 hours
 
-3. **Task End** (`/done`):
+3. **Auto-Completion** (handled by `/dev`):
    - Duration calculated: 2 hours 15 minutes
    - Displayed: "⏱️ Task duration: 2h 15m"
 
@@ -211,7 +211,7 @@ Time data is ready for:
 
 ### After Task Completion
 
-When you run `/done`:
+When `/dev` auto-completes a task:
 
 ```
 ✅ Task 2.1 marked complete!
@@ -227,7 +227,7 @@ When you run `/done`:
 
 Duration is calculated from:
 - `task_started_at` in active_state.json (when `/dev` was run)
-- Current time (when `/done` is run)
+- Current time (when `/dev` auto-completes)
 - Difference = task duration
 
 ---
@@ -240,8 +240,7 @@ Track time spent on:
 - `/hey` - Onboarding time
 - `/do` - Ideation time
 - `/plan` - Planning time
-- `/dev` - Development time
-- `/done` - Completion time
+- `/dev` - Development and auto-completion time
 
 ### Phase Time
 
@@ -249,7 +248,7 @@ Track time by phase:
 - **Ideation** - Idea capture time
 - **Planning** - Plan generation time
 - **Development** - Coding time
-- **Completion** - Task completion time
+- **Completion** - Auto-completion time
 
 ### Project Time
 

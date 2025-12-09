@@ -250,8 +250,8 @@ cat ~/.doplan/memory_card.json | jq .preferred_tech_stack
 # → Educational explanations
 # → Best practices
 
-/done
-# → TypeScript added to tech stack
+/dev
+# → Auto-completes: TypeScript added to tech stack
 # → Achievement: "Tech Explorer" (50 points)
 # → Learning goal progress
 ```
@@ -260,14 +260,14 @@ cat ~/.doplan/memory_card.json | jq .preferred_tech_stack
 
 ```bash
 # 1. Build project
-/do → /plan → /dev → /done
+/do → /plan → /dev (auto-completes)
 
 # 2. Add Docker
 # → Create Dockerfile
 # → Containerize application
 
-/done
-# → Docker added to tech stack
+/dev
+# → Auto-completes: Docker added to tech stack
 # → Achievement: "Tech Explorer" (50 points)
 # → Challenge: "Docker Deployer" (700 points)
 ```

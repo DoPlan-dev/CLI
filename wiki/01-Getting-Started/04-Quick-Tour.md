@@ -104,7 +104,7 @@ DoPlan tracks **everything** automatically - no manual logging needed.
 Time is tracked for:
 - Every command execution
 - Each phase (ideation, planning, development)
-- Complete task duration (from /dev to /done)
+- Complete task duration (from `/dev` start to auto-complete)
 - Session duration
 
 ### View Time Data
@@ -131,7 +131,7 @@ cat .do/system/time-tracker.jsonl | tail -5
 
 ### See Duration After Tasks
 
-When you complete a task with `/done`:
+When `/dev` auto-completes a task:
 ```
 ✅ Task 2.1 marked complete!
    ⏱️  Task duration: 2h 15m
@@ -166,7 +166,7 @@ Current state in `.do/system/history/active_state.json`:
 
 Automatic snapshots in `.do/system/history/`:
 - `state-20250115T100000Z-build.json` - Before /dev
-- `state-20250115T101530Z-done.json` - After /done
+- `state-20250115T101530Z-complete.json` - After auto-completion
 
 **Benefits**:
 - Full history
@@ -182,7 +182,7 @@ DoPlan automates Git operations so you can focus on coding.
 
 ### Auto-Commit
 
-When you run `/done`:
+When `/dev` auto-completes:
 ```
 ✓ Changes committed
   Commit: feat(task-2.1): complete user authentication
@@ -310,19 +310,11 @@ DoPlan commands have powerful subcommands for different needs.
 
 Always know where you are and what's next.
 
-### /status Command
+### How to View Progress
 
-```bash
-/status
-```
-
-**Shows**:
-- Current phase
-- Tasks completed/total
-- Percentage complete
-- Current task
-- Next task
-- State deltas
+- `/sys engagement` - Highlights achievements, milestones, and recent activity
+- State snapshots in `.do/system/history/` show progress over time
+- TASKS.md updates reflect completed tasks after auto-completion
 
 ### Visual Progress
 
@@ -407,7 +399,7 @@ Now that you've seen DoPlan's power:
 ## 💡 Pro Tips
 
 - **Check `/sys engagement`** regularly to see your progress
-- **Use `/status`** to track where you are
+- **Use `/dev`** to start tasks; it auto-completes when finished
 - **Complete challenges** for high scores
 - **Set learning goals** to track your growth
 - **Explore subcommands** for power features

@@ -13,11 +13,9 @@ The DoPlan workflow takes you from idea to production in a simple, engaging, and
    ↓
 3. Planning (/plan)
    ↓
-4. Development Loop (/dev → /done)
+4. Development Loop (/dev auto-completes)
    ↓
-5. Progress Tracking (/status)
-   ↓
-6. Engagement (/sys engagement)
+5. Engagement (/sys engagement)
 ```
 
 ---
@@ -152,7 +150,7 @@ Generate structured execution plan from your idea documents.
 
 ---
 
-## Phase 4: Development Loop (`/dev` → `/done`)
+## Phase 4: Development Loop (`/dev` auto-completes)
 
 ### Purpose
 
@@ -165,13 +163,13 @@ Build your project task by task with automatic tracking and Git automation.
   ↓
 [Code]  → Develop feature
   ↓
-/done   → Complete task (auto-commit/push)
+/dev    → Auto-completes when finished (commit/push/achievements)
   ↓
 /dev    → Next task
   ↓
 [Code]  → Develop feature
   ↓
-/done   → Complete task
+/dev    → Auto-completes when finished
   ↓
 ...repeat...
 ```
@@ -193,89 +191,21 @@ Build your project task by task with automatic tracking and Git automation.
    - Starts time tracking
    - Updates active state
    - Shows personalized message
+   - Monitors progress and auto-completes when done
 
-3. **Development**
-   - Review feature documentation
-   - Code your feature
-   - Test your code
-   - Use your IDE
-
-### Completing a Task (`/done`)
-
-1. **Run `/done`**
-   ```bash
-   /done
-   ```
-
-2. **What Happens**
-   - Verifies active branch
-   - Checks dependencies
+3. **Auto-Completion (no extra command)**
    - Marks task complete in TASKS.md
-   - Updates state
-   - Creates state snapshot
+   - Updates state and snapshots it
    - **Auto-commits** (conventional format)
    - **Auto-pushes** to remote
    - Checks achievements/challenges
-   - Displays task duration
-
-3. **Output**
-   ```
-   ✅ Task 2.1 marked complete!
-      ⏱️  Task duration: 2h 15m
-      ✓ Changes committed
-      ✓ Changes pushed to task/2.1
-   
-   💡 Next steps:
-      • Type /dev to start the next task
-      • Type /status to see overall progress
-   ```
+   - Displays task duration and next-step suggestions
 
 ### Time Per Task: Varies (minutes to hours)
 
 ---
 
-## Phase 5: Progress Tracking (`/status`)
-
-### Purpose
-
-Monitor your progress and see where you are in the project.
-
-### Steps
-
-1. **Run `/status`**
-   ```bash
-   /status
-   ```
-
-2. **What You See**
-   - Current phase
-   - Tasks completed/total
-   - Percentage complete
-   - Current task (if any)
-   - Next task
-   - State deltas
-
-### Output
-
-```
-📊 Project Progress
-
-Phase: Foundation
-Tasks: 3/4 completed (75%)
-
-Current task: 1.4 - Set up testing
-Next up: 2.1 - User authentication
-
-State Delta (since last snapshot):
-  • Task 1.3 completed
-  • Phase: Foundation (no change)
-```
-
-### Time: Instant
-
----
-
-## Phase 6: Engagement (`/sys engagement`)
+## Phase 5: Engagement (`/sys engagement`)
 
 ### Purpose
 
@@ -328,32 +258,16 @@ View your achievements, challenges, and engagement metrics.
 /dev
 # → Task 1.1 started
 # → Code feature
-/done
-# → Task 1.1 complete (2h 15m)
+# → Auto-completes when finished (2h 15m)
 # → Auto-committed and pushed
 
 /dev
 # → Task 1.2 started
 # → Code feature
-/done
-# → Task 1.2 complete (1h 30m)
+# → Auto-completes when finished (1h 30m)
 
 # ... continue ...
 ```
-
-### Regular Checks
-
-```bash
-# Check progress
-/status
-# → See completion percentage
-
-# View engagement
-/sys engagement
-# → See achievements and score
-```
-
----
 
 ## ⏱️ Time Breakdown
 
@@ -366,7 +280,7 @@ View your achievements, challenges, and engagement metrics.
 ### Development Per Task
 - **Task start**: 10-30 seconds
 - **Development**: Varies (minutes to hours)
-- **Task completion**: 10-30 seconds
+- **Auto-completion**: 10-30 seconds (handled by `/dev`)
 - **Total overhead**: ~1 minute per task
 
 ### Regular Checks
@@ -404,14 +318,13 @@ View your achievements, challenges, and engagement metrics.
 ### Efficiency
 - Use `/do now` for fast-tracking
 - Use `/do feature` for single features
-- Check `/status` regularly
-- Always use `/done` when complete
+- Let `/dev` auto-complete tasks
 
 ### Best Practices
 - Complete `/hey` tutorial first time
 - Use iterative conversation in `/do`
 - Review plan before `/dev`
-- Check progress regularly
+- Keep an eye on engagement for progress cues
 - View engagement for motivation
 
 ### Power User

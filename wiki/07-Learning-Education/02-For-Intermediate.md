@@ -55,7 +55,7 @@ authentication, and CRUD operations"
 # → Review plan
 # → Understand structure
 
-/dev → /done
+/dev (auto-completes)
 # → Learn as you build
 # → Complete challenges
 ```
@@ -155,8 +155,8 @@ DoPlan tracks:
 # → Educational explanations
 # → Best practices
 
-/done
-# → Achievement: "Tech Explorer" (50 points)
+/dev
+# → Auto-completes, achievement: "Tech Explorer" (50 points)
 # → Learning goal progress
 ```
 
@@ -170,7 +170,7 @@ DoPlan tracks:
 /plan
 
 # 3. Rapid development
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 # → Fast iteration
 # → Efficient workflow
 ```
@@ -179,7 +179,7 @@ DoPlan tracks:
 
 ```bash
 # 1. Regular workflow
-/do → /plan → /dev → /done
+/do → /plan → /dev (auto-completes)
 
 # 2. Complete challenges
 # → First API integration

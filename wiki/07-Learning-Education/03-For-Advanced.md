@@ -37,7 +37,7 @@ gRPC, Kubernetes, and PostgreSQL"
 /plan
 
 # 3. Rapid development
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 # → Fast iteration
 # → Auto-commit/push
 # → Minimal overhead
@@ -51,7 +51,7 @@ gRPC, Kubernetes, and PostgreSQL"
 
 ```bash
 # 1. Regular workflow
-/do → /plan → /dev → /done
+/do → /plan → /dev (auto-completes)
 
 # 2. Complete high-scoring challenges
 # → First API integration (500 points)
@@ -122,7 +122,7 @@ gRPC, Kubernetes, and PostgreSQL"
 # Fast-track everything
 /do now --prompt "..."
 /plan
-/dev → /done (rapid loop)
+/dev (auto-completes) (rapid loop)
 # → Minimal overhead
 # → Maximum speed
 ```

@@ -5,7 +5,7 @@ DoPlan's commands are designed to be simple, powerful, and engaging. This sectio
 ## 📚 Contents
 
 1. [Command Overview](./01-Command-Overview.md) - All commands at a glance
-2. [Workflow Commands](./02-Workflow-Commands.md) - /hey, /do, /plan, /dev, /done, /status
+2. [Workflow Commands](./02-Workflow-Commands.md) - /hey, /do, /plan, /dev (auto-complete)
 3. [System Commands](./03-System-Commands.md) - /sys and its subcommands
 4. [Command Reference](./04-Command-Reference.md) - Detailed reference for each command
 
@@ -17,9 +17,7 @@ DoPlan's commands are designed to be simple, powerful, and engaging. This sectio
 - **`/hey`** - Onboarding, tutorial, welcome
 - **`/do`** - Capture idea & discovery
 - **`/plan`** - Generate execution plan
-- **`/dev`** - Start development
-- **`/done`** - Complete task (auto-commit/push)
-- **`/status`** - View progress
+- **`/dev`** - Start development and auto-complete tasks
 
 ### System Commands
 - **`/sys`** - System control panel
@@ -41,17 +39,11 @@ The typical DoPlan workflow:
   ↓
 /plan   → Generate Plan
   ↓
-/dev    → Start Development
+/dev    → Start Development (auto-completes)
   ↓
-/done   → Complete Task
-  ↓
-/dev    → Next Task
-  ↓
-/done   → Complete Task
+/dev    → Next Task (auto-completes)
   ↓
 ...repeat...
-  ↓
-/status → Check Progress
 ```
 
 ---

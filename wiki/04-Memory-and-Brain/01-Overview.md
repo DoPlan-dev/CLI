@@ -65,10 +65,10 @@ Personalized Responses
 - Name: "Sarah"
 - Experience: "intermediate"
 - Relationship Level: 75
-- Favorite Commands: ["/dev", "/done"]
+- Favorite Commands: ["/dev"]
 
 **Brain**: Processes all this data
-**Response**: "Hey Sarah! 👋 Great to see you again! I know you love using /dev and /done. Ready to build something amazing?"
+**Response**: "Hey Sarah! 👋 Great to see you again! I know you love using /dev. Ready to build something amazing?"
 
 ---
 

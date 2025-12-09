@@ -12,7 +12,7 @@ Welcome to the **DoPlan CLI Wiki** - your comprehensive guide to understanding a
 
 ### 🎯 [02. Commands](./02-Commands/)
 - **Command Overview** - All commands at a glance
-- **Workflow Commands** - /hey, /do, /plan, /dev, /done, /status
+- **Workflow Commands** - /hey, /do, /plan, /dev (auto-complete)
 - **System Commands** - /sys and its subcommands
 - **Command Reference** - Detailed command documentation
 

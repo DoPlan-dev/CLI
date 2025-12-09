@@ -132,20 +132,14 @@ DoPlan: "I'll create a Git branch for you. A branch is like a separate
 
 ---
 
-### Step 5: Complete Your Task
+### Step 5: Completion Happens Automatically
 
-```bash
-/done
-```
+- `/dev` auto-completes when the task is finished
+- Task marked complete, committed, and pushed
+- Achievements checked and duration shown
+- Suggestions offered for next steps (e.g., start next task)
 
-**What happens**:
-- Task marked complete
-- Changes auto-committed
-- Changes auto-pushed
-- Achievements checked
-- Duration displayed
-
-**What you'll see**:
+**Example output**:
 ```
 ✅ Task 1.1 marked complete!
    ⏱️  Task duration: 1h 30m
@@ -157,10 +151,6 @@ DoPlan: "I'll create a Git branch for you. A branch is like a separate
   Complete your first task
   💰 Points Earned: +50
   ⭐ Rarity: common
-
-💡 Next steps:
-   • Type /dev to start the next task
-   • Type /status to see overall progress
 ```
 
 **Why**: See your progress and celebrate wins!
@@ -268,21 +258,16 @@ DoPlan: "I'll create a Git branch for you. A branch is like a separate
 # → Read documentation
 # → Ask for help
 # → Code with guidance
-/done
-# → Celebrate completion!
+/dev
+# → Auto-completes, celebrate completion!
 # → See achievements
 
 # 5. Continue
-/dev → /done (repeat)
+/dev (auto-completes) (repeat)
 # → Learn as you go
 # → Build skills
 
-# 6. Check progress
-/status
-# → See completion
-# → Track progress
-
-# 7. View engagement
+# 6. View engagement
 /sys engagement
 # → See achievements
 # → Track learning

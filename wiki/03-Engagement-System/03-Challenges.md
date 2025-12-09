@@ -228,7 +228,7 @@ Challenges award **much higher** points than regular achievements:
 
 **What you do**:
 1. Deploy to staging environment
-2. Run `/done` to complete task
+2. Let `/dev` auto-complete the task
 
 **What happens**:
 - 🏆 "First Launch!" challenge detected (1,000 points)
@@ -242,7 +242,7 @@ Challenges award **much higher** points than regular achievements:
 1. Create API endpoint
 2. Write tests
 3. All tests pass
-4. Run `/done`
+4. Let `/dev` finish and auto-complete
 
 **What happens**:
 - 🏆 "API Integration Master" (500 points)

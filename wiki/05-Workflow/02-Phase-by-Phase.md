@@ -234,7 +234,7 @@ Generate structured execution plan from your idea documents.
 
 ---
 
-## Phase 4: Development (`/dev` → `/done`)
+## Phase 4: Development (`/dev` auto-completes)
 
 ### Purpose
 
@@ -252,7 +252,7 @@ Build your project task by task with automatic tracking and Git automation.
   ↓
 [Code]  → Develop feature
   ↓
-/done   → Complete task
+/dev    → Auto-completes when finished (commit/push/achievements)
   ↓
 /dev    → Next task
   ↓
@@ -295,7 +295,7 @@ Build your project task by task with automatic tracking and Git automation.
 📝 Next steps:
    • Review feature documentation in .do/plan/
    • Start coding with your IDE
-   • Type /done when task is complete
+   • Keep coding—completion runs automatically when finished
 ```
 
 **Time tracking starts**: `task_started_at` stored in active_state.json
@@ -310,35 +310,18 @@ Build your project task by task with automatic tracking and Git automation.
 
 **Time**: Varies (minutes to hours)
 
-### Completing a Task (`/done`)
+### Auto-Completion (handled by `/dev`)
 
-**What happens**:
-1. Verifies active branch
-2. Checks dependencies
-3. Marks task complete in TASKS.md
-4. Updates state (adds to completed, clears active)
-5. Creates state snapshot
-6. **Auto-commits** (conventional format)
-7. **Auto-pushes** to remote
-8. Updates changelog (if significant)
-9. Suggests PR creation
-10. Checks achievements/challenges
-11. Displays task duration
-
-**Example output**:
-```
-✅ Task 2.1 marked complete!
-   ⏱️  Task duration: 2h 15m
-   ✓ Changes committed
-   ✓ Changes pushed to task/2.1
-
-💡 Suggestion: Create a pull request?
-   Run: gh pr create --title "feat: User Authentication" --body "Completes task 2.1"
-
-💡 Next steps:
-   • Type /dev to start the next task
-   • Type /status to see overall progress
-```
+**What happens automatically**:
+1. Verifies active branch and dependencies
+2. Marks task complete in TASKS.md
+3. Updates state (adds to completed, clears active)
+4. Creates state snapshot
+5. **Auto-commits** (conventional format) and **auto-pushes**
+6. Updates changelog (if significant)
+7. Suggests PR creation
+8. Checks achievements/challenges
+9. Displays task duration and next steps
 
 **Time tracking ends**: Duration calculated and displayed
 
@@ -352,58 +335,7 @@ Build your project task by task with automatic tracking and Git automation.
 
 ---
 
-## Phase 5: Progress Tracking (`/status`)
-
-### Purpose
-
-Monitor your progress and see where you are in the project.
-
-### Duration
-
-- **Instant** - No processing time
-
-### What It Shows
-
-1. **Current Phase** - Which phase you're in
-2. **Task Statistics** - Completed/total tasks
-3. **Percentage Complete** - Overall progress
-4. **Current Task** - Active task (if any)
-5. **Next Task** - Suggested next task
-6. **State Deltas** - What changed since last snapshot
-
-### Example Output
-
-```
-📊 Project Progress
-
-Phase: Foundation
-Tasks: 3/4 completed (75%)
-
-Current task: 1.4 - Set up testing
-Next up: 2.1 - User authentication
-
-State Delta (since last snapshot):
-  • Task 1.3 completed
-  • Phase: Foundation (no change)
-  • Branch: task/1.3 → cleared
-```
-
-### Data Sources
-
-- `.do/plan/TASKS.md` - Task list
-- `.do/system/history/active_state.json` - Current state
-- `.do/system/history/state-*.json` - State history
-
-### When to Use
-
-- After completing tasks
-- Before starting new work
-- Regular progress checks
-- Planning next steps
-
----
-
-## Phase 6: Engagement (`/sys engagement`)
+## Phase 5: Engagement (`/sys engagement`)
 
 ### Purpose
 
@@ -478,13 +410,13 @@ View your achievements, challenges, and engagement metrics.
 
 ### Development → Completion
 
-**Trigger**: Run `/done` after `/dev`
+**Trigger**: `/dev` detects task is finished
 **State change**: Task completed, state updated
 **What happens**: Task marked complete, committed, pushed, achievements checked
 
 ### Development Loop
 
-**Trigger**: Run `/dev` again after `/done`
+**Trigger**: Run `/dev` again to start the next task
 **State change**: Next task started
 **What happens**: New task, new branch, time tracking continues
 
@@ -512,15 +444,8 @@ View your achievements, challenges, and engagement metrics.
 
 ### Development
 - Review feature docs before coding
-- Use `/done` when complete
-- Check progress regularly
+- Let `/dev` auto-complete when finished
 - View engagement for motivation
-
-### Progress Tracking
-- Check `/status` regularly
-- Monitor completion percentage
-- Track state changes
-- Plan next steps
 
 ### Engagement
 - View dashboard regularly

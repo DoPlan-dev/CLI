@@ -220,7 +220,7 @@ Common issues and solutions. Fix problems quickly and get back to building.
 2. **Verify file locations** - Ensure files exist
 3. **Check permissions** - Read/write access
 4. **Review state** - Check active_state.json
-5. **Use `/status`** - See current state
+5. **Review snapshots** - Compare state files for current state
 
 ### Specific Issues
 

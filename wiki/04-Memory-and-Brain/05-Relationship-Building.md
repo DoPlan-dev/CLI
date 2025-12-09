@@ -270,7 +270,7 @@ on React projects. Ready to build something amazing together?"
 **Interaction**:
 ```
 DoPlan: "Hey Sarah! 👋 It's awesome to see you again! I know you love 
-using /dev and /done, and you're crushing it with React projects. 
+using /dev, and you're crushing it with React projects.
 Ready to build something legendary? Let's do this! 🚀"
 ```
 

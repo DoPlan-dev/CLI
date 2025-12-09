@@ -169,9 +169,9 @@ The Memory Card is stored in your **home directory**, not in project folders. Th
     "/do": 5,
     "/plan": 3,
     "/dev": 25,
-    "/done": 20
+    "/dev": 20
   },
-  "favorite_commands": ["/dev", "/done"],
+  "favorite_commands": ["/dev"],
   "struggled_features": ["Database migrations"],
   "helpful_features": ["Auto-commit", "Time tracking"],
   "time_preferences": {
