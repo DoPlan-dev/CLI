@@ -126,17 +126,19 @@ func (eo *EngagementOrchestrator) ProcessCommandWithEngagement(
 			CelebrateAchievements(earned, out)
 
 			// Also schedule for dopamine timing (for delayed rewards if needed)
-			for _, achievement := range earned {
-				eo.dopamineTiming.ScheduleReward(
-					"achievement",
-					achievement.ID,
-					achievement.Title,
-					achievement.Description,
-					achievement.Points,
-					achievement.Rarity,
-					achievement.Icon,
-					achievement.Project,
-				)
+			if eo.dopamineTiming != nil {
+				for _, achievement := range earned {
+					eo.dopamineTiming.ScheduleReward(
+						"achievement",
+						achievement.ID,
+						achievement.Title,
+						achievement.Description,
+						achievement.Points,
+						achievement.Rarity,
+						achievement.Icon,
+						achievement.Project,
+					)
+				}
 			}
 
 			// Refresh systems after achievements awarded
@@ -149,29 +151,31 @@ func (eo *EngagementOrchestrator) ProcessCommandWithEngagement(
 		}
 	}
 
-	// 4. Check for new challenges
+	// 5. Check for new challenges
 	if eo.challengeSys != nil {
 		completed, err := eo.challengeSys.CheckAndAwardChallenges(context)
 		if err != nil {
 			fmt.Fprintf(out, "⚠️  Warning: Challenge check failed: %v\n", err)
 		} else if len(completed) > 0 {
 			// Schedule challenges for dopamine timing
-			for _, challenge := range completed {
-				eo.dopamineTiming.ScheduleReward(
-					"challenge",
-					challenge.ID,
-					challenge.Title,
-					challenge.Description,
-					challenge.Points,
-					challenge.Rarity,
-					challenge.Icon,
-					challenge.Project,
-				)
+			if eo.dopamineTiming != nil {
+				for _, challenge := range completed {
+					eo.dopamineTiming.ScheduleReward(
+						"challenge",
+						challenge.ID,
+						challenge.Title,
+						challenge.Description,
+						challenge.Points,
+						challenge.Rarity,
+						challenge.Icon,
+						challenge.Project,
+					)
+				}
 			}
 		}
 	}
 
-	// 5. Check if rewards should be released now (immediate for first-time, delayed for others)
+	// 6. Check if rewards should be released now (immediate for first-time, delayed for others)
 	if eo.dopamineTiming != nil {
 		rewards, err := eo.dopamineTiming.CheckAndReleaseRewards(out)
 		if err != nil {
@@ -413,10 +417,9 @@ func (eo *EngagementOrchestrator) detectPainPointResolution(context map[string]i
 		if featureName, ok := context["feature_name"].(string); ok && featureName != "" {
 			for _, struggledFeature := range eo.memoryCard.StruggledFeatures {
 				if struggledFeature == featureName {
-					// User successfully completed a feature they struggled with
-					// This could indicate they overcame a pain point related to that feature
-					// For now, we'll mark it as a potential resolution
-					// In a more sophisticated system, we'd track specific pain points per feature
+							// User successfully completed a feature they struggled with
+							// Treat as resolved pain point for that feature
+							eo.memoryCard.ResolvePainPoint(struggledFeature)
 					break
 				}
 			}
