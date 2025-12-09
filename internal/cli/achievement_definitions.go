@@ -728,7 +728,7 @@ func getSpecialAchievements() []AchievementDefinition {
 			Icon:        GetCarbonIcon("night_owl", "achievement", "common"),
 			Condition: func(mc *MemoryCard, context map[string]interface{}) bool {
 				hour := time.Now().Hour()
-				return hour >= 0 && hour < 4
+				return hour >= 0 && hour < 6
 			},
 		},
 		{

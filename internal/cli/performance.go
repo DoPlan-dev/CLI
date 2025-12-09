@@ -79,16 +79,31 @@ func getOrCreateEngagementOrchestrator(projectPath string) (*EngagementOrchestra
 	if err != nil {
 		// If memory card doesn't exist, create a new one and try again
 		if _, loadErr := LoadMemoryCard(); loadErr != nil {
-			// Create new memory card for new projects
+			// Create new memory card for new projects with all fields initialized
+			// to match the nil-safety checks in LoadMemoryCard
 			mc := &MemoryCard{
-				FirstMet:          time.Now(),
-				ProjectsCount:     0,
-				CommandUsage:      make(map[string]int),
-				Score:             0,
-				Achievements:      []Achievement{},
-				RelationshipLevel: 0,
-				TrustLevel:        0,
-				EngagementScore:   0.0,
+				FirstMet:             time.Now(),
+				ProjectsCount:        0,
+				CommandUsage:         make(map[string]int),
+				Score:                0,
+				Achievements:         []Achievement{},
+				RelationshipLevel:    0,
+				TrustLevel:           0,
+				EngagementScore:      0.0,
+				ConversationHistory:  []ConversationEntry{},
+				MemorableMoments:      []MemorableMoment{},
+				PreferredTechStack:   []string{},
+				ProjectTypes:         []string{},
+				Interests:             []string{},
+				LearningGoals:        []string{},
+				PainPoints:           []string{},
+				FavoriteCommands:     []string{},
+				StruggledFeatures:    []string{},
+				HelpfulFeatures:      []string{},
+				CompletedChallenges:  []string{},
+				ChallengeAttempts:    make(map[string]int),
+				ResolvedPainPoints:   []string{},
+				UsageDates:           []string{},
 			}
 			if saveErr := SaveMemoryCard(mc); saveErr == nil {
 				// Retry initialization after creating memory card

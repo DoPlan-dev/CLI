@@ -501,12 +501,14 @@ func (m *MemoryCard) calculateCurrentStreak() int {
 		if found {
 			streak++
 		} else {
-			// If we're checking today (i=0) and it's not found, assume today counts
-			// (user is currently using DoPlan, so today should be counted)
+			// If we're checking today (i=0) and it's not found, only count it if
+			// UpdateStreak has already added today to UsageDates. Since UpdateStreak
+			// adds today before calling calculateCurrentStreak, if today isn't in
+			// the list, it means the streak should be 0 (no usage today yet).
 			// Otherwise, break the streak
 			if i == 0 {
-				streak++
-				continue
+				// Today not in list means no usage today - streak is broken
+				return 0
 			}
 			break
 		}
